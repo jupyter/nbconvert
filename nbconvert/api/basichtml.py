@@ -1,3 +1,5 @@
+"""TODO: Docstring
+"""
 
 #-----------------------------------------------------------------------------
 # Copyright (c) 2013, the IPython Development Team.
@@ -12,23 +14,29 @@
 #-----------------------------------------------------------------------------
 
 # local import
-import latex
+import exporter
+import nbconvert.transformers.csshtmlheader
 from IPython.utils.traitlets import Unicode
-from nbconvert.transformers.sphinx import SphinxTransformer
+
 #-----------------------------------------------------------------------------
 # Classes
 #-----------------------------------------------------------------------------
-class SphinxExporter(latex.LatexExporter):
+class BasicHtmlExporter(exporter.Exporter):
+
+    file_extension = Unicode(
+        'html', config=True, 
+        help="Extension of the file that should be written to disk"
+        )
 
     template_file = Unicode(
-            'sphinx_howto', config=True,
+            'basichtml', config=True,
             help="Name of the template file to use")
-    
+
     def _register_transformers(self):
         
         #Register the transformers of the base class.
-        super(SphinxExporter, self)._register_transformers()
+        super(BasicHtmlExporter, self)._register_transformers()
         
-        #Register sphinx latex transformer
-        self.register_transformer(SphinxTransformer) 
+        #Register latex transformer
+        self.register_transformer(nbconvert.transformers.csshtmlheader.CSSHtmlHeaderTransformer)
                     
