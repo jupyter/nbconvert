@@ -14,29 +14,14 @@
 #-----------------------------------------------------------------------------
 
 # local import
-import exporter
-import nbconvert.transformers.csshtmlheader
+import basichtml.BasicHtmlExporter
 from IPython.utils.traitlets import Unicode
 
 #-----------------------------------------------------------------------------
 # Classes
 #-----------------------------------------------------------------------------
-class HtmlExporter(exporter.Exporter):
-
-    file_extension = Unicode(
-        'html', config=True, 
-        help="Extension of the file that should be written to disk"
-        )
+class FullHtmlExporter(basichtml.BasicHtmlExporter):
 
     template_file = Unicode(
             'fullhtml', config=True,
-            help="Name of the template file to use")
-
-    def _register_transformers(self):
-        
-        #Register the transformers of the base class.
-        super(HtmlExporter, self)._register_transformers()
-        
-        #Register latex transformer
-        self.register_transformer(nbconvert.transformers.csshtmlheader.CSSHtmlHeaderTransformer)
-                    
+            help="Name of the template file to use")    
