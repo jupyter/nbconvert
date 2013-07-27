@@ -1,5 +1,5 @@
 """
-Exporter for exporting full HTML documents.
+Contains slide show exporter
 """
 
 #-----------------------------------------------------------------------------
@@ -16,24 +16,37 @@ Exporter for exporting full HTML documents.
 
 from IPython.utils.traitlets import Unicode
 
-from .basichtml import BasicHTMLExporter
+from IPython.nbconvert import transformers
 from IPython.config import Config
+
+from .exporter import Exporter
 
 #-----------------------------------------------------------------------------
 # Classes
 #-----------------------------------------------------------------------------
 
-class FullHTMLExporter(BasicHTMLExporter):
+class SlidesExporter(Exporter):
     """
-    Exports a full HTML document.
+    Exports slides
     """
+    
+    file_extension = Unicode(
+        'slides.html', config=True, 
+        help="Extension of the file that should be written to disk"
+        )
 
-    template_file = Unicode(
-            'fullhtml', config=True,
-            help="Name of the template file to use")
+    default_template = Unicode('reveal', config=True, help="""Template of the 
+        data format to use.  I.E. 'reveal'""")
 
     @property
     def default_config(self):
-        c = Config({'CSSHTMLHeaderTransformer':{'enabled':True}})
-        c.merge(super(FullHTMLExporter,self).default_config)
+        c = Config({
+            'CSSHTMLHeaderTransformer':{
+                'enabled':True
+                },
+            'RevealHelpTransformer':{
+                'enabled':True,
+                },                
+            })
+        c.merge(super(SlidesExporter,self).default_config)
         return c
