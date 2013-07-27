@@ -1,5 +1,5 @@
 """
-Module with tests for latex.py
+Module with tests for html.py
 """
 
 #-----------------------------------------------------------------------------
@@ -15,54 +15,45 @@ Module with tests for latex.py
 #-----------------------------------------------------------------------------
 
 from .base import ExportersTestsBase
-from ..latex import LatexExporter
+from ..html import HTMLExporter
 from IPython.testing.decorators import onlyif_cmds_exist
 
 #-----------------------------------------------------------------------------
 # Class
 #-----------------------------------------------------------------------------
 
-class TestLatexExporter(ExportersTestsBase):
-    """Contains test functions for latex.py"""
+class TestHTMLExporter(ExportersTestsBase):
+    """Contains test functions for html.py"""
 
     def test_constructor(self):
         """
-        Can a LatexExporter be constructed?
+        Can a HTMLExporter be constructed?
         """
-        LatexExporter()
+        HTMLExporter()
 
 
     @onlyif_cmds_exist('pandoc')
     def test_export(self):
         """
-        Can a LatexExporter export something?
+        Can a HTMLExporter export something?
         """
-        (output, resources) = LatexExporter().from_filename(self._get_notebook())
-        assert len(output) > 0
-
-
-    @onlyif_cmds_exist('pandoc')
-    def test_export_book(self):
-        """
-        Can a LatexExporter export using 'book' template?
-        """
-        (output, resources) = LatexExporter(template='book').from_filename(self._get_notebook())
+        (output, resources) = HTMLExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
 
     @onlyif_cmds_exist('pandoc')
     def test_export_basic(self):
         """
-        Can a LatexExporter export using 'basic' template?
+        Can a HTMLExporter export using the 'basic' template?
         """
-        (output, resources) = LatexExporter(template='basic').from_filename(self._get_notebook())
+        (output, resources) = HTMLExporter(template='basic').from_filename(self._get_notebook())
         assert len(output) > 0
 
 
     @onlyif_cmds_exist('pandoc')
-    def test_export_article(self):
+    def test_export_full(self):
         """
-        Can a LatexExporter export using 'article' template?
+        Can a HTMLExporter export using the 'full' template?
         """
-        (output, resources) = LatexExporter(template='article').from_filename(self._get_notebook())
+        (output, resources) = HTMLExporter(template='full').from_filename(self._get_notebook())
         assert len(output) > 0

@@ -1,5 +1,5 @@
 """
-Module with tests for basichtml.py
+Module with tests for slides.py
 """
 
 #-----------------------------------------------------------------------------
@@ -15,26 +15,33 @@ Module with tests for basichtml.py
 #-----------------------------------------------------------------------------
 
 from .base import ExportersTestsBase
-from ..basichtml import BasicHTMLExporter
-from IPython.testing.decorators import onlyif_cmds_exist
+from ..slides import SlidesExporter
 
 #-----------------------------------------------------------------------------
 # Class
 #-----------------------------------------------------------------------------
 
-class TestBasicHTMLExporter(ExportersTestsBase):
-    """Contains test functions for basichtml.py"""
+class TestSlidesExporter(ExportersTestsBase):
+    """Contains test functions for slides.py"""
 
     def test_constructor(self):
         """
-        Can a BasicHTMLExporter be constructed?
+        Can a SlidesExporter be constructed?
         """
-        BasicHTMLExporter()
+        SlidesExporter()
 
-    @onlyif_cmds_exist('pandoc')
+
     def test_export(self):
         """
-        Can a BasicHTMLExporter export something?
+        Can a SlidesExporter export something?
         """
-        (output, resources) = BasicHTMLExporter().from_filename(self._get_notebook())
+        (output, resources) = SlidesExporter().from_filename(self._get_notebook())
+        assert len(output) > 0
+
+
+    def test_export_reveal(self):
+        """
+        Can a SlidesExporter export using the 'reveal' template?
+        """
+        (output, resources) = SlidesExporter(template='reveal').from_filename(self._get_notebook())
         assert len(output) > 0
