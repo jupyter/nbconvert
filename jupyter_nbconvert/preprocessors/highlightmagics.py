@@ -13,7 +13,7 @@ import re
 
 # Our own imports
 from .base import Preprocessor
-from IPython.utils.traitlets import Dict
+from traitlets import Dict
 
 
 class HighlightMagicsPreprocessor(Preprocessor):

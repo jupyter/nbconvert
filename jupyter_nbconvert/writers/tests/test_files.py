@@ -19,7 +19,7 @@ import os
 
 from ...tests.base import TestsBase
 from ..files import FilesWriter
-from IPython.utils.py3compat import PY3
+from ipython_genutils.py3compat import PY3
 
 if PY3:
     from io import StringIO

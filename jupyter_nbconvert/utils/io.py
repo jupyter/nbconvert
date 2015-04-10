@@ -6,7 +6,7 @@
 
 import codecs
 import sys
-from IPython.utils.py3compat import PY3
+from ipython_genutils.py3compat import PY3
 
 
 def unicode_std_stream(stream='stdout'):

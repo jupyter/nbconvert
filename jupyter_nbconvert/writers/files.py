@@ -7,9 +7,9 @@ import io
 import os
 import glob
 
-from IPython.utils.traitlets import Unicode
-from IPython.utils.path import link_or_copy, ensure_dir_exists
-from IPython.utils.py3compat import unicode_type
+from traitlets import Unicode
+from ipython_genutils.path import link_or_copy, ensure_dir_exists
+from ipython_genutils.py3compat import unicode_type
 
 from .base import WriterBase
 

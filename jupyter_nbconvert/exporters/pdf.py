@@ -7,9 +7,9 @@ import subprocess
 import os
 import sys
 
-from IPython.utils.py3compat import which
-from IPython.utils.traitlets import Integer, List, Bool, Instance
-from IPython.utils.tempdir import TemporaryWorkingDirectory
+from ipython_genutils.py3compat import which
+from traitlets import Integer, List, Bool, Instance
+from ipython_genutils.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 
 

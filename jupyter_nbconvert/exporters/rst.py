@@ -12,7 +12,7 @@
 # Imports
 #-----------------------------------------------------------------------------
 
-from IPython.config import Config
+from traitlets.config import Config
 
 from .templateexporter import TemplateExporter
 

@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from ..utils.base import NbConvertBase
-from IPython.utils.traitlets import Bool
+from traitlets import Bool
 
 
 class Preprocessor(NbConvertBase):

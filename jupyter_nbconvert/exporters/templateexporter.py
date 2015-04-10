@@ -23,9 +23,9 @@ import os
 # to move ImportErrors to runtime when the requirement is actually needed
 
 # IPython imports
-from IPython.utils.traitlets import MetaHasTraits, Unicode, List, Dict, Any
-from IPython.utils.importstring import import_item
-from IPython.utils import py3compat, text
+from traitlets import MetaHasTraits, Unicode, List, Dict, Any
+from ipython_genutils.importstring import import_item
+from ipython_genutils import py3compat, text
 
 from jupyter_nbconvert import filters
 from .exporter import Exporter
@@ -199,7 +199,7 @@ class TemplateExporter(Exporter):
     
         Parameters
         ----------
-        nb : :class:`~IPython.nbformat.NotebookNode`
+        nb : :class:`~jupyter_nbformat.NotebookNode`
           Notebook node
         resources : dict
           Additional resources that can be accessed read/write by

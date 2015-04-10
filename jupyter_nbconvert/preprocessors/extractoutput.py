@@ -10,9 +10,9 @@ import sys
 import os
 from mimetypes import guess_extension
 
-from IPython.utils.traitlets import Unicode, Set
+from traitlets import Unicode, Set
 from .base import Preprocessor
-from IPython.utils import py3compat
+from ipython_genutils import py3compat
 
 
 class ExtractOutputPreprocessor(Preprocessor):

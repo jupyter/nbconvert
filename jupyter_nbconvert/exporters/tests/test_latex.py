@@ -9,10 +9,10 @@ import re
 
 from .base import ExportersTestsBase
 from ..latex import LatexExporter
-from IPython.nbformat import write
-from IPython.nbformat import v4
-from IPython.testing.decorators import onlyif_cmds_exist
-from IPython.utils.tempdir import TemporaryDirectory
+from jupyter_nbformat import write
+from jupyter_nbformat import v4
+from ipython_genutils.testing.decorators import onlyif_cmds_exist
+from ipython_genutils.tempdir import TemporaryDirectory
 
 
 class TestLatexExporter(ExportersTestsBase):

@@ -5,7 +5,7 @@
 
 from .templateexporter import TemplateExporter
 
-from IPython.utils.traitlets import Dict
+from traitlets import Dict
 
 class ScriptExporter(TemplateExporter):
     

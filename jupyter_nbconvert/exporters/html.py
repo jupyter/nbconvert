@@ -6,7 +6,7 @@
 import os
 
 from jupyter_nbconvert.filters.highlight import Highlight2HTML
-from IPython.config import Config
+from traitlets.config import Config
 
 from .templateexporter import TemplateExporter
 

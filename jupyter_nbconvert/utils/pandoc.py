@@ -10,7 +10,7 @@ import re
 from io import TextIOWrapper, BytesIO
 
 from jupyter_nbconvert.utils.version import check_version
-from IPython.utils.py3compat import cast_bytes, which
+from ipython_genutils.py3compat import cast_bytes, which
 
 from .exceptions import ConversionException
 

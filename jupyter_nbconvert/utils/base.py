@@ -3,9 +3,9 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from IPython.utils.traitlets import List
-from IPython.config.configurable import LoggingConfigurable
-from IPython.utils.traitlets import Unicode
+from traitlets import List
+from traitlets.config.configurable import LoggingConfigurable
+from traitlets import Unicode
 
 class NbConvertBase(LoggingConfigurable):
     """Global configurable class for shared config

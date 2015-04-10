@@ -7,7 +7,7 @@ Module with tests for export.py
 
 import os
 
-from IPython import nbformat
+import jupyter_nbformat as nbformat
 
 from .base import ExportersTestsBase
 from ..export import *

@@ -5,8 +5,8 @@
 
 import sys
 
-from IPython.nbformat import v4
-from IPython.utils.py3compat import PY3
+from jupyter_nbformat import v4
+from ipython_genutils.py3compat import PY3
 
 from .base import ExportersTestsBase
 from ..script import ScriptExporter

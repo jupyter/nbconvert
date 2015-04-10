@@ -13,7 +13,7 @@ Contains writer base class.
 # Imports
 #-----------------------------------------------------------------------------
 
-from IPython.utils.traitlets import List
+from traitlets import List
 
 from ..utils.base import NbConvertBase
 

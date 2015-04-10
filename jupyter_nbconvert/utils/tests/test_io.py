@@ -9,9 +9,9 @@ import sys
 
 import nose.tools as nt
 
-from IPython.testing.decorators import skipif
+from ipython_genutils.testing.decorators import skipif
 from ..io import unicode_std_stream
-from IPython.utils.py3compat import PY3
+from ipython_genutils.py3compat import PY3
 
 if PY3:
     from io import StringIO

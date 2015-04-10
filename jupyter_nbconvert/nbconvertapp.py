@@ -16,11 +16,11 @@ import glob
 
 from IPython.core.application import BaseIPythonApplication, base_aliases, base_flags
 from IPython.core.profiledir import ProfileDir
-from IPython.config import catch_config_error, Configurable
-from IPython.utils.traitlets import (
+from traitlets.config import catch_config_error, Configurable
+from traitlets import (
     Unicode, List, Instance, DottedObjectName, Type, CaselessStrEnum, Bool,
 )
-from IPython.utils.importstring import import_item
+from ipython_genutils.importstring import import_item
 
 from .exporters.export import get_export_names, exporter_map
 from jupyter_nbconvert import exporters, preprocessors, writers, postprocessors

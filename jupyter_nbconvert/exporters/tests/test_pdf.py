@@ -6,7 +6,7 @@
 import logging
 import os
 
-from IPython.testing import decorators as dec
+from ipython_genutils.testing import decorators as dec
 
 from .base import ExportersTestsBase
 from ..pdf import PDFExporter
