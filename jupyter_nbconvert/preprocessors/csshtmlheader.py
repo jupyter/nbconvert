@@ -51,7 +51,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         header = []
         
         # Construct path to IPy CSS
-        from IPython.html import DEFAULT_STATIC_FILES_PATH
+        from jupyter_notebook import DEFAULT_STATIC_FILES_PATH
         sheet_filename = os.path.join(DEFAULT_STATIC_FILES_PATH,
             'style', 'style.min.css')
         
@@ -67,8 +67,8 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Load the user's custom CSS and IPython's default custom CSS.  If they
         # differ, assume the user has made modifications to his/her custom CSS
         # and that we should inline it in the nbconvert output.
-        profile_dir = resources['profile_dir']
-        custom_css_filename = os.path.join(profile_dir, 'static', 'custom', 'custom.css')
+        config_dir = resources['config_dir']
+        custom_css_filename = os.path.join(config_dir, 'custom', 'custom.css')
         if os.path.isfile(custom_css_filename):
             if self._default_css_hash is None:
                 self._default_css_hash = self._hash(os.path.join(DEFAULT_STATIC_FILES_PATH, 'custom', 'custom.css'))
