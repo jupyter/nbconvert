@@ -14,8 +14,7 @@ import sys
 import os
 import glob
 
-from IPython.core.application import BaseIPythonApplication, base_aliases, base_flags
-from IPython.core.profiledir import ProfileDir
+from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
     Unicode, List, Instance, DottedObjectName, Type, CaselessStrEnum, Bool,
@@ -78,18 +77,19 @@ nbconvert_flags.update({
 })
 
 
-class NbConvertApp(BaseIPythonApplication):
+class NbConvertApp(JupyterApp):
     """Application used to convert from notebook file type (``*.ipynb``)"""
 
-    name = 'ipython-nbconvert'
+    name = 'jupyter-nbconvert'
     aliases = nbconvert_aliases
     flags = nbconvert_flags
     
     def _log_level_default(self):
         return logging.INFO
     
+    classes = List()
     def _classes_default(self):
-        classes = [NbConvertBase, ProfileDir]
+        classes = [NbConvertBase]
         for pkg in (exporters, preprocessors, writers, postprocessors):
             for name in dir(pkg):
                 cls = getattr(pkg, name)
@@ -118,44 +118,44 @@ class NbConvertApp(BaseIPythonApplication):
     examples = Unicode(u"""
         The simplest way to use nbconvert is
         
-        > ipython nbconvert mynotebook.ipynb
+        > jupyter nbconvert mynotebook.ipynb
         
         which will convert mynotebook.ipynb to the default format (probably HTML).
         
         You can specify the export format with `--to`.
         Options include {0}
         
-        > ipython nbconvert --to latex mynotebook.ipynb
+        > jupyter nbconvert --to latex mynotebook.ipynb
 
         Both HTML and LaTeX support multiple output templates. LaTeX includes
         'base', 'article' and 'report'.  HTML includes 'basic' and 'full'. You
         can specify the flavor of the format used.
 
-        > ipython nbconvert --to html --template basic mynotebook.ipynb
+        > jupyter nbconvert --to html --template basic mynotebook.ipynb
         
         You can also pipe the output to stdout, rather than a file
         
-        > ipython nbconvert mynotebook.ipynb --stdout
+        > jupyter nbconvert mynotebook.ipynb --stdout
 
         PDF is generated via latex
 
-        > ipython nbconvert mynotebook.ipynb --to pdf
+        > jupyter nbconvert mynotebook.ipynb --to pdf
         
         You can get (and serve) a Reveal.js-powered slideshow
         
-        > ipython nbconvert myslides.ipynb --to slides --post serve
+        > jupyter nbconvert myslides.ipynb --to slides --post serve
         
         Multiple notebooks can be given at the command line in a couple of 
         different ways:
   
-        > ipython nbconvert notebook*.ipynb
-        > ipython nbconvert notebook1.ipynb notebook2.ipynb
+        > jupyter nbconvert notebook*.ipynb
+        > jupyter nbconvert notebook1.ipynb notebook2.ipynb
         
         or you can specify the notebooks list in a config file, containing::
         
             c.NbConvertApp.notebooks = ["my_notebook.ipynb"]
         
-        > ipython nbconvert --config mycfg.py
+        > jupyter nbconvert --config mycfg.py
         """.format(get_export_names()))
 
     # Writer specific variables
@@ -284,7 +284,7 @@ class NbConvertApp(BaseIPythonApplication):
         method should return the resources dictionary, and MUST include the
         following keys:
 
-            - profile_dir: the location of the profile directory
+            - config_dir: the location of the Jupyter config directory
             - unique_key: the notebook name
             - output_files_dir: a directory where output files (not including
               the notebook itself) should be saved
@@ -306,7 +306,7 @@ class NbConvertApp(BaseIPythonApplication):
 
         # first initialize the resources we want to use
         resources = {}
-        resources['profile_dir'] = self.profile_dir.location
+        resources['config_dir'] = self.config_dir
         resources['unique_key'] = notebook_name
         resources['output_files_dir'] = '%s_files' % notebook_name
 
@@ -404,4 +404,4 @@ class NbConvertApp(BaseIPythonApplication):
 # Main entry point
 #-----------------------------------------------------------------------------
 
-launch_new_instance = NbConvertApp.launch_instance
+main = launch_new_instance = NbConvertApp.launch_instance
