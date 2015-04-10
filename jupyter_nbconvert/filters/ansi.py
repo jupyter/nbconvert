@@ -1,24 +1,13 @@
 """Filters for processing ANSI colors within Jinja templates.
 """
-#-----------------------------------------------------------------------------
-# Copyright (c) 2013, the IPython Development Team.
-#
-# Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file COPYING.txt, distributed with this software.
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
+# Copyright (c) IPython Development Team.
+# Distributed under the terms of the Modified BSD License.
 
 import re
-from IPython.utils import coloransi
+from jupyter_nbconvert.utils import coloransi
 from ipython_genutils.text import strip_ansi
 
-#-----------------------------------------------------------------------------
-# Classes and functions
-#-----------------------------------------------------------------------------
 
 __all__ = [
     'strip_ansi',

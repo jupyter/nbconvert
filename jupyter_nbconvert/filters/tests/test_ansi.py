@@ -2,27 +2,14 @@
 Module with tests for ansi filters
 """
 
-#-----------------------------------------------------------------------------
-# Copyright (c) 2013, the IPython Development Team.
-#
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file COPYING.txt, distributed with this software.
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
-
-from IPython.utils.coloransi import TermColors
+from jupyter_nbconvert.utils.coloransi import TermColors
 
 from ...tests.base import TestsBase
 from ..ansi import strip_ansi, ansi2html, ansi2latex
 
-
-#-----------------------------------------------------------------------------
-# Class
-#-----------------------------------------------------------------------------
 
 class TestAnsi(TestsBase):
     """Contains test functions for ansi.py"""
