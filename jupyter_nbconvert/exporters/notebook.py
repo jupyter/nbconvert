@@ -4,8 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 from .exporter import Exporter
-from IPython import nbformat
-from IPython.utils.traitlets import Enum
+import jupyter_nbformat as nbformat
+from traitlets import Enum
 
 class NotebookExporter(Exporter):
     """Exports to an IPython notebook."""

@@ -16,8 +16,8 @@
 import os
 
 # IPython imports
-from IPython.utils.traitlets import Unicode
-from IPython.config import Config
+from traitlets import Unicode
+from traitlets.config import Config
 
 from jupyter_nbconvert.filters.highlight import Highlight2Latex
 from .templateexporter import TemplateExporter

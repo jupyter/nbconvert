@@ -5,7 +5,7 @@
 
 from .base import ExportersTestsBase
 from ..html import HTMLExporter
-from IPython.nbformat import v4
+from jupyter_nbformat import v4
 import re
 
 

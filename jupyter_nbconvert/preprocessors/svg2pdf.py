@@ -11,9 +11,9 @@ import os
 import sys
 import subprocess
 
-from IPython.utils.py3compat import cast_unicode_py2
-from IPython.utils.tempdir import TemporaryDirectory
-from IPython.utils.traitlets import Unicode
+from ipython_genutils.py3compat import cast_unicode_py2
+from ipython_genutils.tempdir import TemporaryDirectory
+from traitlets import Unicode
 
 from .convertfigures import ConvertFiguresPreprocessor
 

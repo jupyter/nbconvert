@@ -14,7 +14,7 @@
 
 import re
 from IPython.utils import coloransi
-from IPython.utils.text import strip_ansi
+from ipython_genutils.text import strip_ansi
 
 #-----------------------------------------------------------------------------
 # Classes and functions

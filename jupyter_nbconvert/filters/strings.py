@@ -18,7 +18,7 @@ except ImportError:
 from xml.etree import ElementTree
 
 from IPython.core.interactiveshell import InteractiveShell
-from IPython.utils import py3compat
+from ipython_genutils import py3compat
 
 
 __all__ = [

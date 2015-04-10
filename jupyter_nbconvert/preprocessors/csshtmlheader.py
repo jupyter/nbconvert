@@ -6,9 +6,9 @@ import os
 import io
 import hashlib
 
-from IPython.utils import path
-from IPython.utils.traitlets import Unicode
-from IPython.utils.py3compat import str_to_bytes
+from ipython_genutils import path
+from traitlets import Unicode
+from ipython_genutils.py3compat import str_to_bytes
 from .base import Preprocessor
 
 class CSSHTMLHeaderPreprocessor(Preprocessor):

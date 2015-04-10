@@ -14,7 +14,7 @@ one format to another.
 #-----------------------------------------------------------------------------
 
 from .base import Preprocessor
-from IPython.utils.traitlets import Unicode
+from traitlets import Unicode
 
 #-----------------------------------------------------------------------------
 # Classes

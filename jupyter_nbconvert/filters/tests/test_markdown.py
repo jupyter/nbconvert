@@ -7,8 +7,8 @@
 import re
 from copy import copy
 
-from IPython.utils.py3compat import string_types
-from IPython.testing import decorators as dec
+from ipython_genutils.py3compat import string_types
+from ipython_genutils.testing import decorators as dec
 
 from ...tests.base import TestsBase
 from ..markdown import markdown2latex, markdown2html, markdown2rst

@@ -11,7 +11,7 @@ import webbrowser
 from tornado import web, ioloop, httpserver
 from tornado.httpclient import AsyncHTTPClient
 
-from IPython.utils.traitlets import Bool, Unicode, Int
+from traitlets import Bool, Unicode, Int
 
 from .base import PostProcessorBase
 

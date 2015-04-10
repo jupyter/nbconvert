@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from .base import Preprocessor
-from IPython.utils.traitlets import Unicode
+from traitlets import Unicode
 
 
 class RevealHelpPreprocessor(Preprocessor):

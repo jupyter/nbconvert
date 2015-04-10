@@ -12,7 +12,7 @@ from .base import TestsBase
 from ..postprocessors import PostProcessorBase
 
 from traitlets.tests.utils import check_help_all_output
-from IPython.testing import decorators as dec
+from ipython_genutils.testing import decorators as dec
 
 #-----------------------------------------------------------------------------
 # Classes and functions

@@ -14,10 +14,10 @@ from subprocess import Popen, PIPE
 
 import nose.tools as nt
 
-from IPython.nbformat import v4, write
-from IPython.utils.tempdir import TemporaryWorkingDirectory
+from jupyter_nbformat import v4, write
+from ipython_genutils.tempdir import TemporaryWorkingDirectory
 
-from IPython.utils.py3compat import string_types, bytes_to_str
+from ipython_genutils.py3compat import string_types, bytes_to_str
 
 class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert

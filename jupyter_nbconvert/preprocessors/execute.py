@@ -11,11 +11,11 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from IPython.utils.traitlets import List, Unicode, Bool
+from traitlets import List, Unicode, Bool
 
-from IPython.nbformat.v4 import output_from_msg
+from jupyter_nbformat.v4 import output_from_msg
 from .base import Preprocessor
-from IPython.utils.traitlets import Integer
+from traitlets import Integer
 
 
 class ExecutePreprocessor(Preprocessor):
@@ -45,7 +45,7 @@ class ExecutePreprocessor(Preprocessor):
         if path == '':
             path = None
 
-        from IPython.kernel.manager import start_new_kernel
+        from jupyter_client.manager import start_new_kernel
         kernel_name = nb.metadata.get('kernelspec', {}).get('name', 'python')
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(

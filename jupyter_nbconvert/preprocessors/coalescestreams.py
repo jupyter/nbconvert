@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
-from IPython.utils.log import get_logger
+from traitlets.log import get_logger
 
 def cell_preprocessor(function):
     """

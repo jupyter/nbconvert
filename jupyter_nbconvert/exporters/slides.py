@@ -13,7 +13,7 @@
 #-----------------------------------------------------------------------------
 
 from jupyter_nbconvert import preprocessors
-from IPython.config import Config
+from traitlets.config import Config
 
 from .html import HTMLExporter
 

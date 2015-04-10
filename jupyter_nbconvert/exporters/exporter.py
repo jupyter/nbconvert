@@ -11,12 +11,12 @@ import copy
 import collections
 import datetime
 
-from IPython.config.configurable import LoggingConfigurable
-from IPython.config import Config
-from IPython import nbformat
-from IPython.utils.traitlets import MetaHasTraits, Unicode, List, TraitError
-from IPython.utils.importstring import import_item
-from IPython.utils import text, py3compat
+from traitlets.config.configurable import LoggingConfigurable
+from traitlets.config import Config
+import jupyter_nbformat as nbformat
+from traitlets import MetaHasTraits, Unicode, List, TraitError
+from ipython_genutils.importstring import import_item
+from ipython_genutils import text, py3compat
 
 
 class ResourcesDict(collections.defaultdict):
@@ -107,7 +107,7 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        nb : :class:`~IPython.nbformat.NotebookNode`
+        nb : :class:`~jupyter_nbformat.NotebookNode`
           Notebook node (dict-like with attr-access)
         resources : dict
           Additional resources that can be accessed read/write by
