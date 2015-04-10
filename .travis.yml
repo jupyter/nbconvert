@@ -8,7 +8,7 @@ before_install:
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
     - pip install -f travis-wheels/wheelhouse . coveralls -r requirements.txt
-    - pip install jupyter_nbconvert[test]
+    - pip install jupyter_nbconvert[execute,serve,test]
     - python -c 'import ipython_kernel.kernelspec; ipython_kernel.kernelspec.install(user=True)'
 script:
     - nosetests --with-coverage --cover-package jupyter_nbconvert jupyter_nbconvert
