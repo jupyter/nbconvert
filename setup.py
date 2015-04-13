@@ -103,6 +103,7 @@ extras_require = setuptools_args['extras_require'] = {
     'serve': ['tornado'],
     # ipython_kernel isn't really necessary for execute
     'execute': ['jupyter_client', 'ipython_kernel'],
+    'docs': ['Sphinx>1.1'],
 }
 
 if 'setuptools' in sys.modules:
