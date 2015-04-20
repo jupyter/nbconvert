@@ -164,7 +164,7 @@ class TestNbConvertApp(TestsBase):
         """
         Does the default config work?
         """
-        with self.create_temp_cwd(['notebook*.ipynb', 'ipython_nbconvert_config.py']):
+        with self.create_temp_cwd(['notebook*.ipynb', 'jupyter_nbconvert_config.py']):
             self.nbconvert('--log-level 0')
             assert os.path.isfile('notebook1.py')
             assert not os.path.isfile('notebook2.py')
@@ -175,7 +175,7 @@ class TestNbConvertApp(TestsBase):
         Can the default config be overriden?
         """
         with self.create_temp_cwd(['notebook*.ipynb',
-                                   'ipython_nbconvert_config.py',
+                                   'jupyter_nbconvert_config.py',
                                    'override.py']):
             self.nbconvert('--log-level 0 --config="override.py"')
             assert not os.path.isfile('notebook1.py')
