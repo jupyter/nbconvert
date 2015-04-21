@@ -110,7 +110,9 @@ class TestsBase(unittest.TestCase):
             os.makedirs(dest)
         files_path = self._get_files_path()
         for pattern in copy_filenames:
-            for match in glob.glob(os.path.join(files_path, pattern)):
+            files = glob.glob(os.path.join(files_path, pattern))
+            assert files
+            for match in files:
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
 
