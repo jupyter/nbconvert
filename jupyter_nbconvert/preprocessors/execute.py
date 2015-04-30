@@ -86,7 +86,13 @@ class ExecutePreprocessor(Preprocessor):
             try:
                 msg = self.kc.shell_channel.get_msg(timeout=self.timeout)
             except Empty:
-                self.log.error("Timeout waiting for execute reply")
+                self.log.error("""Timeout waiting for execute reply (%is).
+                If your cell should take longer than this, you can increase the timeout with:
+                
+                    c.ExecutePreprocessor.timeout = SECONDS
+                
+                in jupyter_nbconvert_config.py
+                """ % self.timeout)
                 if self.interrupt_on_timeout:
                     self.log.error("Interrupting kernel")
                     self.km.interrupt_kernel()
