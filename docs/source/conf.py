@@ -55,7 +55,7 @@ copyright = 'Jupyter Development Team'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-_version_py = '../../jupyter_nbconvert/_version.py'
+_version_py = '../../nbconvert/_version.py'
 version_ns = {}
 exec(compile(open(_version_py).read(), _version_py, 'exec'), version_ns)
 # The short X.Y version.
