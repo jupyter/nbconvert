@@ -11,7 +11,7 @@ install:
     - pip install --no-deps -e git+https://github.com/jupyter/jupyter_notebook#egg=jupyter_notebook
     - pip install -f travis-wheels/wheelhouse . coveralls -r requirements.txt
     - pip install nbconvert[execute,serve,test]
-    - python -c 'import ipython_kernel.kernelspec; ipython_kernel.kernelspec.install(user=True)'
+    - python -c 'import ipykernel.kernelspec; ipykernel.kernelspec.install(user=True)'
 script:
     - nosetests --with-coverage --cover-package nbconvert nbconvert
 after_success:
