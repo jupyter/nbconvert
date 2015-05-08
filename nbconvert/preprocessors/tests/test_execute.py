@@ -16,7 +16,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-import jupyter_nbformat as nbformat
+import nbformat
 
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor

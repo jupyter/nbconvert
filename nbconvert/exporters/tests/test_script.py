@@ -5,7 +5,7 @@
 
 import sys
 
-from jupyter_nbformat import v4
+from nbformat import v4
 from ipython_genutils.py3compat import PY3
 
 from .base import ExportersTestsBase

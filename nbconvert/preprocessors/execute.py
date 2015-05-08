@@ -13,7 +13,7 @@ except ImportError:
 
 from traitlets import List, Unicode, Bool
 
-from jupyter_nbformat.v4 import output_from_msg
+from nbformat.v4 import output_from_msg
 from .base import Preprocessor
 from traitlets import Integer
 

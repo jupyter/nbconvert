@@ -3,7 +3,7 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from jupyter_nbformat import v4 as nbformat
+from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
 from ..coalescestreams import coalesce_streams
