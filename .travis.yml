@@ -7,10 +7,12 @@ sudo: false
 before_install:
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
+    # temporary while renaming propagates
+    - pip install --no-deps -e git+https://github.com/jupyter/jupyter_notebook#egg=jupyter_notebook
     - pip install -f travis-wheels/wheelhouse . coveralls -r requirements.txt
-    - pip install jupyter_nbconvert[execute,serve,test]
+    - pip install nbconvert[execute,serve,test]
     - python -c 'import ipython_kernel.kernelspec; ipython_kernel.kernelspec.install(user=True)'
 script:
-    - nosetests --with-coverage --cover-package jupyter_nbconvert jupyter_nbconvert
+    - nosetests --with-coverage --cover-package nbconvert nbconvert
 after_success:
     - coveralls

@@ -7,7 +7,7 @@
 from __future__ import print_function
 
 # the name of the package
-name = 'jupyter_nbconvert'
+name = 'nbconvert'
 
 #-----------------------------------------------------------------------------
 # Minimal Python version sanity check
@@ -42,8 +42,8 @@ for d, _, _ in os.walk(pjoin(here, name)):
         packages.append(d[len(here)+1:].replace(os.path.sep, '.'))
 
 package_data = {
-    'jupyter_nbconvert.filters' : ['marked.js'],
-    'jupyter_nbconvert' : [
+    'nbconvert.filters' : ['marked.js'],
+    'nbconvert' : [
         'tests/files/*.*',
         'exporters/tests/files/*.*',
         'preprocessors/tests/files/*.*',
@@ -53,7 +53,7 @@ package_data = {
 
 for d, _, _ in os.walk(pjoin(pkg_root, 'templates')):
     g = pjoin(d[len(pkg_root)+1:], '*.*')
-    package_data['jupyter_nbconvert'].append(g)
+    package_data['nbconvert'].append(g)
 
 
 version_ns = {}
@@ -96,7 +96,7 @@ install_requires = setuptools_args['install_requires'] = [
     'pygments',
     'traitlets',
     'jupyter_core',
-    'jupyter_notebook',  # For CSS files
+    # 'jupyter_notebook',  # For CSS files
 ]
 
 extras_require = setuptools_args['extras_require'] = {
