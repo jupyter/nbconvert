@@ -5,7 +5,7 @@
 
 from functools import wraps
 
-from jupyter_nbformat import NotebookNode
+from nbformat import NotebookNode
 from ipython_genutils.py3compat import string_types
 
 from .exporter import Exporter
@@ -28,7 +28,7 @@ def DocDecorator(f):
     
     #Set docstring of function
     f.__doc__ = f.__doc__ + """
-    nb : :class:`~jupyter_nbformat.NotebookNode`
+    nb : :class:`~nbformat.NotebookNode`
       The notebook to export.
     config : config (optional, keyword arg)
         User configuration instance.

@@ -5,8 +5,8 @@
 
 import io
 
-import jupyter_nbformat as nbformat
-from jupyter_nbformat import v4
+import nbformat
+from nbformat import v4
 
 from .base import ExportersTestsBase
 from ..rst import RSTExporter

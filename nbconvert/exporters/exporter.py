@@ -13,7 +13,7 @@ import datetime
 
 from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
-import jupyter_nbformat as nbformat
+import nbformat
 from traitlets import MetaHasTraits, Unicode, List, TraitError
 from ipython_genutils.importstring import import_item
 from ipython_genutils import text, py3compat
@@ -109,7 +109,7 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        nb : :class:`~jupyter_nbformat.NotebookNode`
+        nb : :class:`~nbformat.NotebookNode`
           Notebook node (dict-like with attr-access)
         resources : dict
           Additional resources that can be accessed read/write by

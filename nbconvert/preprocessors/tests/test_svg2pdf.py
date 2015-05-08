@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from ipython_genutils.testing import decorators as dec
-from jupyter_nbformat import v4 as nbformat
+from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
 from ..svg2pdf import SVG2PDFPreprocessor

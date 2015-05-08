@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from .exporter import Exporter
-import jupyter_nbformat as nbformat
+import nbformat
 from traitlets import Enum
 
 class NotebookExporter(Exporter):
