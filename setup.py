@@ -96,7 +96,7 @@ install_requires = setuptools_args['install_requires'] = [
     'pygments',
     'traitlets',
     'jupyter_core',
-    'jupyter_notebook',  # For CSS files
+    # 'jupyter_notebook',  # For CSS files
 ]
 
 extras_require = setuptools_args['extras_require'] = {
