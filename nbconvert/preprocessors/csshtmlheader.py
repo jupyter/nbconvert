@@ -69,10 +69,15 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Load the user's custom CSS and IPython's default custom CSS.  If they
         # differ, assume the user has made modifications to his/her custom CSS
         # and that we should inline it in the nbconvert output.
+        try:
+            from notebook import DEFAULT_STATIC_FILES_PATH
+        except ImportError:
+            DEFAULT_STATIC_FILES_PATH = None
+        
         config_dir = resources['config_dir']
         custom_css_filename = os.path.join(config_dir, 'custom', 'custom.css')
         if os.path.isfile(custom_css_filename):
-            if self._default_css_hash is None:
+            if DEFAULT_STATIC_FILES_PATH and self._default_css_hash is None:
                 self._default_css_hash = self._hash(os.path.join(DEFAULT_STATIC_FILES_PATH, 'custom', 'custom.css'))
             if self._hash(custom_css_filename) != self._default_css_hash:
                 with io.open(custom_css_filename, encoding='utf-8') as f:
