@@ -50,10 +50,12 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         from pygments.formatters import HtmlFormatter
         header = []
         
-        # Construct path to IPy CSS
-        from jupyter_notebook import DEFAULT_STATIC_FILES_PATH
-        sheet_filename = os.path.join(DEFAULT_STATIC_FILES_PATH,
-            'style', 'style.min.css')
+        # Construct path to Jupyter CSS
+        import nbconvert.resources
+        sheet_filename = os.path.join(
+            os.path.dirname(nbconvert.resources.__file__),
+            'style.min.css',
+        )
         
         # Load style CSS file.
         with io.open(sheet_filename, encoding='utf-8') as f:

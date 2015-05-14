@@ -29,8 +29,15 @@ PY3 = (sys.version_info[0] >= 3)
 
 import os
 from glob import glob
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib import urlopen
 
 from distutils.core import setup
+from distutils.cmd import Command
+from distutils.command.build import build
+from distutils.command.sdist import sdist
 
 pjoin = os.path.join
 here = os.path.abspath(os.path.dirname(__file__))
@@ -43,6 +50,7 @@ for d, _, _ in os.walk(pjoin(here, name)):
 
 package_data = {
     'nbconvert.filters' : ['marked.js'],
+    'nbconvert.resources' : ['style.min.css'],
     'nbconvert' : [
         'tests/files/*.*',
         'exporters/tests/files/*.*',
@@ -50,6 +58,49 @@ package_data = {
     ],
 }
 
+
+notebook_css_version = '4.0.0-dev'
+css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
+
+class FetchCSS(Command):
+    description = "Fetch Notebook CSS from Jupyter CDN"
+    user_options = []
+    def initialize_options(self):
+        pass
+    
+    def finalize_options(self):
+        pass
+    
+    def run(self):
+        dest = os.path.join('nbconvert', 'resources', 'style.min.css')
+        if not os.path.exists('.git') and os.path.exists(dest):
+            # not running from git, nothing to do
+            return
+        try:
+            css = urlopen(css_url).read()
+        except Exception as e:
+            print("Failed to download css from %s: %s" % (css_url, e))
+            if os.path.exists(dest):
+                print("Already have CSS")
+            else:
+                raise OSError("Need Notebook CSS to proceed: %s" % dest)
+            
+            return
+        
+        with open(dest, 'wb') as f:
+            f.write(css)
+
+cmdclass = {'css': FetchCSS}
+
+def css_first(command):
+    class CSSFirst(command):
+        def run(self):
+            self.distribution.run_command('css')
+            return command.run(self)
+    return CSSFirst
+
+cmdclass['build'] = css_first(build)
+cmdclass['sdist'] = css_first(sdist)
 
 for d, _, _ in os.walk(pjoin(pkg_root, 'templates')):
     g = pjoin(d[len(pkg_root)+1:], '*.*')
@@ -68,6 +119,7 @@ setup_args = dict(
     scripts         = glob(pjoin('scripts', '*')),
     packages        = packages,
     package_data    = package_data,
+    cmdclass        = cmdclass,
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'http://jupyter.org',
@@ -96,7 +148,6 @@ install_requires = setuptools_args['install_requires'] = [
     'pygments',
     'traitlets',
     'jupyter_core',
-    # 'jupyter_notebook',  # For CSS files
 ]
 
 extras_require = setuptools_args['extras_require'] = {
@@ -108,6 +159,9 @@ extras_require = setuptools_args['extras_require'] = {
 }
 
 if 'setuptools' in sys.modules:
+    from setuptools.command.develop import develop
+    cmdclass['develop'] = css_first(develop)
+
     setup_args.update(setuptools_args)
 
 if __name__ == '__main__':
