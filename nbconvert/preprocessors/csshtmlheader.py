@@ -50,10 +50,12 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         from pygments.formatters import HtmlFormatter
         header = []
         
-        # Construct path to IPy CSS
-        from jupyter_notebook import DEFAULT_STATIC_FILES_PATH
-        sheet_filename = os.path.join(DEFAULT_STATIC_FILES_PATH,
-            'style', 'style.min.css')
+        # Construct path to Jupyter CSS
+        import nbconvert.resources
+        sheet_filename = os.path.join(
+            os.path.dirname(nbconvert.resources.__file__),
+            'style.min.css',
+        )
         
         # Load style CSS file.
         with io.open(sheet_filename, encoding='utf-8') as f:
@@ -67,10 +69,15 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Load the user's custom CSS and IPython's default custom CSS.  If they
         # differ, assume the user has made modifications to his/her custom CSS
         # and that we should inline it in the nbconvert output.
+        try:
+            from notebook import DEFAULT_STATIC_FILES_PATH
+        except ImportError:
+            DEFAULT_STATIC_FILES_PATH = None
+        
         config_dir = resources['config_dir']
         custom_css_filename = os.path.join(config_dir, 'custom', 'custom.css')
         if os.path.isfile(custom_css_filename):
-            if self._default_css_hash is None:
+            if DEFAULT_STATIC_FILES_PATH and self._default_css_hash is None:
                 self._default_css_hash = self._hash(os.path.join(DEFAULT_STATIC_FILES_PATH, 'custom', 'custom.css'))
             if self._hash(custom_css_filename) != self._default_css_hash:
                 with io.open(custom_css_filename, encoding='utf-8') as f:
