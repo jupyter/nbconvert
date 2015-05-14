@@ -12,6 +12,6 @@ install:
     - pip install nbconvert[execute,serve,test]
     - python -c 'import ipykernel.kernelspec; ipykernel.kernelspec.install(user=True)'
 script:
-    - nosetests --with-coverage --cover-package nbconvert nbconvert
+    - nosetests -w /tmp --with-coverage --cover-package nbconvert nbconvert
 after_success:
     - coveralls
