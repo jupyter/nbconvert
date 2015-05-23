@@ -29,6 +29,7 @@ PY3 = (sys.version_info[0] >= 3)
 
 import os
 from glob import glob
+from io import BytesIO
 try:
     from urllib.request import urlopen
 except ImportError:
@@ -71,24 +72,51 @@ class FetchCSS(Command):
     def finalize_options(self):
         pass
     
+    def _download(self):
+        try:
+            return urlopen(css_url).read()
+        except Exception as e:
+            if 'ssl' in str(e).lower():
+                try:
+                    import pycurl
+                except ImportError:
+                    print("Failed, try again after installing PycURL with `pip install pycurl` to avoid outdated SSL.", file=sys.stderr)
+                    raise e
+                else:
+                    print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
+                    return self._download_pycurl()
+            raise e
+    
+    def _download_pycurl(self):
+        """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
+        import pycurl
+        c = pycurl.Curl()
+        c.setopt(c.URL, css_url)
+        buf = BytesIO()
+        c.setopt(c.WRITEDATA, buf)
+        c.perform()
+        return buf.getvalue()
+    
     def run(self):
         dest = os.path.join('nbconvert', 'resources', 'style.min.css')
         if not os.path.exists('.git') and os.path.exists(dest):
             # not running from git, nothing to do
             return
+        print("Downloading CSS: %s" % css_url)
         try:
-            css = urlopen(css_url).read()
+            css = self._download()
         except Exception as e:
-            print("Failed to download css from %s: %s" % (css_url, e))
+            msg = "Failed to download css from %s: %s" % (css_url, e)
+            print(msg, file=sys.stderr)
             if os.path.exists(dest):
-                print("Already have CSS")
+                print("Already have CSS: %s, moving on." % dest)
             else:
                 raise OSError("Need Notebook CSS to proceed: %s" % dest)
-            
             return
         
         with open(dest, 'wb') as f:
             f.write(css)
+        print("Downloaded Notebook CSS to %s" % dest)
 
 cmdclass = {'css': FetchCSS}
 
