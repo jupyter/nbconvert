@@ -10,7 +10,7 @@ install:
     # temporary while renaming propagates
     - pip install -f travis-wheels/wheelhouse . coveralls -r requirements.txt
     - pip install nbconvert[execute,serve,test]
-    - python -c 'import ipykernel.kernelspec; ipykernel.kernelspec.install(user=True)'
+    - python -m ipykernel.kernelspec --user
 script:
     - nosetests -w /tmp --with-coverage --cover-package nbconvert nbconvert
 after_success:
