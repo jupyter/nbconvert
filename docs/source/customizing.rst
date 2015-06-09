@@ -53,6 +53,13 @@ comments regarding the execution counts:
     
     jupyter nbconvert --to python 'example.ipynb' --stdout --template=simplepython.tpl
 
+A few gotchas
+~~~~~~~~~~~~~
+
+Jinja blocks use ``{% %}`` by default which does not play nicely with
+:math:`\LaTeX`, hence thoses are replaced by ``((* *))`` in latex
+templates.
+
 Templates that use cell metadata
 --------------------------------
 
