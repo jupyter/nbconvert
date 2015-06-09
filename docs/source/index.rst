@@ -3,27 +3,27 @@
 Converting notebooks to other formats
 =====================================
 
-Newly added in the 1.0 release of IPython is the ``nbconvert`` tool, which
-allows you to convert an ``.ipynb`` notebook document file into various static
-formats.
+Originally added to IPython in version 1.0 (and moved to Jupyter in the 4.0
+release), the ``nbconvert`` tool allows you to convert an ``.ipynb`` notebook
+document file into various static formats.
 
 Currently, ``nbconvert`` is provided as a command line tool, run as a script
-using IPython. A direct export capability from within the
-IPython Notebook web app is planned.
+using Jupyter. A direct export capability from within the
+Jupyter Notebook web app is planned.
 
 The command-line syntax to run the ``nbconvert`` script is::
 
-  $ ipython nbconvert --to FORMAT notebook.ipynb
+  $ jupyter nbconvert --to FORMAT notebook.ipynb
 
-This will convert the IPython document file ``notebook.ipynb`` into the output
+This will convert the Jupyter document file ``notebook.ipynb`` into the output
 format given by the ``FORMAT`` string.
 
 The default output format is html, for which the ``--to`` argument may be
 omitted::
 
-  $ ipython nbconvert notebook.ipynb
+  $ jupyter nbconvert notebook.ipynb
 
-IPython provides a few templates for some output formats, and these can be
+Jupyter provides a few templates for some output formats, and these can be
 specified via an additional ``--template`` argument.
 
 The currently supported export formats are:
@@ -85,8 +85,8 @@ The currently supported export formats are:
 
   Convert a notebook to an executable script.
   This is the simplest way to get a Python (or other language, depending on the kernel) script out of a notebook.
-  If there were any magics in an IPython notebook, this may only be executable from
-  an IPython session.
+  If there were any magics in an Jupyter notebook, this may only be executable from
+  an Jupyter session.
 
 * ``--to notebook``
 
@@ -96,14 +96,14 @@ The currently supported export formats are:
   instead it allows the running of nbconvert preprocessors on a notebook,
   and/or conversion to other notebook formats. For example::
 
-      ipython nbconvert --to notebook --execute mynotebook.ipynb
+      jupyter nbconvert --to notebook --execute mynotebook.ipynb
 
   will open the notebook, execute it, capture new output, and save the result in
   :file:`mynotebook.nbconvert.ipynb`.
 
   ::
 
-      ipython nbconvert --to notebook --nbformat 3 mynotebook
+      jupyter nbconvert --to notebook --nbformat 3 mynotebook
 
   will create a copy of :file:`mynotebook.ipynb` in :file:`mynotebook.v3.ipynb`
   in version 3 of the notebook format.
@@ -111,7 +111,7 @@ The currently supported export formats are:
   If you want to convert a notebook in-place,
   you can specify the ouptut file to be the same as the input file::
 
-      ipython nbconvert --to notebook mynb --output mynb
+      jupyter nbconvert --to notebook mynb --output mynb
 
   Be careful with that, since it will replace the input file.
 
@@ -127,19 +127,19 @@ the notebook and will be placed in the current working directory. Any
 supporting files (graphics, etc) will be placed in a new directory with the
 same base name as the notebook, suffixed with ``_files``::
 
-  $ ipython nbconvert notebook.ipynb
+  $ jupyter nbconvert notebook.ipynb
   $ ls
   notebook.ipynb   notebook.html    notebook_files/
 
 For simple single-file output, such as html, markdown, etc.,
 the output may be sent to standard output with::
 
-  $ ipython nbconvert --to markdown notebook.ipynb --stdout
+  $ jupyter nbconvert --to markdown notebook.ipynb --stdout
 
 Multiple notebooks can be specified from the command line::
 
-  $ ipython nbconvert notebook*.ipynb
-  $ ipython nbconvert notebook1.ipynb notebook2.ipynb
+  $ jupyter nbconvert notebook*.ipynb
+  $ jupyter nbconvert notebook1.ipynb notebook2.ipynb
 
 or via a list in a configuration file, say ``mycfg.py``, containing the text::
 
@@ -148,7 +148,7 @@ or via a list in a configuration file, say ``mycfg.py``, containing the text::
 
 and using the command::
 
-  $ ipython nbconvert --config mycfg.py
+  $ jupyter nbconvert --config mycfg.py
 
 
 LaTeX citations
