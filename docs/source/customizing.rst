@@ -57,8 +57,7 @@ A few gotchas
 ~~~~~~~~~~~~~
 
 Jinja blocks use ``{% %}`` by default which does not play nicely with
-:math:`\LaTeX`, hence thoses are replaced by ``((* *))`` in latex
-templates.
+LaTeX, hence thoses are replaced by ``((* *))`` in LaTeX templates.
 
 Templates that use cell metadata
 --------------------------------
