@@ -19,6 +19,7 @@ Contents:
    customizing
    nbconvert_library
    config_options
+   api/index
 
 
 Indices and tables
