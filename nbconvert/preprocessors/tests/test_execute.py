@@ -19,7 +19,7 @@ except ImportError:
 import nbformat
 
 from .base import PreprocessorTestsBase
-from ..execute import ExecutePreprocessor
+from ..execute import ExecutePreprocessor, CellExecutionError
 
 from nbconvert.filters import strip_ansi
 from nose.tools import assert_raises
@@ -149,3 +149,13 @@ class TestExecute(PreprocessorTestsBase):
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
         assert_raises(Empty, self.run_notebook, filename, dict(timeout=1), res)
+
+    def test_abort_on_error(self):
+        """
+        Check that conversion is aborted if `abort_on_error` is True.
+        """
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
+        res = self.build_resources()
+        res['metadata']['path'] = os.path.dirname(filename)
+        assert_raises(CellExecutionError, self.run_notebook, filename, dict(abort_on_error=True), res)
