@@ -25,7 +25,7 @@ import os
 # IPython imports
 from traitlets import MetaHasTraits, Unicode, List, Dict, Any
 from ipython_genutils.importstring import import_item
-from ipython_genutils import py3compat, text
+from ipython_genutils import py3compat
 
 from nbconvert import filters
 from .exporter import Exporter
@@ -38,7 +38,7 @@ from .exporter import Exporter
 JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
 
 default_filters = {
-        'indent': text.indent,
+        'indent': filters.indent,
         'markdown2html': filters.markdown2html,
         'ansi2html': filters.ansi2html,
         'filter_data_type': filters.DataTypeFilter,
@@ -82,7 +82,7 @@ class TemplateExporter(Exporter):
     """
     
     # finish the docstring
-    __doc__ = __doc__.format(filters = '- '+'\n    - '.join(default_filters.keys()))
+    __doc__ = __doc__.format(filters = '- '+'\n    - '.join(sorted(default_filters.keys())))
 
 
     template_file = Unicode(u'default',
