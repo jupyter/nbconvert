@@ -3,7 +3,7 @@ Filters
 
 Filters are for use with the :class:`~nbconvert.exporters.TemplateExporter` exporter.
 They provide a way for you transform notebook contents to a particular format depending
-on the tempalte you are using. For example, when converting to HTML, you would want to
+on the template you are using. For example, when converting to HTML, you would want to
 use the :func:`~nbconvert.filters.ansi2html` function to convert ANSI colors (from
 e.g. a terminal traceback) to HTML colors.
 
