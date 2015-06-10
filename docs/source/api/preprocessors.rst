@@ -3,6 +3,11 @@ Preprocessors
 
 .. module:: nbconvert.preprocessors
 
+.. seealso::
+
+   :doc:`/config_options`
+     Configurable options for the nbconvert application
+
 .. autoclass:: Preprocessor
 
     .. automethod:: __init__

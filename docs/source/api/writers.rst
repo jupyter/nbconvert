@@ -3,6 +3,11 @@ Writers
 
 .. module:: nbconvert.writers
 
+.. seealso::
+
+   :doc:`/config_options`
+     Configurable options for the nbconvert application
+
 .. autoclass:: WriterBase
 
     .. automethod:: __init__

@@ -15,10 +15,10 @@ Contents:
    :maxdepth: 2
 
    usage
+   config_options
    latex_citations
    customizing
    nbconvert_library
-   config_options
    api/index
 
 
