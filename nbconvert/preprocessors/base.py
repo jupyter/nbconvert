@@ -34,8 +34,8 @@ class Preprocessor(NbConvertBase):
         ----------
         config : Config
             Configuration file structure
-        **kw : misc
-            Additional arguments
+        `**kw`
+            Additional keyword arguments passed to parent
         """
         
         super(Preprocessor, self).__init__(**kw)
