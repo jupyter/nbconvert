@@ -3,6 +3,11 @@ Exporters
 
 .. module:: nbconvert.exporters
 
+.. seealso::
+
+   :doc:`/config_options`
+     Configurable options for the nbconvert application
+
 .. autoclass:: Exporter
 
     .. automethod:: __init__
@@ -15,8 +20,8 @@ Exporters
 
     .. automethod:: register_preprocessor
 
-Specialized exporters
----------------------
+Specialized exporter classes
+----------------------------
 
 .. autoclass:: HTMLExporter
 
@@ -35,3 +40,30 @@ Specialized exporters
 .. autoclass:: PythonExporter
 
 .. autoclass:: RSTExporter
+
+Specialized exporter functions
+------------------------------
+
+These functions are essentially convenience functions that
+wrap the functionality of the classes documented in the previous
+section.
+
+.. autofunction:: export_custom
+
+.. autofunction:: export_html
+
+.. autofunction:: export_slides
+
+.. autofunction:: export_latex
+
+.. autofunction:: export_pdf
+
+.. autofunction:: export_markdown
+
+.. autofunction:: export_python
+
+.. autofunction:: export_rst
+
+.. autofunction:: export_script
+
+.. autofunction:: export_by_name
