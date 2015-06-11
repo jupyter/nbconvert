@@ -14,7 +14,7 @@ at the command line when you start it.
 try:
     indir = os.path.dirname(__file__)
 except NameError:
-    indir = os.getcwd()
+    indir = os.path.dirname(os.getcwd())
 destination = os.path.join(indir, 'source/config_options.rst')
 
 with open(destination, 'w') as f:
