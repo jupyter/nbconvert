@@ -89,7 +89,11 @@ The currently supported export formats are:
       jupyter nbconvert --to notebook --execute mynotebook.ipynb
 
   will open the notebook, execute it, capture new output, and save the result in
-  :file:`mynotebook.nbconvert.ipynb`.
+  :file:`mynotebook.nbconvert.ipynb`. Any exceptions occurring during execution
+  of a cell will not result in an error, but the output from the exception will
+  simply be included in the cell output. If you specify ``--abort-on-error``
+  in addition to the ``--execute`` flag then ``nbconvert`` will abort if an
+  exception occurs during execution.
 
   ::
 
