@@ -5,3 +5,5 @@ from .highlight import *
 from .latex import *
 from .markdown import *
 from .strings import *
+
+from ipython_genutils.text import indent

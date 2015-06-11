@@ -28,29 +28,31 @@ def DocDecorator(f):
     
     #Set docstring of function
     f.__doc__ = f.__doc__ + """
+
     nb : :class:`~nbformat.NotebookNode`
-      The notebook to export.
+        The notebook to export.
     config : config (optional, keyword arg)
         User configuration instance.
     resources : dict (optional, keyword arg)
         Resources used in the conversion process.
-        
+
     Returns
     -------
-    tuple- output, resources, exporter_instance
-    output : str
-        Jinja 2 output.  This is the resulting converted notebook.
-    resources : dictionary
-        Dictionary of resources used prior to and during the conversion 
-        process.
-    exporter_instance : Exporter
-        Instance of the Exporter class used to export the document.  Useful
-        to caller because it provides a 'file_extension' property which
-        specifies what extension the output should be saved as.
+    tuple
+        output : str
+            Jinja 2 output.  This is the resulting converted notebook.
+        resources : dictionary
+            Dictionary of resources used prior to and during the conversion 
+            process.
+        exporter_instance : Exporter
+            Instance of the Exporter class used to export the document.  Useful
+            to caller because it provides a 'file_extension' property which
+            specifies what extension the output should be saved as.
 
     Notes
     -----
     WARNING: API WILL CHANGE IN FUTURE RELEASES OF NBCONVERT
+
     """
             
     @wraps(f)

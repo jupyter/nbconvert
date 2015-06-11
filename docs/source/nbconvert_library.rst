@@ -329,7 +329,7 @@ use <https://github.com/getpelican/pelican-plugins/pull/21>`__ nbconvert
 programatically to generate blog post. Have a look a `Pythonic
 Preambulations <http://jakevdp.github.io/>`__ for Jake's blog post.
 
-@damianavila wrote the Nicholas Plugin to `write blog post as
+@damianavila wrote the Nikola Plugin to `write blog post as
 Notebooks <http://www.damian.oquanta.info/posts/one-line-deployment-of-your-site-to-gh-pages.html>`__
 and is developping a js-extension to publish notebooks via one click
 from the web app.

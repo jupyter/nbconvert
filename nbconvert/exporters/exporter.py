@@ -87,8 +87,11 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        config : config
+        config : :class:`~traitlets.config.Config`
             User configuration instance.
+        `**kw`
+            Additional keyword arguments passed to parent __init__
+
         """
         with_default_config = self.default_config
         if config:
@@ -114,8 +117,9 @@ class Exporter(LoggingConfigurable):
         resources : dict
           Additional resources that can be accessed read/write by
           preprocessors and filters.
-        **kw
-          Ignored (?)
+        `**kw`
+          Ignored
+
         """
         nb_copy = copy.deepcopy(nb)
         resources = self._init_resources(resources)
@@ -137,6 +141,12 @@ class Exporter(LoggingConfigurable):
         ----------
         filename : str
             Full filename of the notebook file to open and convert.
+        resources : dict
+          Additional resources that can be accessed read/write by
+          preprocessors and filters.
+        `**kw`
+          Ignored
+
         """
 
         # Pull the metadata from the filesystem.
@@ -164,6 +174,12 @@ class Exporter(LoggingConfigurable):
         ----------
         file_stream : file-like object
             Notebook file-like object to convert.
+        resources : dict
+          Additional resources that can be accessed read/write by
+          preprocessors and filters.
+        `**kw`
+          Ignored
+
         """
         return self.from_notebook_node(nbformat.read(file_stream, as_version=4), resources=resources, **kw)
 
@@ -178,7 +194,11 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        preprocessor : preprocessor
+        preprocessor : :class:`~nbconvert.preprocessors.Preprocessor`
+            A dotted module name, a type, or an instance
+        enabled : bool
+            Mark the preprocessor as enabled
+
         """
         if preprocessor is None:
             raise TypeError('preprocessor')

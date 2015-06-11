@@ -15,6 +15,16 @@ Contents:
    :maxdepth: 2
 
    usage
+   config_options
    latex_citations
    customizing
    nbconvert_library
+   api/index
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
