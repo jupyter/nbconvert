@@ -20,20 +20,37 @@ Exporters
 
     .. automethod:: register_preprocessor
 
+.. autoclass:: TemplateExporter
+
+    .. automethod:: __init__
+
+    .. automethod:: from_notebook_node
+
+    .. automethod:: from_filename
+
+    .. automethod:: from_file
+
+    .. automethod:: register_preprocessor
+
+    .. automethod:: register_filter
+
 Specialized exporter classes
 ----------------------------
+
+The :class:`~nbconvert.exporters.NotebookExporter` inherits directly from
+:class:`~nbconvert.exporters.Exporter`, while the other exporters listed here
+inherit either directly or indirectly from
+:class:`~nbconvert.exporters.TemplateExporter`.
+
+.. autoclass:: NotebookExporter
 
 .. autoclass:: HTMLExporter
 
 .. autoclass:: SlidesExporter
 
-.. autoclass:: TemplateExporter
-
 .. autoclass:: LatexExporter
 
 .. autoclass:: MarkdownExporter
-
-.. autoclass:: NotebookExporter
 
 .. autoclass:: PDFExporter
 
