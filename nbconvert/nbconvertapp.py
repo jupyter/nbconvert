@@ -184,7 +184,7 @@ class NbConvertApp(JupyterApp):
                                     help="""PostProcessor class used to write the 
                                     results of the conversion""")
     postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
-    postprocessor_factory = Type(allow_none=True)
+    postprocessor_factory = Type(None, allow_none=True)
 
     def _postprocessor_class_changed(self, name, old, new):
         if new.lower() in self.postprocessor_aliases:
