@@ -272,7 +272,6 @@ class TemplateExporter(Exporter):
         """
         from jinja2 import Environment, ChoiceLoader, FileSystemLoader
         here = os.path.dirname(os.path.realpath(__file__))
-        loaders = self.extra_loaders[:]
 
         paths = self.template_path + \
             [os.path.join(here, self.default_template_path),
