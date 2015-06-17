@@ -111,14 +111,6 @@ class TemplateExporter(Exporter):
         os.path.join("..", "templates", "skeleton"), 
         help="Path where the template skeleton files are located.",
         affects_template=True)
-
-    #Jinja block definitions
-    jinja_comment_block_start = Unicode("", config=True, affects_environment=True)
-    jinja_comment_block_end = Unicode("", config=True, affects_environment=True)
-    jinja_variable_block_start = Unicode("", config=True, affects_environment=True)
-    jinja_variable_block_end = Unicode("", config=True, affects_environment=True)
-    jinja_logic_block_start = Unicode("", config=True, affects_environment=True)
-    jinja_logic_block_end = Unicode("", config=True, affects_environment=True)
     
     #Extension that the template files use.    
     template_extension = Unicode(".tpl", config=True, affects_template=True)
@@ -291,20 +283,6 @@ class TemplateExporter(Exporter):
             loader= ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS
             )
-        
-        #Set special Jinja2 syntax that will not conflict with latex.
-        if self.jinja_logic_block_start:
-            environment.block_start_string = self.jinja_logic_block_start
-        if self.jinja_logic_block_end:
-            environment.block_end_string = self.jinja_logic_block_end
-        if self.jinja_variable_block_start:
-            environment.variable_start_string = self.jinja_variable_block_start
-        if self.jinja_variable_block_end:
-            environment.variable_end_string = self.jinja_variable_block_end
-        if self.jinja_comment_block_start:
-            environment.comment_start_string = self.jinja_comment_block_start
-        if self.jinja_comment_block_end:
-            environment.comment_end_string = self.jinja_comment_block_end
 
         #Add default filters to the Jinja2 environment
         for key, value in default_filters.items():

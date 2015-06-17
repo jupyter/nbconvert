@@ -48,14 +48,6 @@ class LatexExporter(TemplateExporter):
 
     def _template_skeleton_path_default(self):
         return os.path.join("..", "templates", "latex", "skeleton")
-
-    #Special Jinja2 syntax that will not conflict when exporting latex.
-    jinja_comment_block_start = Unicode("((=", config=True)
-    jinja_comment_block_end = Unicode("=))", config=True)
-    jinja_variable_block_start = Unicode("(((", config=True)
-    jinja_variable_block_end = Unicode(")))", config=True)
-    jinja_logic_block_start = Unicode("((*", config=True)
-    jinja_logic_block_end = Unicode("*))", config=True)
     
     #Extension that the template files use.    
     template_extension = Unicode(".tplx", config=True)
@@ -94,3 +86,16 @@ class LatexExporter(TemplateExporter):
         self.register_filter('highlight_code',
                              Highlight2Latex(pygments_lexer=lexer, parent=self))
         return super(LatexExporter, self).from_notebook_node(nb, resources, **kw)
+
+    def _create_environment(self):
+        environment = super(LatexExporter, self)._create_environment()
+
+        # Set special Jinja2 syntax that will not conflict with latex.
+        environment.block_start_string = "((*"
+        environment.block_end_string = "*))"
+        environment.variable_start_string = "((("
+        environment.variable_end_string = ")))"
+        environment.comment_start_string = "((="
+        environment.comment_end_string = "=))"
+
+        return environment
