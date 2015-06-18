@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-<meta charset="utf-8" />
-<title>Nbconvert template structure</title>
-
+<!--
+This is an HTML fragment that gets included into a notebook & rst document
+-->
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -25,18 +21,7 @@ body {
 
 </style>
 
-</head>
-
-<body>
-<h1>Nbconvert template structure</h1>
-
-Nbconvert templates consist of a set of nested blocks. When defining a new
-template, you extend an existing template by overriding some of the blocks.
-
-All the templates shipped in nbconvert have the basic structure described here,
-though some may define additional blocks.
-
-<h2>Main page</h2>
+<h3>Main page</h3>
 <div class="template_block">header</div>
 
 <div class="template_block">body
@@ -66,7 +51,7 @@ though some may define additional blocks.
 
 <div class="template_block">footer</div>
 
-<h2>Outputs</h2>
+<h3>Outputs</h3>
 
 <div class="template_block">outputs
     <div class="template_block">output
@@ -96,9 +81,3 @@ though some may define additional blocks.
     </div>
     <div class="big_vertical_ellipsis">⋮</div>
 </div>
-
-
-
-</body>
-
-</html>

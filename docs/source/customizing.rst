@@ -53,8 +53,111 @@ comments regarding the execution counts:
     
     jupyter nbconvert --to python 'example.ipynb' --stdout --template=simplepython.tpl
 
-**See also**: `Template structure <_static/template_structure.html>`__,
-for the available blocks you can override in your own templates.
+Template structure
+------------------
+
+Nbconvert templates consist of a set of nested blocks. When defining a
+new template, you extend an existing template by overriding some of the
+blocks.
+
+All the templates shipped in nbconvert have the basic structure
+described here, though some may define additional blocks.
+
+.. code:: python
+
+    from IPython.display import HTML, display
+    with open('template_structure.html') as f:
+        display(HTML(f.read()))
+
+
+
+.. raw:: html
+
+    <!--
+    This is an HTML fragment that gets included into a notebook & rst document
+    -->
+    <style type="text/css">
+    /* Overrides of notebook CSS for static HTML export */
+    body {
+        font-family: sans;
+    }
+    
+    .template_block {
+        background-color: hsla(120, 60%, 70%, 0.2);
+        margin: 10px;
+        padding: 5px;
+        border: 1px solid hsla(120, 60%, 70%, 0.5);
+        border-left: 2px solid black;
+    }
+    
+    .big_vertical_ellipsis {
+        font-size: 24pt;
+    }
+    
+    </style>
+    
+    <h3>Main page</h3>
+    <div class="template_block">header</div>
+    
+    <div class="template_block">body
+        <div class="template_block">any_cell
+            <div class="template_block">codecell
+                <div class="template_block">input_group
+                    <div class="template_block">in_prompt</div>
+                    <div class="template_block">input</div>
+                </div>
+                <div class="template_block">output_group
+                    <div class="template_block">output_prompt</div>
+                    <div class="template_block">outputs (see below)</div>
+                </div>
+            </div>
+        </div>
+        <div class="template_block">any_cell
+            <div class="template_block">markdowncell</div>
+        </div>
+        <div class="template_block">any_cell
+            <div class="template_block">rawcell</div>
+        </div>
+        <div class="template_block">any_cell
+            <div class="template_block">unknowncell</div>
+        </div>
+        <div class="big_vertical_ellipsis">⋮</div>
+    </div>
+    
+    <div class="template_block">footer</div>
+    
+    <h3>Outputs</h3>
+    
+    <div class="template_block">outputs
+        <div class="template_block">output
+            <div class="template_block">execute_result</div>
+        </div>
+        <div class="template_block">output
+            <div class="template_block">stream_stdout</div>
+        </div>
+        <div class="template_block">output
+            <div class="template_block">stream_stderr</div>
+        </div>
+        <div class="template_block">output
+            <div class="template_block">display_data
+                <div class="template_block">data_priority
+                    <div class="template_block">data_pdf / data_svg / data_png /
+                        data_html / data_markdown / data_jpg / data_text /
+                        data_latex / data_javascript / data_other
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="template_block">output
+            <div class="template_block">error
+                <div class="template_block">traceback_line</div>
+                <div class="big_vertical_ellipsis">⋮</div>
+            </div>
+        </div>
+        <div class="big_vertical_ellipsis">⋮</div>
+    </div>
+
+
 
 A few gotchas
 ~~~~~~~~~~~~~
