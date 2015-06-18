@@ -53,6 +53,9 @@ comments regarding the execution counts:
     
     jupyter nbconvert --to python 'example.ipynb' --stdout --template=simplepython.tpl
 
+**See also**: `Template structure <_static/template_structure.html>`__,
+for the available blocks you can override in your own templates.
+
 A few gotchas
 ~~~~~~~~~~~~~
 
