@@ -106,9 +106,11 @@ class TestExecute(PreprocessorTestsBase):
             if os.path.basename(filename) == "Disable Stdin.ipynb":
                 continue
             elif os.path.basename(filename) == "Interrupt.ipynb":
-                opts = dict(timeout=1, interrupt_on_timeout=True)
+                opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
+            elif os.path.basename(filename) == "Skip Exceptions.ipynb":
+                opts = dict(allow_errors=True)
             else:
-                opts = {}
+                opts = dict()
             res = self.build_resources()
             res['metadata']['path'] = os.path.dirname(filename)
             input_nb, output_nb = self.run_notebook(filename, opts, res)
