@@ -162,6 +162,8 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 continue
+            elif msg_type == 'error' and not self.allow_errors:
+                raise CellExecutionError(outs)
 
             try:
                 out = output_from_msg(msg)
@@ -169,8 +171,5 @@ class ExecutePreprocessor(Preprocessor):
                 self.log.error("unhandled iopub msg: " + msg_type)
             else:
                 outs.append(out)
-
-            if out.output_type == 'error' and not self.allow_errors:
-                raise CellExecutionError(outs)
 
         return outs
