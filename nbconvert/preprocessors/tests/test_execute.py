@@ -129,7 +129,7 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Disable Stdin.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        input_nb, output_nb = self.run_notebook(filename, {}, res)
+        input_nb, output_nb = self.run_notebook(filename, dict(allow_errors=True), res)
 
         # We need to special-case this particular notebook, because the
         # traceback contains machine-specific stuff like where IPython
