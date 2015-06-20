@@ -50,7 +50,7 @@ class ExecutePreprocessor(Preprocessor):
         )
     )
 
-    abort_on_error = Bool(
+    allow_errors = Bool(
         False, config=True,
         help=dedent(
             """
@@ -170,7 +170,7 @@ class ExecutePreprocessor(Preprocessor):
             else:
                 outs.append(out)
 
-            if out.output_type == 'error' and self.abort_on_error:
+            if out.output_type == 'error' and not self.allow_errors:
                 raise CellExecutionError(outs)
 
         return outs

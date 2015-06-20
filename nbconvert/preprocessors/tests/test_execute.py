@@ -150,12 +150,12 @@ class TestExecute(PreprocessorTestsBase):
         res['metadata']['path'] = os.path.dirname(filename)
         assert_raises(Empty, self.run_notebook, filename, dict(timeout=1), res)
 
-    def test_abort_on_error(self):
+    def test_allow_errors(self):
         """
-        Check that conversion is aborted if `abort_on_error` is True.
+        Check that conversion continues if ``allow_errors`` is False.
         """
         current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        assert_raises(CellExecutionError, self.run_notebook, filename, dict(abort_on_error=True), res)
+        assert_raises(CellExecutionError, self.run_notebook, filename, dict(allow_errors=False), res)

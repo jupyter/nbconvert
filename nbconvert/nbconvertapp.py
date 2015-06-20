@@ -62,11 +62,12 @@ nbconvert_flags.update({
         {'ExecutePreprocessor' : {'enabled' : True}},
         "Execute the notebook prior to export."
         ),
-    'abort-on-error' : (
-        {'ExecutePreprocessor' : {'abort_on_error' : True}},
-        ("Abort (by raising CellExecutionError) if an error was encountered "
-         "during notebook execution. This flag is only relevant if "
-         "'--execute' was specified, too.")
+    'allow-errors' : (
+        {'ExecutePreprocessor' : {'allow_errors' : True}},
+        ("Continue notebook execution even if one of the cells throws "
+         "an error and include the error message in the cell output "
+         "(the default behaviour is to abort conversion). This flag "
+         "is only relevant if '--execute' was specified, too.")
         ),
     'stdout' : (
         {'NbConvertApp' : {'writer_class' : "StdoutWriter"}},

@@ -244,14 +244,16 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('empty.ipynb')
             assert not os.path.isfile('empty.nbconvert.ipynb')
 
-    def test_abort_on_error(self):
+    def test_allow_errors(self):
         """
-        Verify that conversion is aborted if both '--execute' and '--abort-on-error' are used.
+        Verify that conversion is aborted with '--execute' if an error is
+        encountered, but that conversion continues if '--allow-errors' is
+        used in addition.
         """
         with self.create_temp_cwd(['notebook3*.ipynb']):
-            output1, _ = self.nbconvert('--to markdown --stdout notebook3*.ipynb')
-            output2, _ = self.nbconvert('--abort-on-error --to markdown --stdout notebook3*.ipynb')
-            output3, _ = self.nbconvert('--execute --to markdown --stdout notebook3*.ipynb')
+            output1, _ = self.nbconvert('--to markdown --stdout notebook3*.ipynb')  # no cell execution
+            output2, _ = self.nbconvert('--to markdown --allow-errors --stdout notebook3*.ipynb')  # no cell execution; --allow-errors should have no effect
+            output3, _ = self.nbconvert('--execute --allow-errors --to markdown --stdout notebook3*.ipynb')  # with cell execution; errors are allowed
 
             # Un-executed outputs should have neither of the results
             assert '23' not in output1
@@ -263,6 +265,6 @@ class TestNbConvertApp(TestsBase):
             assert '23' in output3
             assert '42' in output3
 
-            # Executing the notebook with --abort-on-error should raise an exception
+            # Executing the notebook should raise an exception if --allow-errors is not specified
             with assert_raises(OSError):
-                self.nbconvert('--execute --abort-on-error --to markdown --stdout notebook3*.ipynb')
+                self.nbconvert('--execute --to markdown --stdout notebook3*.ipynb')
