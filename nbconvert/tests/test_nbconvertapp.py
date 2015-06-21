@@ -251,17 +251,20 @@ class TestNbConvertApp(TestsBase):
         used in addition.
         """
         with self.create_temp_cwd(['notebook3*.ipynb']):
+            # Convert notebook containing a cell that raises an error,
+            # both without and with cell execution enabled.
             output1, _ = self.nbconvert('--to markdown --stdout notebook3*.ipynb')  # no cell execution
             output2, _ = self.nbconvert('--to markdown --allow-errors --stdout notebook3*.ipynb')  # no cell execution; --allow-errors should have no effect
             output3, _ = self.nbconvert('--execute --allow-errors --to markdown --stdout notebook3*.ipynb')  # with cell execution; errors are allowed
 
-            # Un-executed outputs should have neither of the results
+            # Un-executed outputs should not contain either
+            # of the two numbers computed in the notebook.
             assert '23' not in output1
             assert '42' not in output1
             assert '23' not in output2
             assert '42' not in output2
 
-            # Executed output should have both results
+            # Executed output should contain both numbers.
             assert '23' in output3
             assert '42' in output3
 
