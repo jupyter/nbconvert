@@ -280,7 +280,9 @@ class Exporter(LoggingConfigurable):
     def _preprocess(self, nb, resources):
         """
         Preprocess the notebook before passing it into the Jinja engine.
-        To preprocess the notebook is to apply all of the
+        To preprocess the notebook is to successively apply all the
+        enabled preprocessors. Output from each preprocessor is passed
+        along to the next one.
 
         Parameters
         ----------

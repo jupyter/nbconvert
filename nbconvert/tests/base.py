@@ -131,8 +131,9 @@ class TestsBase(unittest.TestCase):
 
     def nbconvert(self, parameters, ignore_return_code=False):
         """
-        Run nbconvert a, IPython shell command, listening for both Errors and non-zero
-        return codes.
+        Run nbconvert as a shell command, listening for both Errors and
+        non-zero return codes. Returns the tuple (stdout, stderr) of
+        output produced during the nbconvert run.
 
         Parameters
         ----------

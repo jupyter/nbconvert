@@ -10,9 +10,11 @@ import sys
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
+from ..preprocessors.execute import CellExecutionError
 
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
+from nose.tools import assert_raises
 
 #-----------------------------------------------------------------------------
 # Classes and functions
@@ -241,3 +243,31 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('empty.ipynb --to notebook --inplace')
             assert os.path.isfile('empty.ipynb')
             assert not os.path.isfile('empty.nbconvert.ipynb')
+
+    def test_allow_errors(self):
+        """
+        Verify that conversion is aborted with '--execute' if an error is
+        encountered, but that conversion continues if '--allow-errors' is
+        used in addition.
+        """
+        with self.create_temp_cwd(['notebook3*.ipynb']):
+            # Convert notebook containing a cell that raises an error,
+            # both without and with cell execution enabled.
+            output1, _ = self.nbconvert('--to markdown --stdout notebook3*.ipynb')  # no cell execution
+            output2, _ = self.nbconvert('--to markdown --allow-errors --stdout notebook3*.ipynb')  # no cell execution; --allow-errors should have no effect
+            output3, _ = self.nbconvert('--execute --allow-errors --to markdown --stdout notebook3*.ipynb')  # with cell execution; errors are allowed
+
+            # Un-executed outputs should not contain either
+            # of the two numbers computed in the notebook.
+            assert '23' not in output1
+            assert '42' not in output1
+            assert '23' not in output2
+            assert '42' not in output2
+
+            # Executed output should contain both numbers.
+            assert '23' in output3
+            assert '42' in output3
+
+            # Executing the notebook should raise an exception if --allow-errors is not specified
+            with assert_raises(OSError):
+                self.nbconvert('--execute --to markdown --stdout notebook3*.ipynb')

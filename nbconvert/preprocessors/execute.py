@@ -15,7 +15,19 @@ from traitlets import List, Unicode, Bool
 
 from nbformat.v4 import output_from_msg
 from .base import Preprocessor
+from ..utils.exceptions import ConversionException
 from traitlets import Integer
+
+
+class CellExecutionError(ConversionException):
+    """
+    Custom exception to propagate exceptions that are raised during
+    notebook execution to the caller. This is mostly useful when
+    using nbconvert as a library, since it allows to deal with
+    failures gracefully.
+    """
+    def __init__(self, traceback):
+        self.traceback = traceback
 
 
 class ExecutePreprocessor(Preprocessor):
@@ -34,6 +46,18 @@ class ExecutePreprocessor(Preprocessor):
             If execution of a cell times out, interrupt the kernel and 
             continue executing other cells rather than throwing an error and 
             stopping.
+            """
+        )
+    )
+
+    allow_errors = Bool(
+        False, config=True,
+        help=dedent(
+            """
+            If `True`, a `CellExecutionError` is raised if any of the notebook
+            cells raises an exception during execution. Otherwise, execution
+            is continued and the output from the exception is included in the
+            cell output.
             """
         )
     )
@@ -101,7 +125,10 @@ class ExecutePreprocessor(Preprocessor):
                     raise
 
             if msg['parent_header'].get('msg_id') == msg_id:
-                break
+                if msg['metadata']['status'] == 'error' and not self.allow_errors:
+                    raise CellExecutionError(msg['content']['traceback'])
+                else:
+                    break
             else:
                 # not our reply
                 continue
