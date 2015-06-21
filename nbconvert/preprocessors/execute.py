@@ -124,11 +124,11 @@ class ExecutePreprocessor(Preprocessor):
                 else:
                     raise
 
-            if msg['msg_type'] == 'execute_reply' and msg['metadata']['status'] == 'error' and not self.allow_errors:
-                raise CellExecutionError(msg['content']['traceback'])
-
             if msg['parent_header'].get('msg_id') == msg_id:
-                break
+                if msg['metadata']['status'] == 'error' and not self.allow_errors:
+                    raise CellExecutionError(msg['content']['traceback'])
+                else:
+                    break
             else:
                 # not our reply
                 continue
