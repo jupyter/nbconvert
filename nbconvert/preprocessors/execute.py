@@ -26,8 +26,8 @@ class CellExecutionError(ConversionException):
     using nbconvert as a library, since it allows to deal with
     failures gracefully.
     """
-    def __init__(self, outputs):
-        self.outputs = outputs
+    def __init__(self, traceback):
+        self.traceback = traceback
 
 
 class ExecutePreprocessor(Preprocessor):
@@ -124,6 +124,9 @@ class ExecutePreprocessor(Preprocessor):
                 else:
                     raise
 
+            if msg['msg_type'] == 'execute_reply' and msg['metadata']['status'] == 'error' and not self.allow_errors:
+                raise CellExecutionError(msg['content']['traceback'])
+
             if msg['parent_header'].get('msg_id') == msg_id:
                 break
             else:
@@ -162,8 +165,6 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 continue
-            elif msg_type == 'error' and not self.allow_errors:
-                raise CellExecutionError(outs)
 
             try:
                 out = output_from_msg(msg)
