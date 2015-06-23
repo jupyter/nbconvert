@@ -90,6 +90,11 @@ described here, though some may define additional blocks.
         border-left: 2px solid black;
     }
     
+    .template_block pre {
+        background: transparent;
+        padding: 0;
+    }
+    
     .big_vertical_ellipsis {
         font-size: 24pt;
     }
@@ -156,6 +161,38 @@ described here, though some may define additional blocks.
         </div>
         <div class="big_vertical_ellipsis">⋮</div>
     </div>
+    
+    <h3>Extra HTML blocks (full.tpl)</h3>
+    <div class="template_block">header
+        <pre>&lt;head&gt;</pre>
+        <div class="template_block">html_head</div>
+        <pre>&lt;/head&gt;</pre>
+    </div>
+    
+    <h3>Extra Latex blocks</h3>
+    <div class="template_block">header
+        <div class="template_block">docclass</div>
+        <div class="template_block">packages</div>
+        <div class="template_block">definitions
+            <div class="template_block">title</div>
+            <div class="template_block">date</div>
+            <div class="template_block">author</div>
+        </div>
+        <div class="template_block">commands
+            <div class="template_block">margins</div>
+        </div>
+    </div>
+    <div class="template_block">body
+        <div class="template_block">predoc
+            <div class="template_block">maketitle</div>
+            <div class="template_block">abstract</div>
+        </div>
+        ... other fields as above ...
+        <div class="template_block">postdoc
+            <div class="template_block">bibliography</div>
+        </div>
+    </div>
+    
 
 
 
@@ -163,7 +200,7 @@ A few gotchas
 ~~~~~~~~~~~~~
 
 Jinja blocks use ``{% %}`` by default which does not play nicely with
-LaTeX, hence thoses are replaced by ``((* *))`` in LaTeX templates.
+LaTeX, so those are replaced by ``((* *))`` in LaTeX templates.
 
 Templates that use cell metadata
 --------------------------------
