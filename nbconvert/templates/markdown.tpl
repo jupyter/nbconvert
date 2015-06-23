@@ -8,7 +8,7 @@
 {%- endblock output_prompt %}
 
 {% block input %}
-```{% if nb.metadata.kernelspec %}{{ nb.metadata.kernelspec.language }}{% endif %}
+```{% if nb.metadata.language_info %}{{ nb.metadata.language_info.name }}{% endif %}
 {{ cell.source}}
 ```
 {% endblock input %}
