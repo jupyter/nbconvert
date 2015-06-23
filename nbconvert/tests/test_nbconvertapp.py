@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 """Test NbConvertApp"""
 
 # Copyright (c) IPython Development Team.
@@ -33,7 +33,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd():
             out, err = self.nbconvert('--log-level 0', ignore_return_code=True)
             self.assertIn("see '--help-all'", out)
-    
+
     def test_help_output(self):
         """ipython nbconvert --help-all works"""
         check_help_all_output('nbconvert')
@@ -54,7 +54,7 @@ class TestNbConvertApp(TestsBase):
         """
         with self.create_temp_cwd():
             self.copy_files_to(['notebook*.ipynb'], 'subdir/')
-            self.nbconvert('--to python --log-level 0 ' + 
+            self.nbconvert('--to python --log-level 0 ' +
                       os.path.join('subdir', '*.ipynb'))
             assert os.path.isfile('notebook1.py')
             assert os.path.isfile('notebook2.py')
@@ -123,7 +123,7 @@ class TestNbConvertApp(TestsBase):
         Do export templates work?
         """
         with self.create_temp_cwd(['notebook2.ipynb']):
-            self.nbconvert('--log-level 0 --to slides '  
+            self.nbconvert('--log-level 0 --to slides '
                       'notebook2.ipynb')
             assert os.path.isfile('notebook2.slides.html')
             with open('notebook2.slides.html') as f:
@@ -191,7 +191,7 @@ class TestNbConvertApp(TestsBase):
             self.create_empty_notebook(u'nb1_análisis.ipynb')
             self.nbconvert('--log-level 0 --to python nb1_*')
             assert os.path.isfile(u'nb1_análisis.py')
-    
+
     @dec.onlyif_cmds_exist('pdflatex', 'pandoc')
     def test_filename_accent_pdf(self):
         """
@@ -271,3 +271,23 @@ class TestNbConvertApp(TestsBase):
             # Executing the notebook should raise an exception if --allow-errors is not specified
             with assert_raises(OSError):
                 self.nbconvert('--execute --to markdown --stdout notebook3*.ipynb')
+
+    def test_fenced_code_blocks_markdown(self):
+        """
+        Verify that input cells use fenced code blocks with the language
+        name in nb.metadata.kernelspec.language, if that exists
+        """
+        with self.create_temp_cwd(["notebook1*.ipynb"]):
+            # this notebook doesn't have nb.metadata.kernelspec, so it should
+            # just do a fenced code block, with no language
+            output1, _ = self.nbconvert('--to markdown --stdout notebook1.ipynb')
+            assert '```python' not in output1  # shouldn't have language
+            assert "```" in output1  # but should have fenced blocks
+
+        with self.create_temp_cwd(["notebook_jl*.ipynb"]):
+
+            output2, _ = self.nbconvert('--to markdown --stdout notebook_jl.ipynb')
+            assert '```julia' in output2  # shouldn't have language
+            assert "```" in output2  # but should also plain ``` to close cell
+
+        pass
