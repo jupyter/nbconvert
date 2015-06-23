@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+{%- block html_head -%}
 <meta charset="utf-8" />
 <title>{{resources['metadata']['name']}}</title>
 
@@ -52,7 +52,7 @@ div#notebook {
 
 <!-- Loading mathjax macro -->
 {{ mathjax() }}
-
+{%- endblock html_head %-}
 </head>
 {%- endblock header -%}
 
