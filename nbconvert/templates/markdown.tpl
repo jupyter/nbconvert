@@ -8,7 +8,9 @@
 {%- endblock output_prompt %}
 
 {% block input %}
-{{ cell.source | indent(4)}}
+```{% if nb.metadata.kernelspec %}{{ nb.metadata.kernelspec.language }}{% endif %}
+{{ cell.source}}
+```
 {% endblock input %}
 
 {% block error %}
