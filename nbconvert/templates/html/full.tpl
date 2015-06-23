@@ -52,7 +52,7 @@ div#notebook {
 
 <!-- Loading mathjax macro -->
 {{ mathjax() }}
-{%- endblock html_head %-}
+{%- endblock html_head -%}
 </head>
 {%- endblock header -%}
 
