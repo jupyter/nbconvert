@@ -119,6 +119,7 @@ class TestMarkdown(TestsBase):
                   "a = 1 *3* 5\n"
                   "$$"),
                   "$ a = 1 *3* 5 $",
+                  "$s_i = s_{i}\n$"
                 ]
         for case in cases:
             self.assertIn(case, markdown2html(case))
@@ -180,7 +181,7 @@ i.e. the $i^{th}$"""
     def _try_markdown(self, method, test, tokens):
         results = method(test)
         if isinstance(tokens, string_types):
-            assert tokens in results
+            self.assertIn(tokens, results)
         else:
             for token in tokens:
-                assert token in results
+                self.assertIn(token, results)
