@@ -49,13 +49,13 @@ class MathBlockLexer(mistune.BlockLexer):
 
 
 class MathInlineGrammar(mistune.InlineGrammar):
-    math = re.compile(r"^\$(.+?)\$")
+    math = re.compile(r"^\$(.+?)\$", re.DOTALL)
     block_math = re.compile(r"^\$\$(.+?)\$\$", re.DOTALL)
     text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
 
 
 class MathInlineLexer(mistune.InlineLexer):
-    default_rules = ['math', 'block_math'] + mistune.InlineLexer.default_rules
+    default_rules = ['block_math', 'math'] + mistune.InlineLexer.default_rules
 
     def __init__(self, renderer, rules=None, **kwargs):
         if rules is None:
