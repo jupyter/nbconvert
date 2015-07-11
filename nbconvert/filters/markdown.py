@@ -27,21 +27,13 @@ from nbconvert.utils.version import check_version
 from ipython_genutils.py3compat import cast_bytes
 
 
-marked = os.path.join(os.path.dirname(__file__), "marked.js")
-_node = None
-
 __all__ = [
     'markdown2html',
     'markdown2html_pandoc',
-    'markdown2html_marked',
     'markdown2html_mistune',
     'markdown2latex',
     'markdown2rst',
 ]
-
-class NodeJSMissing(ConversionException):
-    """Exception raised when node.js is missing."""
-    pass
 
 
 def markdown2latex(source, markup='markdown', extra_args=None):
@@ -73,32 +65,6 @@ def markdown2html_pandoc(source, extra_args=None):
     return pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
 
-def _find_nodejs():
-    global _node
-    if _node is None:
-        # prefer md2html via marked if node.js >= 0.9.12 is available
-        # node is called nodejs on debian, so try that first
-        _node = 'nodejs'
-        if not _verify_node(_node):
-            _node = 'node'
-    return _node
-
-def markdown2html_marked(source, encoding='utf-8'):
-    """Convert a markdown string to HTML via marked"""
-    command = [_find_nodejs(), marked]
-    try:
-        p = subprocess.Popen(command,
-                             stdin=subprocess.PIPE, stdout=subprocess.PIPE
-        )
-    except OSError as e:
-        raise NodeJSMissing(
-            "The command '%s' returned an error: %s.\n" % (" ".join(command), e) +
-            "Please check that Node.js is installed."
-        )
-    out, _ = p.communicate(cast_bytes(source, encoding))
-    out = TextIOWrapper(BytesIO(out), encoding, 'replace').read()
-    return out.rstrip('\n')
-
 # The mistune renderer is the default, because it's simple to depend on it
 markdown2html = markdown2html_mistune
 
@@ -119,24 +85,3 @@ def markdown2rst(source, extra_args=None):
       Output as returned by pandoc.
     """
     return pandoc(source, 'markdown', 'rst', extra_args=extra_args)
-
-def _verify_node(cmd):
-    """Verify that the node command exists and is at least the minimum supported
-    version of node.
-
-    Parameters
-    ----------
-    cmd : string
-        Node command to verify (i.e 'node')."""
-    try:
-        p = subprocess.Popen([cmd, '--version'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, _ = p.communicate()
-        out = out.decode('utf8', 'replace')
-    except OSError:
-        # Command not found
-        return False
-    if p.returncode:
-        # Command error
-        return False
-    return check_version(out.lstrip('v'), '0.9.12')
