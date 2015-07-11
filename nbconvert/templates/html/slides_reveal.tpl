@@ -156,6 +156,9 @@ a.anchor-link {
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
 <link rel="stylesheet" href="custom.css">
 
+<!-- Loading the mathjax macro -->
+{{ mathjax() }}
+
 </head>
 {% endblock header%}
 
@@ -168,37 +171,50 @@ a.anchor-link {
 </div>
 </div>
 
-<script src="{{resources.reveal.url_prefix}}/lib/js/head.min.js"></script>
-
-<script src="{{resources.reveal.url_prefix}}/js/reveal.js"></script>
-
 <script>
 
-// Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
-Reveal.initialize({
-controls: true,
-progress: true,
-history: true,
+require(
+    {
+      // for really large notebook this probably makes sense
+      waitSeconds: 30
+    },
+    [
+      "{{resources.reveal.url_prefix}}/lib/js/head.min.js",
+      "{{resources.reveal.url_prefix}}/js/reveal.js"
+    ],
 
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
+    function(head, Reveal){
 
-// Optional libraries used to extend on reveal.js
-dependencies: [
-{ src: "{{resources.reveal.url_prefix}}/lib/js/classList.js", condition: function() { return !document.body.classList; } },
-{ src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js", async: true, condition: function() { return !!document.body.classList; } }
-]
-});
-</script>
+        // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
 
-<!-- Loading mathjax macro -->
-{{ mathjax() }}
+            theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+            transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
 
-<script>
-Reveal.addEventListener( 'slidechanged', function( event ) {
-  window.scrollTo(0,0);
-  MathJax.Hub.Rerender(event.currentSlide);
-});
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: "{{resources.reveal.url_prefix}}/lib/js/classList.js",
+                  condition: function() { return !document.body.classList; } },
+                { src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js",
+                  async: true,
+                  condition: function() { return !!document.body.classList; } }
+            ]
+        });
+
+        var update = function(event){
+          window.scrollTo(0,0);
+          if(MathJax.Hub.getAllJax(Reveal.getCurrentSlide())){
+            MathJax.Hub.Rerender(Reveal.getCurrentSlide());
+          }
+        };
+
+        Reveal.addEventListener('slidechanged', update);
+    }
+);
+
 </script>
 
 </body>
