@@ -116,4 +116,4 @@ class IPythonRenderer(mistune.Renderer):
 
 def markdown2html_mistune(source):
     """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer()).render(source)
+    return MarkdownWithMath(renderer=IPythonRenderer(escape=False)).render(source)
