@@ -20,12 +20,15 @@ class Testrevealhelp(PreprocessorTestsBase):
 
         slide_metadata = {'slideshow' : {'slide_type': 'slide'}}
         subslide_metadata = {'slideshow' : {'slide_type': 'subslide'}}
+        fragment_metadata = {'slideshow' : {'slide_type': 'fragment'}}  
 
         cells=[nbformat.new_code_cell(source="", execution_count=1, outputs=outputs),
                nbformat.new_markdown_cell(source="", metadata=slide_metadata),
                nbformat.new_code_cell(source="", execution_count=2, outputs=outputs),
                nbformat.new_markdown_cell(source="", metadata=slide_metadata),
-               nbformat.new_markdown_cell(source="", metadata=subslide_metadata)]
+               nbformat.new_markdown_cell(source="", metadata=subslide_metadata),
+               nbformat.new_markdown_cell(source="", metadata=fragment_metadata),
+               nbformat.new_code_cell(source="", execution_count=1, outputs=outputs)]
 
         return nbformat.new_notebook(cells=cells)
 
