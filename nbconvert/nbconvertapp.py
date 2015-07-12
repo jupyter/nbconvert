@@ -22,7 +22,7 @@ from traitlets import (
 from ipython_genutils.importstring import import_item
 
 from .exporters.export import get_export_names, exporter_map
-from nbconvert import exporters, preprocessors, writers, postprocessors
+from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 
@@ -86,7 +86,8 @@ nbconvert_flags.update({
 
 class NbConvertApp(JupyterApp):
     """Application used to convert from notebook file type (``*.ipynb``)"""
-
+    
+    version = __version__
     name = 'jupyter-nbconvert'
     aliases = nbconvert_aliases
     flags = nbconvert_flags
