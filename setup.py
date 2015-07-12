@@ -181,9 +181,7 @@ install_requires = setuptools_args['install_requires'] = [
 extras_require = setuptools_args['extras_require'] = {
     'test': ['nose', 'ipykernel'],
     'serve': ['tornado'],
-    # ipykernel isn't really necessary for execute
-    'execute': ['jupyter_client', 'ipykernel'],
-    'docs': ['Sphinx>1.1', 'numpydoc'],
+    'execute': ['jupyter_client'],
 }
 
 if 'setuptools' in sys.modules:
