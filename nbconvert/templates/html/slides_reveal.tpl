@@ -164,24 +164,31 @@ div.output_prompt {
 
 <script src="{{resources.reveal.url_prefix}}/lib/js/head.min.js"></script>
 
-<script src="{{resources.reveal.url_prefix}}/js/reveal.js"></script>
-
 <script>
+requirejs(["{{resources.reveal.url_prefix}}/js/reveal.js"], function() {
 
-// Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
-Reveal.initialize({
-controls: true,
-progress: true,
-history: true,
+    // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
 
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
 
-// Optional libraries used to extend on reveal.js
-dependencies: [
-{ src: "{{resources.reveal.url_prefix}}/lib/js/classList.js", condition: function() { return !document.body.classList; } },
-{ src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js", async: true, condition: function() { return !!document.body.classList; } }
-]
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+        { src: "{{resources.reveal.url_prefix}}/lib/js/classList.js",
+          condition: function() { return !document.body.classList; } },
+        { src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js",
+          async: true, condition: function() { return !!document.body.classList; } }
+    ]
+    });
+
+    Reveal.addEventListener( 'slidechanged', function( event ) {
+        window.scrollTo(0,0);
+        MathJax.Hub.Rerender(event.currentSlide);
+    });
 });
 </script>
 
@@ -189,10 +196,6 @@ dependencies: [
 {{ mathjax() }}
 
 <script>
-Reveal.addEventListener( 'slidechanged', function( event ) {
-  window.scrollTo(0,0);
-  MathJax.Hub.Rerender(event.currentSlide);
-});
 </script>
 
 </body>
