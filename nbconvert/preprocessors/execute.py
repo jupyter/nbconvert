@@ -62,7 +62,7 @@ class ExecutePreprocessor(Preprocessor):
         )
     )
     
-    extra_arguments = List(Unicode)
+    extra_arguments = List(Unicode())
 
     def preprocess(self, nb, resources):
         path = resources.get('metadata', {}).get('path', '')
