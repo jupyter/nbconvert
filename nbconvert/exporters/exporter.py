@@ -71,7 +71,6 @@ class Exporter(LoggingConfigurable):
                                   'nbconvert.preprocessors.coalesce_streams',
                                   'nbconvert.preprocessors.SVG2PDFPreprocessor',
                                   'nbconvert.preprocessors.CSSHTMLHeaderPreprocessor',
-                                  'nbconvert.preprocessors.RevealHelpPreprocessor',
                                   'nbconvert.preprocessors.LatexPreprocessor',
                                   'nbconvert.preprocessors.HighlightMagicsPreprocessor',
                                   'nbconvert.preprocessors.ExtractOutputPreprocessor',

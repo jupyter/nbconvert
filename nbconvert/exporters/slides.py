@@ -1,28 +1,78 @@
 """HTML slide show Exporter class"""
 
-#-----------------------------------------------------------------------------
-# Copyright (c) 2013, the IPython Development Team.
-#
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file COPYING.txt, distributed with this software.
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
+from copy import deepcopy
 
-from nbconvert import preprocessors
 from traitlets.config import Config
+from traitlets import Unicode
 
 from .html import HTMLExporter
 
-#-----------------------------------------------------------------------------
-# Classes
-#-----------------------------------------------------------------------------
+def prepare(nb):
+    """Add some convenenience metadata on cells for the slide template.
+    """
+    nb = deepcopy(nb)
+
+    for cell in nb.cells:
+        # Make sure every cell has a slide_type
+        cell.metadata.slide_type = cell.metadata.get('slideshow', {}).get('slide_type', '-')
+
+    # Find the first visible cell
+    for index, cell in enumerate(nb.cells):
+        if cell.metadata.slide_type not in {'notes', 'skip'}:
+            cell.metadata.slide_type = 'slide'
+            cell.metadata.slide_start = True
+            cell.metadata.subslide_start = True
+            first_slide_ix = index
+            break
+    else:
+        raise ValueError("All cells are hidden, cannot create slideshow")
+
+    in_fragment = False
+
+    for index, cell in enumerate(nb.cells[first_slide_ix+1:],
+                                 start=(first_slide_ix+1)):
+
+        previous_cell = nb.cells[index - 1]
+
+        # Get the slide type. If type is start, subslide, or slide,
+        # end the last subslide/slide.
+        if cell.metadata.slide_type == 'slide':
+            previous_cell.metadata.slide_end = True
+            cell.metadata.slide_start = True
+        if cell.metadata.slide_type in {'subslide', 'slide'}:
+            previous_cell.metadata.fragment_end = in_fragment
+            previous_cell.metadata.subslide_end = True
+            cell.metadata.subslide_start = True
+            in_fragment = False
+
+        elif cell.metadata.slide_type == 'fragment':
+            cell.metadata.fragment_start = True
+            if in_fragment:
+                previous_cell.metadata.fragment_end = True
+            else:
+                in_fragment  = True
+
+    # The last cell will always be the end of a slide
+    nb.cells[-1].metadata.fragment_end = in_fragment
+    nb.cells[-1].metadata.subslide_end = True
+    nb.cells[-1].metadata.slide_end = True
+
+    return nb
 
 class SlidesExporter(HTMLExporter):
     """Exports HTML slides with reveal.js"""
+
+    reveal_url_prefix = Unicode('reveal.js', config=True,
+        help="""The URL prefix for reveal.js.
+        This can be a a relative URL for a local copy of reveal.js,
+        or point to a CDN.
+
+        For speaker notes to work, a local reveal.js prefix must be used.
+        """
+    )
     
     def _file_extension_default(self):
         return '.slides.html'
@@ -32,12 +82,12 @@ class SlidesExporter(HTMLExporter):
 
     output_mimetype = 'text/html'
 
-    @property
-    def default_config(self):
-        c = Config({
-            'RevealHelpPreprocessor': {
-                'enabled': True,
-                },
-            })
-        c.merge(super(SlidesExporter,self).default_config)
-        return c
+    def from_notebook_node(self, nb, resources=None, **kw):
+        self._init_resources(resources)
+        if 'reveal' not in resources:
+            resources['reveal'] = {}
+        resources['reveal']['url_prefix'] = self.reveal_url_prefix
+
+        nb = prepare(nb)
+
+        return super(SlidesExporter, self).from_notebook_node(nb, resources=resources, **kw)
