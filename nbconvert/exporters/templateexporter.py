@@ -177,8 +177,6 @@ class TemplateExporter(Exporter):
                 template = self.environment.get_template(try_name)
             except (TemplateNotFound, IOError):
                 pass
-            except Exception as e:
-                self.log.warn("Unexpected exception loading template: %s", try_name, exc_info=True)
             else:
                 self.log.debug("Loaded template %s", try_name)
                 return template
