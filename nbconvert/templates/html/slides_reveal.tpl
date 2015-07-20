@@ -142,6 +142,12 @@ div.output_prompt {
   /* 5px right shift to account for margin in parent container */
   margin: 5px 5px 0 0;
 }
+div.text_cell.rendered .rendered_html {
+  overflow-y: hidden;
+}
+a.anchor-link {
+  display: none;
+}
 .rendered_html p {
   text-align: inherit;
 }
