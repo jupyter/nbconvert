@@ -264,6 +264,16 @@ class TemplateExporter(Exporter):
         """
         return self._register_filter(self.environment, name, jinja_filter)
 
+    def _extra_filters(self):
+        """Override in subclasses to provide extra filters.
+
+        This should return an iterable of 2-tuples: (name, class-or-function)
+
+        This is deliberately distinct from config, so that subclasses and user
+        config don't interfere.
+        """
+        return []
+
     def _create_environment(self):
         """
         Create the Jinja templating environment.
@@ -281,11 +291,15 @@ class TemplateExporter(Exporter):
             extensions=JINJA_EXTENSIONS
             )
 
-        #Add default filters to the Jinja2 environment
+        # Add default filters to the Jinja2 environment
         for key, value in default_filters.items():
             self._register_filter(environment, key, value)
 
-        #Load user filters.  Overwrite existing filters if need be.
+        # Add filters specified by subclasses
+        for key, value in self._extra_filters():
+            self._register_filter(environment, key, value)
+
+        # Load user filters.  Overwrite existing filters if need be.
         if self.filters:
             for key, user_filter in self.filters.items():
                 self._register_filter(environment, key, user_filter)
