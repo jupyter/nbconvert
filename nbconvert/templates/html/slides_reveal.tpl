@@ -144,9 +144,11 @@ div.output_prompt {
   margin: 5px 5px 0 0;
 }
 div.text_cell.rendered .rendered_html {
+  /* The H1 height seems miscalculated, we are just hidding the scrollbar */
   overflow-y: hidden;
 }
 a.anchor-link {
+  /* There is still an anchor, we are only hidding it */
   display: none;
 }
 .rendered_html p {
