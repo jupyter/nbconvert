@@ -74,6 +74,9 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 <script src="{{resources.reveal.url_prefix}}/lib/js/html5shiv.js"></script>
 <![endif]-->
 
+<!-- Loading the mathjax macro -->
+{{ mathjax() }}
+
 <!-- Get Font-awesome from cdn -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css">
 
@@ -155,9 +158,6 @@ a.anchor-link {
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
 <link rel="stylesheet" href="custom.css">
-
-<!-- Loading the mathjax macro -->
-{{ mathjax() }}
 
 </head>
 {% endblock header%}
