@@ -51,7 +51,7 @@ nbconvert_aliases.update({
     'writer' : 'NbConvertApp.writer_class',
     'post': 'NbConvertApp.postprocessor_class',
     'output': 'NbConvertApp.output_base',
-    'reveal-prefix': 'RevealHelpPreprocessor.url_prefix',
+    'reveal-prefix': 'SlidesExporter.reveal_url_prefix',
     'nbformat': 'NotebookExporter.nbformat_version',
 })
 
