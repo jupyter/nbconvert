@@ -88,11 +88,9 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
-html {
-  overflow-y: auto;
-}
 .reveal {
   font-size: 160%;
+  overflow-y: scroll;
 }
 .reveal pre {
   width: inherit;
@@ -212,6 +210,8 @@ require(
         };
 
         Reveal.addEventListener('slidechanged', update);
+        Reveal.addEventListener('fragmentshown', update);
+        Reveal.addEventListener('fragmenthidden', update);
     }
 );
 
