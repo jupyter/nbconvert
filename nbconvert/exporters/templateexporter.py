@@ -9,6 +9,7 @@ from __future__ import print_function, absolute_import
 
 # Stdlib imports
 import os
+import uuid
 
 # other libs/dependencies are imported at runtime
 # to move ImportErrors to runtime when the requirement is actually needed
@@ -282,6 +283,8 @@ class TemplateExporter(Exporter):
             loader= ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS
             )
+
+        environment.globals['uuid4'] = uuid.uuid4
 
         #Add default filters to the Jinja2 environment
         for key, value in default_filters.items():
