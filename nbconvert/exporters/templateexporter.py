@@ -177,8 +177,6 @@ class TemplateExporter(Exporter):
                 template = self.environment.get_template(try_name)
             except (TemplateNotFound, IOError):
                 pass
-            except Exception as e:
-                self.log.warn("Unexpected exception loading template: %s", try_name, exc_info=True)
             else:
                 self.log.debug("Loaded template %s", try_name)
                 return template
@@ -266,6 +264,18 @@ class TemplateExporter(Exporter):
         """
         return self._register_filter(self.environment, name, jinja_filter)
 
+    def default_filters(self):
+        """Override in subclasses to provide extra filters.
+
+        This should return an iterable of 2-tuples: (name, class-or-function).
+        You should call the method on the parent class and include the filters
+        it provides.
+
+        If a name is repeated, the last filter provided wins. Filters from
+        user-supplied config win over filters provided by classes.
+        """
+        return default_filters.items()
+
     def _create_environment(self):
         """
         Create the Jinja templating environment.
@@ -283,11 +293,11 @@ class TemplateExporter(Exporter):
             extensions=JINJA_EXTENSIONS
             )
 
-        #Add default filters to the Jinja2 environment
-        for key, value in default_filters.items():
+        # Add default filters to the Jinja2 environment
+        for key, value in self.default_filters():
             self._register_filter(environment, key, value)
 
-        #Load user filters.  Overwrite existing filters if need be.
+        # Load user filters.  Overwrite existing filters if need be.
         if self.filters:
             for key, user_filter in self.filters.items():
                 self._register_filter(environment, key, user_filter)
