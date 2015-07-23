@@ -31,7 +31,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     def _to_format_default(self):
         return 'application/pdf'
     
-    command = Unicode(config=True,
+    command = Unicode(
         help="""The command to use for converting SVG to PDF
         
         This string is a template, which will be formatted with the keys
@@ -39,13 +39,13 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         
         The conversion call must read the SVG from {from_flename},
         and write a PDF to {to_filename}.
-        """)
+        """).tag(config=True)
     
     def _command_default(self):
         return self.inkscape + \
                ' --without-gui --export-pdf="{to_filename}" "{from_filename}"'
     
-    inkscape = Unicode(config=True, help="The path to Inkscape, if necessary")
+    inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
     def _inkscape_default(self):
         if sys.platform == "darwin":
             if os.path.isfile(INKSCAPE_APP):

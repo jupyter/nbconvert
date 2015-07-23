@@ -25,8 +25,8 @@ class ConvertFiguresPreprocessor(Preprocessor):
     Converts all of the outputs in a notebook from one format to another.
     """
 
-    from_format = Unicode(config=True, help='Format the converter accepts')
-    to_format = Unicode(config=True, help='Format the converter writes')
+    from_format = Unicode(help='Format the converter accepts').tag(config=True)
+    to_format = Unicode(help='Format the converter writes').tag(config=True)
 
     def __init__(self, **kw):
         """

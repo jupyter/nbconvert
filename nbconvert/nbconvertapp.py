@@ -112,16 +112,15 @@ class NbConvertApp(JupyterApp):
 
         WARNING: THE COMMANDLINE INTERFACE MAY CHANGE IN FUTURE RELEASES.""")
 
-    output_base = Unicode('', config=True, help='''overwrite base name use for output files.
+    output_base = Unicode('', help='''overwrite base name use for output files.
             can only be used when converting one notebook at a time.
-            ''')
+            ''').tag(config=True)
 
     use_output_suffix = Bool(
         True, 
-        config=True,
         help="""Whether to apply a suffix prior to the extension (only relevant
             when converting to notebook format). The suffix is determined by
-            the exporter, and is usually '.nbconvert'.""")
+            the exporter, and is usually '.nbconvert'.""").tag(config=True)
 
     examples = Unicode(u"""
         The simplest way to use nbconvert is
@@ -170,9 +169,9 @@ class NbConvertApp(JupyterApp):
     writer = Instance('nbconvert.writers.base.WriterBase',  
                       help="""Instance of the writer class used to write the 
                       results of the conversion.""", allow_none=True)
-    writer_class = DottedObjectName('FilesWriter', config=True, 
+    writer_class = DottedObjectName('FilesWriter', 
                                     help="""Writer class used to write the 
-                                    results of the conversion""")
+                                    results of the conversion""").tag(config=True)
     writer_aliases = {'fileswriter': 'nbconvert.writers.files.FilesWriter',
                       'debugwriter': 'nbconvert.writers.debug.DebugWriter',
                       'stdoutwriter': 'nbconvert.writers.stdout.StdoutWriter'}
@@ -188,9 +187,9 @@ class NbConvertApp(JupyterApp):
                       help="""Instance of the PostProcessor class used to write the 
                       results of the conversion.""", allow_none=True)
 
-    postprocessor_class = DottedOrNone(config=True, 
+    postprocessor_class = DottedOrNone(
                                     help="""PostProcessor class used to write the 
-                                    results of the conversion""")
+                                    results of the conversion""").tag(config=True)
     postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
     postprocessor_factory = Type(None, allow_none=True)
 
@@ -204,14 +203,14 @@ class NbConvertApp(JupyterApp):
     # Other configurable variables
     export_format = CaselessStrEnum(get_export_names(),
         default_value="html",
-        config=True,
+        
         help="""The export format to be used."""
-    )
+    ).tag(config=True)
 
-    notebooks = List([], config=True, help="""List of notebooks to convert.
+    notebooks = List([], help="""List of notebooks to convert.
                      Wildcards are supported.
                      Filenames passed positionally will be added to the list.
-                     """)
+                     """).tag(config=True)
 
     @catch_config_error
     def initialize(self, argv=None):

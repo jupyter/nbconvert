@@ -26,11 +26,12 @@ class WriterBase(NbConvertBase):
     useful location. """
 
 
-    files = List([], config=True, help="""
+    files = List([], help="""
         List of the files that the notebook references.  Files will be 
-        included with written output.""")
+        included with written output.""").tag(config=True)
 
 
+    # TODO: Do we need to pass along config information anymore?
     def __init__(self, config=None, **kw):
         """
         Constructor

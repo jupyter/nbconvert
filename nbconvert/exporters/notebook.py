@@ -12,11 +12,11 @@ class NotebookExporter(Exporter):
 
     nbformat_version = Enum(list(nbformat.versions),
         default_value=nbformat.current_nbformat,
-        config=True,
+        
         help="""The nbformat version to write.
         Use this to downgrade notebooks.
         """
-    )
+    ).tag(config=True)
     def _file_extension_default(self):
         return '.ipynb'
 

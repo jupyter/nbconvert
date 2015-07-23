@@ -90,8 +90,8 @@ class TemplateExporter(Exporter):
             self._environment_cached = self._create_environment()
         return self._environment_cached
 
-    template_file = Unicode(config=True,
-            help="Name of the template file to use", affects_template=True)
+    template_file = Unicode(
+            help="Name of the template file to use", affects_template=True).tag(config=True)
     def _template_file_changed(self, name, old, new):
         if new == 'default':
             self.template_file = self.default_template
@@ -101,7 +101,7 @@ class TemplateExporter(Exporter):
 
     default_template = Unicode(u'', affects_template=True)
 
-    template_path = List(['.'], config=True, affects_template=True)
+    template_path = List(['.'], affects_template=True).tag(config=True)
 
     default_template_path = Unicode(
         os.path.join("..", "templates"), 
@@ -113,7 +113,7 @@ class TemplateExporter(Exporter):
         affects_template=True)
     
     #Extension that the template files use.    
-    template_extension = Unicode(".tpl", config=True, affects_template=True)
+    template_extension = Unicode(".tpl", affects_template=True).tag(config=True)
 
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
@@ -121,13 +121,13 @@ class TemplateExporter(Exporter):
         affects_environment=True,
     )
 
-    filters = Dict(config=True,
+    filters = Dict(
         help="""Dictionary of filters, by name and namespace, to add to the Jinja
-        environment.""", affects_environment=True)
+        environment.""", affects_environment=True).tag(config=True)
 
-    raw_mimetypes = List(config=True,
+    raw_mimetypes = List(
         help="""formats of raw cells to be included in this Exporter's output."""
-    )
+    ).tag(config=True)
     def _raw_mimetypes_default(self):
         return [self.output_mimetype, '']
 

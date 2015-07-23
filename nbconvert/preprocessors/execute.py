@@ -35,12 +35,12 @@ class ExecutePreprocessor(Preprocessor):
     Executes all the cells in a notebook
     """
     
-    timeout = Integer(30, config=True,
+    timeout = Integer(30, 
         help="The time to wait (in seconds) for output from executions."
-    )
+    ).tag(config=True)
 
     interrupt_on_timeout = Bool(
-        False, config=True,
+        False, 
         help=dedent(
             """
             If execution of a cell times out, interrupt the kernel and 
@@ -48,10 +48,10 @@ class ExecutePreprocessor(Preprocessor):
             stopping.
             """
         )
-    )
+    ).tag(config=True)
 
     allow_errors = Bool(
-        False, config=True,
+        False, 
         help=dedent(
             """
             If `True`, a `CellExecutionError` is raised if any of the notebook
@@ -60,7 +60,7 @@ class ExecutePreprocessor(Preprocessor):
             cell output.
             """
         )
-    )
+    ).tag(config=True)
     
     extra_arguments = List(Unicode())
 

@@ -9,14 +9,14 @@ from traitlets import Unicode
 
 class RevealHelpPreprocessor(Preprocessor):
 
-    url_prefix = Unicode('reveal.js', config=True,
+    url_prefix = Unicode('reveal.js', 
                          help="""The URL prefix for reveal.js.
                          This can be a a relative URL for a local copy of reveal.js,
                          or point to a CDN.
                          
                          For speaker notes to work, a local reveal.js prefix must be used.
                          """
-    )
+    ).tag(config=True)
 
     def preprocess(self, nb, resources):
         """

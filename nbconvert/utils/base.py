@@ -14,16 +14,16 @@ class NbConvertBase(LoggingConfigurable):
     """
 
     display_data_priority = List(['text/html', 'application/pdf', 'text/latex', 'image/svg+xml', 'image/png', 'image/jpeg', 'text/plain'],
-            config=True,
+            
               help= """
                     An ordered list of preferred output type, the first
                     encountered will usually be used when converting discarding
                     the others.
                     """
-            )
+            ).tag(config=True)
 
-    default_language = Unicode('ipython', config=True,
-       help='DEPRECATED default highlight language, please use language_info metadata instead')
+    default_language = Unicode('ipython', 
+       help='DEPRECATED default highlight language, please use language_info metadata instead').tag(config=True)
 
     def __init__(self, **kw):
         super(NbConvertBase, self).__init__(**kw)
