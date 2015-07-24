@@ -37,10 +37,9 @@ class HighlightMagicsPreprocessor(Preprocessor):
 
     # user defined language extensions
     languages = Dict(
-        config=True,
         help=("Syntax highlighting for magic's extension languages. "
          "Each item associates a language magic extension such as %%R, "
-         "with a pygments lexer such as r."))
+         "with a pygments lexer such as r.")).tag(config=True)
 
     def __init__(self, config=None, **kw):
         """Public constructor"""

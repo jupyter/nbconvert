@@ -43,15 +43,15 @@ class ServePostProcessor(PostProcessorBase):
     """
 
 
-    open_in_browser = Bool(True, config=True,
+    open_in_browser = Bool(True, 
         help="""Should the browser be opened automatically?"""
-    )
-    reveal_cdn = Unicode("https://cdn.jsdelivr.net/reveal.js/2.6.2", config=True,
+    ).tag(config=True)
+    reveal_cdn = Unicode("https://cdn.jsdelivr.net/reveal.js/2.6.2", 
         help="""URL for reveal.js CDN."""
-    )
-    reveal_prefix = Unicode("reveal.js", config=True, help="URL prefix for reveal.js")
-    ip = Unicode("127.0.0.1", config=True, help="The IP address to listen on.")
-    port = Int(8000, config=True, help="port for the server to listen on.")
+    ).tag(config=True)
+    reveal_prefix = Unicode("reveal.js", help="URL prefix for reveal.js").tag(config=True)
+    ip = Unicode("127.0.0.1", help="The IP address to listen on.").tag(config=True)
+    port = Int(8000, help="port for the server to listen on.").tag(config=True)
 
     def postprocess(self, input):
         """Serve the build directory with a webserver."""

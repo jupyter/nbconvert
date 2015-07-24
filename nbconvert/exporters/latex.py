@@ -50,7 +50,7 @@ class LatexExporter(TemplateExporter):
         return os.path.join("..", "templates", "latex", "skeleton")
     
     #Extension that the template files use.    
-    template_extension = Unicode(".tplx", config=True)
+    template_extension = Unicode(".tplx").tag(config=True)
 
     output_mimetype = 'text/latex'
 

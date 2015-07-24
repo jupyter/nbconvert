@@ -22,9 +22,9 @@ class ExtractOutputPreprocessor(Preprocessor):
     """
 
     output_filename_template = Unicode(
-        "{unique_key}_{cell_index}_{index}{extension}", config=True)
+        "{unique_key}_{cell_index}_{index}{extension}").tag(config=True)
 
-    extract_output_types = Set({'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}, config=True)
+    extract_output_types = Set({'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}).tag(config=True)
 
     def preprocess_cell(self, cell, resources, cell_index):
         """

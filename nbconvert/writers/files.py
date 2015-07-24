@@ -21,17 +21,17 @@ class FilesWriter(WriterBase):
     """Consumes nbconvert output and produces files."""
 
 
-    build_directory = Unicode("", config=True,
+    build_directory = Unicode("", 
                               help="""Directory to write output to.  Leave blank
-                              to output to the current directory""")
+                              to output to the current directory""").tag(config=True)
 
     relpath = Unicode(
-        "", config=True, 
+        "",  
         help="""When copying files that the notebook depends on, copy them in
         relation to this path, such that the destination filename will be
         os.path.relpath(filename, relpath). If FilesWriter is operating on a
         notebook that already exists elsewhere on disk, then the default will be
-        the directory containing that notebook.""")
+        the directory containing that notebook.""").tag(config=True)
 
 
     # Make sure that the output directory exists.

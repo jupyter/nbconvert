@@ -50,9 +50,9 @@ class Exporter(LoggingConfigurable):
     """
 
     file_extension = FilenameExtension(
-        '.txt', config=True,
+        '.txt', 
         help="Extension of the file that should be written to disk"
-        )
+        ).tag(config=True)
 
     # MIME type of the result file, for HTTP response headers.
     # This is *not* a traitlet, because we want to be able to access it from
@@ -60,8 +60,8 @@ class Exporter(LoggingConfigurable):
     output_mimetype = ''
 
     #Configurability, allows the user to easily add filters and preprocessors.
-    preprocessors = List(config=True,
-        help="""List of preprocessors, by name or namespace, to enable.""")
+    preprocessors = List(
+        help="""List of preprocessors, by name or namespace, to enable.""").tag(config=True)
 
     _preprocessors = List()
 
@@ -76,11 +76,12 @@ class Exporter(LoggingConfigurable):
                                   'nbconvert.preprocessors.HighlightMagicsPreprocessor',
                                   'nbconvert.preprocessors.ExtractOutputPreprocessor',
                               ],
-        config=True,
+        
         help="""List of preprocessors available by default, by name, namespace, 
-        instance, or type.""")
+        instance, or type.""").tag(config=True)
 
 
+    # TODO: figure out how to pass along config?
     def __init__(self, config=None, **kw):
         """
         Public constructor
