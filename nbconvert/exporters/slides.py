@@ -37,8 +37,19 @@ def prepare(nb):
 
         previous_cell = nb.cells[index - 1]
 
-        # Get the slide type. If type is start, subslide, or slide,
-        # end the last subslide/slide.
+        # Slides are <section> elements in the HTML, subslides (the vertically
+        # stacked slides) are also <section> elements inside the slides,
+        # and fragments are <div>s within subslides. Subslide and fragment
+        # elements can contain content:
+        # <section>
+        #   <section>
+        #     (content)
+        #     <div class="fragment">(content)</div>
+        #   </section>
+        # </section>
+
+        # Get the slide type. If type is subslide or slide,
+        # end the last slide/subslide/fragment as applicable.
         if cell.metadata.slide_type == 'slide':
             previous_cell.metadata.slide_end = True
             cell.metadata.slide_start = True
