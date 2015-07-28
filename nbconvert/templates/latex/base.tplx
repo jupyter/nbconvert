@@ -161,14 +161,22 @@ This template does not define a docclass, the inheriting class must define this.
 
 % Display latex
 ((* block data_latex -*))
-    ((*- if output.data['text/latex'].startswith('$'): -*))
-        ((= Replace $ symbols with more explicit, equation block. =))
-        \begin{equation*}\adjustbox{max width=\hsize}{$
-        ((( output.data['text/latex'] | strip_dollars )))
-        $}\end{equation*}
-    ((*- else -*))
-        ((( output.data['text/latex'] )))
-    ((*- endif *))
+    ((*- set Data = output.data['text/latex'].split('$$') -*))      
+    ((*- for eq in Data: -*)) 
+        ((*- set eqs = eq.strip() -*)) 
+        ((*- if eqs | length >0: -*)) 
+            ((*- if eqs.startswith('$'): -*)) 
+                ((= In line equation, not a block =))
+                ((( eqs )))
+            ((*- else: -*)) 
+                ((= Replace $ symbols with more explicit, equation block. =))
+                ((*- set Eq = '$$' + eqs + '$$' -*)) 
+                \begin{equation*}\adjustbox{max width=\hsize}{$
+                ((( Eq | strip_dollars )))
+                $}\end{equation*}
+            ((*- endif -*)) 
+       ((*-  endif -*)) 
+    ((*- endfor -*)) 
 ((* endblock data_latex *))
 
 % Default mechanism for rendering figures
