@@ -4,6 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from copy import deepcopy
+from warnings import warn
 
 from traitlets.config import Config
 from traitlets import Unicode
@@ -76,7 +77,7 @@ def prepare(nb):
 class SlidesExporter(HTMLExporter):
     """Exports HTML slides with reveal.js"""
 
-    reveal_url_prefix = Unicode('reveal.js', config=True,
+    reveal_url_prefix = Unicode(config=True,
         help="""The URL prefix for reveal.js.
         This can be a a relative URL for a local copy of reveal.js,
         or point to a CDN.
@@ -84,6 +85,13 @@ class SlidesExporter(HTMLExporter):
         For speaker notes to work, a local reveal.js prefix must be used.
         """
     )
+
+    def _reveal_url_prefix_default(self):
+        if 'RevealHelpPreprocessor.url_prefix' in self.config:
+            warn("Please update RevealHelpPreprocessor.url_prefix to "
+                 "SlidesExporter.reveal_url_prefix in config files.")
+            return self.config.RevealHelpPreprocessor.url_prefix
+        return 'reveal.js'
     
     def _file_extension_default(self):
         return '.slides.html'
