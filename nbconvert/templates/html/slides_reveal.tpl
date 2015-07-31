@@ -175,8 +175,9 @@ a.anchor-link {
 
 require(
     {
-      // for really large notebook this probably makes sense
-      waitSeconds: 30
+      // it makes sense to wait a little bit when you are loading
+      // reveal from a cdn in a slow connection environment
+      waitSeconds: 15
     },
     [
       "{{resources.reveal.url_prefix}}/lib/js/head.min.js",
@@ -205,7 +206,6 @@ require(
         });
 
         var update = function(event){
-          window.scrollTo(0,0);
           if(MathJax.Hub.getAllJax(Reveal.getCurrentSlide())){
             MathJax.Hub.Rerender(Reveal.getCurrentSlide());
           }
@@ -214,6 +214,13 @@ require(
         Reveal.addEventListener('slidechanged', update);
         Reveal.addEventListener('fragmentshown', update);
         Reveal.addEventListener('fragmenthidden', update);
+
+        var update_scroll = function(event){
+          $(".reveal").scrollTop(0);
+        };
+
+        Reveal.addEventListener('slidechanged', update_scroll);
+
     }
 );
 
