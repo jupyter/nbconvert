@@ -69,6 +69,9 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 <script src="{{resources.reveal.url_prefix}}/lib/js/html5shiv.js"></script>
 <![endif]-->
 
+<!-- Loading the mathjax macro -->
+{{ mathjax() }}
+
 <!-- Get Font-awesome from cdn -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css">
 
@@ -80,11 +83,9 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
-html {
-  overflow-y: auto;
-}
 .reveal {
   font-size: 160%;
+  overflow-y: scroll;
 }
 .reveal pre {
   width: inherit;
@@ -138,9 +139,11 @@ div.output_prompt {
   margin: 5px 5px 0 0;
 }
 div.text_cell.rendered .rendered_html {
+  /* The H1 height seems miscalculated, we are just hidding the scrollbar */
   overflow-y: hidden;
 }
 a.anchor-link {
+  /* There is still an anchor, we are only hidding it */
   display: none;
 }
 .rendered_html p {
@@ -163,37 +166,59 @@ a.anchor-link {
 </div>
 </div>
 
-<script src="{{resources.reveal.url_prefix}}/lib/js/head.min.js"></script>
-
-<script src="{{resources.reveal.url_prefix}}/js/reveal.js"></script>
-
 <script>
 
-// Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
-Reveal.initialize({
-controls: true,
-progress: true,
-history: true,
+require(
+    {
+      // it makes sense to wait a little bit when you are loading
+      // reveal from a cdn in a slow connection environment
+      waitSeconds: 15
+    },
+    [
+      "{{resources.reveal.url_prefix}}/lib/js/head.min.js",
+      "{{resources.reveal.url_prefix}}/js/reveal.js"
+    ],
 
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
+    function(head, Reveal){
 
-// Optional libraries used to extend on reveal.js
-dependencies: [
-{ src: "{{resources.reveal.url_prefix}}/lib/js/classList.js", condition: function() { return !document.body.classList; } },
-{ src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js", async: true, condition: function() { return !!document.body.classList; } }
-]
-});
-</script>
+        // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
 
-<!-- Loading mathjax macro -->
-{{ mathjax() }}
+            theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+            transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
 
-<script>
-Reveal.addEventListener( 'slidechanged', function( event ) {
-  window.scrollTo(0,0);
-  MathJax.Hub.Rerender(event.currentSlide);
-});
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: "{{resources.reveal.url_prefix}}/lib/js/classList.js",
+                  condition: function() { return !document.body.classList; } },
+                { src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js",
+                  async: true,
+                  condition: function() { return !!document.body.classList; } }
+            ]
+        });
+
+        var update = function(event){
+          if(MathJax.Hub.getAllJax(Reveal.getCurrentSlide())){
+            MathJax.Hub.Rerender(Reveal.getCurrentSlide());
+          }
+        };
+
+        Reveal.addEventListener('slidechanged', update);
+        Reveal.addEventListener('fragmentshown', update);
+        Reveal.addEventListener('fragmenthidden', update);
+
+        var update_scroll = function(event){
+          $(".reveal").scrollTop(0);
+        };
+
+        Reveal.addEventListener('slidechanged', update_scroll);
+
+    }
+);
+
 </script>
 
 </body>
