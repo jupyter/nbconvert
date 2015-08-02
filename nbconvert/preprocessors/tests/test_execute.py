@@ -150,7 +150,12 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        assert_raises(Empty, self.run_notebook, filename, dict(timeout=1), res)
+        try:
+            exception = TimeoutError
+        except NameError:
+            exception = RuntimeError
+
+        assert_raises(exception, self.run_notebook, filename, dict(timeout=1), res)
 
     def test_allow_errors(self):
         """
