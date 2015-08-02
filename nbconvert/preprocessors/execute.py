@@ -122,7 +122,12 @@ class ExecutePreprocessor(Preprocessor):
                     self.km.interrupt_kernel()
                     break
                 else:
-                    raise
+                    try:
+                        exception = TimeoutError
+                    except NameError:
+                        exception = RuntimeError
+                    raise exception("Cell execution timed out, see log"
+                                    " for details.")
 
             if msg['parent_header'].get('msg_id') == msg_id:
                 if msg['metadata']['status'] == 'error' and not self.allow_errors:
