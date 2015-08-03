@@ -207,8 +207,6 @@ require(
         };
 
         Reveal.addEventListener('slidechanged', update);
-        Reveal.addEventListener('fragmentshown', update);
-        Reveal.addEventListener('fragmenthidden', update);
 
         var update_scroll = function(event){
           $(".reveal").scrollTop(0);
