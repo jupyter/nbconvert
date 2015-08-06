@@ -25,8 +25,6 @@ Specialized preprocessors
 
 .. autoclass:: ExtractOutputPreprocessor
 
-.. autoclass:: RevealHelpPreprocessor
-
 .. autoclass:: LatexPreprocessor
 
 .. autoclass:: CSSHTMLHeaderPreprocessor
