@@ -19,9 +19,14 @@ Quick overview
 The main principle of nbconvert is to instantiate an ``Exporter`` that
 controls the pipeline through which notebooks are converted.
 
-First, download @jakevdp's notebook (if you do not have ``requests``,
+Here we will show that you can use nbconvert to convert in-memory document,
+without having to ever read, or write a file to disk. You can of course do the
+conversion with a file on disk, and some convenient methods exist when converting
+from disk.
+
+First, download Jake's notebook (if you do not have ``requests``,
 install it by running ``pip install requests``, or if you don't have pip
-installed, you can find it on PYPI):
+installed, you can find it on PyPI):
 
 .. code:: python
 
@@ -31,7 +36,7 @@ installed, you can find it on PYPI):
 
 The response is a JSON string which represents a Jupyter notebook.
 
-Next, we will read the response using nbformat. Doing this will
+Next, we will read the response using ``nbformat``. Doing this will
 guarantee that the notebook structure is valid. Note that the in-memory
 format and on disk format are slightly different. In particual, on disk,
 multiline strings might be split into a list of strings.
@@ -42,12 +47,12 @@ multiline strings might be split into a list of strings.
     jake_notebook = nbformat.reads(response.text, as_version=4)
     jake_notebook.cells[0]
 
-The nbformat API returns a special type of dictionary. For this examle,
+The ``nbformat`` API returns a special type of dictionary. For this example,
 you don't need to worry about the details of the structure (if you are
 interested, please see the `nbformat
 documentation <http://nbformat.readthedocs.org/en/latest/>`__).
 
-The nbconvert API exposes some basic exporters for common formats and
+The ``nbconvert`` API exposes some basic exporters for common formats and
 defaults. You will start by using one of them. First, you will import
 one of these exporters (specifically, the HTML exporter), then
 instantiate it using most of the defaults, and then you will use it to
@@ -73,15 +78,15 @@ raw HTML:
 
     print(body[:400] + '...')
 
-If you understand HTML, you'll notice that some common tags are ommited,
+If you understand HTML, you'll notice that some common tags are omitted,
 like the ``body`` tag. Those tags are included in the default
 ``HtmlExporter``, which is what would have been constructed if we had
 not modified the ``template_file``.
 
-The resource dict contains (among many things) the extracted ``.png``,
+The resource dictionary contains (among many things) the extracted ``.png``,
 ``.jpg``, etc. from the notebook when applicable. The basic HTML
-exporter leaves the figures as embedded base64, but you can configure it
-to extract the figures. So for now, the resource dict should be mostly
+exporter leaves the figures as embedded `base64`, but you can configure it
+to extract the figures. So for now, the resource dictionary should be mostly
 empty, except for a key containing CSS and a few others whose content
 will be obvious:
 
@@ -101,13 +106,13 @@ and ``from_filename`` methods.
 Extracting Figures using the RST Exporter
 -----------------------------------------
 
-When exporting, you may want to extract the base64 encoded figures as
+When exporting, you may want to extract the `base64` encoded figures as
 files. While the HTML exporter does not do this by default, the
 ``RstExporter`` does:
 
 .. code:: python
 
-    # Import the RST exproter
+    # Import the RST exporter
     from nbconvert import RSTExporter
     # Instantiate it
     rst_exporter = RSTExporter()
@@ -118,10 +123,10 @@ files. While the HTML exporter does not do this by default, the
     print('[.....]')
     print(body[800:1200] + '...')
 
-Notice that base64 images are not embedded, but instead there are
+Notice that `base64` images are not embedded, but instead there are
 filename-like strings, such as ``output_3_0.png``. The strings actually
 are (configurable) keys that map to the binary data in the resources
-dict.
+dictionary.
 
 Note, if you write an RST Plugin, you are responsible for writing all
 the files to the disk (or uploading, etc...) in the right location. Of
@@ -130,7 +135,7 @@ course, the naming scheme is configurable.
 As an exercise, this notebook will show you how to get one of those
 images. First, take a look at the ``'outputs'`` of the returned
 resources dictionary. This is a dictionary that contains a key for each
-extracted resource, with values corresponding to the actual base64
+extracted resource, with values corresponding to the actual `base64`
 encoding:
 
 .. code:: python
@@ -152,13 +157,13 @@ Extracting Figures using the HTML Exporter
 ------------------------------------------
 
 As mentioned above, by default, the HTML exporter does not extract
-images -- it just leaves them as inline base64 encodings. However, this
+images -- it just leaves them as inline `base64` encodings. However, this
 is not always what you might want. For example, here is a use case from
 @jakevdp:
 
     I write an `awesome blog <http://jakevdp.github.io/>`__ using
     Jupyter notebooks converted to HTML, and I want the images to be
-    cached. Having one html file with all of the images base64 encoded
+    cached. Having one html file with all of the images `base64` encoded
     inside it is nice when sharing with a coworker, but for a website,
     not so much. I need an HTML exporter, and I want it to extract the
     figures!
@@ -178,8 +183,8 @@ a another format:
       ``Preprocessor``\ s. Preprocessors only act on the **structure**
       of the notebook, and have unrestricted access to it.
    2. Feeds the notebook into the Jinja templating engine, which
-      converts it to a particular format depending on which template is
-      selected.
+      converts the modified notebook to a particular format depending on which
+      template is selected.
 
 3. The exporter returns the converted notebook and other relevant
    resources as a tuple.
@@ -190,9 +195,9 @@ a another format:
 Using different preprocessors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To extract the figures when using the HTML exporter, we will want to
-change which ``Preprocessor``\ s we are using. There are several
-preprocessors that come with nbconvert, including one called the
+To extract the figures when using the HTML exporter, we want to
+change which ``Preprocessor``\ s are in use. There are several
+preprocessors that come with ``nbconvert``, including one called the
 ``ExtractOutputPreprocessor``.
 
 The ``ExtractOutputPreprocessor`` is responsible for crawling the
@@ -211,6 +216,8 @@ the exporter's list of preprocessors:
     
     # create the new exporter using the custom config
     html_exporter_with_figs = HTMLExporter(config=c)
+
+    # Check that the list of preprocessor has been populated correctly.
     html_exporter_with_figs.preprocessors
 
 We can compare the result of converting the notebook using the original
@@ -274,11 +281,12 @@ custom template.
             nb.cells = nb.cells[self.start:self.end]                    
             return nb, resources
 
-Here a Pelican exporter is created that takes ``PelicanSubCell``
-preprocessors and a ``config`` object as parameters. This may seem
-redundant, but with the configuration system you can register an
-inactive preprocessor on all of the exporters and activate it from
-config files or the command line.
+Next, a ``pelican`` exporter is created from a ``RSTExporter`` Class.  To do so
+we create a ``Config`` object that list ``PelicanSubCell`` as well as some options
+for the preprocessor. The dot-attribute (``Foo.bar =``) notation is a shorthand
+available on ``Config`` object.
+
+Next we instantiate the `RSTExporter` with the ``Config`` object.
 
 .. code:: python
 
@@ -290,9 +298,11 @@ config files or the command line.
     
     # Create our new, customized exporter that uses our custom preprocessor
     pelican = RSTExporter(config=c)
-    
+ 
     # Process the notebook
     print(pelican.from_notebook_node(jake_notebook)[0])
+
+
 
 Programatically creating templates
 ----------------------------------
@@ -301,9 +311,9 @@ Programatically creating templates
 
     from jinja2 import DictLoader
     
-    dl = DictLoader({'full.tpl': 
+    dl = DictLoader({'full.tpl':
     """
-    {%- extends 'basic.tpl' -%} 
+    {%- extends 'basic.tpl' -%}
     
     {% block footer %}
     FOOTER
