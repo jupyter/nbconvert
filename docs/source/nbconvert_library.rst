@@ -6,7 +6,7 @@ In this notebook, you will be introduced to the programmatic API of
 nbconvert and how it can be used in various contexts.
 
 One of [@jakevdp](https://github.com/jakevdp)'s great `blog
-posts <http://jakevdp.github.io/blog/2013/04/15/code-golf-in-python-sudoku/>`__
+posts <https://jakevdp.github.io/blog/2015/08/14/out-of-core-dataframes-in-python/>`__
 will be used to demonstrate. This notebook will not focus on using the
 command line tool. The attentive reader will point-out that no data is
 read from or written to disk during the conversion process. This is
@@ -28,7 +28,7 @@ installed, you can find it on PYPI):
 .. code:: python
 
     import requests
-    response = requests.get('http://jakevdp.github.com/downloads/notebooks/XKCD_plots.ipynb')
+    response = requests.get('http://jakevdp.github.io/downloads/notebooks/OutOfCoreMapping.ipynb')
     response.text[0:60] + '...'
 
 The response is a JSON string which represents a Jupyter notebook.
@@ -57,15 +57,12 @@ process the notebook we downloaded earlier.
 
 .. code:: python
 
-    from traitlets.config import Config
-    
     # 1. Import the exporter
     from nbconvert import HTMLExporter
     
     # 2. Instantiate the exporter. We use the `basic` template for now; we'll get into more details
     # later about how to customize the exporter further.
-    html_exporter = HTMLExporter()
-    html_exporter.template_file = 'basic'
+    html_exporter = HTMLExporter({"template_file":"basic"})
     
     # 3. Process the notebook we loaded earlier
     (body, resources) = html_exporter.from_notebook_node(jake_notebook)
@@ -311,7 +308,7 @@ Programatically creating templates
     {%- extends 'basic.tpl' -%} 
     
     {% block footer %}
-    FOOOOOOOOTEEEEER
+    FOOTER
     {% endblock footer %}
     """})
     
@@ -333,32 +330,3 @@ Preambulations <http://jakevdp.github.io/>`__ for Jake's blog post.
 Notebooks <http://www.damian.oquanta.info/posts/one-line-deployment-of-your-site-to-gh-pages.html>`__
 and is developping a js-extension to publish notebooks via one click
 from the web app.
-
-.. raw:: html
-
-   <center>
-
-.. raw:: html
-
-   <blockquote class="twitter-tweet">
-
-.. raw:: html
-
-   <p>
-
-As @Mbussonn requested... easieeeeer! Deploy your Nikola site with just
-a click in the IPython notebook! http://t.co/860sJunZvj cc @ralsina
-
-.. raw:: html
-
-   </p>
-
-— Damián Avila (@damian\_avila) August 21, 2013
-
-.. raw:: html
-
-   </blockquote>
-
-.. raw:: html
-
-   </center>
