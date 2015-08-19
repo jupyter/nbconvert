@@ -60,7 +60,7 @@ process the notebook we downloaded earlier.
     
     # 2. Instantiate the exporter. We use the `basic` template for now; we'll get into more details
     # later about how to customize the exporter further.
-    html_exporter = HTMLExporter({"template_file":"basic"})
+    html_exporter = HTMLExporter({"Exporter":{"template_file":"basic"}})
     
     # 3. Process the notebook we loaded earlier
     (body, resources) = html_exporter.from_notebook_node(jake_notebook)
