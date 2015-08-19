@@ -188,6 +188,13 @@ extras_require = setuptools_args['extras_require'] = {
 if 'setuptools' in sys.modules:
     from setuptools.command.develop import develop
     cmdclass['develop'] = css_first(develop)
+    # force entrypoints with setuptools (needed for Windows, unconditional because of wheels)
+    setup_args['entry_points'] = {
+        'console_scripts': [
+            'jupyter-nbconvert = nbconvert.nbconvertapp:main',
+        ]
+    }
+    setup_args.pop('scripts', None)
 
     setup_args.update(setuptools_args)
 
