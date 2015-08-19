@@ -5,7 +5,7 @@ Using nbconvert as a library
 In this notebook, you will be introduced to the programmatic API of
 nbconvert and how it can be used in various contexts.
 
-One of [@jakevdp](https://github.com/jakevdp)'s great `blog
+One of `@jakevdp <https://github.com/jakevdp/>`__'s great `blog
 posts <https://jakevdp.github.io/blog/2015/08/14/out-of-core-dataframes-in-python/>`__
 will be used to demonstrate. This notebook will not focus on using the
 command line tool. The attentive reader will point-out that no data is
@@ -15,8 +15,6 @@ well in a database or web-based environement too.
 
 Quick overview
 --------------
-
-Credit: Jonathan Frederic (@jdfreder on github)
 
 The main principle of nbconvert is to instantiate an ``Exporter`` that
 controls the pipeline through which notebooks are converted.
@@ -120,7 +118,7 @@ files. While the HTML exporter does not do this by default, the
     print('[.....]')
     print(body[800:1200] + '...')
 
-Notice that base64 images are not embeded, but instead there are
+Notice that base64 images are not embedded, but instead there are
 filename-like strings, such as ``output_3_0.png``. The strings actually
 are (configurable) keys that map to the binary data in the resources
 dict.
@@ -328,5 +326,5 @@ Preambulations <http://jakevdp.github.io/>`__ for Jake's blog post.
 
 @damianavila wrote the Nikola Plugin to `write blog post as
 Notebooks <http://www.damian.oquanta.info/posts/one-line-deployment-of-your-site-to-gh-pages.html>`__
-and is developping a js-extension to publish notebooks via one click
+and is developing a js-extension to publish notebooks via one click
 from the web app.
