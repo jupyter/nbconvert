@@ -168,6 +168,13 @@ is not always what you might want. For example, here is a use case from
     not so much. I need an HTML exporter, and I want it to extract the
     figures!
 
+
+To do so you just need to add the following to the ``config`` object:
+
+.. code:: python
+
+    config = Config({'ExtractOutputPreprocessor': {'enabled': True}})
+
 Some theory
 ~~~~~~~~~~~
 
