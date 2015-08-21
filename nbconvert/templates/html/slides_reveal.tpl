@@ -73,7 +73,7 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 {{ mathjax() }}
 
 <!-- Get Font-awesome from cdn -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css">
 
 {% for css in resources.inlining.css -%}
     <style type="text/css">
