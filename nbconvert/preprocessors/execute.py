@@ -130,7 +130,7 @@ class ExecutePreprocessor(Preprocessor):
                                     " for details.")
 
             if msg['parent_header'].get('msg_id') == msg_id:
-                if msg['metadata']['status'] == 'error' and not self.allow_errors:
+                if msg['content']['status'] == 'error' and not self.allow_errors:
                     raise CellExecutionError(msg['content']['traceback'])
                 else:
                     break
