@@ -49,6 +49,10 @@
 .. image:: {{ output.metadata.filenames['image/jpeg'] | urlencode }}
 {% endblock data_jpg %}
 
+{% block data_markdown %}
+{{ output.data['text/markdown'] | markdown2rst }}
+{% endblock data_markdown %}
+
 {% block data_latex %}
 .. math::
 
