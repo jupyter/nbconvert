@@ -102,7 +102,7 @@ class SlidesExporter(HTMLExporter):
     output_mimetype = 'text/html'
 
     def from_notebook_node(self, nb, resources=None, **kw):
-        self._init_resources(resources)
+        resources = self._init_resources(resources)
         if 'reveal' not in resources:
             resources['reveal'] = {}
         resources['reveal']['url_prefix'] = self.reveal_url_prefix
