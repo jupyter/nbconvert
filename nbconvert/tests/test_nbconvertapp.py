@@ -240,9 +240,10 @@ class TestNbConvertApp(TestsBase):
         """
         with self.create_temp_cwd():
             self.create_empty_notebook('empty.ipynb')
-            self.nbconvert('empty.ipynb --to notebook --inplace')
+            self.nbconvert('empty.ipynb --inplace')
             assert os.path.isfile('empty.ipynb')
             assert not os.path.isfile('empty.nbconvert.ipynb')
+            assert not os.path.isfile('empty.html')
 
     def test_allow_errors(self):
         """

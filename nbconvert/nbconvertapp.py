@@ -75,8 +75,11 @@ nbconvert_flags.update({
         ),
     'inplace' : (
         {
-            'NbConvertApp' : {'use_output_suffix' : False},
-            'FilesWriter': {'build_directory': ''}
+            'NbConvertApp' : {
+                'use_output_suffix' : False,
+                'export_format': 'notebook',
+            },
+            'FilesWriter': {'build_directory': ''},
         },
         """Run nbconvert in place, overwriting the existing notebook (only 
         relevant when converting to notebook format)"""
