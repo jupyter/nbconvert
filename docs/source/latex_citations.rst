@@ -11,5 +11,5 @@ can:
 For an example of how this works, please see the citations example in
 the nbconvert-examples_ repository.
 
-.. _nbconvert-examples: https://github.com/ipython/nbconvert-examples
+.. _nbconvert-examples: https://github.com/jupyter/nbconvert-examples
 
