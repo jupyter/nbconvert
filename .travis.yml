@@ -3,8 +3,9 @@ python:
     - 3.4
     - 3.3
     - 2.7
-sudo: false
+sudo: true
 before_install:
+    - sudo apt-get install pdflatex texlive-base pandoc
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
     # temporary while renaming propagates
