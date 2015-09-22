@@ -85,6 +85,21 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile('notebook with spaces.pdf')
 
+
+    @dec.onlyif_cmds_exist('pdflatex')
+    @dec.onlyif_cmds_exist('pandoc')
+    def test_pdf(self):
+        """
+        Check to see if pdfs compile, even if strikethroughs are included. 
+        """
+        with self.create_temp_cwd(['notebook2.ipynb']):
+            self.nbconvert('--log-level 0 --to pdf'
+                    ' "notebook2"'
+                    ' --PDFExporter.latex_count=1'
+                    ' --PDFExporter.verbose=True'
+            )
+            assert os.path.isfile('notebook2.pdf')
+
     def test_post_processor(self):
         """Do post processors work?"""
         with self.create_temp_cwd(['notebook1.ipynb']):
