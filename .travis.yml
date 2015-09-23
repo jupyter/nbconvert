@@ -3,9 +3,13 @@ python:
     - 3.4
     - 3.3
     - 2.7
-sudo: true
+sudo: false
+addons:
+  apt:
+    packages:
+    - texlive-base
+    - pandoc
 before_install:
-    - sudo apt-get install texlive-base pandoc
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
     # temporary while renaming propagates
