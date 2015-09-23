@@ -181,23 +181,13 @@ This template does not define a docclass, the inheriting class must define this.
 
 % Display latex
 ((* block data_latex -*))
-    ((*- set Data = output.data['text/latex'].split('$$') -*))      
-    ((*- for eq in Data: -*)) 
-        ((*- set eqs = eq.strip() -*)) 
-        ((*- if eqs | length >0: -*)) 
-            ((*- if eqs.startswith('$'): -*)) 
-                ((= In line equation, not a block =))
-                ((( eqs )))
-            ((*- else: -*)) 
-                ((= Replace $ symbols with more explicit, equation block. =))
-                ((*- set Eq = '$$' + eqs + '$$' -*)) 
-                \begin{equation*}\adjustbox{max width=\hsize}{$
-                ((( Eq | strip_dollars )))
-                $}\end{equation*}
-            ((*- endif -*)) 
-       ((*-  endif -*)) 
-    ((*- endfor -*)) 
+    ((( output.data['text/latex'] | citation2latex | strip_files_prefix | markdown2latex )))
 ((* endblock data_latex *))
+
+% Display markdown
+((* block data_markdown -*))
+    ((( output.data['text/markdown'] | citation2latex | strip_files_prefix | markdown2latex )))
+((* endblock data_markdown *))
 
 % Default mechanism for rendering figures
 ((*- block data_png -*))((( draw_figure(output.metadata.filenames['image/png']) )))((*- endblock -*))
