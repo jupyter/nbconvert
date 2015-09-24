@@ -134,11 +134,11 @@ class ExecutePreprocessor(Preprocessor):
                     raise exception("Cell execution timed out, see log"
                                     " for details.")
 
-        if msg['parent_header'].get('msg_id') == msg_id:
-            break
-        else:
-            # not our reply
-            continue
+            if msg['parent_header'].get('msg_id') == msg_id:
+                break
+            else:
+                # not our reply
+                continue
         
         outs = []
 
