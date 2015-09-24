@@ -34,7 +34,7 @@ class ExecutePreprocessor(Preprocessor):
     """
     Executes all the cells in a notebook
     """
-    
+
     timeout = Integer(30, config=True,
         help="The time to wait (in seconds) for output from executions."
     )
@@ -43,8 +43,8 @@ class ExecutePreprocessor(Preprocessor):
         False, config=True,
         help=dedent(
             """
-            If execution of a cell times out, interrupt the kernel and 
-            continue executing other cells rather than throwing an error and 
+            If execution of a cell times out, interrupt the kernel and
+            continue executing other cells rather than throwing an error and
             stopping.
             """
         )
@@ -61,7 +61,7 @@ class ExecutePreprocessor(Preprocessor):
             """
         )
     )
-    
+
     extra_arguments = List(Unicode())
 
     def preprocess(self, nb, resources):
@@ -93,14 +93,25 @@ class ExecutePreprocessor(Preprocessor):
         """
         if cell.cell_type != 'code':
             return cell, resources
-        try:
-            outputs = self.run_cell(cell)
-        except Exception as e:
-            self.log.error("failed to run cell: " + repr(e))
-            self.log.error(str(cell.source))
-            raise
+
+        outputs = self.run_cell(cell)
         cell.outputs = outputs
+
+        if not self.allow_errors:
+            for out in outputs:
+                if out.output_type == 'error':
+                    pattern = """\
+                        An error occurred while executing the following cell:
+                        ------------------
+                        {cell.source}
+                        ------------------
+
+                        {out.ename}: {out.evalue}
+                        """
+                    msg = dedent(pattern).format(out=out, cell=cell)
+                    raise CellExecutionError(msg)
         return cell, resources
+
 
     def run_cell(self, cell):
         msg_id = self.kc.execute(cell.source)
@@ -112,9 +123,9 @@ class ExecutePreprocessor(Preprocessor):
             except Empty:
                 self.log.error("""Timeout waiting for execute reply (%is).
                 If your cell should take longer than this, you can increase the timeout with:
-                
+
                     c.ExecutePreprocessor.timeout = SECONDS
-                
+
                 in jupyter_nbconvert_config.py
                 """ % self.timeout)
                 if self.interrupt_on_timeout:
@@ -130,14 +141,11 @@ class ExecutePreprocessor(Preprocessor):
                                     " for details.")
 
             if msg['parent_header'].get('msg_id') == msg_id:
-                if msg['content']['status'] == 'error' and not self.allow_errors:
-                    raise CellExecutionError(msg['content']['traceback'])
-                else:
-                    break
+                break
             else:
                 # not our reply
                 continue
-        
+
         outs = []
 
         while True:
