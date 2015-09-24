@@ -34,7 +34,7 @@ class ExecutePreprocessor(Preprocessor):
     """
     Executes all the cells in a notebook
     """
-    
+
     timeout = Integer(30, config=True,
         help="The time to wait (in seconds) for output from executions."
     )
@@ -43,8 +43,8 @@ class ExecutePreprocessor(Preprocessor):
         False, config=True,
         help=dedent(
             """
-            If execution of a cell times out, interrupt the kernel and 
-            continue executing other cells rather than throwing an error and 
+            If execution of a cell times out, interrupt the kernel and
+            continue executing other cells rather than throwing an error and
             stopping.
             """
         )
@@ -61,7 +61,7 @@ class ExecutePreprocessor(Preprocessor):
             """
         )
     )
-    
+
     extra_arguments = List(Unicode())
 
     def preprocess(self, nb, resources):
@@ -93,10 +93,10 @@ class ExecutePreprocessor(Preprocessor):
         """
         if cell.cell_type != 'code':
             return cell, resources
-        
+
         outputs = self.run_cell(cell)
         cell.outputs = outputs
-    
+
         if not self.allow_errors:
             for out in outputs:
                 if out.output_type == 'error':
@@ -123,9 +123,9 @@ class ExecutePreprocessor(Preprocessor):
             except Empty:
                 self.log.error("""Timeout waiting for execute reply (%is).
                 If your cell should take longer than this, you can increase the timeout with:
-                
+
                     c.ExecutePreprocessor.timeout = SECONDS
-                
+
                 in jupyter_nbconvert_config.py
                 """ % self.timeout)
                 if self.interrupt_on_timeout:
@@ -145,7 +145,7 @@ class ExecutePreprocessor(Preprocessor):
             else:
                 # not our reply
                 continue
-        
+
         outs = []
 
         while True:
