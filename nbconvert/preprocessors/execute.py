@@ -93,14 +93,19 @@ class ExecutePreprocessor(Preprocessor):
         """
         if cell.cell_type != 'code':
             return cell, resources
-        try:
-            outputs = self.run_cell(cell)
-        except Exception as e:
-            self.log.error("failed to run cell: " + repr(e))
-            self.log.error(str(cell.source))
-            raise
+        
+        outputs = self.run_cell(cell)
         cell.outputs = outputs
+    
+        if not self.allow_errors:
+            for out in outputs:
+                if out.output_type == 'error':
+                    msg = 'Error executing the following the notebook cell:\n'
+                    msg += str(cell.source)
+                    raise CellExecutionError(msg)            
+    
         return cell, resources
+
 
     def run_cell(self, cell):
         msg_id = self.kc.execute(cell.source)
@@ -129,14 +134,11 @@ class ExecutePreprocessor(Preprocessor):
                     raise exception("Cell execution timed out, see log"
                                     " for details.")
 
-            if msg['parent_header'].get('msg_id') == msg_id:
-                if msg['content']['status'] == 'error' and not self.allow_errors:
-                    raise CellExecutionError(msg['content']['traceback'])
-                else:
-                    break
-            else:
-                # not our reply
-                continue
+        if msg['parent_header'].get('msg_id') == msg_id:
+            break
+        else:
+            # not our reply
+            continue
         
         outs = []
 
