@@ -100,10 +100,16 @@ class ExecutePreprocessor(Preprocessor):
         if not self.allow_errors:
             for out in outputs:
                 if out.output_type == 'error':
-                    msg = 'Error executing the following the notebook cell:\n'
-                    msg += str(cell.source)
-                    raise CellExecutionError(msg)            
-    
+                    pattern = """\
+                        An error occurred while executing the following cell:
+                        ------------------
+                        {cell.source}
+                        ------------------
+
+                        {out.ename}: {out.evalue}
+                        """
+                    msg = dedent(pattern).format(out=out, cell=cell)
+                    raise CellExecutionError(msg)
         return cell, resources
 
 
