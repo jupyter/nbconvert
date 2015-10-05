@@ -11,13 +11,14 @@ templates.
 import os
 import re
 import textwrap
+import warnings
+
 try:
     from urllib.parse import quote  # Py 3
 except ImportError:
     from urllib2 import quote  # Py 2
 from xml.etree import ElementTree
 
-from IPython.core.interactiveshell import InteractiveShell
 from ipython_genutils import py3compat
 
 
@@ -187,8 +188,17 @@ def ipython2python(code):
     code : str
         IPython code, to be transformed to pure Python
     """
-    shell = InteractiveShell.instance()
-    return shell.input_transformer_manager.transform_cell(code)
+    try:
+        from IPython.core.interactiveshell import InteractiveShell
+    except ImportError:
+        warnings.warn(
+            "IPython is needed to transform IPython syntax to pure Python."
+            " Install ipython if you need this functionality."
+        )
+        return code
+    else:
+        shell = InteractiveShell.instance()
+        return shell.input_transformer_manager.transform_cell(code)
 
 def posix_path(path):
     """Turn a path into posix-style path/to/etc
