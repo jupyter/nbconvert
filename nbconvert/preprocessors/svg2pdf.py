@@ -20,6 +20,12 @@ from .convertfigures import ConvertFiguresPreprocessor
 
 INKSCAPE_APP = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 
+if sys.platform == "win32":
+    if sys.version_info < (2, 99):
+        import _winreg as winreg
+    else:    
+        import winreg
+
 
 class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     """
@@ -50,6 +56,14 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         if sys.platform == "darwin":
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
+        if sys.platform == "win32":
+            wr_handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+            try:
+                rkey = winreg.OpenKey(wr_handle, "SOFTWARE\\Classes\\inkscape.svg\\DefaultIcon")
+                inkscape = winreg.QueryValueEx(rkey, "")[0]
+            except FileNotFoundError:
+                raise FileNotFoundError("Inkscape executable not found")
+            return inkscape
         return "inkscape"
 
 
