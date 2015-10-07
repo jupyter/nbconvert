@@ -77,7 +77,8 @@ class PDFExporter(LatexExporter):
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for index in range(count):
-                p = subprocess.Popen(command, stdout=stdout, stdin=null)
+                shell = (sys.platform == 'win32')
+                p = subprocess.Popen(subprocess.list2cmdline(command) if shell else command, stdout=stdout, stdin=null, shell=shell)
                 out, err = p.communicate()
                 if p.returncode:
                     if self.verbose:
