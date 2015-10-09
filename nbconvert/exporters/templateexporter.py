@@ -7,15 +7,13 @@ that uses Jinja2 to export notebook files into different formats.
 
 from __future__ import print_function, absolute_import
 
-# Stdlib imports
 import os
 import uuid
 
 # other libs/dependencies are imported at runtime
 # to move ImportErrors to runtime when the requirement is actually needed
 
-# IPython imports
-from traitlets import MetaHasTraits, Unicode, List, Dict
+from traitlets import HasTraits, Unicode, List, Dict
 from ipython_genutils.importstring import import_item
 from ipython_genutils import py3compat
 
@@ -234,7 +232,7 @@ class TemplateExporter(Exporter):
             environ.filters[name] = jinja_filter
             return jinja_filter
 
-        elif isclass and isinstance(jinja_filter, MetaHasTraits):
+        elif isclass and issubclass(jinja_filter, HasTraits):
             #filter is configurable.  Make sure to pass in new default for
             #the enabled flag if one was specified.
             filter_instance = jinja_filter(parent=self)
