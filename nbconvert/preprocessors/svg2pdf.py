@@ -21,10 +21,10 @@ from .convertfigures import ConvertFiguresPreprocessor
 INKSCAPE_APP = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 
 if sys.platform == "win32":
-    if sys.version_info < (2, 99):
-        import _winreg as winreg
-    else:    
+    try:
         import winreg
+    except ImportError:
+        import _winreg as winreg
 
 
 class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
