@@ -232,6 +232,8 @@ point:
     {{ super() }}
     <div style="background-color:red">
     <div style='background-color:orange'>
+    {% endblock any_cell %}
+
 
 Once you have tagged the cells appropriately and written your template
 using the cell above, try converting your notebook using the following
