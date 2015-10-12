@@ -9,7 +9,7 @@ import sys
 
 from ipython_genutils.py3compat import which
 from traitlets import Integer, List, Bool, Instance
-from ipython_genutils.tempdir import TemporaryWorkingDirectory
+from ipython_genutils.tempdir import TemporaryDirectory
 from .latex import LatexExporter
 
 
@@ -125,8 +125,10 @@ class PDFExporter(LatexExporter):
         latex, resources = super(PDFExporter, self).from_notebook_node(
             nb, resources=resources, **kw
         )
-        with TemporaryWorkingDirectory() as td:
-            notebook_name = "notebook"
+        with TemporaryDirectory() as td:
+            notebook_name = os.path.join(td, 'notebook')
+            self.latex_command.append('-output-directory=%s' % td)
+            self.latex_command.append('-aux-directory=%s' % td)
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
             rc = self.run_latex(tex_file)

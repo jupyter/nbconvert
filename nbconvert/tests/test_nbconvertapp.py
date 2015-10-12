@@ -307,3 +307,13 @@ class TestNbConvertApp(TestsBase):
             assert "```" in output2  # but should also plain ``` to close cell
 
         pass
+
+    @dec.onlyif_cmds_exist('pdflatex')
+    @dec.onlyif_cmds_exist('pandoc')
+    def test_linked_images(self):
+        """
+        Generate PDFs with an image linked in a markdown cell
+        """
+        with self.create_temp_cwd(['latex-linked-image.ipynb', 'testimage.png']):
+            self.nbconvert('--to pdf latex-linked-image.ipynb')
+            assert os.path.isfile('latex-linked-image.pdf')
