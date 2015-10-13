@@ -14,7 +14,7 @@ import datetime
 from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
 import nbformat
-from traitlets import MetaHasTraits, Unicode, List, TraitError
+from traitlets import HasTraits, Unicode, List, TraitError
 from ipython_genutils.importstring import import_item
 from ipython_genutils import text, py3compat
 
@@ -219,7 +219,7 @@ class Exporter(LoggingConfigurable):
             self._preprocessors.append(preprocessor)
             return preprocessor
 
-        elif isclass and isinstance(preprocessor, MetaHasTraits):
+        elif isclass and issubclass(preprocessor, HasTraits):
             # Preprocessor is configurable.  Make sure to pass in new default for 
             # the enabled flag if one was specified.
             self.register_preprocessor(preprocessor(parent=self), enabled)
