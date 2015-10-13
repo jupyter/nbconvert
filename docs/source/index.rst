@@ -21,6 +21,7 @@ Contents:
    customizing
    nbconvert_library
    api/index
+   changelog
 
 
 Indices and tables
