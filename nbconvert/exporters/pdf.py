@@ -8,8 +8,8 @@ import os
 import sys
 
 from ipython_genutils.py3compat import which
-from traitlets import Integer, List, Bool, Instance
-from ipython_genutils.tempdir import TemporaryDirectory
+from traitlets import Integer, List, Bool, Instance, Unicode
+from ipython_genutils.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 
 
@@ -36,6 +36,7 @@ class PDFExporter(LatexExporter):
         help="File extensions of temp files to remove after running."
     )
     
+    texinputs = Unicode(help="texinputs dir. A notebook's directory is added")
     writer = Instance("nbconvert.writers.FilesWriter", args=())
 
     def run_command(self, command_list, filename, count, log_function):
@@ -74,11 +75,16 @@ class PDFExporter(LatexExporter):
         
         times = 'time' if count == 1 else 'times'
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
+        
+        shell = (sys.platform == 'win32')
+        if shell:
+            command = subprocess.list2cmdline(command)
+        env = os.environ.copy()
+        env['TEXINPUTS'] = os.pathsep.join([self.texinputs, env.get('TEXINPUTS', '')])
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for index in range(count):
-                shell = (sys.platform == 'win32')
-                p = subprocess.Popen(subprocess.list2cmdline(command) if shell else command, stdout=stdout, stdin=null, shell=shell)
+                p = subprocess.Popen(command, stdout=stdout, stdin=null, shell=shell, env=env)
                 out, err = p.communicate()
                 if p.returncode:
                     if self.verbose:
@@ -97,7 +103,7 @@ class PDFExporter(LatexExporter):
         def log_error(command, out):
             self.log.critical(u"%s failed: %s\n%s", command[0], command, out)
 
-        return self.run_command(self.latex_command, filename, 
+        return self.run_command(self.latex_command, filename,
             self.latex_count, log_error)
 
     def run_bib(self, filename):
@@ -120,15 +126,19 @@ class PDFExporter(LatexExporter):
                 os.remove(filename+ext)
             except OSError:
                 pass
-
+    
     def from_notebook_node(self, nb, resources=None, **kw):
         latex, resources = super(PDFExporter, self).from_notebook_node(
             nb, resources=resources, **kw
         )
-        with TemporaryDirectory() as td:
-            notebook_name = os.path.join(td, 'notebook')
-            self.latex_command.append('-output-directory=%s' % td)
-            self.latex_command.append('-aux-directory=%s' % td)
+        # set texinputs directory, so that local files will be found
+        if resources and resources.get('metadata', {}).get('path'):
+            self.texinputs = resources['metadata']['path']
+        else:
+            self.texinputs = os.getcwd()
+        
+        with TemporaryWorkingDirectory() as td:
+            notebook_name = 'notebook'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
             rc = self.run_latex(tex_file)
@@ -139,7 +149,7 @@ class PDFExporter(LatexExporter):
             
             pdf_file = notebook_name + '.pdf'
             if not os.path.isfile(pdf_file):
-                raise RuntimeError("PDF creating failed")
+                raise IOError("PDF creating failed")
             self.log.info('PDF successfully created')
             with open(pdf_file, 'rb') as f:
                 pdf_data = f.read()
