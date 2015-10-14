@@ -13,7 +13,9 @@ import uuid
 # other libs/dependencies are imported at runtime
 # to move ImportErrors to runtime when the requirement is actually needed
 
-from traitlets import HasTraits, Unicode, List, Dict
+
+# IPython imports
+from traitlets import HasTraits, Unicode, List, Dict, DottedObjectName
 from ipython_genutils.importstring import import_item
 from ipython_genutils import py3compat
 
@@ -88,6 +90,10 @@ class TemplateExporter(Exporter):
         if self._environment_cached is None:
             self._environment_cached = self._create_environment()
         return self._environment_cached
+
+    template_lib = DottedObjectName('tpllib',config=True,
+            help="Name of the template file to use")
+
 
     template_file = Unicode(config=True,
             help="Name of the template file to use", affects_template=True)
@@ -174,6 +180,7 @@ class TemplateExporter(Exporter):
             self.log.debug("Attempting to load template %s", try_name)
             try:
                 template = self.environment.get_template(try_name)
+                print('got template %s' % try_name)
             except (TemplateNotFound, IOError):
                 pass
             else:
@@ -279,13 +286,15 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        from jinja2 import Environment, ChoiceLoader, FileSystemLoader
+        from jinja2 import Environment, ChoiceLoader, FileSystemLoader, PackageLoader
         here = os.path.dirname(os.path.realpath(__file__))
 
         paths = self.template_path + \
             [os.path.join(here, self.default_template_path),
              os.path.join(here, self.template_skeleton_path)]
-        loaders = self.extra_loaders + [FileSystemLoader(paths)]
+        print('tpl lib is ', self.template_lib)
+        loaders = self.extra_loaders + [FileSystemLoader(paths)] + [PackageLoader(*self.template_lib.split('.', 1))]
+
 
         environment = Environment(
             loader= ChoiceLoader(loaders),
