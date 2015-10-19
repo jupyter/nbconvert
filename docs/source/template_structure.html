@@ -3,7 +3,7 @@ This is an HTML fragment that gets included into a notebook & rst document
 -->
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
-body {
+.jp-tpl-structure {
     font-family: sans;
 }
 
@@ -26,6 +26,7 @@ body {
 
 </style>
 
+<div class='jp-tpl-structure'>
 <h3>Main page</h3>
 <div class="template_block">header</div>
 
@@ -116,5 +117,6 @@ body {
     <div class="template_block">postdoc
         <div class="template_block">bibliography</div>
     </div>
+</div>
 </div>
 
