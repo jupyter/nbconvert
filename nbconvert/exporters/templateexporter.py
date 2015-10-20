@@ -53,7 +53,6 @@ default_filters = {
         'prevent_list_blocks': filters.prevent_list_blocks,
 }
 
-
 class TemplateExporter(Exporter):
     """
     Exports notebooks into other file formats.  Uses Jinja 2 templating engine
@@ -180,7 +179,6 @@ class TemplateExporter(Exporter):
             self.log.debug("Attempting to load template %s", try_name)
             try:
                 template = self.environment.get_template(try_name)
-                print('got template %s' % try_name)
             except (TemplateNotFound, IOError):
                 pass
             else:
@@ -292,14 +290,14 @@ class TemplateExporter(Exporter):
         paths = self.template_path + \
             [os.path.join(here, self.default_template_path),
              os.path.join(here, self.template_skeleton_path)]
-        print('tpl lib is ', self.template_lib)
-        loaders = self.extra_loaders + [FileSystemLoader(paths)] + [PackageLoader(*self.template_lib.split('.', 1))]
 
-
+        # This is where we instantiate our custom template loader, which is defined below outside of TemplateExporter
+        loaders = self.extra_loaders + [FileSystemLoader(paths)] + [CustomTemplateLoader(*self.template_lib.split('.', 1))]
         environment = Environment(
             loader= ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS
             )
+        # end of my changes here
 
         environment.globals['uuid4'] = uuid.uuid4
 
@@ -313,3 +311,24 @@ class TemplateExporter(Exporter):
                 self._register_filter(environment, key, user_filter)
 
         return environment
+
+
+# This is the custom template loader, a sub-class of the jinja2 BaseLoader class
+
+from jinja2 import BaseLoader, TemplateNotFound
+from os.path import join, exists, getmtime
+
+class CustomTemplateLoader(BaseLoader):
+
+    def __init__(self, path):
+        self.path = path
+
+    def get_source(self, environment, template):
+        path = join(self.path, template)
+        if not exists(path):
+            raise TemplateNotFound(template)
+        mtime = getmtime(path)
+        with open(path, 'r') as f:
+            source = f.read()
+        return source, path, lambda: mtime == getmtime(path)
+

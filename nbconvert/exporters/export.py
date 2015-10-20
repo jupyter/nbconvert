@@ -174,4 +174,5 @@ def get_export_names():
     """Return a list of the currently supported export targets
 
     WARNING: API WILL CHANGE IN FUTURE RELEASES OF NBCONVERT"""
-    return sorted(exporter_map.keys())
+    m = list(exporter_map.keys())
+    return sorted(m)

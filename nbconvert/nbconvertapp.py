@@ -17,8 +17,9 @@ import glob
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
-    Unicode, List, Instance, DottedObjectName, Type, CaselessStrEnum, Bool,
+    Unicode, List, Instance, DottedObjectName, Type, CaselessStrEnum, Bool, Undefined, Enum
 )
+
 from ipython_genutils.importstring import import_item
 
 from .exporters.export import get_export_names, exporter_map
@@ -29,6 +30,34 @@ from .utils.exceptions import ConversionException
 #-----------------------------------------------------------------------------
 #Classes and functions
 #-----------------------------------------------------------------------------
+
+class CaselessStrEnumOrDottedObjectName(CaselessStrEnum, DottedObjectName):
+    """Either an enum whose value must be in a given sequence, or a Dotted Object Name
+
+    Exporter can be either  alis tof built-ins exporter that are whilelisted and are simple strings ('html', 'latex', 'pdf', ... )
+    Or a dotted object name that will be imported at run-time and instancitaed with the right configuration. 
+    """
+
+    def __init__(self, values, default_value=Undefined, **metadata):
+        self.values = values
+        Enum.__init__(self, values=values, default_value=default_value, **metadata)
+
+
+    def validate(self, obj, value):
+        if '.' not in value:
+            CaselessStrEnum.validate(self, obj, value)
+            pass
+        else: 
+            DottedObjectName.validate(self, obj, value)
+        return value
+
+    def info(self):
+        """ Returns a description of the trait."""
+        result = 'any of ' + repr(self.values)
+        if self.allow_none:
+            return result + ' or None'
+        return result
+
 
 class DottedOrNone(DottedObjectName):
     """
@@ -206,10 +235,12 @@ class NbConvertApp(JupyterApp):
 
 
     # Other configurable variables
-    export_format = CaselessStrEnum(get_export_names(),
+    export_format = CaselessStrEnumOrDottedObjectName(
+        values=get_export_names(),
         default_value="html",
+        allow_none=False,
         config=True,
-        help="""The export format to be used."""
+        help="""The export format to be used, either one of the built-in formats, or a dotted object name that represents the import path for an `Exporter` class"""
     )
 
     notebooks = List([], config=True, help="""List of notebooks to convert.
@@ -401,7 +432,12 @@ class NbConvertApp(JupyterApp):
             self.exit(1)
         
         # initialize the exporter
-        self.exporter = exporter_map[self.export_format](config=self.config)
+        _exp = exporter_map.get(self.export_format, None)
+        if _exp is not None:
+            self.exporter = _exp(config=self.config)
+        else:
+            _exp  = import_item(self.export_format)
+            self.exporter = _exp(config=self.config)
 
         # no notebooks to convert!
         if len(self.notebooks) == 0:
