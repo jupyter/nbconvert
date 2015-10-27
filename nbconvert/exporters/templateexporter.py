@@ -49,6 +49,7 @@ default_filters = {
         'add_prompts': filters.add_prompts,
         'ascii_only': filters.ascii_only,
         'prevent_list_blocks': filters.prevent_list_blocks,
+        'get_metadata': filters.get_metadata,
 }
 
 

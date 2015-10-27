@@ -136,13 +136,15 @@ unknown type  {{ cell.type }}
 {%- else %}
 <img src="data:image/png;base64,{{ output.data['image/png'] }}"
 {%- endif %}
-{%- if 'width' in output.metadata.get('image/png', {}) %}
-width={{output.metadata['image/png']['width']}}
+{%- set width=output | get_metadata('width', 'image/png') -%}
+{%- if width is not none %}
+width={{width}}
 {%- endif %}
-{%- if 'height' in output.metadata.get('image/png', {}) %}
-height={{output.metadata['image/png']['height']}}
+{%- set height=output | get_metadata('height', 'image/png') -%}
+{%- if height is not none %}
+height={{height}}
 {%- endif %}
-{%- if output.metadata.get('image/png', {}).get('unconfined') %}
+{%- if output | get_metadata('unconfined', 'image/png') -%}
 class="unconfined"
 {%- endif %}
 >
@@ -156,11 +158,16 @@ class="unconfined"
 {%- else %}
 <img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] }}"
 {%- endif %}
-{%- if 'width' in output.metadata.get('image/jpeg', {}) %}
-width={{output.metadata['image/jpeg']['width']}}
+{%- set width=output | get_metadata('width', 'image/jpeg') -%}
+{%- if width is not none %}
+width={{width}}
 {%- endif %}
-{%- if 'height' in output.metadata.get('image/jpeg', {}) %}
-height={{output.metadata['image/jpeg']['height']}}
+{%- set height=output | get_metadata('height', 'image/jpeg') -%}
+{%- if height is not none %}
+height={{height}}
+{%- endif %}
+{%- if output | get_metadata('unconfined', 'image/jpeg') -%}
+class="unconfined"
 {%- endif %}
 >
 </div>
