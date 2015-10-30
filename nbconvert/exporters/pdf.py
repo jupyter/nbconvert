@@ -80,7 +80,7 @@ class PDFExporter(LatexExporter):
         if shell:
             command = subprocess.list2cmdline(command)
         env = os.environ.copy()
-        env['TEXINPUTS'] = os.pathsep.join([self.texinputs, env.get('TEXINPUTS', '')])
+        env['TEXINPUTS'] = str(os.pathsep.join([self.texinputs, env.get('TEXINPUTS', '')]))
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for index in range(count):
