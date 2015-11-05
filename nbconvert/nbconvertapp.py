@@ -72,6 +72,7 @@ nbconvert_aliases.update({
     'writer' : 'NbConvertApp.writer_class',
     'post': 'NbConvertApp.postprocessor_class',
     'output': 'NbConvertApp.output_base',
+    'output-dir': 'FilesWriter.build_directory',
     'reveal-prefix': 'SlidesExporter.reveal_url_prefix',
     'nbformat': 'NotebookExporter.nbformat_version',
 })

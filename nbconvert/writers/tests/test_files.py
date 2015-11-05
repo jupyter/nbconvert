@@ -98,7 +98,7 @@ class Testfiles(TestsBase):
                 self.assertEqual(output, 'b')
 
 
-    def test_builddir(self):
+    def test_build_dir(self):
         """Can FilesWriter write to a build dir correctly?"""
 
         # Work in a temporary directory.
@@ -125,6 +125,20 @@ class Testfiles(TestsBase):
             with open(extracted_file_dest, 'r') as f:
                 output = f.read()
                 self.assertEqual(output, 'b')
+
+    def test_build_dir_default(self):
+        """FilesWriter defaults to input path"""
+        with self.create_temp_cwd():
+            os.mkdir('sub')
+            resources = {
+                'metadata': {'path': 'sub'}
+            }
+            writer = FilesWriter()
+            writer.write(u'content', resources, notebook_name="out")
+            dest = os.path.join('sub', 'out')
+            assert os.path.isfile(dest)
+            with open(dest) as f:
+                self.assertEqual(f.read().strip(), 'content')
 
 
     def test_links(self):
