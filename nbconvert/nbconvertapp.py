@@ -32,10 +32,12 @@ from .utils.exceptions import ConversionException
 #-----------------------------------------------------------------------------
 
 class CaselessStrEnumOrDottedObjectName(CaselessStrEnum, DottedObjectName):
-    """Either an enum whose value must be in a given sequence, or a Dotted Object Name
+    """Either an Enum whose value must be in a given sequence, or a Dotted Object Name
 
-    Exporter can be either  alis tof built-ins exporter that are whilelisted and are simple strings ('html', 'latex', 'pdf', ... )
-    Or a dotted object name that will be imported at run-time and instancitaed with the right configuration. 
+    Exporter can be either alias of built-ins exporter that are white-listed
+    and are simple strings ('html', 'latex', 'pdf', ... ) Or a dotted object
+    name that will be imported at run-time and instantiate with the right
+    configuration.
     """
 
     def __init__(self, values, default_value=Undefined, **metadata):
@@ -77,7 +79,6 @@ nbconvert_aliases.update(base_aliases)
 nbconvert_aliases.update({
     'to' : 'NbConvertApp.export_format',
     'template' : 'TemplateExporter.template_file',
-    'templatelib' : 'TemplateExporter.template_lib',
     'writer' : 'NbConvertApp.writer_class',
     'post': 'NbConvertApp.postprocessor_class',
     'output': 'NbConvertApp.output_base',

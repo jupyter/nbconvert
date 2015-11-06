@@ -90,9 +90,6 @@ class TemplateExporter(Exporter):
             self._environment_cached = self._create_environment()
         return self._environment_cached
 
-    template_lib = DottedObjectName('tpllib',config=True,
-            help="Name of the template file to use")
-
 
     template_file = Unicode(config=True,
             help="Name of the template file to use", affects_template=True)
@@ -291,13 +288,11 @@ class TemplateExporter(Exporter):
             [os.path.join(here, self.default_template_path),
              os.path.join(here, self.template_skeleton_path)]
 
-        # This is where we instantiate our custom template loader, which is defined below outside of TemplateExporter
-        loaders = self.extra_loaders + [FileSystemLoader(paths)] + [CustomTemplateLoader(*self.template_lib.split('.', 1))]
+        loaders = self.extra_loaders + [FileSystemLoader(paths)]
         environment = Environment(
             loader= ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS
             )
-        # end of my changes here
 
         environment.globals['uuid4'] = uuid.uuid4
 
@@ -311,24 +306,3 @@ class TemplateExporter(Exporter):
                 self._register_filter(environment, key, user_filter)
 
         return environment
-
-
-# This is the custom template loader, a sub-class of the jinja2 BaseLoader class
-
-from jinja2 import BaseLoader, TemplateNotFound
-from os.path import join, exists, getmtime
-
-class CustomTemplateLoader(BaseLoader):
-
-    def __init__(self, path):
-        self.path = path
-
-    def get_source(self, environment, template):
-        path = join(self.path, template)
-        if not exists(path):
-            raise TemplateNotFound(template)
-        mtime = getmtime(path)
-        with open(path, 'r') as f:
-            source = f.read()
-        return source, path, lambda: mtime == getmtime(path)
-
