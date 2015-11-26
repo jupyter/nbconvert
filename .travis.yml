@@ -16,7 +16,7 @@ before_install:
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
     - wget http://c90cb902a90d6a506ab3-a24171cbeaa42ce11788f0df3362e902.r46.cf5.rackcdn.com/pandoc-1.15.0.6.tar.gz && tar -xzf pandoc-1.15.0.6.tar.gz
-    - pip install -f travis-wheels/wheelhouse . coveralls -r requirements.txt
+    - pip install -f travis-wheels/wheelhouse . coveralls
     - pip install nbconvert[execute,serve,test]
     - python -m ipykernel.kernelspec --user
 script:
