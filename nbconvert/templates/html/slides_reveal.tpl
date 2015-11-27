@@ -159,13 +159,16 @@ a.anchor-link {
 
 
 {% block body %}
+{% block pre_slides %}
 <body>
+{% endblock pre_slides %}
+
 <div class="reveal">
 <div class="slides">
 {{ super() }}
 </div>
 </div>
-
+{% block post_slides %}
 <script>
 
 require(
@@ -216,10 +219,10 @@ require(
 
     }
 );
-
 </script>
 
 </body>
+{% endblock post_slides %}
 {% endblock body %}
 
 {% block footer %}
