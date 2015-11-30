@@ -7,7 +7,7 @@ import subprocess
 import os
 import sys
 
-from ipython_genutils.py3compat import which
+from ipython_genutils.py3compat import which, cast_bytes_py2
 from traitlets import Integer, List, Bool, Instance, Unicode
 from ipython_genutils.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
@@ -80,7 +80,10 @@ class PDFExporter(LatexExporter):
         if shell:
             command = subprocess.list2cmdline(command)
         env = os.environ.copy()
-        env['TEXINPUTS'] = str(os.pathsep.join([self.texinputs, env.get('TEXINPUTS', '')]))
+        env['TEXINPUTS'] = os.pathsep.join([
+            cast_bytes_py2(self.texinputs),
+            env.get('TEXINPUTS', ''),
+        ])
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for index in range(count):
