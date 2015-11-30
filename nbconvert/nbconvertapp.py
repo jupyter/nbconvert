@@ -310,14 +310,13 @@ class NbConvertApp(JupyterApp):
             - output_files_dir: a directory where output files (not including
               the notebook itself) should be saved
 
-        If filename is none (converting notebook from in memory), fill in the required
+        If filename is None (converting notebook from in memory), fill in the required
         parameters with UUID.
         """
 
         # Get a unique key for the notebook and set it in the resources object.
         if not notebook_filename:
             notebook_name = '%s' % uuid.uuid4()
-
         else:
             basename = os.path.basename(notebook_filename)
             notebook_name = basename[:basename.rfind('.')]
@@ -346,7 +345,7 @@ class NbConvertApp(JupyterApp):
         exporter. This function returns the output and (possibly modified)
         resources from the exporter.
 
-        shell_input: a filename or buffer from stdin depending on the '--stdin' option
+        shell_input: a filename or buffer (for instance from stdin using '--stdin' option)
         """
         try:
             if self.from_stdin:
@@ -399,7 +398,7 @@ class NbConvertApp(JupyterApp):
 
         """
         if self.from_stdin:
-            self.log.info("Converting notebook from stdin to stdout", shell_input, self.export_format)
+            self.log.info("Converting notebook from stdin into %s", self.export_format)
             resources = self.init_single_notebook_resources(None)
         else:
             self.log.info("Converting notebook %s to %s", shell_input, self.export_format)
