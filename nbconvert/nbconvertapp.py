@@ -34,7 +34,7 @@ class DottedOrNone(DottedObjectName):
     """
     A string holding a valid dotted object name in Python, such as A.b3._c
     Also allows for None type."""
-    
+
     default_value = u''
 
     def validate(self, obj, value):
@@ -42,7 +42,7 @@ class DottedOrNone(DottedObjectName):
             return super(DottedOrNone, self).validate(obj, value)
         else:
             return value
-            
+
 nbconvert_aliases = {}
 nbconvert_aliases.update(base_aliases)
 nbconvert_aliases.update({
@@ -81,7 +81,7 @@ nbconvert_flags.update({
             },
             'FilesWriter': {'build_directory': ''},
         },
-        """Run nbconvert in place, overwriting the existing notebook (only 
+        """Run nbconvert in place, overwriting the existing notebook (only
         relevant when converting to notebook format)"""
         )
 })
@@ -158,7 +158,7 @@ class NbConvertApp(JupyterApp):
         
         Multiple notebooks can be given at the command line in a couple of 
         different ways:
-  
+        
         > jupyter nbconvert notebook*.ipynb
         > jupyter nbconvert notebook1.ipynb notebook2.ipynb
         
@@ -170,11 +170,11 @@ class NbConvertApp(JupyterApp):
         """.format(get_export_names()))
 
     # Writer specific variables
-    writer = Instance('nbconvert.writers.base.WriterBase',  
-                      help="""Instance of the writer class used to write the 
+    writer = Instance('nbconvert.writers.base.WriterBase',
+                      help="""Instance of the writer class used to write the
                       results of the conversion.""", allow_none=True)
-    writer_class = DottedObjectName('FilesWriter', config=True, 
-                                    help="""Writer class used to write the 
+    writer_class = DottedObjectName('FilesWriter', config=True,
+                                    help="""Writer class used to write the
                                     results of the conversion""")
     writer_aliases = {'fileswriter': 'nbconvert.writers.files.FilesWriter',
                       'debugwriter': 'nbconvert.writers.debug.DebugWriter',
@@ -187,12 +187,12 @@ class NbConvertApp(JupyterApp):
         self.writer_factory = import_item(new)
 
     # Post-processor specific variables
-    postprocessor = Instance('nbconvert.postprocessors.base.PostProcessorBase',  
-                      help="""Instance of the PostProcessor class used to write the 
+    postprocessor = Instance('nbconvert.postprocessors.base.PostProcessorBase',
+                      help="""Instance of the PostProcessor class used to write the
                       results of the conversion.""", allow_none=True)
 
-    postprocessor_class = DottedOrNone(config=True, 
-                                    help="""PostProcessor class used to write the 
+    postprocessor_class = DottedOrNone(config=True,
+                                    help="""PostProcessor class used to write the
                                     results of the conversion""")
     postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
     postprocessor_factory = Type(None, allow_none=True)
@@ -231,7 +231,7 @@ class NbConvertApp(JupyterApp):
         Add the cwd to the sys.path ($PYTHONPATH)
         """
         sys.path.insert(0, os.getcwd())
-        
+
 
     def init_notebooks(self):
         """Construct the list of notebooks.
@@ -250,8 +250,8 @@ class NbConvertApp(JupyterApp):
         # Use glob to replace all the notebook patterns with filenames.
         filenames = []
         for pattern in patterns:
-            
-            # Use glob to find matching filenames.  Allow the user to convert 
+
+            # Use glob to find matching filenames.  Allow the user to convert
             # notebooks without having to type the extension.
             globbed_files = glob.glob(pattern)
             globbed_files.extend(glob.glob(pattern + '.ipynb'))
@@ -276,7 +276,7 @@ class NbConvertApp(JupyterApp):
         """
         Initialize the postprocessor (which is stateless)
         """
-        self._postprocessor_class_changed(None, self.postprocessor_class, 
+        self._postprocessor_class_changed(None, self.postprocessor_class,
             self.postprocessor_class)
         if self.postprocessor_factory:
             self.postprocessor = self.postprocessor_factory(parent=self)
@@ -323,16 +323,20 @@ class NbConvertApp(JupyterApp):
 
         return resources
 
-    def export_single_notebook(self, notebook_filename, resources):
+    def export_single_notebook(self, shell_input, resources):
         """Step 2: Export the notebook
 
         Exports the notebook to a particular format according to the specified
         exporter. This function returns the output and (possibly modified)
         resources from the exporter.
 
+        shell_input: a filename or buffer from stdin depending on the '--stdin' option
         """
         try:
-            output, resources = self.exporter.from_filename(notebook_filename, resources=resources)
+            if stdin_input:
+                output, resources = self.exporter.from_file(shell_input, resources=resources)
+            else:
+                output, resources = self.exporter.from_filename(shell_input, resources=resources)
         except ConversionException:
             self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)
             self.exit(1)
@@ -369,7 +373,7 @@ class NbConvertApp(JupyterApp):
         if hasattr(self, 'postprocessor') and self.postprocessor:
             self.postprocessor(write_results)
 
-    def convert_single_notebook(self, notebook_filename):
+    def convert_single_notebook(self, shell_input):
         """Convert a single notebook. Performs the following steps:
 
             1. Initialize notebook resources
@@ -378,9 +382,12 @@ class NbConvertApp(JupyterApp):
             4. (Maybe) postprocess the written file
 
         """
-        self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
-        resources = self.init_single_notebook_resources(notebook_filename)
-        output, resources = self.export_single_notebook(notebook_filename, resources)
+        if stdin_option:
+            self.log.info("Converting notebook from stdin to stdout", shell_input, self.export_format)
+        else:
+            self.log.info("Converting notebook %s to %s", shell_input, self.export_format)
+        resources = self.init_single_notebook_resources(shell_input)
+        output, resources = self.export_single_notebook(shell_input, resources)
         write_results = self.write_single_notebook(output, resources)
         self.postprocess_single_notebook(write_results)
 
@@ -398,7 +405,7 @@ class NbConvertApp(JupyterApp):
                 """
             )
             self.exit(1)
-        
+
         # initialize the exporter
         self.exporter = exporter_map[self.export_format](config=self.config)
 
