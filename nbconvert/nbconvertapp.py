@@ -427,7 +427,7 @@ class NbConvertApp(JupyterApp):
         self.exporter = exporter_map[self.export_format](config=self.config)
 
         # no notebooks to convert!
-        if len(self.notebooks) == 0:
+        if len(self.notebooks) == 0 and not self.from_stdin:
             self.print_help()
             sys.exit(-1)
 
@@ -436,7 +436,7 @@ class NbConvertApp(JupyterApp):
             for notebook_filename in self.notebooks:
                 self.convert_single_notebook(notebook_filename)
         else:
-            self.convert_single_notebook(stream=sys.stdin)
+            self.convert_single_notebook(sys.stdin)
             
 #-----------------------------------------------------------------------------
 # Main entry point
