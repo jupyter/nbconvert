@@ -316,7 +316,7 @@ class NbConvertApp(JupyterApp):
 
         # Get a unique key for the notebook and set it in the resources object.
         if not notebook_filename:
-            notebook_name = '%s' % uuid.uuid(4)
+            notebook_name = '%s' % uuid.uuid4()
 
         else:
             basename = os.path.basename(notebook_filename)
@@ -349,7 +349,7 @@ class NbConvertApp(JupyterApp):
         shell_input: a filename or buffer from stdin depending on the '--stdin' option
         """
         try:
-            if stdin_input:
+            if self.from_stdin:
                 output, resources = self.exporter.from_file(shell_input, resources=resources)
             else:
                 output, resources = self.exporter.from_filename(shell_input, resources=resources)
@@ -398,11 +398,12 @@ class NbConvertApp(JupyterApp):
             4. (Maybe) postprocess the written file
 
         """
-        if stdin_option:
+        if self.from_stdin:
             self.log.info("Converting notebook from stdin to stdout", shell_input, self.export_format)
+            resources = self.init_single_notebook_resources(None)
         else:
             self.log.info("Converting notebook %s to %s", shell_input, self.export_format)
-        resources = self.init_single_notebook_resources(shell_input)
+            resources = self.init_single_notebook_resources(shell_input)
         output, resources = self.export_single_notebook(shell_input, resources)
         write_results = self.write_single_notebook(output, resources)
         self.postprocess_single_notebook(write_results)
