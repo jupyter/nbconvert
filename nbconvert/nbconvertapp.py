@@ -13,6 +13,7 @@ import logging
 import sys
 import os
 import glob
+import uuid
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
@@ -68,6 +69,10 @@ nbconvert_flags.update({
          "an error and include the error message in the cell output "
          "(the default behaviour is to abort conversion). This flag "
          "is only relevant if '--execute' was specified, too.")
+        ),
+    'stdin' : (
+        {'NbConvertApp' : {'from_stdin' : True}},
+        "read a single notebook file from stdin, and write the converted result to stdout. Implies `--stdout`"
         ),
     'stdout' : (
         {'NbConvertApp' : {'writer_class' : "StdoutWriter"}},
@@ -176,6 +181,7 @@ class NbConvertApp(JupyterApp):
     writer_class = DottedObjectName('FilesWriter', config=True,
                                     help="""Writer class used to write the
                                     results of the conversion""")
+    from_stdin   = Bool(False, config=True, help="read a single notebook from stdin.")
     writer_aliases = {'fileswriter': 'nbconvert.writers.files.FilesWriter',
                       'debugwriter': 'nbconvert.writers.debug.DebugWriter',
                       'stdoutwriter': 'nbconvert.writers.stdout.StdoutWriter'}
@@ -185,6 +191,10 @@ class NbConvertApp(JupyterApp):
         if new.lower() in self.writer_aliases:
             new = self.writer_aliases[new.lower()]
         self.writer_factory = import_item(new)
+
+    def _from_stdin_changed(self, name, old, new):
+        if new == True:
+            self.writer_class = "StdoutWriter"
 
     # Post-processor specific variables
     postprocessor = Instance('nbconvert.postprocessors.base.PostProcessorBase',
@@ -300,18 +310,24 @@ class NbConvertApp(JupyterApp):
             - output_files_dir: a directory where output files (not including
               the notebook itself) should be saved
 
+        If filename is none (converting notebook from in memory), fill in the required
+        parameters with UUID.
         """
 
         # Get a unique key for the notebook and set it in the resources object.
-        basename = os.path.basename(notebook_filename)
-        notebook_name = basename[:basename.rfind('.')]
-        if self.output_base:
-            # strip duplicate extension from output_base, to avoid Basname.ext.ext
-            if getattr(self.exporter, 'file_extension', False):
-                base, ext = os.path.splitext(self.output_base)
-                if ext == self.exporter.file_extension:
-                    self.output_base = base
-            notebook_name = self.output_base
+        if not notebook_filename:
+            notebook_name = '%s' % uuid.uuid(4)
+
+        else:
+            basename = os.path.basename(notebook_filename)
+            notebook_name = basename[:basename.rfind('.')]
+            if self.output_base:
+                # strip duplicate extension from output_base, to avoid Basname.ext.ext
+                if getattr(self.exporter, 'file_extension', False):
+                    base, ext = os.path.splitext(self.output_base)
+                    if ext == self.exporter.file_extension:
+                        self.output_base = base
+                notebook_name = self.output_base
 
         self.log.debug("Notebook name is '%s'", notebook_name)
 
@@ -415,8 +431,11 @@ class NbConvertApp(JupyterApp):
             sys.exit(-1)
 
         # convert each notebook
-        for notebook_filename in self.notebooks:
-            self.convert_single_notebook(notebook_filename)
+        if not self.from_stdin:
+            for notebook_filename in self.notebooks:
+                self.convert_single_notebook(notebook_filename)
+        else:
+            self.convert_single_notebook(stream=sys.stdin)
             
 #-----------------------------------------------------------------------------
 # Main entry point
