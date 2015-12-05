@@ -13,7 +13,6 @@ import logging
 import sys
 import os
 import glob
-import uuid
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
@@ -317,7 +316,7 @@ class NbConvertApp(JupyterApp):
 
         # Get a unique key for the notebook and set it in the resources object.
         if not notebook_filename:
-            notebook_name = '%s' % uuid.uuid4()
+            notebook_name = 'notebook'
         else:
             basename = os.path.basename(notebook_filename)
             notebook_name = basename[:basename.rfind('.')]
@@ -354,8 +353,8 @@ class NbConvertApp(JupyterApp):
             else:
                 output, resources = self.exporter.from_filename(shell_input, resources=resources)
         except ConversionException:
-            self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)
-            self.exit(1)
+            self.log.error("Error while converting notebook", exc_info=True)
+            self.exit('Could not convert notebook.')
 
         return output, resources
 
