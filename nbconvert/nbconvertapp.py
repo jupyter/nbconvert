@@ -71,7 +71,11 @@ nbconvert_flags.update({
          "is only relevant if '--execute' was specified, too.")
         ),
     'stdin' : (
-        {'NbConvertApp' : {'from_stdin' : True}},
+        {'NbConvertApp' : {
+            'from_stdin' : True,
+            'writer_class':'StdoutWriter'
+            }
+        },
         "read a single notebook file from stdin, and write the converted result to stdout. Implies `--stdout`"
         ),
     'stdout' : (
@@ -192,9 +196,6 @@ class NbConvertApp(JupyterApp):
             new = self.writer_aliases[new.lower()]
         self.writer_factory = import_item(new)
 
-    def _from_stdin_changed(self, name, old, new):
-        if new == True:
-            self.writer_class = "StdoutWriter"
 
     # Post-processor specific variables
     postprocessor = Instance('nbconvert.postprocessors.base.PostProcessorBase',
