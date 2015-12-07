@@ -21,8 +21,8 @@ install:
     - python -m ipykernel.kernelspec --user
 script:
     - # need to cd or coverage report broken.
-    - DIR=$(pwd) ; cd /tmp/
-    - nosetests --with-coverage --cover-package nbconvert --cover-inclusive --cover-xml nbconvert --cover-xml-file=$DIR/coverage.xml
+    - cd /tmp/
+    - nosetests --with-coverage --cover-package nbconvert --cover-inclusive --cover-xml nbconvert --cover-xml-file=$TRAVIS_BUILD_DIR/coverage.xml
     - cd -
 after_success:
     - codecov
