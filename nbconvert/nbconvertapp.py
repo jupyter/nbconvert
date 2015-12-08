@@ -310,8 +310,6 @@ class NbConvertApp(JupyterApp):
             - output_files_dir: a directory where output files (not including
               the notebook itself) should be saved
 
-        If filename is None (converting notebook from in memory), fill in the required
-        parameters with UUID.
         """
 
         # Get a unique key for the notebook and set it in the resources object.
