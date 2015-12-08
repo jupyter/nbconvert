@@ -6,6 +6,7 @@
 from .templateexporter import TemplateExporter
 
 from traitlets import Dict
+from traitlets.utils.importstring import import_item
 
 class ScriptExporter(TemplateExporter):
     
@@ -23,7 +24,11 @@ class ScriptExporter(TemplateExporter):
             self.log.debug("Loading script exporter: %s", exporter_name)
             from .export import exporter_map
             if exporter_name not in self._exporters:
-                Exporter = exporter_map[exporter_name]
+                if exporter_name in exporter_map:
+                    Exporter = exporter_map[exporter_name]
+                else:
+                    self.log.debug("Importing custom Exporter: %s", exporter_name)
+                    Exporter = import_item(exporter_name)
                 self._exporters[exporter_name] = Exporter(parent=self)
             exporter = self._exporters[exporter_name]
             return exporter.from_notebook_node(nb, resources, **kw)
