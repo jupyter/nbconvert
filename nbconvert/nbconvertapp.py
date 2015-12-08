@@ -336,20 +336,20 @@ class NbConvertApp(JupyterApp):
 
         return resources
 
-    def export_single_notebook(self, shell_input, resources):
+    def export_single_notebook(self, notebook_filename, resources):
         """Step 2: Export the notebook
 
         Exports the notebook to a particular format according to the specified
         exporter. This function returns the output and (possibly modified)
         resources from the exporter.
 
-        shell_input: a filename or buffer (for instance from stdin using '--stdin' option)
+        notebook_filename: a filename or buffer (for instance from stdin using '--stdin' option)
         """
         try:
             if self.from_stdin:
-                output, resources = self.exporter.from_file(shell_input, resources=resources)
+                output, resources = self.exporter.from_file(notebook_filename, resources=resources)
             else:
-                output, resources = self.exporter.from_filename(shell_input, resources=resources)
+                output, resources = self.exporter.from_filename(notebook_filename, resources=resources)
         except ConversionException:
             self.log.error("Error while converting notebook", exc_info=True)
             self.exit('Could not convert notebook.')
@@ -386,7 +386,7 @@ class NbConvertApp(JupyterApp):
         if hasattr(self, 'postprocessor') and self.postprocessor:
             self.postprocessor(write_results)
 
-    def convert_single_notebook(self, shell_input):
+    def convert_single_notebook(self, notebook_filename):
         """Convert a single notebook. Performs the following steps:
 
             1. Initialize notebook resources
@@ -399,9 +399,9 @@ class NbConvertApp(JupyterApp):
             self.log.info("Converting notebook from stdin into %s", self.export_format)
             resources = self.init_single_notebook_resources(None)
         else:
-            self.log.info("Converting notebook %s to %s", shell_input, self.export_format)
-            resources = self.init_single_notebook_resources(shell_input)
-        output, resources = self.export_single_notebook(shell_input, resources)
+            self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
+            resources = self.init_single_notebook_resources(notebook_filename)
+        output, resources = self.export_single_notebook(notebook_filename, resources)
         write_results = self.write_single_notebook(output, resources)
         self.postprocess_single_notebook(write_results)
 
