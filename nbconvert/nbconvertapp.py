@@ -72,7 +72,6 @@ nbconvert_flags.update({
     'stdin' : (
         {'NbConvertApp' : {
             'from_stdin' : True,
-            'writer_class':'StdoutWriter'
             }
         },
         "read a single notebook file from stdin, and write the converted result to stdout. Implies `--stdout`"
