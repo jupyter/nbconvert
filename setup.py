@@ -192,6 +192,7 @@ install_requires = setuptools_args['install_requires'] = [
     'jupyter_core',
     'nbformat',
     'entrypoints',
+    'bleach',
 ]
 
 extras_require = setuptools_args['extras_require'] = {
