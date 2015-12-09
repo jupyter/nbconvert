@@ -29,7 +29,7 @@ class SanitizeHTML(Preprocessor):
     tags = List(
         Unicode,
         config=True,
-        default=ALLOWED_TAGS,
+        default_value=ALLOWED_TAGS,
         help="List of HTML tags to allow",
     )
     styles = List(
