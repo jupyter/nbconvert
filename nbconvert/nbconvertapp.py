@@ -429,7 +429,7 @@ class NbConvertApp(JupyterApp):
             sys.exit(-1)
 
         # convert each notebook
-        if not self.from_stdin:
+        if not self.writer_class == 'StdoutWriter': #if stdout there is no file
             for notebook_filename in self.notebooks:
                 self.convert_single_notebook(notebook_filename)
         else:
