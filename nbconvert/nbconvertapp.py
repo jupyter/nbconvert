@@ -74,7 +74,7 @@ nbconvert_flags.update({
             'from_stdin' : True,
             }
         },
-        "read a single notebook file from stdin, and write the converted result to stdout. Implies `--stdout`"
+        "read a single notebook file from stdin. Write the resulting notebook with default basename 'notebook.*'"
         ),
     'stdout' : (
         {'NbConvertApp' : {'writer_class' : "StdoutWriter"}},
@@ -345,7 +345,7 @@ class NbConvertApp(JupyterApp):
         notebook_filename: a filename or buffer (for instance from stdin using '--stdin' option)
         """
         try:
-            if input_buffer:
+            if input_buffer is not None:
                 output, resources = self.exporter.from_file(input_buffer, resources=resources)
             else:
                 output, resources = self.exporter.from_filename(notebook_filename, resources=resources)
