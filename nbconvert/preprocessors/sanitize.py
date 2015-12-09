@@ -8,14 +8,14 @@ from bleach import (
     ALLOWED_TAGS,
     clean,
 )
-from IPython.utils.traitlets import (
+from traitlets import (
     Any,
     Bool,
     List,
     Set,
     Unicode,
 )
-from IPython.nbconvert.preprocessors.base import Preprocessor
+from .base import Preprocessor
 
 
 class SanitizeHTML(Preprocessor):
