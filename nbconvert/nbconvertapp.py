@@ -335,7 +335,7 @@ class NbConvertApp(JupyterApp):
 
         return resources
 
-    def export_single_notebook(self, notebook_filename, resources):
+    def export_single_notebook(self, notebook_filename, resources, input_buffer=None):
         """Step 2: Export the notebook
 
         Exports the notebook to a particular format according to the specified
@@ -345,8 +345,8 @@ class NbConvertApp(JupyterApp):
         notebook_filename: a filename or buffer (for instance from stdin using '--stdin' option)
         """
         try:
-            if self.from_stdin:
-                output, resources = self.exporter.from_file(notebook_filename, resources=resources)
+            if input_buffer:
+                output, resources = self.exporter.from_file(input_buffer, resources=resources)
             else:
                 output, resources = self.exporter.from_filename(notebook_filename, resources=resources)
         except ConversionException:
@@ -385,22 +385,27 @@ class NbConvertApp(JupyterApp):
         if hasattr(self, 'postprocessor') and self.postprocessor:
             self.postprocessor(write_results)
 
-    def convert_single_notebook(self, notebook_filename):
+    def convert_single_notebook(self, notebook_filename, input_buffer=None):
         """Convert a single notebook. Performs the following steps:
 
             1. Initialize notebook resources
             2. Export the notebook to a particular format
             3. Write the exported notebook to file
             4. (Maybe) postprocess the written file
-
+            
+            If input_buffer is not None, convertion is done using buffer as source ignoring
+            the notebook_filename argument.
         """
-        if self.from_stdin:
-            self.log.info("Converting notebook from stdin into %s", self.export_format)
-            resources = self.init_single_notebook_resources(None)
-        else:
+        if not input_buffer:
             self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
             resources = self.init_single_notebook_resources(notebook_filename)
-        output, resources = self.export_single_notebook(notebook_filename, resources)
+            output, resources = self.export_single_notebook(notebook_filename, resources)
+        else:
+            notebook_filename = "notebook"
+            self.log.info("Converting notebook into %s", self.export_format)
+            resources = self.init_single_notebook_resources(None) #init_single_notebook_resources need to know there is no file
+            output, resources = self.export_single_notebook(notebook_filename, resources, input_buffer=input_buffer)
+
         write_results = self.write_single_notebook(output, resources)
         self.postprocess_single_notebook(write_results)
 
@@ -428,11 +433,11 @@ class NbConvertApp(JupyterApp):
             sys.exit(-1)
 
         # convert each notebook
-        if not self.writer_class == 'StdoutWriter': #if stdout there is no file
+        if not self.from_stdin:
             for notebook_filename in self.notebooks:
                 self.convert_single_notebook(notebook_filename)
         else:
-            self.convert_single_notebook(sys.stdin)
+            self.convert_single_notebook(None, input_buffer=sys.stdin)
             
 #-----------------------------------------------------------------------------
 # Main entry point

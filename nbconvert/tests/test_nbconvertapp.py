@@ -324,9 +324,12 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook1.ipynb"]):
             with io.open('notebook1.ipynb') as f:
                 notebook = f.read().encode()
-                output1, _ = self.nbconvert('--to markdown --stdin', stdin=notebook)
-            assert_not_in('```python', output1) # shouldn't have language
-            assert_in("```", output1) # but should have fenced blocks
+                self.nbconvert('--to markdown --stdin', stdin=notebook)
+            assert os.path.isfile("notebook.md") #default name for stdin input
+            with io.open('notebook.md') as f:
+                output1 = f.read()
+                assert_not_in('```python', output1) # shouldn't have language
+                assert_in("```", output1) # but should have fenced blocks
 
     @dec.onlyif_cmds_exist('pdflatex')
     @dec.onlyif_cmds_exist('pandoc')
