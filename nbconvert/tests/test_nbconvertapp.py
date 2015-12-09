@@ -304,6 +304,18 @@ class TestNbConvertApp(TestsBase):
             assert '```julia' in output2  # shouldn't have language
             assert "```" in output2  # but should also plain ``` to close cell
     
+    def test_convert_from_stdin_to_stdout(self):
+        """
+        Verify that conversion can be done via stdin, and that 
+        --stdin  implies --stdout. 
+        """
+        with self.create_temp_cwd(["notebook1.ipynb"]):
+            with io.open('notebook1.ipynb') as f:
+                notebook = f.read().encode()
+                output1, _ = self.nbconvert('--to markdown --stdin --stdout', stdin=notebook)
+            assert_not_in('```python', output1) # shouldn't have language
+            assert_in("```", output1) # but should have fenced blocks
+
     def test_convert_from_stdin(self):
         """
         Verify that conversion can be done via stdin, and that 
@@ -315,7 +327,6 @@ class TestNbConvertApp(TestsBase):
                 output1, _ = self.nbconvert('--to markdown --stdin', stdin=notebook)
             assert_not_in('```python', output1) # shouldn't have language
             assert_in("```", output1) # but should have fenced blocks
-
 
     @dec.onlyif_cmds_exist('pdflatex')
     @dec.onlyif_cmds_exist('pandoc')
