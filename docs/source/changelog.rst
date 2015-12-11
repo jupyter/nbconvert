@@ -1,6 +1,8 @@
 Changes in nbconvert
 ====================
 
+- allow nbconvert reading from stdin with "--stdin" option (write into "notebook" basename)
+
 4.1
 ---
 
