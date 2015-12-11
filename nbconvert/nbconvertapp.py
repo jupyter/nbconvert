@@ -431,7 +431,7 @@ class NbConvertApp(JupyterApp):
                 self.convert_single_notebook(notebook_filename)
         else:
             # default name when conversion from stdin
-            self.convert_single_notebook("notebook", input_buffer=sys.stdin)
+            self.convert_single_notebook("notebook.ipynb", input_buffer=sys.stdin)
             
 #-----------------------------------------------------------------------------
 # Main entry point
