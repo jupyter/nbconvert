@@ -2,6 +2,7 @@
 
 from .base import PreprocessorTestsBase
 from ..sanitize import SanitizeHTML
+from nbformat import v4 as nbformat
 
 
 class TestSanitizer(PreprocessorTestsBase):
@@ -102,6 +103,59 @@ class TestSanitizer(PreprocessorTestsBase):
             '_A_ <em style="color: blue;">few</em> '
             '&lt;script&gt;tags&lt;/script&gt;'
         )
+
+    def test_tag_passthrough(self):
+        """Test passing through raw output"""
+        preprocessor = self.build_preprocessor()
+
+        self.assertEqual(
+            self.preprocess_source(
+                'raw',
+                '_A_ <em>few</em> <script>tags</script>',
+                preprocessor
+            ),
+            '_A_ <em>few</em> <script>tags</script>'
+        )
+
+    def test_output_sanitizing(self):
+        """Test that outputs are also sanitized properly"""
+        preprocessor = self.build_preprocessor()
+        nb = self.build_notebook()
+
+        outputs = [
+            nbformat.new_output("display_data", data={
+                'text/plain': 'b',
+                'text/html': '<script>more evil</script>'
+                }),
+            nbformat.new_output('stream', name='stdout', text="wat"),
+            nbformat.new_output('stream', name='stdout', text="<script>Evil tag</script>")
+        ]
+        nb.cells[0].outputs = outputs
+
+        res = self.build_resources()
+        nb, res = preprocessor(nb, res)
+
+        expected_output = [
+            {
+                'data': {
+                    'text/html': '&lt;script&gt;more evil&lt;/script&gt;',
+                    'text/plain': 'b'
+                },
+                'metadata': {},
+                'output_type': 'display_data',
+            },
+            {
+                'name': 'stdout',
+                'output_type': 'stream',
+                'text': 'wat'
+            },
+            {
+                'name': 'stdout',
+                'output_type':
+                'stream', 'text': '<script>Evil tag</script>'
+            }
+        ]
+        self.assertEqual(nb.cells[0].outputs, expected_output)
 
     def test_tag_whitelist(self):
         """Test tag whitelisting"""
