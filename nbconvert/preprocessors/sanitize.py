@@ -77,13 +77,17 @@ class SanitizeHTML(Preprocessor):
 
         Cell Types:
           raw:
-            Return unchanged
+            Sanitize literal HTML
           markdown:
             Sanitize literal HTML
           code:
             Sanitize outputs that could result in code execution
         """
         if cell.cell_type == 'raw':
+            # Sanitize all raw cells anyway.
+            # Only ones with the text/html mimetype should be emitted
+            # but erring on the side of safety maybe.
+            cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
         elif cell.cell_type == 'markdown':
             cell.source = self.sanitize_html_tags(cell.source)

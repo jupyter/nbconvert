@@ -114,7 +114,7 @@ class TestSanitizer(PreprocessorTestsBase):
                 '_A_ <em>few</em> <script>tags</script>',
                 preprocessor
             ),
-            '_A_ <em>few</em> <script>tags</script>'
+            '_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;'
         )
 
     def test_output_sanitizing(self):
