@@ -81,9 +81,8 @@ class ExecutePreprocessor(Preprocessor):
             path = None
 
         from jupyter_client.manager import start_new_kernel
-        if not self.kernel_name:
-            kernel_name = nb.metadata.get('kernelspec', {}).get('name', 'python')
-        else:
+        kernel_name = nb.metadata.get('kernelspec', {}).get('name', 'python')
+        if self.kernel_name:
             kernel_name = self.kernel_name
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(
