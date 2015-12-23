@@ -65,7 +65,7 @@ class ExecutePreprocessor(Preprocessor):
     extra_arguments = List(Unicode())
 
     kernel_name = Unicode(
-        "python", config=True,
+        '', config=True,
         help=dedent(
             """
             Name of kernel to use to execute the cells.
