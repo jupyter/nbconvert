@@ -19,6 +19,7 @@ Contents:
    config_options
    latex_citations
    customizing
+   execute_api
    nbconvert_library
    api/index
    changelog
