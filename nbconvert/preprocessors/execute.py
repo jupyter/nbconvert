@@ -64,6 +64,17 @@ class ExecutePreprocessor(Preprocessor):
 
     extra_arguments = List(Unicode())
 
+    kernel_name = Unicode(
+        '', config=True,
+        help=dedent(
+            """
+            Name of kernel to use to execute the cells.
+            If not set, use the kernel_spec embedded in the notebook.
+            """
+        )
+    )
+
+
     def preprocess(self, nb, resources):
         path = resources.get('metadata', {}).get('path', '')
         if path == '':
@@ -71,6 +82,8 @@ class ExecutePreprocessor(Preprocessor):
 
         from jupyter_client.manager import start_new_kernel
         kernel_name = nb.metadata.get('kernelspec', {}).get('name', 'python')
+        if self.kernel_name:
+            kernel_name = self.kernel_name
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(
             kernel_name=kernel_name,
