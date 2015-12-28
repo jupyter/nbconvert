@@ -23,7 +23,8 @@ import shlex
 #sys.path.insert(0, os.path.abspath('.'))
 
 if os.environ.get('READTHEDOCS', ''):
-    # RTD doesn't use the Makefile, so re-run autogen_config.py here.
+    # RTD doesn't use the repo's Makefile to build docs. Run autogen_config.py
+    # here to generate rst files from ipynb files.
 
     with open('../autogen_config.py') as f:
         exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
@@ -65,6 +66,7 @@ author = 'Jupyter Development Team'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
+# Get information from _version.py and use it to generate version and release
 _version_py = '../../nbconvert/_version.py'
 version_ns = {}
 exec(compile(open(_version_py).read(), _version_py, 'exec'), version_ns)
