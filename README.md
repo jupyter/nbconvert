@@ -21,16 +21,16 @@ formats via [Jinja][] templates. The nbconvert tool allows you to convert an
 ## Usage
 
 From the command line, use nbconvert to convert a Jupyter notebook (*input*) to a
-a different format (*output*). The basic command structure is::
+a different format (*output*). The basic command structure is:
 
     $ jupyter nbconvert --to <output format> <input notebook>
 
-where *<output format>* is the desired output format and *<input notebook>* is the
+where `<output format>` is the desired output format and `<input notebook>` is the
 filename of the Jupyter notebook.
 
 ### Example: Convert a notebook to HTML
 
-Convert Juptyer notebook `mynotebook.ipynb` file to HTML using::
+Convert Juptyer notebook file, `mynotebook.ipynb`, to HTML using:
 
     $ jupyter nbconvert --to html mynotebook.ipynb
 
