@@ -2,5 +2,6 @@ traitlets
 jupyter_core
 jupyter_client
 nbformat
+sphinx_rtd_theme
 -e git+https://github.com/ipython/ipython.git#egg=ipython
 -e git+https://github.com/ipython/ipykernel.git#egg=ipykernel
