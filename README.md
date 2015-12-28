@@ -39,14 +39,15 @@ This command creates an HTML output file named `mynotebook.html`.
 
 ## Resources
 
-- [Project Jupyter website](https://jupyter.org)
-- [Online Demo at try.jupyter.org](https://try.jupyter.org)
 - [Documentation for Jupyter nbconvert](https://nbconvert.readthedocs.org/en/latest/)
   [[PDF](https://media.readthedocs.org/pdf/nbconvert/latest/nbconvert.pdf)]
-- [Documentation for Project Jupyter](https://jupyter.readthedocs.org/en/latest/index.html)
-  [[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)]
+- [nbconvert examples on GitHub](https://github.com/jupyter/nbconvert-examples)
 - [Issues](https://github.com/jupyter/nbconvert/issues)
 - [Technical support - Jupyter Google Group](https://groups.google.com/forum/#!forum/jupyter)
+- [Project Jupyter website](https://jupyter.org)
+- [Documentation for Project Jupyter](https://jupyter.readthedocs.org/en/latest/index.html)
+  [[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)]
+
 
 
 [Jinja]: http://jinja.pocoo.org/
