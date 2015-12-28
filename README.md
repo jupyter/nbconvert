@@ -1,20 +1,27 @@
-# Jupyter Notebook Conversion, nbconvert
+# nbconvert
+### Jupyter Notebook Conversion
 
-`jupyter nbconvert` converts notebooks to various other formats via [Jinja][] templates.
-The nbconvert tool allows you to convert an `.ipynb` notebook document file
-into various static formats including:
+[![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)
+[![Build Status](https://travis-ci.org/jupyter/nbconvert.svg?branch=master)](https://travis-ci.org/jupyter/nbconvert)
+[![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=latest)](http://nbconvert.readthedocs.org/en/latest/?badge=latest)
+
+The **nbconvert** tool, `jupyter nbconvert`, converts notebooks to various other
+formats via [Jinja][] templates. The nbconvert tool allows you to convert an
+`.ipynb` notebook file into various static formats including:
+
 * HTML
-* LaTEX
+* LaTeX
 * PDF
 * Reveal JS
 * Markdown (md)
 * ReStructured Text (rst)
-* executable script.
+* executable script
+
 
 ## Usage
 
-From the command line, use nbconvert to convert a Jupyter notebook (**input**) to a
-a different format (**output**). The basic command structure is:
+From the command line, use nbconvert to convert a Jupyter notebook (*input*) to a
+a different format (*output*). The basic command structure is::
 
     $ jupyter nbconvert --to <output format> <input notebook>
 
@@ -23,11 +30,12 @@ filename of the Jupyter notebook.
 
 ### Example: Convert a notebook to HTML
 
-Convert Juptyer notebook `mynotebook.ipynb` file to HTML using:
+Convert Juptyer notebook `mynotebook.ipynb` file to HTML using::
 
-   $ jupyter nbconvert --to html mynotebook.ipynb
+    $ jupyter nbconvert --to html mynotebook.ipynb
 
 This command creates an HTML output file named `mynotebook.html`.
+
 
 ## Resources
 
