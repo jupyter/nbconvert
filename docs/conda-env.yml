@@ -1,0 +1,8 @@
+name: nbconvert_docs
+channels:
+- asmeurer
+dependencies:
+- pandoc
+- nbformat
+- jupyter_client
+- ipykernel
