@@ -1,6 +1,0 @@
-traitlets
-jupyter_core
-jupyter_client
-nbformat
--e git+https://github.com/ipython/ipython.git#egg=ipython
--e git+https://github.com/ipython/ipykernel.git#egg=ipykernel
