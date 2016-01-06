@@ -28,6 +28,10 @@ if os.environ.get('READTHEDOCS', ''):
     with open('../autogen_config.py') as f:
         exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
 
+        # Convert notebook files to rst
+        os.system("jupyter nbconvert --to rst customizing.ipynb --FilesWriter.build_directory=source")
+        os.system("jupyter nbconvert --to rst nbconvert_library.ipynb --FilesWriter.build_directory=source")
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
