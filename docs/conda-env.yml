@@ -6,3 +6,4 @@ dependencies:
 - nbformat
 - jupyter_client
 - ipykernel
+- numpydoc
