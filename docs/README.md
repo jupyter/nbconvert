@@ -7,29 +7,27 @@ is hosted on ReadTheDocs.
 
 1. Change directory to documentation root:
 
-       $ cd docs
+           $ cd docs
 
 2. Install requirements:
 
-       $ pip install -r requirements.txt
+           $ pip install -r requirements.txt
 
 3. Build documentation using Makefile for Linux and OS X:
 
-       $ make html
+           $ make html
 
-   or for Windows:
+  or on Windows:
 
-       $ make.bat html
+           $ make.bat html
 
-4. Display the documentation locally:
+4. Display the documentation locally by navigating to
+   ``build/html/index.html`` in your browser:
 
-       $ open build/html/index.html
+   Or alternatively you may run a local server to display
+   the docs. In Python 3:
 
-   This command will open a window in your browser.
-
-   Or alternatively you may run a local server to display the docs. In Python 3:
-
-       $ python -m http.server 8000
+           $ python -m http.server 8000
 
    In your browser, go to `http://localhost:8000`.
 
