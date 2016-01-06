@@ -23,8 +23,9 @@ import shlex
 #sys.path.insert(0, os.path.abspath('.'))
 
 if os.environ.get('READTHEDOCS', ''):
-    # RTD doesn't use the repo's Makefile to build docs. Run autogen_config.py
-    # here to generate rst files from ipynb files.
+    # RTD doesn't use the repo's Makefile to build docs. We run
+    # autogen_config.py to create the config docs (i.e. Configuration Options
+    # page).
 
     with open('../autogen_config.py') as f:
         exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
