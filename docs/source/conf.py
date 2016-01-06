@@ -23,7 +23,9 @@ import shlex
 #sys.path.insert(0, os.path.abspath('.'))
 
 if os.environ.get('READTHEDOCS', ''):
-    # RTD doesn't use the Makefile, so re-run autogen_config.py here.
+    # RTD doesn't use the repo's Makefile to build docs. We run
+    # autogen_config.py to create the config docs (i.e. Configuration Options
+    # page).
 
     with open('../autogen_config.py') as f:
         exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
@@ -65,6 +67,7 @@ author = 'Jupyter Development Team'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
+# Get information from _version.py and use it to generate version and release
 _version_py = '../../nbconvert/_version.py'
 version_ns = {}
 exec(compile(open(_version_py).read(), _version_py, 'exec'), version_ns)
@@ -120,9 +123,21 @@ todo_include_todos = False
 
 # -- Options for HTML output ----------------------------------------------
 
+# Set on_rtd to whether we are building on readthedocs.org. We get this line of
+# code grabbed from docs.readthedocs.org
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+if not on_rtd:  # only import and set the theme if we're building docs locally
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+# otherwise, readthedocs.org uses their default theme, so no need to specify it
+
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#html_theme = 'alabaster'
+#html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -130,7 +145,7 @@ todo_include_todos = False
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+#html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -296,7 +311,6 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}

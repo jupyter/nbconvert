@@ -113,7 +113,7 @@ The currently supported export formats are:
   nbconvert uses pandoc_ to convert between various markup languages,
   so pandoc is a dependency when converting to latex or reStructuredText.
 
-.. _pandoc: http://johnmacfarlane.net/pandoc/
+.. _pandoc: http://pandoc.org/
 
 The output file created by ``nbconvert`` will have the same base name as
 the notebook and will be placed in the current working directory. Any
