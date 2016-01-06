@@ -1,8 +1,0 @@
-traitlets
-jupyter_core
-jupyter_client
-nbformat
-nbsphinx
-sphinx_rtd_theme
-ipykernel
-mistune
