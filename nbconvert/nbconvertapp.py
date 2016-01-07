@@ -38,6 +38,7 @@ def _validate_exporter(exporter):
     from ipython_genutils import py3compat
 
     if '.' not in exporter:
+        value = None
         if isinstance(exporter, str):
             value = py3compat.cast_unicode_py2(exporter)
         value = value.lower()
