@@ -419,7 +419,8 @@ class NbConvertApp(JupyterApp):
             self.exit(1)
         
         # initialize the exporter
-        self.exporter = get_exporter(self.export_format)(config=self.config)
+        cls = get_exporter(self.export_format)
+        self.exporter = cls(config=self.config)
 
         # no notebooks to convert!
         if len(self.notebooks) == 0:
