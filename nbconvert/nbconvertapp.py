@@ -239,7 +239,7 @@ class NbConvertApp(JupyterApp):
 
 
     export_format = Unicode(
-        values='html',
+        'html',
         allow_none=False,
         config=True,
         help="""The export format to be used, either one of the built-in formats, or a dotted object name that represents the import path for an `Exporter` class"""

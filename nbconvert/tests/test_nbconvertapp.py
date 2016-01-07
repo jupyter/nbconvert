@@ -5,12 +5,9 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
-import glob
-import sys
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
-from ..preprocessors.execute import CellExecutionError
 
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
