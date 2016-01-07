@@ -31,38 +31,22 @@ from .utils.exceptions import ConversionException
 #Classes and functions
 #-----------------------------------------------------------------------------
 
-def _validate_exporter(exporter):
-    """ given an exporter name, raise if it is not a valid one.
-
-    """
-    from ipython_genutils import py3compat
-
-    if '.' not in exporter:
-        value = None
-        if isinstance(exporter, str):
-            value = py3compat.cast_unicode_py2(exporter)
-        value = value.lower()
-        if (value in get_export_names()):
-            return value
-        else:
-            raise ValueError('Unknown exporter "%s", did you mean one of "%s"?'% (exporter, '", "'.join(get_export_names())))
-    else :
-        # try to import to raise if not possible.
-        import_item(exporter)
-        return exporter
-
-
-def get_exporter(exporter):
+def get_exporter(name):
     """ given an exporter name, return a class ready to be instantiate
     
-    Validate the exporter name first.
+    Raises ValueError if exporter is not found
     """
-    exporter = _validate_exporter(exporter)
+    if name in exporter_map:
+        return exporter_map[name]
 
-    if '.' not in exporter:
-        return exporter_map.get(exporter, None)
-    else :
-        return import_item(exporter)
+    if '.' in name:
+        try:
+            return import_item(name)
+        except ImportError:
+            pass
+
+    raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
+                     % (name, ', '.join(sorted(get_export_names()))))
 
 
 class DottedOrNone(DottedObjectName):
@@ -241,20 +225,11 @@ class NbConvertApp(JupyterApp):
 
     export_format = Unicode(
         'html',
-        allow_none=False,
-        config=True,
-        help="""The export format to be used, either one of the built-in formats, or a dotted object name that represents the import path for an `Exporter` class"""
+        allow_none=False, config=True,
+        help="""The export format to be used, either one of the built-in formats,
+        or a dotted object name that represents the import path for an
+        `Exporter` class"""
     )
-
-    def _export_format_changed(self, old, new):
-        try:
-            _validate_exporter(new)
-        except ValueError as e:
-            sys.exit(e.args)
-        except ImportError as e:
-            self.log.debug(e, exc_info=True)
-            sys.exit("Cannot import exporter '%s'" % new)
-
 
     notebooks = List([], config=True, help="""List of notebooks to convert.
                      Wildcards are supported.
@@ -444,8 +419,7 @@ class NbConvertApp(JupyterApp):
             self.exit(1)
         
         # initialize the exporter
-        _exp = get_exporter(self.export_format)
-        self.exporter = _exp(config=self.config)
+        self.exporter = get_exporter(self.export_format)(config=self.config)
 
         # no notebooks to convert!
         if len(self.notebooks) == 0:
