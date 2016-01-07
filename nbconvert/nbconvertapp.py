@@ -17,7 +17,7 @@ import glob
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
-    Unicode, List, Instance, DottedObjectName, Type, CaselessStrEnum, Bool, Undefined, Enum
+    Unicode, List, Instance, DottedObjectName, Type, Bool
 )
 
 from ipython_genutils.importstring import import_item
@@ -31,34 +31,37 @@ from .utils.exceptions import ConversionException
 #Classes and functions
 #-----------------------------------------------------------------------------
 
-class CaselessStrEnumOrDottedObjectName(CaselessStrEnum, DottedObjectName):
-    """Either an Enum whose value must be in a given sequence, or a Dotted Object Name
+def _validate_exporter(exporter):
+    """ given an exporter name, raise if it is not a valid one.
 
-    Exporter can be either alias of built-ins exporter that are white-listed
-    and are simple strings ('html', 'latex', 'pdf', ... ) Or a dotted object
-    name that will be imported at run-time and instantiate with the right
-    configuration.
     """
+    from ipython_genutils import py3compat
 
-    def __init__(self, values, default_value=Undefined, **metadata):
-        self.values = values
-        Enum.__init__(self, values=values, default_value=default_value, **metadata)
+    if '.' not in exporter:
+        if isinstance(exporter, str):
+            value = py3compat.cast_unicode_py2(exporter)
+        value = value.lower()
+        if (value in get_export_names()):
+            return value
+        else:
+            raise ValueError('Unknown exporter "%s", did you mean one of "%s"?'% (exporter, '", "'.join(get_export_names())))
+    else :
+        # try to import to raise if not possible.
+        import_item(exporter)
+        return exporter
 
 
-    def validate(self, obj, value):
-        if '.' not in value:
-            CaselessStrEnum.validate(self, obj, value)
-            pass
-        else: 
-            DottedObjectName.validate(self, obj, value)
-        return value
+def get_exporter(exporter):
+    """ given an exporter name, return a class ready to be instantiate
+    
+    Validate the exporter name first.
+    """
+    exporter = _validate_exporter(exporter)
 
-    def info(self):
-        """ Returns a description of the trait."""
-        result = 'any of ' + repr(self.values)
-        if self.allow_none:
-            return result + ' or None'
-        return result
+    if '.' not in exporter:
+        return exporter_map.get(exporter, None)
+    else :
+        return import_item(exporter)
 
 
 class DottedOrNone(DottedObjectName):
@@ -235,14 +238,22 @@ class NbConvertApp(JupyterApp):
             self.postprocessor_factory = import_item(new)
 
 
-    # Other configurable variables
-    export_format = CaselessStrEnumOrDottedObjectName(
-        values=get_export_names(),
-        default_value="html",
+    export_format = Unicode(
+        values='html',
         allow_none=False,
         config=True,
         help="""The export format to be used, either one of the built-in formats, or a dotted object name that represents the import path for an `Exporter` class"""
     )
+
+    def _export_format_changed(self, old, new):
+        try:
+            _validate_exporter(new)
+        except ValueError as e:
+            sys.exit(e.args)
+        except ImportError as e:
+            self.log.debug(e, exc_info=True)
+            sys.exit("Cannot import exporter '%s'" % new)
+
 
     notebooks = List([], config=True, help="""List of notebooks to convert.
                      Wildcards are supported.
@@ -256,7 +267,6 @@ class NbConvertApp(JupyterApp):
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
-
 
 
     def init_syspath(self):
@@ -433,12 +443,8 @@ class NbConvertApp(JupyterApp):
             self.exit(1)
         
         # initialize the exporter
-        _exp = exporter_map.get(self.export_format, None)
-        if _exp is not None:
-            self.exporter = _exp(config=self.config)
-        else:
-            _exp  = import_item(self.export_format)
-            self.exporter = _exp(config=self.config)
+        _exp = get_exporter(self.export_format)
+        self.exporter = _exp(config=self.config)
 
         # no notebooks to convert!
         if len(self.notebooks) == 0:
