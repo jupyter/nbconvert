@@ -9,3 +9,4 @@ from .pdf import PDFExporter
 from .python import PythonExporter
 from .rst import RSTExporter
 from .exporter import Exporter, FilenameExtension
+from .script import ScriptExporter
