@@ -135,7 +135,7 @@ And the template file, that inherits from the html `full` template and prepend/a
     {% block markdowncell -%}
 
 
-    ## this is a markdown cells
+    ## this is a markdown cell
     {super()}
     ## THIS IS THE END
 
@@ -145,12 +145,4 @@ And the template file, that inherits from the html `full` template and prepend/a
 
 Assuming you install this pacakge locally, or from PyPI, you can now use::
 
-    juyter nbconvert --to mypackage.MyEporter notebook.ipynb
-
-
-
-
-
-
-
-
+    jupyter nbconvert --to mypackage.MyEporter notebook.ipynb
