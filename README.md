@@ -37,12 +37,24 @@ Convert Juptyer notebook file, `mynotebook.ipynb`, to HTML using:
 This command creates an HTML output file named `mynotebook.html`.
 
 ## Dev Install
+First make sure that you have pandoc installed:
+
+```
+sudo apt-get install pandoc
+```
+
+Or
+
+```
+brew install pandoc
+```
+
 Install nbconvert for development using:
 
 ```
 git clone https://github.com/jupyter/nbconvert.git
 cd nbconvert
-python setup.py develop
+pip install -e .
 ```
 
 
