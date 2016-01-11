@@ -54,10 +54,12 @@ class ExecutePreprocessor(Preprocessor):
         False, config=True,
         help=dedent(
             """
-            If `True`, a `CellExecutionError` is raised if any of the notebook
-            cells raises an exception during execution. Otherwise, execution
-            is continued and the output from the exception is included in the
-            cell output.
+            If `False` (default), when a cell raises an error the
+            execution is stoppped and a `CellExecutionError`
+            is raised.
+            If `True`, execution errors are ignored and the execution
+            is continued until the end of the notebook. Output from
+            exceptions is included in the cell output in both cases.
             """
         )
     )
