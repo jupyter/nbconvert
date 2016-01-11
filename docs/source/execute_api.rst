@@ -3,8 +3,8 @@ Executing notebooks
 
 In this section we show how to execute a ``.ipynb`` notebook
 document saving the result in notebook format.
-To export the notebook to other formats see the
-:ref:`next section <nbconvert_library>`.
+To export the notebook to other formats see section
+:ref:`Using nbconvert as a library <nbconvert_library>`.
 
 Executing notebooks programmatically is useful, for example, as a test layer
 in python libraries that include example notebooks, or as a way to
@@ -43,8 +43,9 @@ Next, we configure the notebook execution mode:
 We specified two (optional) arguments ``timeout`` and ``kernel_name``, which
 define respectively the execution timeout and the execution kernel.
 
-    The **kernel_name** keyword `requires <https://github.com/jupyter/nbconvert/pull/177>`__
-    nbconvert 4.2 (unreleased, use master branch from github).
+    The option to specify **kernel_name** it's new in nbconvert 4.2.
+    When not specified or when using nbconvert <4.2,
+    the default python kernel is chosen.
 
 To actually run the notebook we call the method ``preprocess``:
 
@@ -59,15 +60,16 @@ Finally, to save the resulting notebook:
 
 .. code-block:: python
 
-    nbformat.write(nb, open('executed_notebook.ipynb', mode='wt'))
+    with open('executed_notebook.ipynb', 'wt') as f:
+        nbformat.write(nb, f)
 
 That's all. Your executed notebook will be saved in the current folder
-in the file *executed_notebook.ipynb*.
+in the file ``executed_notebook.ipynb``.
 
 Execution arguments
 -------------------
 
-The arguments passed to ``ExecutePreprocessor`` are configuration options
+The arguments passed to :class:`ExecutePreprocessor` are configuration options
 called `traitlets <http://traitlets.readthedocs.org/>`_.
 There are many cool things about traitlets, for example
 they enforce the type of the input and they can be accessed/modified as
@@ -75,13 +77,14 @@ class attributes. Moreover, each traitlet is automatically exposed
 as command-line options. For example, we can pass the timeout from the
 command-line like this::
 
-    jupyter nbconvert --ExecutePreprocessor.timeout=3600 --to notebook --execute mynotebook.ipynb
+    jupyter nbconvert --ExecutePreprocessor.timeout=600 --to notebook --execute mynotebook.ipynb
 
 Let's now discuss in more detail the two traitlets we used.
 
-The ``timeout`` traitlet defines the maximum time (in seconds) the notebook is
+The ``timeout`` traitlet defines the maximum time (in seconds) each notebook
+cell is
 allowed to run, if the execution takes longer an exception will be raised.
-The default is only 30 s, so in many cases you may want to specify
+The default is 30 s, so in cases of long-running cells you may want to specify
 an higher value.
 
 The second traitlet, ``kernel_name``, allows specifying the name of the kernel
@@ -115,7 +118,7 @@ After an error, we can still save the notebook as before:
 
 The saved notebook contains the output up until the failing cell,
 and includes a full stack-trace and error (which can help debugging).
-A pattern I use to execute notebooks while handling errors is the following:
+A useful pattern to execute notebooks while handling errors is the following:
 
 .. code-block:: python
 
@@ -134,12 +137,13 @@ In case of errors, however, an additional message is printed and the
 ``CellExecutionError`` is raised. The messages directs the user to
 the saved notebook for further inspection.
 
-As a last scenario, sometimes notebooks contains independent computations
-in each code cell.
-In this case it can be useful to run the notebook until the end,
-in order to get a complete picture of all cells that are failing.
-Luckily enough, the ``allow_errors`` traitlet (default False) allows to do that.
+As a last scenario, it is sometimes useful to execute notebooks which
+raise exceptions, for example to show an error conditions.
+In this case, instead of stopping the execution on the first error,
+we can keep executing the notebook using the traitlet ``allow_errors``
+(default False).
 With ``allow_errors=True``,
-the notebook is executed until the end, and a ``CellExecutionError`` is raised
-if one or more cells threw an error. In this case, the output notebook
-will contain the stack-traces and error messages for all the failing cells.
+the notebook is executed until the end, regardless of any error encountered
+during the execution. The output notebook,
+will contain the stack-traces and error messages for **all** the cells
+raising exceptions.
