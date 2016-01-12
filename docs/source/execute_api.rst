@@ -14,6 +14,10 @@ automate the data analysis in projects involving more than one notebook.
 
 The same functionality of executing notebooks is exposed through a
 :doc:`command line interface <usage>` or a python API interface.
+As an example, a notebook can be executed from the command line with::
+
+    jupyter nbconvert --to notebook --execute mynotebook.ipynb
+
 In this section we will (mostly) illustrate how to use the python API interface.
 
 A Quick example
@@ -22,9 +26,7 @@ A Quick example
 Let's start with a complete quick example, leaving detailed explanations
 to the following sections.
 
-First we import nbconvert and the :class:`ExecutePreprocessor` class:
-
-.. code-block:: python
+First we import nbconvert and the :class:`ExecutePreprocessor` class::
 
     import nbformat
     from nbconvert.preprocessors import ExecutePreprocessor
