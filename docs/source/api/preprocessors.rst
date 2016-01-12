@@ -34,5 +34,6 @@ Specialized preprocessors
 .. autoclass:: ClearOutputPreprocessor
 
 .. autoclass:: ExecutePreprocessor
+    :members:
 
 .. autofunction:: coalesce_streams
