@@ -36,7 +36,13 @@ class ExecutePreprocessor(Preprocessor):
     """
 
     timeout = Integer(30, config=True,
-        help="The time to wait (in seconds) for output from executions."
+        help=dedent(
+            """
+            The time to wait (in seconds) for output from executions.
+            If a cell execution takes longer, a `CellExecutionError`
+            is raised.
+            """
+        )
     )
 
     interrupt_on_timeout = Bool(
