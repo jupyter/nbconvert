@@ -32,7 +32,8 @@ we can load it with:
 
 .. code-block:: python
 
-    nb = nbformat.read(open(notebook_filename), as_version=4)
+    with open(notebook_filename) as f:
+        nb = nbformat.read(f, as_version=4)
 
 Next, we configure the notebook execution mode:
 
