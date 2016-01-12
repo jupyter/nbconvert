@@ -37,12 +37,12 @@ we can load it with::
 
 Next, we configure the notebook execution mode::
 
-    ep = ExecutePreprocessor(timeout=3600, kernel_name='python3')
+    ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
 
 We specified two (optional) arguments ``timeout`` and ``kernel_name``, which
 define respectively the execution timeout and the execution kernel.
 
-    The option to specify **kernel_name** it's new in nbconvert 4.2.
+    The option to specify **kernel_name** is new in nbconvert 4.2.
     When not specified or when using nbconvert <4.2,
     the default python kernel is chosen.
 
