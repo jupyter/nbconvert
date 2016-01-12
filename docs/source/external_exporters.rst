@@ -143,6 +143,6 @@ And the template file, that inherits from the html `full` template and prepend/a
     {% endblock markdowncell %}
 
 
-Assuming you install this pacakge locally, or from PyPI, you can now use::
+Assuming you install this package locally, or from PyPI, you can now use::
 
     jupyter nbconvert --to mypackage.MyEporter notebook.ipynb
