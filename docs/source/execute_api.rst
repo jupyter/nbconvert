@@ -107,7 +107,7 @@ there are no execution error. But, what if there are errors?
 An error during the notebook execution, by default, will stop the execution
 and raise a ``CellExecutionError``. Conveniently, the source cell causing
 the error and the original error name and message are also printed.
-After an error, we can still save the notebook as before:
+After an error, we can still save the notebook as before::
 
     with open('executed_notebook.ipynb', mode='wt') as f:
         nbformat.write(nb, f)
