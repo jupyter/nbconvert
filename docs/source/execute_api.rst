@@ -1,17 +1,19 @@
 Executing notebooks
 ===================
 
+.. module:: nbconvert.preprocessors
+
 In this section we show how to execute a ``.ipynb`` notebook
 document saving the result in notebook format.
 To export the notebook to other formats see section
-:ref:`Using nbconvert as a library <nbconvert_library>`.
+:doc:`nbconvert_library`.
 
 Executing notebooks programmatically is useful, for example, as a test layer
 in python libraries that include example notebooks, or as a way to
 automate the data analysis in projects involving more than one notebook.
 
 The same functionality of executing notebooks is exposed through a
-:ref:`command line interface <commandline_usage>` or a python API interface.
+:doc:`command line interface <usage>` or a python API interface.
 In this section we will (mostly) illustrate how to use the python API interface.
 
 A Quick example
@@ -20,7 +22,7 @@ A Quick example
 Let's start with a complete quick example, leaving detailed explanations
 to the following sections.
 
-First we import nbconvert and the ``ExecutePreprocessor`` class:
+First we import nbconvert and the :class:`ExecutePreprocessor` class:
 
 .. code-block:: python
 
