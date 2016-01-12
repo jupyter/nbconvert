@@ -1,5 +1,3 @@
-.. commandline_usage:
-
 Command-Line Usage
 ==================
 
