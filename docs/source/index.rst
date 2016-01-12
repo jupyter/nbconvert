@@ -3,7 +3,8 @@ Converting Notebooks to Other Formats
 =====================================
 
 The ``nbconvert`` tool allows you to convert an ``.ipynb`` notebook
-document file into various static formats.
+document file into various static formats. It can also execute notebooks
+programmatically.
 
 Currently, ``nbconvert`` is provided as a command line tool, run as a script
 using Jupyter. It also powers the 'Download as' feature within the
