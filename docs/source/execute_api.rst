@@ -29,17 +29,13 @@ First we import nbconvert and the :class:`ExecutePreprocessor` class:
     import nbformat
     from nbconvert.preprocessors import ExecutePreprocessor
 
-Assuming that ``notebook_filename`` is the path of a notebook,
-we can load it with:
-
-.. code-block:: python
+Assuming that ``notebook_filename`` contains the path of a notebook,
+we can load it with::
 
     with open(notebook_filename) as f:
         nb = nbformat.read(f, as_version=4)
 
-Next, we configure the notebook execution mode:
-
-.. code-block:: python
+Next, we configure the notebook execution mode::
 
     ep = ExecutePreprocessor(timeout=3600, kernel_name='python3')
 
@@ -50,18 +46,14 @@ define respectively the execution timeout and the execution kernel.
     When not specified or when using nbconvert <4.2,
     the default python kernel is chosen.
 
-To actually run the notebook we call the method ``preprocess``:
-
-.. code-block:: python
+To actually run the notebook we call the method ``preprocess``::
 
     ep.preprocess(nb, {'metadata': {'path': 'notebooks/'}})
 
 Hopefully, we will not get any errors during the notebook execution
 (see the last section for error handling). Note that ``path`` specifies
 in which folder to execute the notebook.
-Finally, to save the resulting notebook:
-
-.. code-block:: python
+Finally, to save the resulting notebook::
 
     with open('executed_notebook.ipynb', 'wt') as f:
         nbformat.write(nb, f)
@@ -115,15 +107,12 @@ and raise a ``CellExecutionError``. Conveniently, the source cell causing
 the error and the original error name and message are also printed.
 After an error, we can still save the notebook as before:
 
-.. code-block:: python
-
-    nbformat.write(nb, open('executed_notebook.ipynb', mode='wt'))
+    with open('executed_notebook.ipynb', mode='wt') as f:
+        nbformat.write(nb, f)
 
 The saved notebook contains the output up until the failing cell,
 and includes a full stack-trace and error (which can help debugging).
-A useful pattern to execute notebooks while handling errors is the following:
-
-.. code-block:: python
+A useful pattern to execute notebooks while handling errors is the following::
 
     try:
         out = ep.preprocess(nb, {'metadata': {'path': run_path}})
