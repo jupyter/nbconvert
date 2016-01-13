@@ -3,13 +3,17 @@ Executing notebooks
 
 .. module:: nbconvert.preprocessors
 
+Jupyter notebooks are often saved with cleared output cells. nbconvert
+provides a helpful way to execute the input cells of an .ipynb notebook
+file and save the results, both input and output cells, as an .ipynb file.
+
 In this section we show how to execute a ``.ipynb`` notebook
 document saving the result in notebook format.
-To export the notebook to other formats see section
-:doc:`nbconvert_library`.
+If you need to export notebooks to other formats (optionally executing them
+during conversion) see section :doc:`nbconvert_library`.
 
-Executing notebooks programmatically is useful, for example, as a test layer
-in Python libraries that include example notebooks, or as a way to
+Executing notebooks can be very helpful, for example, to run all notebooks
+in Python library in one step, or as a way to
 automate the data analysis in projects involving more than one notebook.
 
 The same functionality of executing notebooks is exposed through a
