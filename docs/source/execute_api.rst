@@ -5,12 +5,12 @@ Executing notebooks
 
 Jupyter notebooks are often saved with cleared output cells. nbconvert
 provides a helpful way to execute the input cells of an .ipynb notebook
-file and save the results, both input and output cells, as an .ipynb file.
+file and save the results, both input and output cells, as a .ipynb file.
 
 In this section we show how to execute a ``.ipynb`` notebook
 document saving the result in notebook format.
-If you need to export notebooks to other formats (optionally executing them
-during conversion) see section :doc:`nbconvert_library`.
+If you need to export notebooks to other formats, such as reStructured Text
+or Markdown (optionally executing them) see section :doc:`nbconvert_library`.
 
 Executing notebooks can be very helpful, for example, to run all notebooks
 in Python library in one step, or as a way to
@@ -22,7 +22,7 @@ As an example, a notebook can be executed from the command line with::
 
     jupyter nbconvert --to notebook --execute mynotebook.ipynb
 
-In this section we will (mostly) illustrate how to use the Python API interface.
+This section will illustrate the Python API interface.
 
 A Quick example
 ---------------
@@ -59,7 +59,7 @@ To actually run the notebook we call the method ``preprocess``::
 Hopefully, we will not get any errors during the notebook execution
 (see the last section for error handling). Note that ``path`` specifies
 in which folder to execute the notebook.
-Finally, to save the resulting notebook::
+Finally, save the resulting notebook with::
 
     with open('executed_notebook.ipynb', 'wt') as f:
         nbformat.write(nb, f)
@@ -98,7 +98,7 @@ in their metadata
 (depending on the kernel used the last time the notebook was saved).
 In reality, these notebooks will work on both Python 2/3 and, for testing,
 it is important to be able to execute them programmatically on both
-versions. Here the traitlet ``kernel_name`` comes to help:
+versions. Here the traitlet ``kernel_name`` is helpful:
 we can just run each notebook twice, specifying first "python2" and then
 "python3" as kernel name.
 
@@ -106,7 +106,7 @@ Error Handling
 --------------
 
 In the previous sections we saw how to save an executed notebook, assuming
-there are no execution error. But, what if there are errors?
+there are no execution errors. But, what if there are errors?
 
 An error during the notebook execution, by default, will stop the execution
 and raise a ``CellExecutionError``. Conveniently, the source cell causing
@@ -132,11 +132,11 @@ A useful pattern to execute notebooks while handling errors is the following::
 
 This will save the executed notebook regardless of execution errors.
 In case of errors, however, an additional message is printed and the
-``CellExecutionError`` is raised. The messages directs the user to
+``CellExecutionError`` is raised. The message directs the user to
 the saved notebook for further inspection.
 
 As a last scenario, it is sometimes useful to execute notebooks which
-raise exceptions, for example to show an error conditions.
+raise exceptions, for example to show an error condition.
 In this case, instead of stopping the execution on the first error,
 we can keep executing the notebook using the traitlet ``allow_errors``
 (default False).
