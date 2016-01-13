@@ -9,16 +9,16 @@ To export the notebook to other formats see section
 :doc:`nbconvert_library`.
 
 Executing notebooks programmatically is useful, for example, as a test layer
-in python libraries that include example notebooks, or as a way to
+in Python libraries that include example notebooks, or as a way to
 automate the data analysis in projects involving more than one notebook.
 
 The same functionality of executing notebooks is exposed through a
-:doc:`command line interface <usage>` or a python API interface.
+:doc:`command line interface <usage>` or a Python API interface.
 As an example, a notebook can be executed from the command line with::
 
     jupyter nbconvert --to notebook --execute mynotebook.ipynb
 
-In this section we will (mostly) illustrate how to use the python API interface.
+In this section we will (mostly) illustrate how to use the Python API interface.
 
 A Quick example
 ---------------
@@ -46,7 +46,7 @@ define respectively the execution timeout and the execution kernel.
 
     The option to specify **kernel_name** is new in nbconvert 4.2.
     When not specified or when using nbconvert <4.2,
-    the default python kernel is chosen.
+    the default Python kernel is chosen.
 
 To actually run the notebook we call the method ``preprocess``::
 
@@ -88,11 +88,11 @@ The second traitlet, ``kernel_name``, allows specifying the name of the kernel
 to be used for the execution. By default, the kernel name is obtained from the
 notebook metadata. The traitlet ``kernel_name`` allows to specify a user-defined
 kernel, overriding the value in the notebook metadata. A common use case
-is that of a python 2/3 library which includes documentation/testing
+is that of a Python 2/3 library which includes documentation/testing
 notebooks. These notebooks will specify either a python2 or python3 kernel
 in their metadata
 (depending on the kernel used the last time the notebook was saved).
-In reality, these notebooks will work on both python 2/3 and, for testing,
+In reality, these notebooks will work on both Python 2/3 and, for testing,
 it is important to be able to execute them programmatically on both
 versions. Here the traitlet ``kernel_name`` comes to help:
 we can just run each notebook twice, specifying first "python2" and then
