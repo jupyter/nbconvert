@@ -129,7 +129,7 @@ class TestsBase(unittest.TestCase):
         return os.path.join(path, *names)
 
 
-    def nbconvert(self, parameters, ignore_return_code=False):
+    def nbconvert(self, parameters, ignore_return_code=False, stdin=None):
         """
         Run nbconvert as a shell command, listening for both Errors and
         non-zero return codes. Returns the tuple (stdout, stderr) of
@@ -145,8 +145,8 @@ class TestsBase(unittest.TestCase):
         if isinstance(parameters, string_types):
             parameters = shlex.split(parameters)
         cmd = [sys.executable, '-m', 'nbconvert'] + parameters
-        p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-        stdout, stderr = p.communicate()
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+        stdout, stderr = p.communicate(input=stdin)
         if not (p.returncode == 0 or ignore_return_code):
             raise OSError(bytes_to_str(stderr))
         return stdout.decode('utf8', 'replace'), stderr.decode('utf8', 'replace')
