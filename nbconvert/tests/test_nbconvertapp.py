@@ -57,6 +57,19 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook2.py')
 
 
+    def test_convert_full_qualified_name(self):
+        """
+        Test that nbconvert can convert file using a full qualified name for a
+        package, import and use it.
+        """
+        with self.create_temp_cwd():
+            self.copy_files_to(['notebook*.ipynb'], 'subdir/')
+            self.nbconvert('--to nbconvert.tests.fake_exporters.MyExporter --log-level 0 ' +
+                      os.path.join('subdir', '*.ipynb'))
+            assert os.path.isfile('notebook1.test_ext')
+            assert os.path.isfile('notebook2.test_ext')
+
+
     def test_explicit(self):
         """
         Do explicit notebook names work?
