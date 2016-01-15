@@ -43,6 +43,8 @@ def get_exporter(name):
         try:
             return import_item(name)
         except ImportError:
+            log = logging.getLogger()
+            log.error("Error importing %s" % name, exc_info=True)
             pass
 
     raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
