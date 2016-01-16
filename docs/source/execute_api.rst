@@ -46,7 +46,7 @@ Next, we configure the notebook execution mode::
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
 
 We specified two (optional) arguments ``timeout`` and ``kernel_name``, which
-define respectively the execution timeout and the execution kernel.
+define respectively the cell execution timeout and the execution kernel.
 
     The option to specify **kernel_name** is new in nbconvert 4.2.
     When not specified or when using nbconvert <4.2,
@@ -128,7 +128,8 @@ A useful pattern to execute notebooks while handling errors is the following::
         print(msg)
         raise
     finally:
-        nbformat.write(nb, open(notebook_filename_out, mode='wt'))
+        with open(notebook_filename_out, mode='wt') as f:
+            nbformat.write(nb, f)
 
 This will save the executed notebook regardless of execution errors.
 In case of errors, however, an additional message is printed and the
