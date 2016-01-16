@@ -39,7 +39,7 @@ line should behave the same as for built-in exporters.
 
 
 Parameters controlled by external exporter
-=========================================
+==========================================
 
 An external exporter can control almost any parameter of the notebook conversion
 process, from simple parameters such as the output file extension, to more complex
@@ -50,7 +50,7 @@ configurable API. Refer to the library that provides these exporters for
 details on how these configuration options works.
 
 You can use the Jupyter configuration files to configure an external exporter. As
-for any nbconvert exporters you can use either the configuration file syntax of
+for any ``nbconvert`` exporters you can use either the configuration file syntax of
 ``c.MyExporter.config_option=value`` or the command line flag form
 ``--MyExporter.config_option=value``. 
 
