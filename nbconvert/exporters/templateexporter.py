@@ -13,7 +13,9 @@ import uuid
 # other libs/dependencies are imported at runtime
 # to move ImportErrors to runtime when the requirement is actually needed
 
-from traitlets import HasTraits, Unicode, List, Dict
+
+# IPython imports
+from traitlets import HasTraits, Unicode, List, Dict, DottedObjectName
 from ipython_genutils.importstring import import_item
 from ipython_genutils import py3compat
 
@@ -52,7 +54,6 @@ default_filters = {
         'get_metadata': filters.get_metadata,
 }
 
-
 class TemplateExporter(Exporter):
     """
     Exports notebooks into other file formats.  Uses Jinja 2 templating engine
@@ -89,6 +90,7 @@ class TemplateExporter(Exporter):
         if self._environment_cached is None:
             self._environment_cached = self._create_environment()
         return self._environment_cached
+
 
     template_file = Unicode(config=True,
             help="Name of the template file to use", affects_template=True)
@@ -280,14 +282,14 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        from jinja2 import Environment, ChoiceLoader, FileSystemLoader
+        from jinja2 import Environment, ChoiceLoader, FileSystemLoader, PackageLoader
         here = os.path.dirname(os.path.realpath(__file__))
 
         paths = self.template_path + \
             [os.path.join(here, self.default_template_path),
              os.path.join(here, self.template_skeleton_path)]
-        loaders = self.extra_loaders + [FileSystemLoader(paths)]
 
+        loaders = self.extra_loaders + [FileSystemLoader(paths)]
         environment = Environment(
             loader= ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS

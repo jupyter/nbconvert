@@ -17,8 +17,9 @@ import glob
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
-    Unicode, List, Instance, DottedObjectName, Type, CaselessStrEnum, Bool,
+    Unicode, List, Instance, DottedObjectName, Type, Bool
 )
+
 from ipython_genutils.importstring import import_item
 
 from .exporters.export import get_export_names, exporter_map
@@ -29,6 +30,26 @@ from .utils.exceptions import ConversionException
 #-----------------------------------------------------------------------------
 #Classes and functions
 #-----------------------------------------------------------------------------
+
+def get_exporter(name):
+    """ given an exporter name, return a class ready to be instantiate
+    
+    Raises ValueError if exporter is not found
+    """
+    if name in exporter_map:
+        return exporter_map[name]
+
+    if '.' in name:
+        try:
+            return import_item(name)
+        except ImportError:
+            log = logging.getLogger()
+            log.error("Error importing %s" % name, exc_info=True)
+            pass
+
+    raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
+                     % (name, ', '.join(sorted(get_export_names()))))
+
 
 class DottedOrNone(DottedObjectName):
     """
@@ -204,11 +225,12 @@ class NbConvertApp(JupyterApp):
             self.postprocessor_factory = import_item(new)
 
 
-    # Other configurable variables
-    export_format = CaselessStrEnum(get_export_names(),
-        default_value="html",
-        config=True,
-        help="""The export format to be used."""
+    export_format = Unicode(
+        'html',
+        allow_none=False, config=True,
+        help="""The export format to be used, either one of the built-in formats,
+        or a dotted object name that represents the import path for an
+        `Exporter` class"""
     )
 
     notebooks = List([], config=True, help="""List of notebooks to convert.
@@ -223,7 +245,6 @@ class NbConvertApp(JupyterApp):
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
-
 
 
     def init_syspath(self):
@@ -400,7 +421,8 @@ class NbConvertApp(JupyterApp):
             self.exit(1)
         
         # initialize the exporter
-        self.exporter = exporter_map[self.export_format](config=self.config)
+        cls = get_exporter(self.export_format)
+        self.exporter = cls(config=self.config)
 
         # no notebooks to convert!
         if len(self.notebooks) == 0:
