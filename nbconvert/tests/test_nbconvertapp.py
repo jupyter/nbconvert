@@ -214,7 +214,7 @@ class TestNbConvertApp(TestsBase):
         """
         with self.create_temp_cwd():
             self.create_empty_notebook(u'nb1_análisis.ipynb')
-            self.nbconvert('--log-level 0 --to python nb1_*')
+            self.nbconvert('--log-level 0 --to Python nb1_*')
             assert os.path.isfile(u'nb1_análisis.py')
 
     @dec.onlyif_cmds_exist('pdflatex', 'pandoc')

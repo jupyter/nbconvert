@@ -36,8 +36,8 @@ def get_exporter(name):
     
     Raises ValueError if exporter is not found
     """
-    if name in exporter_map:
-        return exporter_map[name]
+    if name.lower() in exporter_map:
+        return exporter_map[name.lower()]
 
     if '.' in name:
         try:
