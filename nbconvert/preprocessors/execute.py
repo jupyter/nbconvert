@@ -39,8 +39,8 @@ class ExecutePreprocessor(Preprocessor):
         help=dedent(
             """
             The time to wait (in seconds) for output from executions.
-            If a cell execution takes longer, a `CellExecutionError`
-            is raised.
+            If a cell execution takes longer, an exception (TimeoutError
+            on python 3+, RuntimeError on python 2) is raised.
             """
         )
     )
