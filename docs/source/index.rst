@@ -20,6 +20,7 @@ Contents:
    usage
    config_options
    latex_citations
+   external_exporters
    customizing
    execute_api
    nbconvert_library
