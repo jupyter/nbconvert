@@ -1,4 +1,4 @@
-.. _external_exporter:
+.. _external_exporters:
 
 Using external exporters
 ========================
