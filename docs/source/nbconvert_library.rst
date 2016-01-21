@@ -5,13 +5,14 @@ Using nbconvert as a library
 In this notebook, you will be introduced to the programmatic API of
 nbconvert and how it can be used in various contexts.
 
-One of [@jakevdp](https://github.com/jakevdp)'s great `blog
-posts <http://jakevdp.github.io/blog/2013/04/15/code-golf-in-python-sudoku/>`__
-will be used to demonstrate. This notebook will not focus on using the
-command line tool. The attentive reader will point-out that no data is
-read from or written to disk during the conversion process. This is
-because nbconvert has been designed to work in memory so that it works
-well in a database or web-based environement too.
+A great `blog
+post <http://jakevdp.github.io/blog/2013/04/15/code-golf-in-python-sudoku/>`__
+by [@jakevdp](https://github.com/jakevdp) will be used to demonstrate.
+This notebook will not focus on using the command line tool. The
+attentive reader will point-out that no data is read from or written to
+disk during the conversion process. This is because nbconvert has been
+designed to work in memory so that it works well in a database or
+web-based environement too.
 
 Quick overview
 --------------
