@@ -90,7 +90,8 @@ We are going to write an exporter that:
   - exports to html, so we will reuse the built-in html exporter
   - changes the file extension to `.test_ext`
 
-::
+.. code-block:: python
+
     # file __init__.py
     import os
     import os.path
