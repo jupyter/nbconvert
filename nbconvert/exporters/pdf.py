@@ -145,9 +145,9 @@ class PDFExporter(LatexExporter):
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
             rc = self.run_latex(tex_file)
-            if not rc:
+            if rc:
                 rc = self.run_bib(tex_file)
-            if not rc:
+            if rc:
                 rc = self.run_latex(tex_file)
             
             pdf_file = notebook_name + '.pdf'

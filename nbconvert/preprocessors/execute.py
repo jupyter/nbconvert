@@ -36,7 +36,13 @@ class ExecutePreprocessor(Preprocessor):
     """
 
     timeout = Integer(30, config=True,
-        help="The time to wait (in seconds) for output from executions."
+        help=dedent(
+            """
+            The time to wait (in seconds) for output from executions.
+            If a cell execution takes longer, an exception (TimeoutError
+            on python 3+, RuntimeError on python 2) is raised.
+            """
+        )
     )
 
     interrupt_on_timeout = Bool(
@@ -54,23 +60,59 @@ class ExecutePreprocessor(Preprocessor):
         False, config=True,
         help=dedent(
             """
-            If `True`, a `CellExecutionError` is raised if any of the notebook
-            cells raises an exception during execution. Otherwise, execution
-            is continued and the output from the exception is included in the
-            cell output.
+            If `False` (default), when a cell raises an error the
+            execution is stoppped and a `CellExecutionError`
+            is raised.
+            If `True`, execution errors are ignored and the execution
+            is continued until the end of the notebook. Output from
+            exceptions is included in the cell output in both cases.
             """
         )
     )
 
     extra_arguments = List(Unicode())
 
+    kernel_name = Unicode(
+        '', config=True,
+        help=dedent(
+            """
+            Name of kernel to use to execute the cells.
+            If not set, use the kernel_spec embedded in the notebook.
+            """
+        )
+    )
+
+
     def preprocess(self, nb, resources):
+        """
+        Preprocess notebook executing each code cell.
+
+        The input argument `nb` is modified in-place.
+
+        Parameters
+        ----------
+        nb : NotebookNode
+            Notebook being executed.
+        resources : dictionary
+            Additional resources used in the conversion process. For example,
+            passing ``{'metadata': {'path': run_path}}`` sets the
+            execution path to ``run_path``.
+
+        Returns
+        -------
+        nb : NotebookNode
+            The executed notebook.
+        resources : dictionary
+            Additional resources used in the conversion process.
+        """
         path = resources.get('metadata', {}).get('path', '')
         if path == '':
             path = None
 
         from jupyter_client.manager import start_new_kernel
         kernel_name = nb.metadata.get('kernelspec', {}).get('name', 'python')
+        if self.kernel_name:
+            kernel_name = self.kernel_name
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(
             kernel_name=kernel_name,
@@ -89,7 +131,9 @@ class ExecutePreprocessor(Preprocessor):
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
-        Apply a transformation on each code cell. See base.py for details.
+        Executes a single code cell. See base.py for details.
+
+        To execute all cells see :meth:`preprocess`.
         """
         if cell.cell_type != 'code':
             return cell, resources

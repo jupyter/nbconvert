@@ -58,6 +58,19 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook2.py')
 
 
+    def test_convert_full_qualified_name(self):
+        """
+        Test that nbconvert can convert file using a full qualified name for a
+        package, import and use it.
+        """
+        with self.create_temp_cwd():
+            self.copy_files_to(['notebook*.ipynb'], 'subdir/')
+            self.nbconvert('--to nbconvert.tests.fake_exporters.MyExporter --log-level 0 ' +
+                      os.path.join('subdir', '*.ipynb'))
+            assert os.path.isfile('notebook1.test_ext')
+            assert os.path.isfile('notebook2.test_ext')
+
+
     def test_explicit(self):
         """
         Do explicit notebook names work?
@@ -202,7 +215,7 @@ class TestNbConvertApp(TestsBase):
         """
         with self.create_temp_cwd():
             self.create_empty_notebook(u'nb1_análisis.ipynb')
-            self.nbconvert('--log-level 0 --to python nb1_*')
+            self.nbconvert('--log-level 0 --to Python nb1_*')
             assert os.path.isfile(u'nb1_análisis.py')
 
     @dec.onlyif_cmds_exist('pdflatex', 'pandoc')

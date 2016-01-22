@@ -14,6 +14,17 @@ from traitlets import Unicode, Set
 from .base import Preprocessor
 from ipython_genutils import py3compat
 
+def guess_extension_without_jpe(mimetype):
+    """
+    This function fixes a problem with '.jpe' extensions
+    of jpeg images which are then not recognised by latex.
+    For any other case, the function works in the same way
+    as mimetypes.guess_extension
+    """
+    ext = guess_extension(mimetype)
+    if ext==".jpe":
+        ext=".jpeg"
+    return ext
 
 class ExtractOutputPreprocessor(Preprocessor):
     """
@@ -72,7 +83,7 @@ class ExtractOutputPreprocessor(Preprocessor):
                     else:
                         data = data.encode("UTF-8")
                     
-                    ext = guess_extension(mime_type)
+                    ext = guess_extension_without_jpe(mime_type)
                     if ext is None:
                         ext = '.' + mime_type.rsplit('/')[-1]
                     

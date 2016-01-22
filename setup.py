@@ -60,7 +60,7 @@ package_data = {
 }
 
 
-notebook_css_version = '4.0.1'
+notebook_css_version = '4.1.0'
 css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
 class FetchCSS(Command):
