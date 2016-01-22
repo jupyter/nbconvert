@@ -360,7 +360,7 @@ class NbConvertApp(JupyterApp):
         resources from the exporter.
 
         notebook_filename: a filename
-        input_buffer: a containing notebook buffer, if not None notebook_filename is ignored
+        input_buffer: a readable file like object returning unicode, if not None notebook_filename is ignored
         """
         try:
             if input_buffer is not None:
