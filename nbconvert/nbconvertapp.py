@@ -25,6 +25,7 @@ from .exporters.export import get_export_names, exporter_map
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
+from .utils.io import unicode_stdin_stream
 
 #-----------------------------------------------------------------------------
 #Classes and functions
@@ -430,8 +431,9 @@ class NbConvertApp(JupyterApp):
             for notebook_filename in self.notebooks:
                 self.convert_single_notebook(notebook_filename)
         else:
+            input_buffer = unicode_stdin_stream()
             # default name when conversion from stdin
-            self.convert_single_notebook("notebook.ipynb", input_buffer=sys.stdin)
+            self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
             
 #-----------------------------------------------------------------------------
 # Main entry point

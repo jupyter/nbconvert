@@ -31,3 +31,20 @@ def unicode_std_stream(stream='stdout'):
         stream_b = stream
 
     return codecs.getwriter('utf-8')(stream_b)
+
+def unicode_stdin_stream():
+    u"""Get a wrapper to read unicode from stdin as UTF-8.
+
+    This ignores environment variables and default encodings, to reliably read unicode from stdin.
+
+    ::
+
+        totreat = unicode_stdin_stream().read()
+    """
+    stream  = sys.stdin
+    if PY3:
+        stream_b = stream.buffer
+    else:
+        stream_b = stream
+
+    return codecs.getreader('utf-8')(stream_b)
