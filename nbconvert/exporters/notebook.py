@@ -29,4 +29,6 @@ class NotebookExporter(Exporter):
         else:
             resources['output_suffix'] = '.nbconvert'
         output = nbformat.writes(nb_copy, version=self.nbformat_version)
+        if not output.endswith("\n"):
+            output = output + "\n"
         return output, resources
