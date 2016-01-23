@@ -25,7 +25,7 @@ ansi_colormap = {
     '35': 'ansipurple',
     '36': 'ansicyan',
     '37': 'ansigrey',
-    '01': 'ansibold',
+    '1': 'ansibold',
 }
 
 html_escapes = {
@@ -40,7 +40,7 @@ ansi_re = re.compile('\x1b' + r'\[([\dA-Fa-f;]*?)m')
 def ansi2html(text):
     """
     Convert ansi colors to html colors.
-    
+
     Parameters
     ----------
     text : str
@@ -49,7 +49,7 @@ def ansi2html(text):
 
     # do ampersand first
     text = text.replace('&', '&amp;')
-    
+
     for c, escape in html_escapes.items():
         text = text.replace(c, escape)
 
@@ -61,7 +61,7 @@ def ansi2html(text):
     while m:
         cmds = m.groups()[0].split(';')
         closer = '</span>' if opened else ''
-        
+
         # True if there is there more than one element in cmds, *or*
         # if there is only one but it is not equal to a string of zeroes.
         opened = len(cmds) > 1 or cmds[0] != '0' * len(cmds[0])
@@ -105,7 +105,7 @@ def single_ansi2latex(code):
     else:
         style = 0
         color = components[0][-3:-1]
-        
+
     # If the style is not normal (0), bold (1) or blinking (5) then treat it as normal
     if style not in [0, 1, 5]:
         style = 0
@@ -147,9 +147,9 @@ def ansi2latex(text):
             texform, openbrack = single_ansi2latex(code)
             outstring += texform
         last_end = match.end()
-    
+
     # Add the remainer of the string and THEN close any remaining color brackets.
     outstring += text[last_end:]
-    if openbrack: 
+    if openbrack:
         outstring += '}'*openbrack
     return outstring.strip()
