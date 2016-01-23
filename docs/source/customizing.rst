@@ -208,6 +208,10 @@ A few gotchas
 Jinja blocks use ``{% %}`` by default which does not play nicely with
 LaTeX, so those are replaced by ``((* *))`` in LaTeX templates.
 
+Jinja expressions use ``{{ }}`` by default which does not play nicely with
+LaTeX, so those are replaced by ``((( )))`` in LaTeX templates.
+
+
 Templates that use cell metadata
 --------------------------------
 
