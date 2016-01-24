@@ -15,7 +15,7 @@ Python files. For example, the following command converts the
 .. code:: python
 
     %%bash
-
+    
     jupyter nbconvert --to python 'example.ipynb' --stdout
 
 From the code, you can see that non-code cells are also exported. As
@@ -31,13 +31,13 @@ formatted:
 .. code:: python
 
     %%writefile simplepython.tpl
-
+    
     {% extends 'python.tpl'%}
-
+    
     ## remove markdown cells
     {% block markdowncell -%}
     {% endblock markdowncell %}
-
+    
     ## change the appearance of execution count
     {% block in_prompt %}
     # This was input cell with execution count: {{ cell.execution_count if cell.execution_count else ' ' }}
@@ -50,7 +50,7 @@ comments regarding the execution counts:
 .. code:: python
 
     %%bash
-
+    
     jupyter nbconvert --to python 'example.ipynb' --stdout --template=simplepython.tpl
 
 Template structure
@@ -81,7 +81,7 @@ described here, though some may define additional blocks.
     .jp-tpl-structure {
         font-family: sans;
     }
-
+    
     .template_block {
         background-color: hsla(120, 60%, 70%, 0.2);
         margin: 10px;
@@ -89,26 +89,26 @@ described here, though some may define additional blocks.
         border: 1px solid hsla(120, 60%, 70%, 0.5);
         border-left: 2px solid black;
     }
-
+    
     .template_block:hover {
         border-color: black;
     }
-
+    
     .template_block pre {
         background: transparent;
         padding: 0;
     }
-
+    
     .big_vertical_ellipsis {
         font-size: 24pt;
     }
-
+    
     </style>
-
+    
     <div class='jp-tpl-structure'>
     <h3>Main page</h3>
     <div class="template_block">header</div>
-
+    
     <div class="template_block">body
         <div class="template_block">any_cell
             <div class="template_block">codecell
@@ -133,11 +133,11 @@ described here, though some may define additional blocks.
         </div>
         <div class="big_vertical_ellipsis">⋮</div>
     </div>
-
+    
     <div class="template_block">footer</div>
-
+    
     <h3>Outputs</h3>
-
+    
     <div class="template_block">outputs
         <div class="template_block">output
             <div class="template_block">execute_result</div>
@@ -166,14 +166,14 @@ described here, though some may define additional blocks.
         </div>
         <div class="big_vertical_ellipsis">⋮</div>
     </div>
-
+    
     <h3>Extra HTML blocks (full.tpl)</h3>
     <div class="template_block">header
         <pre>&lt;head&gt;</pre>
         <div class="template_block">html_head</div>
         <pre>&lt;/head&gt;</pre>
     </div>
-
+    
     <h3>Extra Latex blocks</h3>
     <div class="template_block">header
         <div class="template_block">docclass</div>
@@ -198,30 +198,15 @@ described here, though some may define additional blocks.
         </div>
     </div>
     </div>
-
+    
 
 
 
 A few gotchas
 ~~~~~~~~~~~~~
 
-By default, Jinja uses ``{% ... %}`` for blocks, ``{{ ... }}`` for expressions and ``{# ... #}`` for comments.  Since these curly brackets don't work well with LaTeX, they're replaced by ``((* ... *))``, ``((( ... )))`` and ``((= ... =))`` in LaTeX templates.
-
-Here's an example that uses all three to typeset the pdf in the font Libertine:
-
-..code:: latex
-
-    ((* extends 'article.tplx' *))
-    ((* block packages *))
-
-    \usepackage{libertine}  % latex font package
-
-    ((= Using super() will include the rest of the packages normally used in the
-     article.tplx template. This comment won't be in the final LaTeX =))
-    ((( super() )))
-    ((* endblock packages *))
-
-
+Jinja blocks use ``{% %}`` by default which does not play nicely with
+LaTeX, so those are replaced by ``((* *))`` in LaTeX templates.
 
 Templates that use cell metadata
 --------------------------------
@@ -249,7 +234,7 @@ The following lines of code may be a helpful starting point:
 .. code:: python
 
     %%writefile mytemplate.tpl
-
+    
     {% extends 'full.tpl'%}
     {% block any_cell %}
         <div style="border:thin solid red">
@@ -264,5 +249,5 @@ command:
 .. code:: python
 
     %%bash
-
+    
     jupyter nbconvert --to html <your chosen notebook.ipynb> --template=mytemplate.tpl
