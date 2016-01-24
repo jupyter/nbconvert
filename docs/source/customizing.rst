@@ -205,8 +205,21 @@ described here, though some may define additional blocks.
 A few gotchas
 ~~~~~~~~~~~~~
 
-Jinja blocks use ``{% %}`` by default which does not play nicely with
-LaTeX, so those are replaced by ``((* *))`` in LaTeX templates.
+By default, Jinja uses ``{% ... %}`` for blocks, ``{{ ... }}`` for expressions and ``{# ... #}`` for comments.  Since these curly brackets don't work well with LaTeX, they're replaced by ``((* ... *))``, ``((( ... )))`` and ``((= ... =))`` in LaTeX templates.
+
+Here's an example that uses all three to typeset the pdf in the font Libertine:
+
+..code:: latex
+
+    ((* extends 'article.tplx' *))
+    ((* block packages *))
+
+    \usepackage{libertine}  % latex font package
+
+    ((= Using super() will include the rest of the packages normally used in the
+     article.tplx template. This comment won't be in the final LaTeX =))
+    ((( super() )))
+    ((* endblock packages *))
 
 Templates that use cell metadata
 --------------------------------
