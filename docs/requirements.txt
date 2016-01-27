@@ -4,4 +4,5 @@ jupyter_client
 nbformat
 nbsphinx
 sphinx_rtd_theme
--e git+https://github.com/ipython/ipykernel.git#egg=ipykernel
+ipykernel
+mistune
