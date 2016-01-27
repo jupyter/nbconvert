@@ -19,7 +19,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) sou
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext ipynb2rst
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -51,7 +51,7 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
-html: source/config_options.rst ipynb2rst
+html: source/config_options.rst
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -59,11 +59,6 @@ html: source/config_options.rst ipynb2rst
 source/config_options.rst:
 	python3 autogen_config.py
 	@echo "Created docs for config options"
-
-ipynb2rst:
-	jupyter nbconvert --to rst source/customizing.ipynb --FilesWriter.build_directory=source
-	jupyter nbconvert --to rst source/nbconvert_library.ipynb --FilesWriter.build_directory=source
-	@echo "Converted notebooks to rst"
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
