@@ -29,6 +29,9 @@ class CellExecutionError(ConversionException):
     def __init__(self, traceback):
         self.traceback = traceback
 
+    def __str__(self):
+        return self.traceback
+
 
 class ExecutePreprocessor(Preprocessor):
     """
