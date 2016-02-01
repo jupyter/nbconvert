@@ -1,5 +1,5 @@
 conda:
-    file: docs/conda-env.yml
+    file: docs/environment.yml
 python:
     version: 2   # https://github.com/rtfd/readthedocs.org/issues/1901
     setup_py_install: true
