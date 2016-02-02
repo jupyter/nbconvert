@@ -279,7 +279,7 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        from jinja2 import Environment, ChoiceLoader, FileSystemLoader, PackageLoader
+        from jinja2 import Environment, ChoiceLoader, FileSystemLoader
         here = os.path.dirname(os.path.realpath(__file__))
 
         paths = self.template_path + \
