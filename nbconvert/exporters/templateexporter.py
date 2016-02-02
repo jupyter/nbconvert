@@ -198,8 +198,6 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
 
-        self._load_template()
-
         if self.template is not None:
             output = self.template.render(nb=nb_copy, resources=resources)
         else:
