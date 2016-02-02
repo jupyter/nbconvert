@@ -103,16 +103,16 @@ class TemplateExporter(Exporter):
 
     default_template = Unicode(u'', affects_template=True)
 
-    template_path = List(['.'], config=True, affects_template=True)
+    template_path = List(['.'], config=True, affects_environment=True)
 
     default_template_path = Unicode(
         os.path.join("..", "templates"), 
-        help="Path where the template files are located.", affects_template=True)
+        help="Path where the template files are located.", affects_environment=True)
 
     template_skeleton_path = Unicode(
         os.path.join("..", "templates", "skeleton"), 
         help="Path where the template skeleton files are located.",
-        affects_template=True)
+        affects_environment=True)
     
     #Extension that the template files use.    
     template_extension = Unicode(".tpl", config=True, affects_template=True)
