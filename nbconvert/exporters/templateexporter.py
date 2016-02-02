@@ -163,16 +163,16 @@ class TemplateExporter(Exporter):
         """
         from jinja2 import TemplateNotFound
 
-        # Try different template names during conversion.  First try to load the
+        if not self.template_file:
+            raise ValueError("No template_file specified!")
+
+        # First try to load the
         # template by name with extension added, then try loading the template
-        # as if the name is explicitly specified, then try the name as a 
-        # 'flavor', and lastly just try to load the template by module name.
-        try_names = []
-        if self.template_file:
-            try_names.extend([
-                self.template_file + self.template_extension,
-                self.template_file,
-            ])
+        # as if the name is explicitly specified.
+        try_names = [
+            self.template_file + self.template_extension,
+            self.template_file,
+        ]
         for try_name in try_names:
             self.log.debug("Attempting to load template %s", try_name)
             try:
