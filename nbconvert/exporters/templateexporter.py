@@ -103,16 +103,16 @@ class TemplateExporter(Exporter):
 
     default_template = Unicode(u'', affects_template=True)
 
-    template_path = List(['.'], config=True, affects_template=True)
+    template_path = List(['.'], config=True, affects_environment=True)
 
     default_template_path = Unicode(
         os.path.join("..", "templates"), 
-        help="Path where the template files are located.", affects_template=True)
+        help="Path where the template files are located.", affects_environment=True)
 
     template_skeleton_path = Unicode(
         os.path.join("..", "templates", "skeleton"), 
         help="Path where the template skeleton files are located.",
-        affects_template=True)
+        affects_environment=True)
     
     #Extension that the template files use.    
     template_extension = Unicode(".tpl", config=True, affects_template=True)
@@ -163,16 +163,16 @@ class TemplateExporter(Exporter):
         """
         from jinja2 import TemplateNotFound
 
-        # Try different template names during conversion.  First try to load the
+        if not self.template_file:
+            raise ValueError("No template_file specified!")
+
+        # First try to load the
         # template by name with extension added, then try loading the template
-        # as if the name is explicitly specified, then try the name as a 
-        # 'flavor', and lastly just try to load the template by module name.
-        try_names = []
-        if self.template_file:
-            try_names.extend([
-                self.template_file + self.template_extension,
-                self.template_file,
-            ])
+        # as if the name is explicitly specified.
+        try_names = [
+            self.template_file + self.template_extension,
+            self.template_file,
+        ]
         for try_name in try_names:
             self.log.debug("Attempting to load template %s", try_name)
             try:
@@ -182,6 +182,8 @@ class TemplateExporter(Exporter):
             else:
                 self.log.debug("Loaded template %s", try_name)
                 return template
+
+        raise TemplateNotFound(self.template_file)
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """
@@ -198,12 +200,7 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
 
-        self._load_template()
-
-        if self.template is not None:
-            output = self.template.render(nb=nb_copy, resources=resources)
-        else:
-            raise IOError('template file "%s" could not be found' % self.template_file)
+        output = self.template.render(nb=nb_copy, resources=resources)
         return output, resources
 
     def _register_filter(self, environ, name, jinja_filter):
@@ -282,7 +279,7 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        from jinja2 import Environment, ChoiceLoader, FileSystemLoader, PackageLoader
+        from jinja2 import Environment, ChoiceLoader, FileSystemLoader
         here = os.path.dirname(os.path.realpath(__file__))
 
         paths = self.template_path + \
