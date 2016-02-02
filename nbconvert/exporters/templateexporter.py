@@ -183,6 +183,8 @@ class TemplateExporter(Exporter):
                 self.log.debug("Loaded template %s", try_name)
                 return template
 
+        raise TemplateNotFound(self.template_file)
+
     def from_notebook_node(self, nb, resources=None, **kw):
         """
         Convert a notebook from a notebook node instance.
@@ -198,10 +200,7 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
 
-        if self.template is not None:
-            output = self.template.render(nb=nb_copy, resources=resources)
-        else:
-            raise IOError('template file "%s" could not be found' % self.template_file)
+        output = self.template.render(nb=nb_copy, resources=resources)
         return output, resources
 
     def _register_filter(self, environ, name, jinja_filter):
