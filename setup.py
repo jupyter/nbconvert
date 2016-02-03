@@ -54,7 +54,7 @@ package_data = {
     'nbconvert.resources' : ['style.min.css'],
     'nbconvert' : [
         'tests/files/*.*',
-        'tests/exporter_entrypoint/*.*',
+        'tests/exporter_entrypoint/*.py',
         'tests/exporter_entrypoint/*/*.*',
         'exporters/tests/files/*.*',
         'preprocessors/tests/files/*.*',
