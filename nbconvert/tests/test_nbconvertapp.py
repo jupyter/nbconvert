@@ -6,9 +6,12 @@
 
 import os
 import io
+import sys
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
+from nbconvert import nbconvertapp
+from nbconvert.exporters import Exporter
 
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
@@ -358,3 +361,12 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(['latex-linked-image.ipynb', 'testimage.png']):
             self.nbconvert('--to pdf latex-linked-image.ipynb')
             assert os.path.isfile('latex-linked-image.pdf')
+
+def test_get_exporter_entrypoint():
+    p = os.path.join(os.path.dirname(__file__), 'exporter_entrypoint')
+    sys.path.insert(0, p)
+    try:
+        cls = nbconvertapp.get_exporter('entrypoint_test')
+        assert issubclass(cls, Exporter), cls
+    finally:
+        del sys.path[0]

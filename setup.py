@@ -177,6 +177,7 @@ install_requires = setuptools_args['install_requires'] = [
     'traitlets',
     'jupyter_core',
     'nbformat',
+    'entrypoints',
 ]
 
 extras_require = setuptools_args['extras_require'] = {
