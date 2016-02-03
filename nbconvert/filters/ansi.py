@@ -5,13 +5,14 @@
 
 import re
 import jinja2
-from ipython_genutils.text import strip_ansi
 
 __all__ = [
     'strip_ansi',
     'ansi2html',
     'ansi2latex'
 ]
+
+_ANSI_RE = re.compile('\x1b\\[(.*?)([@-~])')
 
 _FG_HTML = (
     'ansiblack',
@@ -56,6 +57,19 @@ _BG_LATEX = (
     'lightcyan',
     'white',
 )
+
+
+def strip_ansi(source):
+    """
+    Remove ANSI escape codes from text.
+
+    Parameters
+    ----------
+    source : str
+        Source to remove the ANSI from
+
+    """
+    return _ANSI_RE.sub('', source)
 
 
 def ansi2html(text):
@@ -170,14 +184,13 @@ def _ansi2anything(text, converter):
     fixConsole() in notebook/notebook/static/base/js/utils.js.
 
     """
-    ansi_re = re.compile('\x1b\\[([^@-~]*)([@-~])')
     fg, bg = None, None
     bold = False
     numbers = []
     out = []
 
     while text:
-        m = ansi_re.search(text)
+        m = _ANSI_RE.search(text)
         if m:
             if m.group(2) == 'm':
                 try:
