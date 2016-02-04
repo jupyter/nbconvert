@@ -26,6 +26,7 @@ from .exporters.export import get_export_names, exporter_map
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
+from .utils.io import unicode_stdin_stream
 
 #-----------------------------------------------------------------------------
 #Classes and functions
@@ -89,6 +90,13 @@ nbconvert_flags.update({
          "an error and include the error message in the cell output "
          "(the default behaviour is to abort conversion). This flag "
          "is only relevant if '--execute' was specified, too.")
+        ),
+    'stdin' : (
+        {'NbConvertApp' : {
+            'from_stdin' : True,
+            }
+        },
+        "read a single notebook file from stdin. Write the resulting notebook with default basename 'notebook.*'"
         ),
     'stdout' : (
         {'NbConvertApp' : {'writer_class' : "StdoutWriter"}},
@@ -208,12 +216,12 @@ class NbConvertApp(JupyterApp):
         self.writer_factory = import_item(new)
 
     # Post-processor specific variables
-    postprocessor = Instance('nbconvert.postprocessors.base.PostProcessorBase',  
-                      help="""Instance of the PostProcessor class used to write the 
+    postprocessor = Instance('nbconvert.postprocessors.base.PostProcessorBase',
+                      help="""Instance of the PostProcessor class used to write the
                       results of the conversion.""", allow_none=True)
 
     postprocessor_class = DottedOrNone(config=True, 
-                                    help="""PostProcessor class used to write the 
+                                    help="""PostProcessor class used to write the
                                     results of the conversion""")
     postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
     postprocessor_factory = Type(None, allow_none=True)
@@ -237,6 +245,7 @@ class NbConvertApp(JupyterApp):
                      Wildcards are supported.
                      Filenames passed positionally will be added to the list.
                      """)
+    from_stdin   = Bool(False, config=True, help="read a single notebook from stdin.")
 
     @catch_config_error
     def initialize(self, argv=None):
@@ -323,7 +332,6 @@ class NbConvertApp(JupyterApp):
 
         """
 
-        # Get a unique key for the notebook and set it in the resources object.
         basename = os.path.basename(notebook_filename)
         notebook_name = basename[:basename.rfind('.')]
         if self.output_base:
@@ -344,16 +352,21 @@ class NbConvertApp(JupyterApp):
 
         return resources
 
-    def export_single_notebook(self, notebook_filename, resources):
+    def export_single_notebook(self, notebook_filename, resources, input_buffer=None):
         """Step 2: Export the notebook
 
         Exports the notebook to a particular format according to the specified
         exporter. This function returns the output and (possibly modified)
         resources from the exporter.
 
+        notebook_filename: a filename
+        input_buffer: a readable file like object returning unicode, if not None notebook_filename is ignored
         """
         try:
-            output, resources = self.exporter.from_filename(notebook_filename, resources=resources)
+            if input_buffer is not None:
+                output, resources = self.exporter.from_file(input_buffer, resources=resources)
+            else:
+                output, resources = self.exporter.from_filename(notebook_filename, resources=resources)
         except ConversionException:
             self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)
             self.exit(1)
@@ -390,18 +403,24 @@ class NbConvertApp(JupyterApp):
         if hasattr(self, 'postprocessor') and self.postprocessor:
             self.postprocessor(write_results)
 
-    def convert_single_notebook(self, notebook_filename):
+    def convert_single_notebook(self, notebook_filename, input_buffer=None):
         """Convert a single notebook. Performs the following steps:
 
             1. Initialize notebook resources
             2. Export the notebook to a particular format
             3. Write the exported notebook to file
             4. (Maybe) postprocess the written file
-
+            
+            If input_buffer is not None, convertion is done using buffer as source into
+            a file basenamed by the notebook_filename argument.
         """
-        self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
+        if input_buffer is None:
+            self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
+        else:
+            self.log.info("Converting notebook into %s", self.export_format)
+        
         resources = self.init_single_notebook_resources(notebook_filename)
-        output, resources = self.export_single_notebook(notebook_filename, resources)
+        output, resources = self.export_single_notebook(notebook_filename, resources, input_buffer=input_buffer)
         write_results = self.write_single_notebook(output, resources)
         self.postprocess_single_notebook(write_results)
 
@@ -425,13 +444,18 @@ class NbConvertApp(JupyterApp):
         self.exporter = cls(config=self.config)
 
         # no notebooks to convert!
-        if len(self.notebooks) == 0:
+        if len(self.notebooks) == 0 and not self.from_stdin:
             self.print_help()
             sys.exit(-1)
 
         # convert each notebook
-        for notebook_filename in self.notebooks:
-            self.convert_single_notebook(notebook_filename)
+        if not self.from_stdin:
+            for notebook_filename in self.notebooks:
+                self.convert_single_notebook(notebook_filename)
+        else:
+            input_buffer = unicode_stdin_stream()
+            # default name when conversion from stdin
+            self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
             
 #-----------------------------------------------------------------------------
 # Main entry point

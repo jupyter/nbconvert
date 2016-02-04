@@ -5,13 +5,14 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import io
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
 
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
-from nose.tools import assert_raises
+from nose.tools import assert_raises, assert_in, assert_not_in
 
 #-----------------------------------------------------------------------------
 # Classes and functions
@@ -315,8 +316,31 @@ class TestNbConvertApp(TestsBase):
             output2, _ = self.nbconvert('--to markdown --stdout notebook_jl.ipynb')
             assert '```julia' in output2  # shouldn't have language
             assert "```" in output2  # but should also plain ``` to close cell
+    
+    def test_convert_from_stdin_to_stdout(self):
+        """
+        Verify that conversion can be done via stdin to stdout
+        """
+        with self.create_temp_cwd(["notebook1.ipynb"]):
+            with io.open('notebook1.ipynb') as f:
+                notebook = f.read().encode()
+                output1, _ = self.nbconvert('--to markdown --stdin --stdout', stdin=notebook)
+            assert_not_in('```python', output1) # shouldn't have language
+            assert_in("```", output1) # but should have fenced blocks
 
-        pass
+    def test_convert_from_stdin(self):
+        """
+        Verify that conversion can be done via stdin.
+        """
+        with self.create_temp_cwd(["notebook1.ipynb"]):
+            with io.open('notebook1.ipynb') as f:
+                notebook = f.read().encode()
+                self.nbconvert('--to markdown --stdin', stdin=notebook)
+            assert os.path.isfile("notebook.md") #default name for stdin input
+            with io.open('notebook.md') as f:
+                output1 = f.read()
+                assert_not_in('```python', output1) # shouldn't have language
+                assert_in("```", output1) # but should have fenced blocks
 
     @dec.onlyif_cmds_exist('pdflatex')
     @dec.onlyif_cmds_exist('pandoc')
