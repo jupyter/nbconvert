@@ -189,6 +189,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
+        from IPython.core.inputsplitter import IPythonInputSplitter
         from IPython.core.interactiveshell import InteractiveShell
     except ImportError:
         warnings.warn(
@@ -197,8 +198,8 @@ def ipython2python(code):
         )
         return code
     else:
-        shell = InteractiveShell.instance()
-        return shell.input_transformer_manager.transform_cell(code)
+        isp = IPythonInputSplitter(line_input_checker=False)
+        return isp.transform_cell(code)
 
 def posix_path(path):
     """Turn a path into posix-style path/to/etc
