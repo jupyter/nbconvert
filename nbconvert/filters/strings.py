@@ -190,7 +190,6 @@ def ipython2python(code):
     """
     try:
         from IPython.core.inputsplitter import IPythonInputSplitter
-        from IPython.core.interactiveshell import InteractiveShell
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."
