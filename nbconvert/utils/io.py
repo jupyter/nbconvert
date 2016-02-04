@@ -43,7 +43,10 @@ def unicode_stdin_stream():
     """
     stream  = sys.stdin
     if PY3:
-        stream_b = stream.buffer
+        try:
+            stream_b = stream.buffer
+        except AttributeError:
+            return stream
     else:
         stream_b = stream
 

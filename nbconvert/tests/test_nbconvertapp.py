@@ -319,8 +319,7 @@ class TestNbConvertApp(TestsBase):
     
     def test_convert_from_stdin_to_stdout(self):
         """
-        Verify that conversion can be done via stdin, and that 
-        --stdin  implies --stdout. 
+        Verify that conversion can be done via stdin to stdout
         """
         with self.create_temp_cwd(["notebook1.ipynb"]):
             with io.open('notebook1.ipynb') as f:
@@ -331,8 +330,7 @@ class TestNbConvertApp(TestsBase):
 
     def test_convert_from_stdin(self):
         """
-        Verify that conversion can be done via stdin, and that 
-        --stdin  implies --stdout. 
+        Verify that conversion can be done via stdin.
         """
         with self.create_temp_cwd(["notebook1.ipynb"]):
             with io.open('notebook1.ipynb') as f:
