@@ -64,10 +64,6 @@ This template does not define a docclass, the inheriting class must define this.
     \definecolor{lightpurple}{rgb}{0.87,0.63,0.87}
     \definecolor{lightcyan}{rgb}{0.5,1.0,0.83}
 
-    % commands for extended ansi colors (commas behave strangely in fancyvrb)
-    \newcommand{\textcolorRGB}[3]{\textcolor[RGB]{#1,#2,#3}}
-    \newcommand{\colorboxRGB}[3]{\colorbox[RGB]{#1,#2,#3}}
-    
     % commands and environments needed by pandoc snippets
     % extracted from the output of `pandoc -s`
     \providecommand{\tightlist}{%

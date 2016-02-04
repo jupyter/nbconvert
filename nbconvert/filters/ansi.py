@@ -146,7 +146,9 @@ def _latexconverter(fg, bg, bold):
         starttag += r'\textcolor{' + _FG_LATEX[fg] + '}{'
         endtag = '}' + endtag
     elif fg:
-        starttag += r'\textcolorRGB{%s}{%s}{%s}{' % fg
+        # See http://tex.stackexchange.com/a/291102/13684
+        starttag += r'\def\tcRGB{\textcolor[RGB]}\expandafter'
+        starttag += r'\tcRGB\expandafter{\detokenize{%s,%s,%s}}{' % fg
         endtag = '}' + endtag
 
     if isinstance(bg, int):
@@ -154,7 +156,10 @@ def _latexconverter(fg, bg, bold):
         starttag += _BG_LATEX[bg] + '}{'
         endtag = r'\strut}' + endtag
     elif bg:
-        starttag += r'\setlength{\fboxsep}{0pt}\colorboxRGB{%s}{%s}{%s}{' % bg
+        starttag += r'\setlength{\fboxsep}{0pt}'
+        # See http://tex.stackexchange.com/a/291102/13684
+        starttag += r'\def\cbRGB{\colorbox[RGB]}\expandafter'
+        starttag += r'\cbRGB\expandafter{\detokenize{%s,%s,%s}}{' % bg
         endtag = r'\strut}' + endtag
 
     if bold:
