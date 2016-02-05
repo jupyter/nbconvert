@@ -68,10 +68,9 @@ class FilesWriter(WriterBase):
             output_extension = resources.get('output_extension', None)
 
             # Get the relative path for copying files
-            if self.relpath == '':
-                relpath = resources.get('metadata', {}).get('path', '')
-            else:
-                relpath = self.relpath
+            resource_path = resources.get('metadata', {}).get('path', '')
+            relpath = self.relpath or resource_path
+            build_directory = self.build_directory or resource_path
 
             # Write all of the extracted resources to the destination directory.
             # NOTE: WE WRITE EVERYTHING AS-IF IT'S BINARY.  THE EXTRACT FIG
@@ -83,7 +82,7 @@ class FilesWriter(WriterBase):
             for filename, data in items:
 
                 # Determine where to write the file to
-                dest = os.path.join(self.build_directory, filename)
+                dest = os.path.join(build_directory, filename)
                 path = os.path.dirname(dest)
                 self._makedir(path)
 
@@ -93,7 +92,7 @@ class FilesWriter(WriterBase):
                     f.write(data)
 
             # Copy referenced files to output directory
-            if self.build_directory:
+            if build_directory:
                 for filename in self.files:
 
                     # Copy files that match search pattern
@@ -106,13 +105,13 @@ class FilesWriter(WriterBase):
                             dest_filename = matching_filename
 
                         # Make sure folder exists.
-                        dest = os.path.join(self.build_directory, dest_filename)
+                        dest = os.path.join(build_directory, dest_filename)
                         path = os.path.dirname(dest)
                         self._makedir(path)
 
                         # Copy if destination is different.
                         if not os.path.normpath(dest) == os.path.normpath(matching_filename):
-                            self.log.info("Linking %s -> %s", matching_filename, dest)
+                            self.log.info("Copying %s -> %s", matching_filename, dest)
                             link_or_copy(matching_filename, dest)
 
             # Determine where to write conversion results.
@@ -120,8 +119,7 @@ class FilesWriter(WriterBase):
                 dest = notebook_name + output_extension
             else:
                 dest = notebook_name
-            if self.build_directory:
-                dest = os.path.join(self.build_directory, dest)
+            dest = os.path.join(build_directory, dest)
 
             # Write conversion results.
             self.log.info("Writing %i bytes to %s", len(output), dest)
