@@ -54,6 +54,8 @@ package_data = {
     'nbconvert.resources' : ['style.min.css'],
     'nbconvert' : [
         'tests/files/*.*',
+        'tests/exporter_entrypoint/*.py',
+        'tests/exporter_entrypoint/*/*.*',
         'exporters/tests/files/*.*',
         'preprocessors/tests/files/*.*',
     ],
@@ -177,6 +179,7 @@ install_requires = setuptools_args['install_requires'] = [
     'traitlets',
     'jupyter_core',
     'nbformat',
+    'entrypoints',
 ]
 
 extras_require = setuptools_args['extras_require'] = {
