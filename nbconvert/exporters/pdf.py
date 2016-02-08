@@ -12,6 +12,21 @@ from traitlets import Integer, List, Bool, Instance, Unicode
 from ipython_genutils.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 
+class LatexFailed(IOError):
+    """Exception for failed latex run
+    
+    Captured latex output is in error.output.
+    """
+    def __init__(self, output):
+        self.output = output
+    
+    def __unicode__(self):
+        return u"PDF creating failed, captured latex output:\n%s" % self.output
+    
+    def __str__(self):
+        u = self.__unicode__()
+        return cast_bytes_py2(u)
+
 
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files"""
@@ -38,6 +53,8 @@ class PDFExporter(LatexExporter):
     
     texinputs = Unicode(help="texinputs dir. A notebook's directory is added")
     writer = Instance("nbconvert.writers.FilesWriter", args=())
+    
+    _captured_output = List()
 
     def run_command(self, command_list, filename, count, log_function):
         """Run command_list count times.
@@ -87,8 +104,9 @@ class PDFExporter(LatexExporter):
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for index in range(count):
-                p = subprocess.Popen(command, stdout=stdout, stdin=null, shell=shell, env=env)
-                out, err = p.communicate()
+                p = subprocess.Popen(command, stdout=stdout, stderr=subprocess.STDOUT,
+                        stdin=null, shell=shell, env=env)
+                out, _ = p.communicate()
                 if p.returncode:
                     if self.verbose:
                         # verbose means I didn't capture stdout with PIPE,
@@ -97,6 +115,7 @@ class PDFExporter(LatexExporter):
                     else:
                         out = out.decode('utf-8', 'replace')
                     log_function(command, out)
+                    self._captured_output.append(out)
                     return False # failure
         return True # success
 
@@ -140,6 +159,7 @@ class PDFExporter(LatexExporter):
         else:
             self.texinputs = os.getcwd()
         
+        self._captured_outputs = []
         with TemporaryWorkingDirectory() as td:
             notebook_name = 'notebook'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
@@ -152,7 +172,7 @@ class PDFExporter(LatexExporter):
             
             pdf_file = notebook_name + '.pdf'
             if not os.path.isfile(pdf_file):
-                raise IOError("PDF creating failed")
+                raise LatexFailed('\n'.join(self._captured_output))
             self.log.info('PDF successfully created')
             with open(pdf_file, 'rb') as f:
                 pdf_data = f.read()
