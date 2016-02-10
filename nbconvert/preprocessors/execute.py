@@ -197,7 +197,7 @@ class ExecutePreprocessor(Preprocessor):
 
         while True:
             try:
-                msg = self.kc.iopub_channel.get_msg(timeout=self.timeout)
+                msg = self.kc.iopub_channel.get_msg(timeout=1)
             except Empty:
                 self.log.warn("Timeout waiting for IOPub output")
                 break
