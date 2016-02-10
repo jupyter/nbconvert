@@ -197,7 +197,12 @@ class ExecutePreprocessor(Preprocessor):
 
         while True:
             try:
-                msg = self.kc.iopub_channel.get_msg(timeout=1)
+                # We've already waited for execute_reply, so all output
+                # should already be waiting. However, on slow networks, like
+                # in certain CI systems, waiting < 1 second might miss messages.
+                # So long as the kernel sends a status:idle message when it
+                # finishes, we won't actually have to wait this long, anyway.
+                msg = self.kc.iopub_channel.get_msg(timeout=4)
             except Empty:
                 self.log.warn("Timeout waiting for IOPub output")
                 break
