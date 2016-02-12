@@ -33,7 +33,8 @@ This template does not define a docclass, the inheriting class must define this.
     \usepackage{hyperref}
     \usepackage{longtable} % longtable support required by pandoc >1.10
     \usepackage{booktabs}  % table support for pandoc > 1.12.2
-    \usepackage{ulem} % ulem is needed to support strikethroughs (\sout)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
     ((* endblock packages *))
 
     ((* block definitions *))
