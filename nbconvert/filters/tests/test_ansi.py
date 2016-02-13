@@ -25,10 +25,7 @@ class TestAnsi(TestsBase):
         }
 
         for inval, outval in correct_outputs.items():
-            self._try_strip_ansi(inval, outval)
-
-    def _try_strip_ansi(self, inval, outval):
-        self.assertEqual(outval, strip_ansi(inval))
+            self.assertEqual(outval, strip_ansi(inval))
 
     def test_ansi2html(self):
         """ansi2html test"""
@@ -43,10 +40,7 @@ class TestAnsi(TestsBase):
         }
 
         for inval, outval in correct_outputs.items():
-            self._try_ansi2html(inval, outval)
-
-    def _try_ansi2html(self, inval, outval):
-        self.fuzzy_compare(outval, ansi2html(inval))
+            self.fuzzy_compare(outval, ansi2html(inval))
 
     def test_ansi2latex(self):
         """ansi2latex test"""
@@ -65,7 +59,4 @@ class TestAnsi(TestsBase):
         }
 
         for inval, outval in correct_outputs.items():
-            self._try_ansi2latex(inval, outval)
-
-    def _try_ansi2latex(self, inval, outval):
-        self.fuzzy_compare(outval, ansi2latex(inval), case_sensitive=True)
+            self.fuzzy_compare(outval, ansi2latex(inval), case_sensitive=True)
