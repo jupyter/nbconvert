@@ -5,7 +5,7 @@ dependencies:
 - pandoc
 - nbformat
 - jupyter_client
-- ipykernel
-- numpydoc
+- sphinx
 - pip:
     - nbsphinx
+    - entrypoints
