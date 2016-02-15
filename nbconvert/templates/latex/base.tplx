@@ -64,7 +64,7 @@ This template does not define a docclass, the inheriting class must define this.
     \definecolor{lightblue}{rgb}{0.53,0.81,0.92}
     \definecolor{lightpurple}{rgb}{0.87,0.63,0.87}
     \definecolor{lightcyan}{rgb}{0.5,1.0,0.83}
-    
+
     % commands and environments needed by pandoc snippets
     % extracted from the output of `pandoc -s`
     \providecommand{\tightlist}{%
