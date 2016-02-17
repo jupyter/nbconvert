@@ -162,7 +162,7 @@ class Exporter(LoggingConfigurable):
         resources['metadata']['modified_date'] = modified_date.strftime(text.date_format)
 
         with io.open(filename, encoding='utf-8') as f:
-            return self.from_notebook_node(nbformat.read(f, as_version=4), resources=resources, **kw)
+            return self.from_file(f, resources=resources, **kw)
 
 
     def from_file(self, file_stream, resources=None, **kw):
