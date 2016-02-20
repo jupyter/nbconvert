@@ -363,10 +363,10 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('latex-linked-image.pdf')
 
     @dec.onlyif_cmds_exist('pandoc')
-    def test_linked_jpeg(self):
+    def test_embedded_jpeg(self):
         """
         Verify that latex conversion succeeds
-        with a notebook with a linked .jpeg
+        with a notebook with an embedded .jpeg
         """
         with self.create_temp_cwd(['notebook4_jpeg.ipynb',
                                    'containerized_deployments.jpeg']):
