@@ -362,6 +362,18 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--to pdf latex-linked-image.ipynb')
             assert os.path.isfile('latex-linked-image.pdf')
 
+    @dec.onlyif_cmds_exist('pandoc')
+    def test_embedded_jpeg(self):
+        """
+        Verify that latex conversion succeeds
+        with a notebook with an embedded .jpeg
+        """
+        with self.create_temp_cwd(['notebook4_jpeg.ipynb',
+                                   'containerized_deployments.jpeg']):
+            self.nbconvert('--to latex notebook4_jpeg.ipynb')
+            assert os.path.isfile('notebook4_jpeg.tex')
+
+
 def test_get_exporter_entrypoint():
     p = os.path.join(os.path.dirname(__file__), 'exporter_entrypoint')
     sys.path.insert(0, p)
