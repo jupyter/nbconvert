@@ -22,6 +22,7 @@ class TestAnsi(TestsBase):
             '\x1b[31mh\x1b[31me\x1b[31ml\x1b[31ml\x1b[31mo\x1b[31m': 'hello',
             'hel\x1b[;00;;032;;;32mlo': 'hello',
             'hello': 'hello',
+            'z\ra\nz\rb\nz\rc\nz\rz\rd': 'a\nb\nc\nd',
         }
 
         for inval, outval in correct_outputs.items():
@@ -38,6 +39,7 @@ class TestAnsi(TestsBase):
             'hel\x1b[0;32mlo': 'hel<span class="ansigreen">lo</span>',
             'hello': 'hello',
             '\x1b[1mhello\x1b[33mworld\x1b[0m': '<span class="ansibold">hello</span><span class="ansiyellow ansibold">world</span>',
+            'z\ra\nz\rb\nz\rc\nz\rz\rd': 'a\nb\nc\nd',
         }
 
         for inval, outval in correct_outputs.items():
@@ -58,6 +60,7 @@ class TestAnsi(TestsBase):
             'hello\x1b[01;34mthere': r'hello\textcolor{blue}{\textbf{there}}',
             'hello\x1b[001;34mthere': r'hello\textcolor{blue}{\textbf{there}}',
             '\x1b[1mhello\x1b[33mworld\x1b[0m': r'\textbf{hello}\textcolor{brown}{\textbf{world}}',
+            'z\ra\nz\rb\nz\rc\nz\rz\rd': 'a\nb\nc\nd',
         }
 
         for inval, outval in correct_outputs.items():
