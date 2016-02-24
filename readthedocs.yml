@@ -1,0 +1,5 @@
+conda:
+    file: docs/environment.yml
+python:
+    version: 2 # pandoc fails with Python 3 (missing libgmp??)
+    setup_py_install: true
