@@ -13,6 +13,7 @@ __all__ = [
 ]
 
 _ANSI_RE = re.compile('\x1b\\[(.*?)([@-~])')
+_CARRIAGE_RETURN_RE = re.compile(r'.*\r(?=[^\n])')
 
 _FG_HTML = (
     'ansiblack',
@@ -69,6 +70,7 @@ def strip_ansi(source):
         Source to remove the ANSI from
 
     """
+    source = _strip_carriage_return(source)
     return _ANSI_RE.sub('', source)
 
 
@@ -193,6 +195,7 @@ def _ansi2anything(text, converter):
     bold = False
     numbers = []
     out = []
+    text = _strip_carriage_return(text)
 
     while text:
         m = _ANSI_RE.search(text)
@@ -280,3 +283,8 @@ def _get_extended_color(numbers):
     else:
         raise ValueError()
     return r, g, b
+
+
+def _strip_carriage_return(text):
+    """Process \\r characters."""
+    return _CARRIAGE_RETURN_RE.sub('', text)

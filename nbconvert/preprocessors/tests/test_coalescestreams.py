@@ -40,19 +40,3 @@ class TestCoalesceStreams(PreprocessorTestsBase):
         nb, res = coalesce_streams(nb, res)
         outputs = nb.cells[0].outputs
         self.assertEqual(outputs[0].text, u'01234567')
-
-    def test_coalesce_replace_streams(self):
-        """Are \\r characters handled?"""
-        outputs = [nbformat.new_output(output_type="stream", name="stdout", text="z"),
-                   nbformat.new_output(output_type="stream", name="stdout", text="\ra"),
-                   nbformat.new_output(output_type="stream", name="stdout", text="\nz\rb"),
-                   nbformat.new_output(output_type="stream", name="stdout", text="\nz"),
-                   nbformat.new_output(output_type="stream", name="stdout", text="\rc\n"),
-                   nbformat.new_output(output_type="stream", name="stdout", text="z\rz\rd")]
-        cells=[nbformat.new_code_cell(source="# None", execution_count=1,outputs=outputs)]
-
-        nb = nbformat.new_notebook(cells=cells)
-        res = self.build_resources()
-        nb, res = coalesce_streams(nb, res)
-        outputs = nb.cells[0].outputs
-        self.assertEqual(outputs[0].text, u'a\nb\nc\nd')

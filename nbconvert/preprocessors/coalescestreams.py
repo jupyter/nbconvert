@@ -31,8 +31,6 @@ def cell_preprocessor(function):
         return nb, resources
     return wrappedfunc
 
-cr_pat = re.compile(r'.*\r(?=[^\n])')
-
 @cell_preprocessor
 def coalesce_streams(cell, resources, index):
     """
@@ -66,11 +64,6 @@ def coalesce_streams(cell, resources, index):
         else:
             new_outputs.append(output)
             last = output
-    
-    # process \r characters
-    for output in new_outputs:
-        if output.output_type == 'stream' and '\r' in output.text:
-            output.text = cr_pat.sub('', output.text)
 
     cell.outputs = new_outputs
     return cell, resources
