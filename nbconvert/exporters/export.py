@@ -4,6 +4,12 @@
 # Distributed under the terms of the Modified BSD License.
 
 from functools import wraps
+from itertools import chain
+
+import entrypoints
+
+from traitlets.log import get_logger
+from traitlets.utils.importstring import import_item
 
 from nbformat import NotebookNode
 from ipython_genutils.py3compat import string_types
@@ -49,12 +55,8 @@ def DocDecorator(f):
             to caller because it provides a 'file_extension' property which
             specifies what extension the output should be saved as.
 
-    Notes
-    -----
-    WARNING: API WILL CHANGE IN FUTURE RELEASES OF NBCONVERT
-
     """
-            
+
     @wraps(f)
     def decorator(*args, **kwargs):
         return f(*args, **kwargs)
@@ -79,7 +81,7 @@ __all__ = [
     'export_rst',
     'export_by_name',
     'get_export_names',
-    'ExporterNameError'
+    'ExporterNameError',
 ]
 
 
@@ -149,6 +151,7 @@ g = globals()
 for name, E in exporter_map.items():
     g['export_%s' % name] = DocDecorator(_make_exporter(name, E))
 
+
 @DocDecorator
 def export_by_name(format_name, nb, **kw):
     """
@@ -162,16 +165,46 @@ def export_by_name(format_name, nb, **kw):
         Name of the template style to export to.
     """
     
+    exporter = get_exporter(name)
     function_name = "export_" + format_name.lower()
     
     if function_name in globals():
         return globals()[function_name](nb, **kw)
     else:
-        raise ExporterNameError("template for `%s` not found" % function_name)
+        exporter = get_exporter(name)
+        
+        raise ExporterNameError("Exporter for `%s` not found" % function_name)
+
+
+def get_exporter(name):
+    """ given an exporter name, return a class ready to be instantiate
+    
+    Raises ValueError if exporter is not found
+    """
+    if name.lower() in exporter_map:
+        return exporter_map[name.lower()]
+
+    try:
+        return entrypoints.get_single('nbconvert.exporter', name).load()
+    except entrypoints.NoSuchEntryPoint:
+        pass
+
+    if '.' in name:
+        try:
+            return import_item(name)
+        except ImportError:
+            log = get_logger()
+            log.error("Error importing %s" % name, exc_info=True)
+
+    raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
+                     % (name, ', '.join(get_export_names())))
 
 
 def get_export_names():
     """Return a list of the currently supported export targets
-
-    WARNING: API WILL CHANGE IN FUTURE RELEASES OF NBCONVERT"""
-    return sorted(exporter_map.keys())
+    
+    Exporters can be found in external packages by registering
+    them as an nbconvert.exporter entrypoint.
+    """
+    return sorted(exporter_map.keys()) + \
+           sorted(entrypoints.get_group_named('nbconvert.exporter'))
