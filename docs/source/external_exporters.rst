@@ -41,8 +41,8 @@ you can register them in your package's :file:`setup.py`:
         ...
         entry_points = {
             'nbconvert.exporters': [
-                'foo = mymodule.FooExporter',
-                'bar = mymodule.BarExporter',
+                'foo = mymodule:FooExporter',
+                'bar = mymodule:BarExporter',
             ],
         }
     )
