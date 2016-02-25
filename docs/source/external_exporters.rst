@@ -53,7 +53,7 @@ This will enable people who have installed your package to call::
 
 instead of having to specify the full import name of your exporters.
 
-.. _entry points: https://pythonhosted.org/setuptools/setuptools.html#dynamic-discovery-of-services-and-plugins
+.. _entry points: https://packaging.python.org/en/latest/distributing/#entry-points
 
 
 Exporters without entrypoints
