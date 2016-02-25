@@ -6,11 +6,12 @@ Module with tests for export.py
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import sys
 
 import nbformat
 
 from .base import ExportersTestsBase
-from ..export import *
+from ..export import get_exporter, export_by_name, export, Exporter, ExporterNameError, get_export_names
 from ..python import PythonExporter
 
 
@@ -87,4 +88,14 @@ class TestExport(ExportersTestsBase):
             (output, resources) = export(None, self._get_notebook())
         except TypeError:
             pass
-                
+
+def test_get_exporter_entrypoint():
+    import nbconvert.tests
+    p = os.path.join(os.path.dirname(nbconvert.tests.__file__), 'exporter_entrypoint')
+    sys.path.insert(0, p)
+    assert 'entrypoint_test' in get_export_names()
+    try:
+        cls = get_exporter('entrypoint_test')
+        assert issubclass(cls, Exporter), cls
+    finally:
+        del sys.path[0]
