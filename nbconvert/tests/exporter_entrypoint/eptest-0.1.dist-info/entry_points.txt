@@ -1,2 +1,2 @@
-[nbconvert.exporter]
+[nbconvert.exporters]
 entrypoint_test = eptest:DummyExporter

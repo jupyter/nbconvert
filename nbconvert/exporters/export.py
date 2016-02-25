@@ -185,7 +185,7 @@ def get_exporter(name):
         return exporter_map[name.lower()]
 
     try:
-        return entrypoints.get_single('nbconvert.exporter', name).load()
+        return entrypoints.get_single('nbconvert.exporters', name).load()
     except entrypoints.NoSuchEntryPoint:
         pass
 
@@ -207,4 +207,4 @@ def get_export_names():
     them as an nbconvert.exporter entrypoint.
     """
     return sorted(exporter_map.keys()) + \
-           sorted(entrypoints.get_group_named('nbconvert.exporter'))
+           sorted(entrypoints.get_group_named('nbconvert.exporters'))
