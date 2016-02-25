@@ -5,26 +5,62 @@ Using external exporters
 
 .. versionadded:: 4.2
 
-    You can now use the ``--to`` flag to use custom export formats defined in other
-    libraries.
+    You can now use the ``--to`` flag to use custom export formats defined outside nbconvert.
 
 
 The command-line syntax to run the ``nbconvert`` script is::
 
-  $ jupyter nbconvert --to FORMAT notebook.ipynb
+  jupyter nbconvert --to FORMAT notebook.ipynb
 
 This will convert the Jupyter document file ``notebook.ipynb`` into the output
 format designated by the ``FORMAT`` string as explained below.
 
 A few built-in formats are available by default: `html`, `pdf`,
 `script`, `latex`. Each of these has its own _exporter_ with many configuration
-options that can be extended. Having the option to point to a different _exporter_ 
-allows authors to create their own fully customized templates. 
+options that can be extended. Having the option to point to a different _exporter_
+allows authors to create their own fully customized templates or export formats.
 
-A custom _exporter_ must be a globally importable python object. We recommend that
-these be distributed as python libraries.
 
-To export using an exporter from an external library, use the `fully qualified`
+A custom _exporter_ must be an importable Python object. We recommend that
+these be distributed as Python libraries.
+
+.. _entrypoints:
+
+Entry points
+------------
+
+Additional exporters may be registered as `entry points`_.
+nbconvert uses the ``nbconvert.exporters`` entry point to find exporters from any package you may have installed.
+
+If you are writing a Python package that provides an exporter,
+you can register them in your package's :file:`setup.py`:
+
+.. sourcecode:: python
+
+    setup(
+        ...
+        entry_points = {
+            'nbconvert.exporters': [
+                'foo = mymodule.FooExporter',
+                'bar = mymodule.BarExporter',
+            ],
+        }
+    )
+
+This will enable people who have installed your package to call::
+
+    jupyter nbconvert --to foo mynotebook.ipynb
+
+instead of having to specify the full import name of your exporters.
+
+.. _entry points: https://pythonhosted.org/setuptools/setuptools.html#dynamic-discovery-of-services-and-plugins
+
+
+Exporters without entrypoints
+-----------------------------
+
+Custom exporters are encouraged to register themselves with entrypoints, as described above.
+If an exporter is not registered with an entrypoint, it can still be used with the fully qualified
 name of this exporter on the command line as the argument of the ``--to`` flag::
 
   $ jupyter nbconvert --to <full.qualified.name> notebook.ipynb
@@ -38,8 +74,8 @@ A library can therefore contain multiple exporters. All other flags of the comma
 line should behave the same as for built-in exporters. 
 
 
-Parameters controlled by external exporter
-==========================================
+Parameters controlled by an external exporter
+=============================================
 
 An external exporter can control almost any parameter of the notebook conversion
 process, from simple parameters such as the output file extension, to more complex
