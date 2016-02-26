@@ -14,7 +14,6 @@ import sys
 import os
 import glob
 
-import entrypoints
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
@@ -23,7 +22,7 @@ from traitlets import (
 
 from ipython_genutils.importstring import import_item
 
-from .exporters.export import get_export_names, exporter_map
+from .exporters.export import get_export_names, get_exporter
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
@@ -32,33 +31,6 @@ from .utils.io import unicode_stdin_stream
 #-----------------------------------------------------------------------------
 #Classes and functions
 #-----------------------------------------------------------------------------
-
-def get_exporter(name):
-    """ given an exporter name, return a class ready to be instantiate
-    
-    Raises ValueError if exporter is not found
-    """
-    if name.lower() in exporter_map:
-        return exporter_map[name.lower()]
-
-    if '.' in name:
-        try:
-            return import_item(name)
-        except ImportError:
-            log = logging.getLogger()
-            log.error("Error importing %s" % name, exc_info=True)
-            pass
-    else:
-        try:
-            return entrypoints.get_single('nbconvert.exporter', name).load()
-        except entrypoints.NoSuchEntryPoint:
-            pass
-
-    valid_names = sorted(get_export_names() +
-                     list(entrypoints.get_group_named('nbconvert.exporter')))
-    raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
-                     % (name, ', '.join(valid_names)))
-
 
 class DottedOrNone(DottedObjectName):
     """

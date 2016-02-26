@@ -374,11 +374,3 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook4_jpeg.tex')
 
 
-def test_get_exporter_entrypoint():
-    p = os.path.join(os.path.dirname(__file__), 'exporter_entrypoint')
-    sys.path.insert(0, p)
-    try:
-        cls = nbconvertapp.get_exporter('entrypoint_test')
-        assert issubclass(cls, Exporter), cls
-    finally:
-        del sys.path[0]
