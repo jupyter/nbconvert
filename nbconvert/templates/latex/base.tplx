@@ -76,22 +76,23 @@ This template does not define a docclass, the inheriting class must define this.
     \definecolor{inputbackground}{rgb}{.95, .95, .85}
     \definecolor{outputbackground}{rgb}{.95, .95, .95}
     \definecolor{traceback}{rgb}{1, .95, .95}
-    % ansi colors
-    \definecolor{red}{rgb}{.6,0,0}
-    \definecolor{green}{rgb}{0,.65,0}
-    \definecolor{brown}{rgb}{0.6,0.6,0}
-    \definecolor{blue}{rgb}{0,.145,.698}
-    \definecolor{purple}{rgb}{.698,.145,.698}
-    \definecolor{cyan}{rgb}{0,.698,.698}
-    \definecolor{lightgray}{gray}{0.5}
-    
-    % bright ansi colors
-    \definecolor{darkgray}{gray}{0.25}
-    \definecolor{lightred}{rgb}{1.0,0.39,0.28}
-    \definecolor{lightgreen}{rgb}{0.48,0.99,0.0}
-    \definecolor{lightblue}{rgb}{0.53,0.81,0.92}
-    \definecolor{lightpurple}{rgb}{0.87,0.63,0.87}
-    \definecolor{lightcyan}{rgb}{0.5,1.0,0.83}
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
 
     % commands and environments needed by pandoc snippets
     % extracted from the output of `pandoc -s`
