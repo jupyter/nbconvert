@@ -38,7 +38,7 @@ class ExecutePreprocessor(Preprocessor):
     Executes all the cells in a notebook
     """
 
-    timeout = Integer(30, config=True,
+    timeout = Integer(-1, config=True,
         help=dedent(
             """
             The time to wait (in seconds) for output from executions.
