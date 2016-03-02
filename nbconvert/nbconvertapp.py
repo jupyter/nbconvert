@@ -93,14 +93,13 @@ nbconvert_flags.update({
         },
         """Run nbconvert in place, overwriting the existing notebook (only 
         relevant when converting to notebook format)"""
-        )
+        ),
     'tiemout' : (
         {
-            'ExecutePreprocessor' : {'timeout' : True}},
-            "Allow notebook cells to run until completion."
-            
-            )
-        })
+            'ExecutePreprocessor' : {'timeout' : True},
+        },
+        "Allow notebook cells to run until completion."
+        )
 
 })
 

@@ -38,12 +38,14 @@ class ExecutePreprocessor(Preprocessor):
     Executes all the cells in a notebook
     """
 
-    timeout = Integer(-1, config=True,
+    timeout = Integer(10, config=True, allow_none=True,
         help=dedent(
             """
             The time to wait (in seconds) for output from executions.
             If a cell execution takes longer, an exception (TimeoutError
             on python 3+, RuntimeError on python 2) is raised.
+
+            `None`, or `0` will disable the timeout.
             """
         )
     )
@@ -166,7 +168,10 @@ class ExecutePreprocessor(Preprocessor):
         # wait for finish, with timeout
         while True:
             try:
-                msg = self.kc.shell_channel.get_msg(timeout=self.timeout)
+                timeout = self.timeout:
+                    if timeout <= 0:
+                        timeout = None
+                msg = self.kc.shell_channel.get_msg(timeout=timeout)
             except Empty:
                 self.log.error("""Timeout waiting for execute reply (%is).
                 If your cell should take longer than this, you can increase the timeout with:
