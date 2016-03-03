@@ -90,11 +90,12 @@ class ExecutePreprocessor(Preprocessor):
         help=dedent(
             """
             If `False` (default), then the kernel will continue waiting for
-            iopub messages until it receives all of them. If `True`, then an
-            error will be thrown after the first timeout. This option generally
-            does not need to be used, but may be useful in contexts where there
-            is the possibility of executing notebooks with memory-consuming
-            infinite loops.
+            iopub messages until it receives a kernel idle message, or until a
+            timeout occurs, at which point the currently executing cell will be
+            skipped. If `True`, then an error will be raised after the first
+            timeout. This option generally does not need to be used, but may be
+            useful in contexts where there is the possibility of executing
+            notebooks with memory-consuming infinite loops.
             """
             )
         )
