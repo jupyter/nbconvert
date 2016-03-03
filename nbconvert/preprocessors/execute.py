@@ -85,6 +85,20 @@ class ExecutePreprocessor(Preprocessor):
         )
     )
 
+    raise_on_iopub_timeout = Bool(
+        False, config=True,
+        help=dedent(
+            """
+            If `False` (default), then the kernel will continue waiting for
+            iopub messages until it receives all of them. If `True`, then an
+            error will be thrown after the first timeout. This option generally
+            does not need to be used, but may be useful in contexts where there
+            is the possibility of executing notebooks with memory-consuming
+            infinite loops.
+            """
+            )
+        )
+
 
     def preprocess(self, nb, resources):
         """
@@ -205,7 +219,10 @@ class ExecutePreprocessor(Preprocessor):
                 msg = self.kc.iopub_channel.get_msg(timeout=4)
             except Empty:
                 self.log.warn("Timeout waiting for IOPub output")
-                break
+                if self.raise_on_iopub_timeout:
+                    raise RuntimeError("Timeout waiting for IOPub output")
+                else:
+                    break
             if msg['parent_header'].get('msg_id') != msg_id:
                 # not an output from our execution
                 continue
