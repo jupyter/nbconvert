@@ -38,7 +38,7 @@ class ExecutePreprocessor(Preprocessor):
     Executes all the cells in a notebook
     """
 
-    timeout = Integer(10, config=True, allow_none=True,
+    timeout = Integer(30, config=True, allow_none=True,
         help=dedent(
             """
             The time to wait (in seconds) for output from executions.
@@ -168,9 +168,9 @@ class ExecutePreprocessor(Preprocessor):
         # wait for finish, with timeout
         while True:
             try:
-                timeout = self.timeout:
-                    if timeout <= 0:
-                        timeout = None
+                timeout = self.timeout
+                if timeout <= 0:
+                    timeout = None
                 msg = self.kc.shell_channel.get_msg(timeout=timeout)
             except Empty:
                 self.log.error("""Timeout waiting for execute reply (%is).
