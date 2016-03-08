@@ -23,6 +23,7 @@ from ..execute import ExecutePreprocessor, CellExecutionError
 
 from nbconvert.filters import strip_ansi
 from nose.tools import assert_raises
+from testpath import modified_env
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 
@@ -89,13 +90,18 @@ class TestExecute(PreprocessorTestsBase):
         """
         with io.open(filename) as f:
             input_nb = nbformat.read(f, 4)
+
         preprocessor = self.build_preprocessor(opts)
         cleaned_input_nb = copy.deepcopy(input_nb)
         for cell in cleaned_input_nb.cells:
             if 'execution_count' in cell:
                 del cell['execution_count']
             cell['outputs'] = []
-        output_nb, _ = preprocessor(cleaned_input_nb, resources)
+
+        # Override terminal size to standardise traceback format
+        with modified_env({'COLUMNS': '80', 'LINES': '24'}):
+            output_nb, _ = preprocessor(cleaned_input_nb, resources)
+
         return input_nb, output_nb
 
     def test_run_notebooks(self):
