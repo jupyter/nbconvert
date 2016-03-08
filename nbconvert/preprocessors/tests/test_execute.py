@@ -11,11 +11,6 @@ import io
 import os
 import re
 
-try:
-    from queue import Empty  # Py 3
-except ImportError:
-    from Queue import Empty  # Py 2
-
 import nbformat
 
 from .base import PreprocessorTestsBase

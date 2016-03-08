@@ -4,6 +4,10 @@ import os.path
 from nbconvert.nbconvertapp import NbConvertApp
 
 header = """\
+
+.. This is an automatically generated file.
+.. do not modify by hand.
+
 Configuration options
 =====================
 
