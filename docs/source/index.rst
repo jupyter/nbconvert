@@ -19,6 +19,7 @@ Contents:
    install
    usage
    config_options
+   architecture
    latex_citations
    external_exporters
    customizing
