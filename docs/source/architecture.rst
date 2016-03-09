@@ -5,7 +5,7 @@ Architecture of nbconvert
 =========================
 
 This is a high-level outline of the structure and objects in nbconvert,
-and how they are used in the pipeline of converting a notebook to any given fromat.
+and how they are used in the pipeline of converting a notebook to any given format.
 
 
 .. _exporters:
@@ -120,4 +120,3 @@ which is used for serving `reveal.js`_ HTML slideshows.
 .. _jinja: http://jinja.pocoo.org
 .. _filter: http://jinja.pocoo.org/docs/dev/templates/#filters
 .. _reveal.js: http://lab.hakim.se/reveal-js
-
