@@ -31,8 +31,8 @@ Contents:
    :caption: Configuration
    
    config_options
-   external_exporters
    customizing
+   external_exporters
 
 .. toctree::
    :maxdepth: 1

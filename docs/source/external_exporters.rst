@@ -1,11 +1,12 @@
 .. _external_exporters:
 
-Using external exporters
-========================
+Customizing exporters
+=====================
 
 .. versionadded:: 4.2
 
-    You can now use the ``--to`` flag to use custom export formats defined outside nbconvert.
+    You can now use the ``--to`` flag to use custom export formats defined
+    outside nbconvert.
 
 
 The command-line syntax to run the ``nbconvert`` script is::
@@ -15,25 +16,30 @@ The command-line syntax to run the ``nbconvert`` script is::
 This will convert the Jupyter document file ``notebook.ipynb`` into the output
 format designated by the ``FORMAT`` string as explained below.
 
+Extending the built-in format exporters
+---------------------------------------
 A few built-in formats are available by default: `html`, `pdf`,
-`script`, `latex`. Each of these has its own _exporter_ with many configuration
-options that can be extended. Having the option to point to a different _exporter_
-allows authors to create their own fully customized templates or export formats.
-
+`script`, `latex`. Each of these has its own _exporter_ with many
+configuration options that can be extended. Having the option to point to a
+different _exporter_ allows authors to create their own fully customized
+templates or export formats.
 
 A custom _exporter_ must be an importable Python object. We recommend that
 these be distributed as Python libraries.
 
 .. _entrypoints:
 
-Entry points
-------------
+Registering a custom exporter as an entry point
+-----------------------------------------------
 
-Additional exporters may be registered as `entry points`_.
-nbconvert uses the ``nbconvert.exporters`` entry point to find exporters from any package you may have installed.
+Additional exporters may be registered as named `entry_points`_.
+nbconvert uses the ``nbconvert.exporters`` entry point to find exporters
+from any package you may have installed.
 
-If you are writing a Python package that provides an exporter,
-you can register them in your package's :file:`setup.py`:
+If you are writing a Python package that provides custom exporters,
+you can register the custom exporters in your package's :file:`setup.py`. For
+example, your package may contain two custom exporters, named "simple" and
+"detail", and can be registered in your package's :file:`setup.py` as follows:
 
 .. sourcecode:: python
 
@@ -41,37 +47,41 @@ you can register them in your package's :file:`setup.py`:
         ...
         entry_points = {
             'nbconvert.exporters': [
-                'foo = mymodule:FooExporter',
-                'bar = mymodule:BarExporter',
+                'simple = mymodule:SimpleExporter',
+                'detail = mymodule:DetailExporter',
             ],
         }
     )
 
-This will enable people who have installed your package to call::
+Now people who have installed your Python package containing the two
+custom exporters can call the entry point name::
 
-    jupyter nbconvert --to foo mynotebook.ipynb
+    jupyter nbconvert --to detail mynotebook.ipynb
 
-instead of having to specify the full import name of your exporters.
+instead of having to specify the full import name of the custom exporter.
 
 .. _entry points: https://packaging.python.org/en/latest/distributing/#entry-points
 
 
-Exporters without entrypoints
------------------------------
+Using a custom exporter without entrypoints
+-------------------------------------------
+We encourage registering custom exporters as entry points as described in the
+previous section. Registering a custom exporter with an entry point simplifies
+using the exporter. If a custom exporter has not been registered with an
+entry point, the exporter can still be used by providing the fully qualified
+name of this exporter as the argument of the ``--to`` flag when running from
+the command line::
 
-Custom exporters are encouraged to register themselves with entrypoints, as described above.
-If an exporter is not registered with an entrypoint, it can still be used with the fully qualified
-name of this exporter on the command line as the argument of the ``--to`` flag::
+  $ jupyter nbconvert --to <full.qualified.name of custom exporter> notebook.ipynb
 
-  $ jupyter nbconvert --to <full.qualified.name> notebook.ipynb
-
-For example, assuming a library `tcontrib` has an exporter name `TExporter`,
-you would convert to this format using::
+For example, assuming a library `tcontrib` has a custom exporter name
+`TExporter`, you would convert to this custom format using the following::
   
    $ jupyter nbconvert --to tcontrib.TExporter notebook.ipynb
 
-A library can therefore contain multiple exporters. All other flags of the command 
-line should behave the same as for built-in exporters. 
+A library can contain multiple exporters. Creators of custom exporters should
+make sure that all other flags of the command line behave the same for the
+custom exporters as for built-in exporters. 
 
 
 Parameters controlled by an external exporter
