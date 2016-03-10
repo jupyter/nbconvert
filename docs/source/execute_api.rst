@@ -8,13 +8,13 @@ provides a helpful way to execute the input cells of an .ipynb notebook
 file and save the results, both input and output cells, as a .ipynb file.
 
 In this section we show how to execute a ``.ipynb`` notebook
-document saving the result in notebook format.
-If you need to export notebooks to other formats, such as reStructured Text
-or Markdown (optionally executing them) see section :doc:`nbconvert_library`.
+document saving the result in notebook format. If you need to export
+notebooks to other formats, such as reStructured Text or Markdown (optionally
+executing them) see section :doc:`nbconvert_library`.
 
 Executing notebooks can be very helpful, for example, to run all notebooks
-in Python library in one step, or as a way to
-automate the data analysis in projects involving more than one notebook.
+in Python library in one step, or as a way to automate the data analysis in
+projects involving more than one notebook.
 
 The same functionality of executing notebooks is exposed through a
 :doc:`command line interface <usage>` or a Python API interface.
