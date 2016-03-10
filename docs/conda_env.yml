@@ -1,7 +1,3 @@
 name: nbconvert_docs
 dependencies:
-- sphinx>=1.3
-- sphinx_rtd_theme
-- pygments==2.1.1
-- pip:
-    - nbsphinx
+- sphinx
