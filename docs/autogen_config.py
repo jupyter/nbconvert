@@ -11,8 +11,8 @@ header = """\
 Configuration options
 =====================
 
-These options can be set in ``~/.jupyter/jupyter_nbconvert_config.py``, or
-at the command line when you start it.
+Configuration options may be set in a file, ``~/.jupyter/jupyter_nbconvert_config.py``,
+or at the command line when starting nbconvert, i.e. ``jupyter nbconvert --config Application.log_level=10``.
 """
 
 try:
