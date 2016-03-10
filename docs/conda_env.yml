@@ -1,11 +1,10 @@
 name: nbconvert_docs
-channels:
-- asmeurer
 dependencies:
-- pandoc
+- nbconvert
 - nbformat
+- jupyter
+- notebook
 - jupyter_client
 - sphinx
-- pip:
-    - nbsphinx
-    - entrypoints
+- nbsphinx
+- entrypoints
