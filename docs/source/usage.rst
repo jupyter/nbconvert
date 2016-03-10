@@ -55,6 +55,12 @@ LaTeX
 
     Very basic latex output - mainly meant as a starting point for custom
     templates.
+    
+  .. note::
+
+    nbconvert uses pandoc_ to convert between various markup languages,
+    so pandoc is a dependency when converting to latex or reStructuredText.
+
 
 PDF
 ~~~
@@ -87,6 +93,11 @@ reStructuredText
 
   Basic reStructuredText output. Useful as a starting point for embedding
   notebooks in Sphinx docs.
+  
+  .. note::
+
+    nbconvert uses pandoc_ to convert between various markup languages,
+    so pandoc is a dependency when converting to latex or reStructuredText.
 
 Executable script
 ~~~~~~~~~~~~~~~~~
@@ -117,19 +128,19 @@ specify ``--allow-errors`` (in addition to the ``--execute`` flag) then
 conversion will continue and the output from any exception will be included
 in the cell output.
 
-  ::
+The following command::
 
       jupyter nbconvert --to notebook --nbformat 3 mynotebook
 
-  will create a copy of :file:`mynotebook.ipynb` in :file:`mynotebook.v3.ipynb`
-  in version 3 of the notebook format.
+will create a copy of :file:`mynotebook.ipynb` in :file:`mynotebook.v3.ipynb`
+in version 3 of the notebook format.
 
-  If you want to convert a notebook in-place,
-  you can specify the ouptut file to be the same as the input file::
+If you want to convert a notebook in-place, you can specify the ouptut file
+to be the same as the input file::
 
       jupyter nbconvert --to notebook mynb --output mynb
 
-  Be careful with that, since it will replace the input file.
+Be careful with that, since it will replace the input file.
 
 .. note::
 
@@ -152,6 +163,8 @@ the output may be sent to standard output with::
 
   $ jupyter nbconvert --to markdown notebook.ipynb --stdout
 
+Converting multiple notebooks
+-----------------------------
 Multiple notebooks can be specified from the command line::
 
   $ jupyter nbconvert notebook*.ipynb
