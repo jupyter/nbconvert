@@ -1,6 +1,11 @@
 Changes in nbconvert
 ====================
 
+4.2 (in development)
+--------------------
+
+``4.2 on GitHub - Add link once release is tagged``
+
 - allow nbconvert reading from stdin with "--stdin" option (write into "notebook" basename)
 
 4.1
