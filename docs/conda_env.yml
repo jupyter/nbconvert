@@ -2,3 +2,5 @@ name: nbconvert_docs
 dependencies:
 - sphinx
 - nbconvert
+- pip:
+    - nbsphinx
