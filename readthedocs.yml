@@ -1,4 +1,5 @@
 conda:
-    file: docs/conda_env.yml
+    file: docs/environment.yml
 python:
-    version: 3
+    version: 2
+    setup_py_install: true 
