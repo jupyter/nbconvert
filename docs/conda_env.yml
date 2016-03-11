@@ -2,5 +2,7 @@ name: nbconvert_docs
 dependencies:
 - sphinx
 - nbconvert
+- jupyter_client
 - pip:
     - nbsphinx
+    - entrypoints
