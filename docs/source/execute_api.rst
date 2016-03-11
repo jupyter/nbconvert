@@ -86,7 +86,8 @@ The ``timeout`` traitlet defines the maximum time (in seconds) each notebook
 cell is
 allowed to run, if the execution takes longer an exception will be raised.
 The default is 30 s, so in cases of long-running cells you may want to specify
-an higher value.
+an higher value. The ``timeout`` option can also be set to ``None`` or ``-1``
+to remove any restriction on execution time.  
 
 The second traitlet, ``kernel_name``, allows specifying the name of the kernel
 to be used for the execution. By default, the kernel name is obtained from the

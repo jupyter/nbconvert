@@ -45,7 +45,7 @@ class ExecutePreprocessor(Preprocessor):
             If a cell execution takes longer, an exception (TimeoutError
             on python 3+, RuntimeError on python 2) is raised.
 
-            `None`, or `0` will disable the timeout.
+            `None` or `-1` will disable the timeout.
             """
         )
     )
@@ -184,7 +184,7 @@ class ExecutePreprocessor(Preprocessor):
         while True:
             try:
                 timeout = self.timeout
-                if timeout <= 0:
+                if timeout < 0:
                     timeout = None
                 msg = self.kc.shell_channel.get_msg(timeout=timeout)
             except Empty:
