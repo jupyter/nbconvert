@@ -1,6 +1,6 @@
 name: nbconvert_docs
 channels:
-- willingc
+- willingcn
 dependencies:
 - python=3.5
 - pandoc
