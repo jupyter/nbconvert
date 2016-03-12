@@ -1,6 +1,6 @@
 name: nbconvert_docs
 channels:
-    - asmeurer
+- asmeurer
 dependencies:
 - pandoc
 - nbformat
