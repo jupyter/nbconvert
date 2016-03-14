@@ -60,7 +60,7 @@ custom exporters can call the entry point name::
 
 instead of having to specify the full import name of the custom exporter.
 
-.. _entry points: https://packaging.python.org/en/latest/distributing/#entry-points
+.. _entry_points: https://packaging.python.org/en/latest/distributing/#entry-points
 
 
 Using a custom exporter without entrypoints
@@ -76,12 +76,12 @@ the command line::
 
 For example, assuming a library `tcontrib` has a custom exporter name
 `TExporter`, you would convert to this custom format using the following::
-  
+
    $ jupyter nbconvert --to tcontrib.TExporter notebook.ipynb
 
 A library can contain multiple exporters. Creators of custom exporters should
 make sure that all other flags of the command line behave the same for the
-custom exporters as for built-in exporters. 
+custom exporters as for built-in exporters.
 
 
 Parameters controlled by an external exporter
@@ -92,20 +92,20 @@ process, from simple parameters such as the output file extension, to more compl
 ones such as the execution of the notebook or a custom rendering template.
 
 All external exporters can expose custom options using the ``traitlets``
-configurable API. Refer to the library that provides these exporters for 
+configurable API. Refer to the library that provides these exporters for
 details on how these configuration options works.
 
 You can use the Jupyter configuration files to configure an external exporter. As
 for any ``nbconvert`` exporters you can use either the configuration file syntax of
 ``c.MyExporter.config_option=value`` or the command line flag form
-``--MyExporter.config_option=value``. 
+``--MyExporter.config_option=value``.
 
 Writing a custom ``Exporter``
 =============================
 
-Under the hood exporters are python classes that expose a certain interface. 
+Under the hood exporters are python classes that expose a certain interface.
 Any importable classes that expose this interface can be use as an exporter for
-nbconvert. 
+nbconvert.
 
 For simplicity we expose basic classes that implement all the relevant methods
 that you have to subclass and overwrite just the relevant methods to provide a
@@ -113,8 +113,8 @@ custom exporter. Below we show you the step to create a custom exporter that
 provides a custom file extension, and a custom template that inserts before and after
 each markdown cell.
 
-We will lay out files to be ready for Python packaging and distributing on PyPI, 
-although the exact art of Python packaging is beyond the scope of this explanation. 
+We will lay out files to be ready for Python packaging and distributing on PyPI,
+although the exact art of Python packaging is beyond the scope of this explanation.
 
 We will use the following layout for our package to expose a custom exporter::
 
@@ -126,9 +126,9 @@ We will use the following layout for our package to expose a custom exporter::
         └── templates
             └── test_template.tpl
 
-As you can see the layout is relatively simple, in the case where a template is not 
-needed we would actually have only one file with an Exporter implementation.  Of course 
-you can change the layout of your package to have a more fine-grained structure of the 
+As you can see the layout is relatively simple, in the case where a template is not
+needed we would actually have only one file with an Exporter implementation.  Of course
+you can change the layout of your package to have a more fine-grained structure of the
 subpackage. But lets see what a minimum example looks like.
 
 We are going to write an exporter that:
@@ -151,9 +151,9 @@ We are going to write an exporter that:
 
     class MyExporter(HTMLExporter):
         """
-        My custom exporter  
+        My custom exporter
         """
-        
+
         def _file_extension_default(self):
             """
             The new file extension is `.test_ext`
@@ -173,7 +173,7 @@ We are going to write an exporter that:
             We want to use the new template we ship with our library.
             """
             return 'test_template' # full
-        
+
 
 And the template file, that inherits from the html `full` template and prepend/append text to each markdown cell (see Jinja2 docs for template syntax)::
 
