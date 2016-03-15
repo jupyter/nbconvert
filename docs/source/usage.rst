@@ -108,6 +108,10 @@ Executable script
   This is the simplest way to get a Python (or other language, depending on
   the kernel) script out of a notebook. If there were any magics in an
   Jupyter notebook, this may only be executable from a Jupyter session.
+  
+  For example, to convert a Julia notebook to a Julia executable script::
+      
+      jupyter nbconvert --to script my_julia_notebook.ipynb my_julia_script.jl
 
 Notebook and preprocessors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
