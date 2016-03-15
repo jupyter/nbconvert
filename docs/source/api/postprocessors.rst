@@ -16,3 +16,5 @@ Specialized postprocessors
 --------------------------
 
 .. autoclass:: ServePostProcessor
+
+    .. automethod:: postprocess
