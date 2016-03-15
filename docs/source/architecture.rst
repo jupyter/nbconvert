@@ -117,6 +117,6 @@ which is used for serving `reveal.js`_ HTML slideshows.
 
 .. links:
 
-.. _jinja: http://jinja.pocoo.org
+.. _jinja: http://jinja.pocoo.org/
 .. _filter: http://jinja.pocoo.org/docs/dev/templates/#filters
 .. _reveal.js: http://lab.hakim.se/reveal-js

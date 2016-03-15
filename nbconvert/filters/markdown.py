@@ -49,7 +49,7 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     markup : string
       Markup used by pandoc's reader
       default : pandoc extended markdown
-      (see http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown)
+      (see http://pandoc.org/README.html#pandocs-markdown)
 
     Returns
     -------

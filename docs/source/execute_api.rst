@@ -79,7 +79,7 @@ Execution arguments (traitlets)
 -------------------------------
 
 The arguments passed to :class:`ExecutePreprocessor` are configuration options
-called `traitlets <http://traitlets.readthedocs.org/>`_.
+called `traitlets <http://traitlets.readthedocs.org/en/stable>`_.
 There are many cool things about traitlets. For example,
 they enforce the input type, and they can be accessed/modified as
 class attributes. Moreover, each traitlet is automatically exposed

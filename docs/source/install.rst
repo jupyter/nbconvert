@@ -22,7 +22,7 @@ Installing Pandoc
 -----------------
 
 For converting markdown to formats other than HTML, nbconvert uses
-`Pandoc <https://pandoc.org>`_ (1.12.1 or later).
+`Pandoc <http://pandoc.org>`_ (1.12.1 or later).
 
 To install pandoc on Linux, you can generally use your package manager::
 
