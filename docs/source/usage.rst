@@ -111,7 +111,7 @@ Executable script
   
   For example, to convert a Julia notebook to a Julia executable script::
       
-      jupyter nbconvert --to script my_julia_notebook.ipynb my_julia_script.jl
+      jupyter nbconvert --to script my_julia_notebook.ipynb
 
 Notebook and preprocessors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
