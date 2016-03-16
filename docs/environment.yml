@@ -1,11 +1,12 @@
 name: nbconvert_docs
 channels:
-- asmeurer
+- willingcn
 dependencies:
+- python=3.5
 - pandoc
 - nbformat
 - jupyter_client
-- sphinx
 - pip:
+    - sphinx==1.3.6
     - nbsphinx
     - entrypoints

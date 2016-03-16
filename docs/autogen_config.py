@@ -1,5 +1,12 @@
 #!/usr/bin/env python
+"""
+autogen_config.py
 
+Create config_options.rst, a Sphinx documentation source file.
+Documents the options that may be set in nbconvert's configuration file,
+jupyter_nbconvert_config.py.
+
+"""
 import os.path
 from nbconvert.nbconvertapp import NbConvertApp
 
@@ -11,8 +18,8 @@ header = """\
 Configuration options
 =====================
 
-These options can be set in ``~/.jupyter/jupyter_nbconvert_config.py``, or
-at the command line when you start it.
+Configuration options may be set in a file, ``~/.jupyter/jupyter_nbconvert_config.py``,
+or at the command line when starting nbconvert, i.e. ``jupyter nbconvert --config Application.log_level=10``.
 """
 
 try:

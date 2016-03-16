@@ -1,10 +1,13 @@
-Installing nbconvert
-====================
+Installation
+============
 
 .. seealso::
 
-   `Installing Jupyter <http://jupyter.readthedocs.org/en/latest/install.html>`__
+   `Installing Jupyter <https://jupyter.readthedocs.org/en/latest/install.html>`__
      Nbconvert is part of the Jupyter ecosystem.
+
+Installing nbconvert
+--------------------
 
 Nbconvert is packaged for both pip and conda, so you can install it with::
 
@@ -12,14 +15,14 @@ Nbconvert is packaged for both pip and conda, so you can install it with::
     # OR
     conda install nbconvert
 
-If you're new to Python, we recommend installing `Anaconda <https://www.continuum.io/downloads>`__,
+If you're new to Python, we recommend installing `Anaconda <https://www.continuum.io/downloads>`_,
 a Python distribution which includes nbconvert and the other Jupyter components.
 
-Pandoc
-------
+Installing Pandoc
+-----------------
 
-For converting markdown to formats other than HTML, nbconvert uses Pandoc_
-(1.12.1 or later).
+For converting markdown to formats other than HTML, nbconvert uses
+`Pandoc <http://pandoc.org>`_ (1.12.1 or later).
 
 To install pandoc on Linux, you can generally use your package manager::
 

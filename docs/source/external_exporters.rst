@@ -1,11 +1,12 @@
 .. _external_exporters:
 
-Using external exporters
-========================
+Customizing exporters
+=====================
 
 .. versionadded:: 4.2
 
-    You can now use the ``--to`` flag to use custom export formats defined outside nbconvert.
+    You can now use the ``--to`` flag to use custom export formats defined
+    outside nbconvert.
 
 
 The command-line syntax to run the ``nbconvert`` script is::
@@ -15,25 +16,30 @@ The command-line syntax to run the ``nbconvert`` script is::
 This will convert the Jupyter document file ``notebook.ipynb`` into the output
 format designated by the ``FORMAT`` string as explained below.
 
+Extending the built-in format exporters
+---------------------------------------
 A few built-in formats are available by default: `html`, `pdf`,
-`script`, `latex`. Each of these has its own _exporter_ with many configuration
-options that can be extended. Having the option to point to a different _exporter_
-allows authors to create their own fully customized templates or export formats.
-
+`script`, `latex`. Each of these has its own _exporter_ with many
+configuration options that can be extended. Having the option to point to a
+different _exporter_ allows authors to create their own fully customized
+templates or export formats.
 
 A custom _exporter_ must be an importable Python object. We recommend that
 these be distributed as Python libraries.
 
 .. _entrypoints:
 
-Entry points
-------------
+Registering a custom exporter as an entry point
+-----------------------------------------------
 
-Additional exporters may be registered as `entry points`_.
-nbconvert uses the ``nbconvert.exporters`` entry point to find exporters from any package you may have installed.
+Additional exporters may be registered as named `entry_points`_.
+nbconvert uses the ``nbconvert.exporters`` entry point to find exporters
+from any package you may have installed.
 
-If you are writing a Python package that provides an exporter,
-you can register them in your package's :file:`setup.py`:
+If you are writing a Python package that provides custom exporters,
+you can register the custom exporters in your package's :file:`setup.py`. For
+example, your package may contain two custom exporters, named "simple" and
+"detail", and can be registered in your package's :file:`setup.py` as follows:
 
 .. sourcecode:: python
 
@@ -41,37 +47,41 @@ you can register them in your package's :file:`setup.py`:
         ...
         entry_points = {
             'nbconvert.exporters': [
-                'foo = mymodule:FooExporter',
-                'bar = mymodule:BarExporter',
+                'simple = mymodule:SimpleExporter',
+                'detail = mymodule:DetailExporter',
             ],
         }
     )
 
-This will enable people who have installed your package to call::
+Now people who have installed your Python package containing the two
+custom exporters can call the entry point name::
 
-    jupyter nbconvert --to foo mynotebook.ipynb
+    jupyter nbconvert --to detail mynotebook.ipynb
 
-instead of having to specify the full import name of your exporters.
+instead of having to specify the full import name of the custom exporter.
 
-.. _entry points: https://packaging.python.org/en/latest/distributing/#entry-points
+.. _entry_points: https://packaging.python.org/en/latest/distributing/#entry-points
 
 
-Exporters without entrypoints
------------------------------
+Using a custom exporter without entrypoints
+-------------------------------------------
+We encourage registering custom exporters as entry points as described in the
+previous section. Registering a custom exporter with an entry point simplifies
+using the exporter. If a custom exporter has not been registered with an
+entry point, the exporter can still be used by providing the fully qualified
+name of this exporter as the argument of the ``--to`` flag when running from
+the command line::
 
-Custom exporters are encouraged to register themselves with entrypoints, as described above.
-If an exporter is not registered with an entrypoint, it can still be used with the fully qualified
-name of this exporter on the command line as the argument of the ``--to`` flag::
+  $ jupyter nbconvert --to <full.qualified.name of custom exporter> notebook.ipynb
 
-  $ jupyter nbconvert --to <full.qualified.name> notebook.ipynb
+For example, assuming a library `tcontrib` has a custom exporter name
+`TExporter`, you would convert to this custom format using the following::
 
-For example, assuming a library `tcontrib` has an exporter name `TExporter`,
-you would convert to this format using::
-  
    $ jupyter nbconvert --to tcontrib.TExporter notebook.ipynb
 
-A library can therefore contain multiple exporters. All other flags of the command 
-line should behave the same as for built-in exporters. 
+A library can contain multiple exporters. Creators of custom exporters should
+make sure that all other flags of the command line behave the same for the
+custom exporters as for built-in exporters.
 
 
 Parameters controlled by an external exporter
@@ -82,20 +92,20 @@ process, from simple parameters such as the output file extension, to more compl
 ones such as the execution of the notebook or a custom rendering template.
 
 All external exporters can expose custom options using the ``traitlets``
-configurable API. Refer to the library that provides these exporters for 
+configurable API. Refer to the library that provides these exporters for
 details on how these configuration options works.
 
 You can use the Jupyter configuration files to configure an external exporter. As
 for any ``nbconvert`` exporters you can use either the configuration file syntax of
 ``c.MyExporter.config_option=value`` or the command line flag form
-``--MyExporter.config_option=value``. 
+``--MyExporter.config_option=value``.
 
 Writing a custom ``Exporter``
 =============================
 
-Under the hood exporters are python classes that expose a certain interface. 
+Under the hood exporters are python classes that expose a certain interface.
 Any importable classes that expose this interface can be use as an exporter for
-nbconvert. 
+nbconvert.
 
 For simplicity we expose basic classes that implement all the relevant methods
 that you have to subclass and overwrite just the relevant methods to provide a
@@ -103,8 +113,8 @@ custom exporter. Below we show you the step to create a custom exporter that
 provides a custom file extension, and a custom template that inserts before and after
 each markdown cell.
 
-We will lay out files to be ready for Python packaging and distributing on PyPI, 
-although the exact art of Python packaging is beyond the scope of this explanation. 
+We will lay out files to be ready for Python packaging and distributing on PyPI,
+although the exact art of Python packaging is beyond the scope of this explanation.
 
 We will use the following layout for our package to expose a custom exporter::
 
@@ -116,9 +126,9 @@ We will use the following layout for our package to expose a custom exporter::
         └── templates
             └── test_template.tpl
 
-As you can see the layout is relatively simple, in the case where a template is not 
-needed we would actually have only one file with an Exporter implementation.  Of course 
-you can change the layout of your package to have a more fine-grained structure of the 
+As you can see the layout is relatively simple, in the case where a template is not
+needed we would actually have only one file with an Exporter implementation.  Of course
+you can change the layout of your package to have a more fine-grained structure of the
 subpackage. But lets see what a minimum example looks like.
 
 We are going to write an exporter that:
@@ -141,9 +151,9 @@ We are going to write an exporter that:
 
     class MyExporter(HTMLExporter):
         """
-        My custom exporter  
+        My custom exporter
         """
-        
+
         def _file_extension_default(self):
             """
             The new file extension is `.test_ext`
@@ -163,7 +173,7 @@ We are going to write an exporter that:
             We want to use the new template we ship with our library.
             """
             return 'test_template' # full
-        
+
 
 And the template file, that inherits from the html `full` template and prepend/append text to each markdown cell (see Jinja2 docs for template syntax)::
 
