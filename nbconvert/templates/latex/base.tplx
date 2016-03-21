@@ -15,7 +15,7 @@ This template does not define a docclass, the inheriting class must define this.
     ((* block packages *))
     \usepackage{graphicx} % Used to insert images
     \usepackage{adjustbox} % Used to constrain images to a maximum size 
-    \usepackage{color} % Allow colors to be defined
+    \usepackage{xcolor} % Allow colors to be defined
     \usepackage{enumerate} % Needed for markdown enumerations to work
     \usepackage{geometry} % Used to adjust the document margins
     \usepackage{amsmath} % Equations
