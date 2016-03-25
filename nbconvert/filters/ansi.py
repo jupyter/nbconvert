@@ -219,6 +219,10 @@ def _ansi2anything(text, converter):
                     numbers.clear()
             elif n == 49:
                 bg = None
+            elif 90 <= n <= 97:
+                fg = n - 90 + 8
+            elif 100 <= n <= 107:
+                bg = n - 100 + 8
             else:
                 pass  # Unknown codes are ignored
     return ''.join(out)
