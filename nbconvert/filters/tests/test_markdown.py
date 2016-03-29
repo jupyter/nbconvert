@@ -178,11 +178,7 @@ i.e. the $i^{th}$"""
             self._try_markdown(markdown2rst, test, tokens[index])
 
     def test_multiple_email_links(self):
-        cases = {
-            '<a@b.c> <d.e@f.g>':
-                '<a href="mailto:a@b.c">a@b.c</a>. '
-                '<a href="mailto:d.e@f.g">d.e@f.g</a>.'
-        }
+        cases = {'<d.e@f.g>': '<a href="mailto:a@b.c">a@b.c</a>. '}
         for md, html in cases.items():
             self.assertIn(html, markdown2html(md))
 
