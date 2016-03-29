@@ -178,9 +178,8 @@ i.e. the $i^{th}$"""
             self._try_markdown(markdown2rst, test, tokens[index])
 
     def test_multiple_email_links(self):
-        cases = {'<d.e@f.g>': '<a href="mailto:a@b.c">a@b.c</a>. '}
-        for md, html in cases.items():
-            self.assertIn(html, markdown2html(md))
+        # https://github.com/jupyter/nbviewer/issues/582
+        self.assertNotIn('<c.d@e.f>', markdown2html('<a@b.c> <c.d@e.f>'))
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)
