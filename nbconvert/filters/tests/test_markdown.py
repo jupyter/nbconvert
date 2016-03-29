@@ -123,7 +123,7 @@ class TestMarkdown(TestsBase):
                 ]
         for case in cases:
             self.assertIn(case, markdown2html(case))
-    
+
     def test_markdown2html_math_mixed(self):
         """ensure markdown between inline and inline-block math"""
         case = """The entries of $C$ are given by the exact formula:
@@ -177,6 +177,14 @@ i.e. the $i^{th}$"""
         for index, test in enumerate(self.tests):
             self._try_markdown(markdown2rst, test, tokens[index])
 
+    def test_multiple_email_links(self):
+        cases = {
+            '<a@b.c> <d.e@f.g>':
+                '<a href="mailto:a@b.c">a@b.c</a>. '
+                '<a href="mailto:d.e@f.g">d.e@f.g</a>.'
+        }
+        for md, html in cases.items():
+            self.assertIn(html, markdown2html(md))
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)
