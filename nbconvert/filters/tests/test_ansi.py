@@ -1,9 +1,12 @@
+# coding: utf-8
 """
 Module with tests for ansi filters
 """
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+
+from __future__ import unicode_literals
 
 from ...tests.base import TestsBase
 from ..ansi import strip_ansi, ansi2html, ansi2latex
@@ -36,7 +39,7 @@ class TestAnsi(TestsBase):
             '\x1b[1;33mhello': '<span class="ansiyellow ansibold">hello</span>',
             '\x1b[37mh\x1b[0;037me\x1b[;0037ml\x1b[00;37ml\x1b[;;37mo': '<span class="ansigray">h</span><span class="ansigray">e</span><span class="ansigray">l</span><span class="ansigray">l</span><span class="ansigray">o</span>',
             'hel\x1b[0;32mlo': 'hel<span class="ansigreen">lo</span>',
-            'hello': 'hello',
+            'hellø': 'hellø',
             '\x1b[1mhello\x1b[33mworld\x1b[0m': '<span class="ansibold">hello</span><span class="ansiyellow ansibold">world</span>',
         }
 

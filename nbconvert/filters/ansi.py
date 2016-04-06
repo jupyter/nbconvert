@@ -78,11 +78,11 @@ def ansi2html(text):
 
     Parameters
     ----------
-    text : str
+    text : unicode
         Text containing ANSI colors to convert to HTML
 
     """
-    text = str(jinja2.utils.escape(text))
+    text = jinja2.utils.escape(text)
     return _ansi2anything(text, _htmlconverter)
 
 
@@ -92,7 +92,7 @@ def ansi2latex(text):
 
     Parameters
     ----------
-    text : str
+    text : unicode
         Text containing ANSI colors to convert to LaTeX
 
     """
