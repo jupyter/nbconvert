@@ -13,6 +13,7 @@ This template does not define a docclass, the inheriting class must define this.
     ((* block docclass *))((* endblock docclass *))
     
     ((* block packages *))
+    \usepackage[T1]{fontenc}
     % Nicer default font than Computer Modern for most use cases
     \usepackage{palatino}
 
