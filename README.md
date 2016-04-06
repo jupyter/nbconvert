@@ -39,7 +39,7 @@ Convert Juptyer notebook file, `mynotebook.ipynb`, to HTML using:
 This command creates an HTML output file named `mynotebook.html`.
 
 ## Dev Install
-Check if pandoc installed (``pandoc --version``); if needed, install:
+Check if pandoc is installed (``pandoc --version``); if needed, install:
 
 ```
 sudo apt-get install pandoc
