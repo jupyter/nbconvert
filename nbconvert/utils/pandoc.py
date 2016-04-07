@@ -17,7 +17,9 @@ from .exceptions import ConversionException
 _minimal_version = "1.12.1"
 
 def pandoc(source, fmt, to, extra_args=None, encoding='utf-8'):
-    """Convert an input string in format `from` to format `to` via pandoc.
+    """Convert an input string using pandoc.
+
+    Pandoc converts an input string `from` a format `to` a target format.
 
     Parameters
     ----------
@@ -85,7 +87,7 @@ def get_pandoc_version():
 
 
 def check_pandoc_version():
-    """Returns True if minimal pandoc version is met.
+    """Returns True if pandoc's version meets at least minimal version.
 
     Raises
     ------
@@ -111,7 +113,7 @@ def check_pandoc_version():
 # Exception handling
 #-----------------------------------------------------------------------------
 class PandocMissing(ConversionException):
-    """Exception raised when Pandoc is missing. """
+    """Exception raised when Pandoc is missing."""
     def __init__(self, *args, **kwargs):
         super(PandocMissing, self).__init__( "Pandoc wasn't found.\n" +
                                              "Please check that pandoc is installed:\n" +

@@ -14,9 +14,17 @@ from distutils.version import LooseVersion
 def check_version(v, check):
     """check version string v >= check
 
-    If dev/prerelease tags result in TypeError for string-number comparison,
-    it is assumed that the dependency is satisfied.
-    Users on dev branches are responsible for keeping their own packages up to date.
+    Parameters
+    ----------
+    v : str
+        version of the package
+    check : str
+        minimal version required
+
+    Note: If dev/prerelease tags result in TypeError for string-number
+    comparison, it is assumed that the check passes and the version dependency
+    is satisfied. Users on dev branches are responsible for keeping their own
+    packages up to date.
     """
     try:
         return LooseVersion(v) >= LooseVersion(check)

@@ -39,7 +39,7 @@ Convert Juptyer notebook file, `mynotebook.ipynb`, to HTML using:
 This command creates an HTML output file named `mynotebook.html`.
 
 ## Dev Install
-First make sure that you have pandoc installed:
+Check if pandoc is installed (``pandoc --version``); if needed, install:
 
 ```
 sudo apt-get install pandoc
@@ -70,7 +70,6 @@ pip install -e .
 - [Project Jupyter website](https://jupyter.org)
 - [Documentation for Project Jupyter](https://jupyter.readthedocs.org/en/latest/index.html)
   [[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)]
-
 
 
 [Jinja]: http://jinja.pocoo.org/

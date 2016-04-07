@@ -33,10 +33,9 @@ from .utils.io import unicode_stdin_stream
 #-----------------------------------------------------------------------------
 
 class DottedOrNone(DottedObjectName):
+    """A string holding a valid dotted object name in Python, such as A.b3._c
+    Also allows for None type.
     """
-    A string holding a valid dotted object name in Python, such as A.b3._c
-    Also allows for None type."""
-    
     default_value = u''
 
     def validate(self, obj, value):
@@ -230,6 +229,7 @@ class NbConvertApp(JupyterApp):
 
     @catch_config_error
     def initialize(self, argv=None):
+        """Initialize application, notebooks, writer, and postprocessor"""
         self.init_syspath()
         super(NbConvertApp, self).initialize(argv)
         self.init_notebooks()
@@ -238,21 +238,20 @@ class NbConvertApp(JupyterApp):
 
 
     def init_syspath(self):
-        """
-        Add the cwd to the sys.path ($PYTHONPATH)
-        """
+        """Add the cwd to the sys.path ($PYTHONPATH)"""
         sys.path.insert(0, os.getcwd())
         
 
     def init_notebooks(self):
         """Construct the list of notebooks.
+
         If notebooks are passed on the command-line,
-        they override notebooks specified in config files.
+        they override (rather than add) notebooks specified in config files.
         Glob each notebook to replace notebook patterns with filenames.
         """
 
-        # Specifying notebooks on the command-line overrides (rather than adds)
-        # the notebook list
+        # Specifying notebooks on the command-line overrides (rather than
+        # adds) the notebook list
         if self.extra_args:
             patterns = self.extra_args
         else:
@@ -275,48 +274,43 @@ class NbConvertApp(JupyterApp):
         self.notebooks = filenames
 
     def init_writer(self):
-        """
-        Initialize the writer (which is stateless)
-        """
+        """Initialize the writer (which is stateless)"""
         self._writer_class_changed(None, self.writer_class, self.writer_class)
         self.writer = self.writer_factory(parent=self)
         if hasattr(self.writer, 'build_directory') and self.writer.build_directory != '':
             self.use_output_suffix = False
 
     def init_postprocessor(self):
-        """
-        Initialize the postprocessor (which is stateless)
-        """
+        """Initialize the postprocessor (which is stateless)"""
         self._postprocessor_class_changed(None, self.postprocessor_class, 
             self.postprocessor_class)
         if self.postprocessor_factory:
             self.postprocessor = self.postprocessor_factory(parent=self)
 
     def start(self):
-        """
-        Ran after initialization completed
-        """
+        """Run start after initialization process has completed"""
         super(NbConvertApp, self).start()
         self.convert_notebooks()
 
     def init_single_notebook_resources(self, notebook_filename):
         """Step 1: Initialize resources
 
-        This intializes the resources dictionary for a single notebook. This
-        method should return the resources dictionary, and MUST include the
-        following keys:
+        This initializes the resources dictionary for a single notebook.
 
-            - config_dir: the location of the Jupyter config directory
-            - unique_key: the notebook name
-            - output_files_dir: a directory where output files (not including
-              the notebook itself) should be saved
-
+        Returns
+        -------
+        dict
+            resources dictionary for a single notebook that MUST include the
+            following keys:
+                - config_dir: the location of the Jupyter config directory
+                - unique_key: the notebook name
+                - output_files_dir: a directory where output files (not
+                  including the notebook itself) should be saved
         """
-
         basename = os.path.basename(notebook_filename)
         notebook_name = basename[:basename.rfind('.')]
         if self.output_base:
-            # strip duplicate extension from output_base, to avoid Basname.ext.ext
+            # strip duplicate extension from output_base, to avoid Basename.ext.ext
             if getattr(self.exporter, 'file_extension', False):
                 base, ext = os.path.splitext(self.output_base)
                 if ext == self.exporter.file_extension:
@@ -340,8 +334,21 @@ class NbConvertApp(JupyterApp):
         exporter. This function returns the output and (possibly modified)
         resources from the exporter.
 
-        notebook_filename: a filename
-        input_buffer: a readable file like object returning unicode, if not None notebook_filename is ignored
+        Parameters
+        ----------
+        notebook_filename : str
+            name of notebook file.
+        resources : dict
+        input_buffer :
+            readable file-like object returning unicode.
+            if not None, notebook_filename is ignored
+
+        Returns
+        -------
+        output
+
+        dict
+            resources (possibly modified)
         """
         try:
             if input_buffer is not None:
@@ -360,6 +367,17 @@ class NbConvertApp(JupyterApp):
         This writes output from the exporter to file using the specified writer.
         It returns the results from the writer.
 
+        Parameters
+        ----------
+        output :
+        resources : dict
+            resources for a single notebook including name, config directory
+            and directory to save output
+
+        Returns
+        -------
+        file
+            results from the specified writer output of exporter
         """
         if 'unique_key' not in resources:
             raise KeyError("unique_key MUST be specified in the resources, but it is not")
@@ -373,27 +391,33 @@ class NbConvertApp(JupyterApp):
         return write_results
 
     def postprocess_single_notebook(self, write_results):
-        """Step 4: Postprocess the notebook
+        """Step 4: Post-process the written file
 
-        This postprocesses the notebook after it has been written, taking as an
-        argument the results of writing the notebook to file. This only actually
-        does anything if a postprocessor has actually been specified.
-
+        Only used if a postprocessor has been specified. After the
+        converted notebook is written to a file in Step 3, this post-processes
+        the notebook.
         """
         # Post-process if post processor has been defined.
         if hasattr(self, 'postprocessor') and self.postprocessor:
             self.postprocessor(write_results)
 
     def convert_single_notebook(self, notebook_filename, input_buffer=None):
-        """Convert a single notebook. Performs the following steps:
+        """Convert a single notebook.
+
+        Performs the following steps:
 
             1. Initialize notebook resources
             2. Export the notebook to a particular format
             3. Write the exported notebook to file
             4. (Maybe) postprocess the written file
-            
-            If input_buffer is not None, convertion is done using buffer as source into
-            a file basenamed by the notebook_filename argument.
+
+        Parameters
+        ----------
+        notebook_filename : str
+        input_buffer :
+            If input_buffer is not None, conversion is done and the buffer is
+            used as source into a file basenamed by the notebook_filename
+            argument.
         """
         if input_buffer is None:
             self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
@@ -406,9 +430,7 @@ class NbConvertApp(JupyterApp):
         self.postprocess_single_notebook(write_results)
 
     def convert_notebooks(self):
-        """
-        Convert the notebooks in the self.notebook traitlet
-        """
+        """Convert the notebooks in the self.notebook traitlet """
         # check that the output base isn't specified if there is more than
         # one notebook to convert
         if self.output_base != '' and len(self.notebooks) > 1:

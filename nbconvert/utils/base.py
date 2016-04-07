@@ -10,7 +10,7 @@ from traitlets import Unicode
 class NbConvertBase(LoggingConfigurable):
     """Global configurable class for shared config
 
-    Useful for display data priority that might be use by many transformers
+    Useful for display data priority that might be used by many transformers
     """
 
     display_data_priority = List(['text/html', 'application/pdf', 'text/latex', 'image/svg+xml', 'image/png', 'image/jpeg', 'text/markdown', 'text/plain'],
