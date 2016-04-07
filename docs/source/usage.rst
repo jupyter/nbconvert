@@ -15,13 +15,26 @@ omitted::
 
   $ jupyter nbconvert notebook.ipynb
 
+.. _supported_output:
+
 Supported output formats
 ------------------------
-The currently supported output formats are: HTML, LaTeX, PDF, Reveal.js HTML
-slideshow, Markdown, reStructuredText, executable script, and notebook. 
+The currently supported output formats are:
+
+    - :ref:`HTML <convert_html>`,
+    - :ref:`LaTeX <convert_latex>`,
+    - :ref:`PDF <convert_pdf>`,
+    - :ref:`Reveal.js HTML slideshow <convert_revealjs>`,
+    - :ref:`Markdown <convert_markdown>`,
+    - :ref:`reStructuredText <convert_rst>`,
+    - :ref:`executable script <convert_script>`,
+    - :ref:`notebook <convert_notebook>`.
+
 Jupyter also provides a few templates for output formats. These can be
 specified via an additional ``--template`` argument and are listed in the
 sections below.
+
+.. _convert_html:
 
 HTML
 ~~~~
@@ -36,6 +49,8 @@ HTML
 
     Simplified HTML, useful for embedding in webpages, blogs, etc.
     This excludes HTML headers.
+
+.. _convert_latex:
 
 LaTeX
 ~~~~~
@@ -56,18 +71,21 @@ LaTeX
 
     Very basic latex output - mainly meant as a starting point for custom
     templates.
-    
+
   .. note::
 
     nbconvert uses pandoc_ to convert between various markup languages,
     so pandoc is a dependency when converting to latex or reStructuredText.
 
+.. _convert_pdf:
 
 PDF
 ~~~
 * ``--to pdf``
 
   Generates a PDF via latex. Supports the same templates as ``--to latex``.
+
+.. _convert_revealjs:
 
 Reveal.js HTML slideshow
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,6 +99,8 @@ Reveal.js HTML slideshow
   Reveal.js library in the same directory where your_talk.slides.html is
   located, or point to another directory using the ``--reveal-prefix`` alias.
 
+.. _convert_markdown:
+
 Markdown
 ~~~~~~~~
 * ``--to markdown``
@@ -88,17 +108,21 @@ Markdown
   Simple markdown output.  Markdown cells are unaffected,
   and code cells indented 4 spaces.
 
+.. _convert_rst:
+
 reStructuredText
 ~~~~~~~~~~~~~~~~
 * ``--to rst``
 
   Basic reStructuredText output. Useful as a starting point for embedding
   notebooks in Sphinx docs.
-  
+
   .. note::
 
     nbconvert uses pandoc_ to convert between various markup languages,
     so pandoc is a dependency when converting to latex or reStructuredText.
+
+.. _convert_script:
 
 Executable script
 ~~~~~~~~~~~~~~~~~
@@ -108,10 +132,12 @@ Executable script
   This is the simplest way to get a Python (or other language, depending on
   the kernel) script out of a notebook. If there were any magics in an
   Jupyter notebook, this may only be executable from a Jupyter session.
-  
+
   For example, to convert a Julia notebook to a Julia executable script::
-      
+
       jupyter nbconvert --to script my_julia_notebook.ipynb
+
+.. _convert_notebook:
 
 Notebook and preprocessors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,8 +150,7 @@ Notebook and preprocessors
   and/or conversion to other notebook formats. For example::
 
       jupyter nbconvert --to notebook --execute mynotebook.ipynb
-      
-      
+
 This will open the notebook, execute it, capture new output, and save the
 result in :file:`mynotebook.nbconvert.ipynb`. By default, ``nbconvert`` will
 abort conversion if any exceptions occur during execution of a cell. If you
