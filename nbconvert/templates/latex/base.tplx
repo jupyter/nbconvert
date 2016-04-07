@@ -66,16 +66,11 @@ This template does not define a docclass, the inheriting class must define this.
     ((* endblock packages *))
 
     ((* block definitions *))
-    \definecolor{orange}{cmyk}{0,0.4,0.8,0.2}
-    \definecolor{darkorange}{rgb}{.71,0.21,0.01}
-    \definecolor{darkgreen}{rgb}{.12,.54,.11}
-    \definecolor{myteal}{rgb}{.26, .44, .56}
-    \definecolor{gray}{gray}{0.45}
-    \definecolor{lightgray}{gray}{.95}
-    \definecolor{mediumgray}{gray}{.8}
-    \definecolor{inputbackground}{rgb}{.95, .95, .85}
-    \definecolor{outputbackground}{rgb}{.95, .95, .95}
-    \definecolor{traceback}{rgb}{1, .95, .95}
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
     % ANSI colors
     \definecolor{ansi-black}{HTML}{3E424D}
     \definecolor{ansi-black-intense}{HTML}{282C36}
@@ -155,9 +150,9 @@ This template does not define a docclass, the inheriting class must define this.
     \hypersetup{
       breaklinks=true,  % so long urls are correctly broken across lines
       colorlinks=true,
-      urlcolor=blue,
-      linkcolor=darkorange,
-      citecolor=darkgreen,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
       }
     % Slightly bigger margins than the latex defaults
     ((* block margins *))
