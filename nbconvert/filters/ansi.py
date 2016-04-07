@@ -14,48 +14,23 @@ __all__ = [
 
 _ANSI_RE = re.compile('\x1b\\[(.*?)([@-~])')
 
-_FG_HTML = (
-    'ansiblack',
-    'ansired',
-    'ansigreen',
-    'ansiyellow',
-    'ansiblue',
-    'ansipurple',
-    'ansicyan',
-    'ansigray',
-)
-
-_BG_HTML = (
-    'ansibgblack',
-    'ansibgred',
-    'ansibggreen',
-    'ansibgyellow',
-    'ansibgblue',
-    'ansibgpurple',
-    'ansibgcyan',
-    'ansibggray',
-)
-
-_FG_LATEX = (
-    'black',
-    'red',
-    'green',
-    'brown',
-    'blue',
-    'purple',
-    'cyan',
-    'lightgray',
-)
-
-_BG_LATEX = (
-    'darkgray',
-    'lightred',
-    'lightgreen',
-    'yellow',
-    'lightblue',
-    'lightpurple',
-    'lightcyan',
-    'white',
+_ANSI_COLORS = (
+    'ansi-black',
+    'ansi-red',
+    'ansi-green',
+    'ansi-yellow',
+    'ansi-blue',
+    'ansi-magenta',
+    'ansi-cyan',
+    'ansi-white',
+    'ansi-black-intense',
+    'ansi-red-intense',
+    'ansi-green-intense',
+    'ansi-yellow-intense',
+    'ansi-blue-intense',
+    'ansi-magenta-intense',
+    'ansi-cyan-intense',
+    'ansi-white-intense',
 )
 
 
@@ -111,17 +86,17 @@ def _htmlconverter(fg, bg, bold):
     styles = []
 
     if isinstance(fg, int):
-        classes.append(_FG_HTML[fg])
+        classes.append(_ANSI_COLORS[fg] + '-fg')
     elif fg:
         styles.append('color: rgb({},{},{})'.format(*fg))
 
     if isinstance(bg, int):
-        classes.append(_BG_HTML[bg])
+        classes.append(_ANSI_COLORS[bg] + '-bg')
     elif bg:
         styles.append('background-color: rgb({},{},{})'.format(*bg))
 
     if bold:
-        classes.append('ansibold')
+        classes.append('ansi-bold')
 
     starttag = '<span'
     if classes:
@@ -143,7 +118,7 @@ def _latexconverter(fg, bg, bold):
     starttag, endtag = '', ''
 
     if isinstance(fg, int):
-        starttag += r'\textcolor{' + _FG_LATEX[fg] + '}{'
+        starttag += r'\textcolor{' + _ANSI_COLORS[fg] + '}{'
         endtag = '}' + endtag
     elif fg:
         # See http://tex.stackexchange.com/a/291102/13684
@@ -153,7 +128,7 @@ def _latexconverter(fg, bg, bold):
 
     if isinstance(bg, int):
         starttag += r'\setlength{\fboxsep}{0pt}\colorbox{'
-        starttag += _BG_LATEX[bg] + '}{'
+        starttag += _ANSI_COLORS[bg] + '}{'
         endtag = r'\strut}' + endtag
     elif bg:
         starttag += r'\setlength{\fboxsep}{0pt}'
@@ -210,6 +185,8 @@ def _ansi2anything(text, converter):
             chunk, text = text, ''
 
         if chunk:
+            if bold and fg in range(8):
+                fg += 8
             starttag, endtag = converter(fg, bg, bold)
             out.append(starttag)
             out.append(chunk)
@@ -242,6 +219,10 @@ def _ansi2anything(text, converter):
                     numbers.clear()
             elif n == 49:
                 bg = None
+            elif 90 <= n <= 97:
+                fg = n - 90 + 8
+            elif 100 <= n <= 107:
+                bg = n - 100 + 8
             else:
                 pass  # Unknown codes are ignored
     return ''.join(out)
@@ -262,8 +243,8 @@ def _get_extended_color(numbers):
         if idx < 0:
             raise ValueError()
         elif idx < 16:
-            # 8 default terminal colors
-            return idx % 8  # ignore bright/non-bright distinction
+            # 16 default terminal colors
+            return idx
         elif idx < 232:
             # 6x6x6 color cube, see http://stackoverflow.com/a/27165165/500098
             r = (idx - 16) // 36
