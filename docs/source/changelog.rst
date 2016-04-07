@@ -6,7 +6,8 @@ Changes in nbconvert
 
 `4.2 on GitHub <https://github.com/jupyter/nbconvert/milestones/4.2>`_
 
-- allow nbconvert reading from stdin with "--stdin" option (write into "notebook" basename)
+- allow nbconvert reading from stdin with ``--stdin`` option (write into
+  ``notebook`` basename)
 
 4.1
 ---
