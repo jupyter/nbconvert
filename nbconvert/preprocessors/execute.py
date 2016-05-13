@@ -30,6 +30,12 @@ class CellExecutionError(ConversionException):
         self.traceback = traceback
 
     def __str__(self):
+        s = self.__unicode__()
+        if not isinstance(s, str):
+            s = s.encode('utf8', 'replace')
+        return s
+    
+    def __unicode__(self):
         return self.traceback
 
 
@@ -164,7 +170,7 @@ class ExecutePreprocessor(Preprocessor):
         if not self.allow_errors:
             for out in outputs:
                 if out.output_type == 'error':
-                    pattern = """\
+                    pattern = u"""\
                         An error occurred while executing the following cell:
                         ------------------
                         {cell.source}
