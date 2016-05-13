@@ -166,4 +166,6 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        assert_raises(CellExecutionError, self.run_notebook, filename, dict(allow_errors=False), res)
+        with assert_raises(CellExecutionError) as exc:
+            self.run_notebook(filename, dict(allow_errors=False), res)
+        self.assertIsInstance(str(exc), str)
