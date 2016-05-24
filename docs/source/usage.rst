@@ -99,6 +99,16 @@ Reveal.js HTML slideshow
   Reveal.js library in the same directory where your_talk.slides.html is
   located, or point to another directory using the ``--reveal-prefix`` alias.
 
+  .. note:: 
+
+    In order to designate a mapping from notebook cells to Reveal.js slides, 
+    from within the Jupyter notebook, select menu item 
+    View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu 
+    on the upper-right of each cell.  From it, one may choose from 
+    "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion, 
+    cells designated as "skip" will not be included, "notes" will be included 
+    only in presenter notes, etc.
+
 .. _convert_markdown:
 
 Markdown
