@@ -2,17 +2,18 @@
 Module that define a custom exporter just to test the ability to invoke
 nbconvert with full qualified name
 """
+
+from traitlets import default
+
 from nbconvert.exporters.html import HTMLExporter
 
-#-----------------------------------------------------------------------------
-# Classes
-#-----------------------------------------------------------------------------
 
 class MyExporter(HTMLExporter):
     """
-    My custom exporter  
+    My custom exporter
     """
     
+    @default('file_extension')
     def _file_extension_default(self):
         """
         The new file extension is `.test_ext`

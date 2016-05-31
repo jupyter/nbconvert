@@ -7,43 +7,40 @@ import io
 import os
 import glob
 
-from traitlets import Unicode
+from traitlets import Unicode, observe
 from ipython_genutils.path import link_or_copy, ensure_dir_exists
 from ipython_genutils.py3compat import unicode_type
 
 from .base import WriterBase
 
-#-----------------------------------------------------------------------------
-# Classes
-#-----------------------------------------------------------------------------
 
 class FilesWriter(WriterBase):
     """Consumes nbconvert output and produces files."""
 
 
-    build_directory = Unicode("", config=True,
+    build_directory = Unicode("",
                               help="""Directory to write output to.  Leave blank
-                              to output to the current directory""")
+                              to output to the current directory"""
+    ).tag(config=True)
 
     relpath = Unicode(
-        "", config=True, 
         help="""When copying files that the notebook depends on, copy them in
         relation to this path, such that the destination filename will be
         os.path.relpath(filename, relpath). If FilesWriter is operating on a
         notebook that already exists elsewhere on disk, then the default will be
-        the directory containing that notebook.""")
-
+        the directory containing that notebook."""
+    ).tag(config=True)
 
     # Make sure that the output directory exists.
-    def _build_directory_changed(self, name, old, new):
+    @observe('build_directory')
+    def _build_directory_changed(self, change):
+        new = change['new']
         if new:
             ensure_dir_exists(new)
 
-
     def __init__(self, **kw):
         super(FilesWriter, self).__init__(**kw)
-        self._build_directory_changed('build_directory', self.build_directory, 
-                                      self.build_directory)
+        self._build_directory_changed({'new': self.build_directory})
     
     def _makedir(self, path):
         """Make a directory if it doesn't already exist"""

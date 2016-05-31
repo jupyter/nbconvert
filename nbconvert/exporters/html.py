@@ -1,33 +1,35 @@
 """HTML Exporter class"""
 
-# Copyright (c) IPython Development Team.
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
 import os
 
-from nbconvert.filters.highlight import Highlight2HTML
+from traitlets import default
 from traitlets.config import Config
+
+from nbconvert.filters.highlight import Highlight2HTML
 
 from .templateexporter import TemplateExporter
 
-#-----------------------------------------------------------------------------
-# Classes
-#-----------------------------------------------------------------------------
 
 class HTMLExporter(TemplateExporter):
     """
     Exports a basic HTML document.  This exporter assists with the export of
     HTML.  Inherit from it if you are writing your own HTML template and need
     custom preprocessors/filters.  If you don't need custom preprocessors/
-    filters, just change the 'template_file' config option.  
+    filters, just change the 'template_file' config option.
     """
-    
+
+    @default('file_extension')
     def _file_extension_default(self):
         return '.html'
 
+    @default('default_template_path')
     def _default_template_path_default(self):
         return os.path.join("..", "templates", "html")
 
+    @default('template_file')
     def _template_file_default(self):
         return 'full'
     

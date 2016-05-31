@@ -17,7 +17,8 @@ import glob
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
-    Unicode, List, Instance, DottedObjectName, Type, Bool
+    Unicode, List, Instance, DottedObjectName, Type, Bool,
+    default, observe,
 )
 
 from ipython_genutils.importstring import import_item
@@ -104,10 +105,12 @@ class NbConvertApp(JupyterApp):
     aliases = nbconvert_aliases
     flags = nbconvert_flags
     
+    @default('log_level')
     def _log_level_default(self):
         return logging.INFO
     
     classes = List()
+    @default('classes')
     def _classes_default(self):
         classes = [NbConvertBase]
         for pkg in (exporters, preprocessors, writers, postprocessors):
@@ -124,16 +127,16 @@ class NbConvertApp(JupyterApp):
 
         WARNING: THE COMMANDLINE INTERFACE MAY CHANGE IN FUTURE RELEASES.""")
 
-    output_base = Unicode('', config=True, help='''overwrite base name use for output files.
+    output_base = Unicode('', help='''overwrite base name use for output files.
             can only be used when converting one notebook at a time.
-            ''')
+            ''').tag(config=True)
 
     use_output_suffix = Bool(
         True, 
-        config=True,
         help="""Whether to apply a suffix prior to the extension (only relevant
             when converting to notebook format). The suffix is determined by
-            the exporter, and is usually '.nbconvert'.""")
+            the exporter, and is usually '.nbconvert'."""
+    ).tag(config=True)
 
     examples = Unicode(u"""
         The simplest way to use nbconvert is
@@ -179,18 +182,20 @@ class NbConvertApp(JupyterApp):
         """.format(get_export_names()))
 
     # Writer specific variables
-    writer = Instance('nbconvert.writers.base.WriterBase',  
+    writer = Instance('nbconvert.writers.base.WriterBase',
                       help="""Instance of the writer class used to write the 
                       results of the conversion.""", allow_none=True)
-    writer_class = DottedObjectName('FilesWriter', config=True, 
+    writer_class = DottedObjectName('FilesWriter',
                                     help="""Writer class used to write the 
-                                    results of the conversion""")
+                                    results of the conversion""").tag(config=True)
     writer_aliases = {'fileswriter': 'nbconvert.writers.files.FilesWriter',
                       'debugwriter': 'nbconvert.writers.debug.DebugWriter',
                       'stdoutwriter': 'nbconvert.writers.stdout.StdoutWriter'}
     writer_factory = Type(allow_none=True)
-
-    def _writer_class_changed(self, name, old, new):
+    
+    @observe('writer_class')
+    def _writer_class_changed(self, change):
+        new = change['new']
         if new.lower() in self.writer_aliases:
             new = self.writer_aliases[new.lower()]
         self.writer_factory = import_item(new)
@@ -200,13 +205,16 @@ class NbConvertApp(JupyterApp):
                       help="""Instance of the PostProcessor class used to write the
                       results of the conversion.""", allow_none=True)
 
-    postprocessor_class = DottedOrNone(config=True, 
+    postprocessor_class = DottedOrNone(
                                     help="""PostProcessor class used to write the
-                                    results of the conversion""")
+                                    results of the conversion"""
+    ).tag(config=True)
     postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
     postprocessor_factory = Type(None, allow_none=True)
-
-    def _postprocessor_class_changed(self, name, old, new):
+    
+    @observe('postprocessor_class')
+    def _postprocessor_class_changed(self, change):
+        new = change['new']
         if new.lower() in self.postprocessor_aliases:
             new = self.postprocessor_aliases[new.lower()]
         if new:
@@ -215,17 +223,18 @@ class NbConvertApp(JupyterApp):
 
     export_format = Unicode(
         'html',
-        allow_none=False, config=True,
+        allow_none=False,
         help="""The export format to be used, either one of the built-in formats,
         or a dotted object name that represents the import path for an
         `Exporter` class"""
-    )
+    ).tag(config=True)
 
-    notebooks = List([], config=True, help="""List of notebooks to convert.
+    notebooks = List([], help="""List of notebooks to convert.
                      Wildcards are supported.
                      Filenames passed positionally will be added to the list.
-                     """)
-    from_stdin   = Bool(False, config=True, help="read a single notebook from stdin.")
+                     """
+    ).tag(config=True)
+    from_stdin = Bool(False, help="read a single notebook from stdin.").tag(config=True)
 
     @catch_config_error
     def initialize(self, argv=None):
@@ -236,11 +245,9 @@ class NbConvertApp(JupyterApp):
         self.init_writer()
         self.init_postprocessor()
 
-
     def init_syspath(self):
         """Add the cwd to the sys.path ($PYTHONPATH)"""
         sys.path.insert(0, os.getcwd())
-        
 
     def init_notebooks(self):
         """Construct the list of notebooks.
@@ -275,15 +282,14 @@ class NbConvertApp(JupyterApp):
 
     def init_writer(self):
         """Initialize the writer (which is stateless)"""
-        self._writer_class_changed(None, self.writer_class, self.writer_class)
+        self._writer_class_changed({ 'new': self.writer_class })
         self.writer = self.writer_factory(parent=self)
         if hasattr(self.writer, 'build_directory') and self.writer.build_directory != '':
             self.use_output_suffix = False
 
     def init_postprocessor(self):
         """Initialize the postprocessor (which is stateless)"""
-        self._postprocessor_class_changed(None, self.postprocessor_class, 
-            self.postprocessor_class)
+        self._postprocessor_class_changed({'new': self.postprocessor_class})
         if self.postprocessor_factory:
             self.postprocessor = self.postprocessor_factory(parent=self)
 

@@ -2,34 +2,14 @@
 Module with tests for files
 """
 
-#-----------------------------------------------------------------------------
-# Copyright (c) 2013, the IPython Development Team.
-#
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file COPYING.txt, distributed with this software.
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
-
-import sys
 import os
 
 from ...tests.base import TestsBase
 from ..files import FilesWriter
-from ipython_genutils.py3compat import PY3
 
-if PY3:
-    from io import StringIO
-else:
-    from StringIO import StringIO
-
-
-#-----------------------------------------------------------------------------
-# Class
-#-----------------------------------------------------------------------------
 
 class Testfiles(TestsBase):
     """Contains test functions for files.py"""
@@ -285,7 +265,7 @@ class Testfiles(TestsBase):
                 output = f.read()
                 self.assertEqual(output, 'd')
 
-    def test_relpath_default(self):
+    def test_relpath_precedence(self):
         """Does the FilesWriter relpath option take precedence over the path?"""
 
         # Work in a temporary directory.

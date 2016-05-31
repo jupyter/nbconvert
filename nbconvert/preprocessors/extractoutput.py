@@ -5,14 +5,13 @@ notebook file.  The extracted outputs are returned in the 'resources' dictionary
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import base64
+from binascii import a2b_base64
 import sys
 import os
 from mimetypes import guess_extension
 
 from traitlets import Unicode, Set
 from .base import Preprocessor
-from ipython_genutils import py3compat
 
 def guess_extension_without_jpe(mimetype):
     """
@@ -33,9 +32,12 @@ class ExtractOutputPreprocessor(Preprocessor):
     """
 
     output_filename_template = Unicode(
-        "{unique_key}_{cell_index}_{index}{extension}", config=True)
+        "{unique_key}_{cell_index}_{index}{extension}"
+    ).tag(config=True)
 
-    extract_output_types = Set({'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}, config=True)
+    extract_output_types = Set(
+        {'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}
+    ).tag(config=True)
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
@@ -73,11 +75,9 @@ class ExtractOutputPreprocessor(Preprocessor):
 
                     #Binary files are base64-encoded, SVG is already XML
                     if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
-
-                        # data is b64-encoded as text (str, unicode)
-                        # decodestring only accepts bytes
-                        data = py3compat.cast_bytes(data)
-                        data = base64.decodestring(data)
+                        # data is b64-encoded as text (str, unicode),
+                        # we want the original bytes
+                        data = a2b_base64(data)
                     elif sys.platform == 'win32':
                         data = data.replace('\n', '\r\n').encode("UTF-8")
                     else:

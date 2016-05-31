@@ -1,30 +1,16 @@
 """LaTeX Exporter class"""
 
-#-----------------------------------------------------------------------------
-# Copyright (c) 2013, the IPython Development Team.
-#
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file COPYING.txt, distributed with this software.
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
-
-# Stdlib imports
 import os
 
-# IPython imports
-from traitlets import Unicode
+from traitlets import Unicode, default
 from traitlets.config import Config
 
 from nbconvert.filters.highlight import Highlight2Latex
 from .templateexporter import TemplateExporter
 
-#-----------------------------------------------------------------------------
-# Classes and functions
-#-----------------------------------------------------------------------------
 
 class LatexExporter(TemplateExporter):
     """
@@ -36,24 +22,27 @@ class LatexExporter(TemplateExporter):
     subfolder of the "../templates" folder.
     """
 
+    @default('file_extension')
     def _file_extension_default(self):
         return '.tex'
 
+    @default('template_file')
     def _template_file_default(self):
         return 'article'
 
-    #Latex constants
+    # Latex constants
+    @default('default_template_path')
     def _default_template_path_default(self):
         return os.path.join("..", "templates", "latex")
 
+    @default('template_skeleton_path')
     def _template_skeleton_path_default(self):
         return os.path.join("..", "templates", "latex", "skeleton")
     
-    #Extension that the template files use.    
-    template_extension = Unicode(".tplx", config=True)
+    #Extension that the template files use.
+    template_extension = Unicode(".tplx").tag(config=True)
 
     output_mimetype = 'text/latex'
-
 
     @property
     def default_config(self):

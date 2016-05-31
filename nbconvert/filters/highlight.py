@@ -13,6 +13,8 @@ from within Jinja templates.
 from nbconvert.utils.base import NbConvertBase
 from warnings import warn
 
+from traitlets import observe
+
 MULTILINE_OUTPUTS = ['text', 'html', 'svg', 'latex', 'javascript', 'json']
 
 __all__ = [
@@ -24,11 +26,12 @@ class Highlight2HTML(NbConvertBase):
     def __init__(self, pygments_lexer=None, **kwargs):
         self.pygments_lexer = pygments_lexer or 'ipython3'
         super(Highlight2HTML, self).__init__(**kwargs)
-
-    def _default_language_changed(self, name, old, new):
+    
+    @observe('default_language')
+    def _default_language_changed(self, change):
         warn('Setting default_language in config is deprecated, '
              'please use language_info metadata instead.')
-        self.pygments_lexer = new
+        self.pygments_lexer = change['new']
 
     def __call__(self, source, language=None, metadata=None):
         """
@@ -58,11 +61,12 @@ class Highlight2Latex(NbConvertBase):
     def __init__(self, pygments_lexer=None, **kwargs):
         self.pygments_lexer = pygments_lexer or 'ipython3'
         super(Highlight2Latex, self).__init__(**kwargs)
-
-    def _default_language_changed(self, name, old, new):
+    
+    @observe('default_language')
+    def _default_language_changed(self, change):
         warn('Setting default_language in config is deprecated, '
              'please use language_info metadata instead.')
-        self.pygments_lexer = new
+        self.pygments_lexer = change['new']
 
     def __call__(self, source, language=None, metadata=None, strip_verbatim=False):
         """

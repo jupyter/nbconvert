@@ -44,7 +44,7 @@ class ExecutePreprocessor(Preprocessor):
     Executes all the cells in a notebook
     """
 
-    timeout = Integer(30, config=True, allow_none=True,
+    timeout = Integer(30, allow_none=True,
         help=dedent(
             """
             The time to wait (in seconds) for output from executions.
@@ -54,10 +54,9 @@ class ExecutePreprocessor(Preprocessor):
             `None` or `-1` will disable the timeout.
             """
         )
-    )
+    ).tag(config=True)
 
-    interrupt_on_timeout = Bool(
-        False, config=True,
+    interrupt_on_timeout = Bool(False,
         help=dedent(
             """
             If execution of a cell times out, interrupt the kernel and
@@ -65,36 +64,33 @@ class ExecutePreprocessor(Preprocessor):
             stopping.
             """
         )
-    )
+    ).tag(config=True)
 
-    allow_errors = Bool(
-        False, config=True,
+    allow_errors = Bool(False,
         help=dedent(
             """
             If `False` (default), when a cell raises an error the
-            execution is stoppped and a `CellExecutionError`
+            execution is stopped and a `CellExecutionError`
             is raised.
             If `True`, execution errors are ignored and the execution
             is continued until the end of the notebook. Output from
             exceptions is included in the cell output in both cases.
             """
         )
-    )
+    ).tag(config=True)
 
     extra_arguments = List(Unicode())
 
-    kernel_name = Unicode(
-        '', config=True,
+    kernel_name = Unicode('',
         help=dedent(
             """
             Name of kernel to use to execute the cells.
             If not set, use the kernel_spec embedded in the notebook.
             """
         )
-    )
+    ).tag(config=True)
 
-    raise_on_iopub_timeout = Bool(
-        False, config=True,
+    raise_on_iopub_timeout = Bool(False,
         help=dedent(
             """
             If `False` (default), then the kernel will continue waiting for
@@ -106,7 +102,7 @@ class ExecutePreprocessor(Preprocessor):
             notebooks with memory-consuming infinite loops.
             """
             )
-        )
+    ).tag(config=True)
 
 
     def preprocess(self, nb, resources):
