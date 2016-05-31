@@ -1,17 +1,19 @@
 """Generic script exporter class for any kernel language"""
 
-# Copyright (c) IPython Development Team.
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
 from .templateexporter import TemplateExporter
 
-from traitlets import Dict
+from traitlets import Dict, default
 from traitlets.utils.importstring import import_item
+
 
 class ScriptExporter(TemplateExporter):
     
     _exporters = Dict()
     
+    @default('template_file')
     def _template_file_default(self):
         return 'script'
 

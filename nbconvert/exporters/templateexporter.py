@@ -15,7 +15,7 @@ import uuid
 
 
 # IPython imports
-from traitlets import HasTraits, Unicode, List, Dict, DottedObjectName
+from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from ipython_genutils.importstring import import_item
 from ipython_genutils import py3compat
 
@@ -71,7 +71,7 @@ class TemplateExporter(Exporter):
 
 
     _template_cached = None
-    def _invalidate_template_cache(self):
+    def _invalidate_template_cache(self, change=None):
         self._template_cached = None
 
     @property
@@ -92,44 +92,50 @@ class TemplateExporter(Exporter):
         return self._environment_cached
 
 
-    template_file = Unicode(config=True,
-            help="Name of the template file to use", affects_template=True)
-    def _template_file_changed(self, name, old, new):
-        if new == 'default':
+    template_file = Unicode(
+            help="Name of the template file to use"
+    ).tag(config=True, affects_template=True)
+
+    @observe('template_file')
+    def _template_file_changed(self, change):
+        if change['new'] == 'default':
             self.template_file = self.default_template
 
+    @default('template_file')
     def _template_file_default(self):
         return self.default_template
 
-    default_template = Unicode(u'', affects_template=True)
+    default_template = Unicode(u'').tag(affects_template=True)
 
-    template_path = List(['.'], config=True, affects_environment=True)
+    template_path = List(['.']).tag(config=True, affects_environment=True)
 
     default_template_path = Unicode(
         os.path.join("..", "templates"), 
-        help="Path where the template files are located.", affects_environment=True)
+        help="Path where the template files are located."
+    ).tag(affects_environment=True)
 
     template_skeleton_path = Unicode(
-        os.path.join("..", "templates", "skeleton"), 
+        os.path.join("..", "templates", "skeleton"),
         help="Path where the template skeleton files are located.",
-        affects_environment=True)
+    ).tag(affects_environment=True)
     
-    #Extension that the template files use.    
-    template_extension = Unicode(".tpl", config=True, affects_template=True)
+    #Extension that the template files use.
+    template_extension = Unicode(".tpl").tag(config=True, affects_template=True)
 
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
              "before the default FileSystem ones.",
-        affects_environment=True,
-    )
+    ).tag(affects_environment=True)
 
-    filters = Dict(config=True,
+    filters = Dict(
         help="""Dictionary of filters, by name and namespace, to add to the Jinja
-        environment.""", affects_environment=True)
+        environment."""
+    ).tag(config=True, affects_environment=True)
 
-    raw_mimetypes = List(config=True,
+    raw_mimetypes = List(
         help="""formats of raw cells to be included in this Exporter's output."""
-    )
+    ).tag(config=True)
+    @default('raw_mimetypes')
     def _raw_mimetypes_default(self):
         return [self.output_mimetype, '']
 
@@ -150,9 +156,9 @@ class TemplateExporter(Exporter):
         """
         super(TemplateExporter, self).__init__(config=config, **kw)
 
-        self.on_trait_change(self._invalidate_environment_cache,
+        self.observe(self._invalidate_environment_cache,
                      list(self.traits(affects_environment=True)))
-        self.on_trait_change(self._invalidate_template_cache,
+        self.observe(self._invalidate_template_cache,
                      list(self.traits(affects_template=True)))
 
 

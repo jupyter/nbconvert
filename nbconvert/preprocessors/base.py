@@ -24,7 +24,7 @@ class Preprocessor(NbConvertBase):
         'c.YourPreprocessorName.enabled = True'
     """
     
-    enabled = Bool(False, config=True)
+    enabled = Bool(False).tag(config=True)
 
     def __init__(self, **kw):
         """

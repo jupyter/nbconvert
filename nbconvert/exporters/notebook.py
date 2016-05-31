@@ -5,18 +5,19 @@
 
 from .exporter import Exporter
 import nbformat
-from traitlets import Enum
+from traitlets import Enum, default
 
 class NotebookExporter(Exporter):
     """Exports to an IPython notebook."""
 
     nbformat_version = Enum(list(nbformat.versions),
         default_value=nbformat.current_nbformat,
-        config=True,
         help="""The nbformat version to write.
         Use this to downgrade notebooks.
         """
-    )
+    ).tag(config=True)
+
+    @default('file_extension')
     def _file_extension_default(self):
         return '.ipynb'
 

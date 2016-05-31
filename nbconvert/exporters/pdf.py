@@ -31,25 +31,25 @@ class LatexFailed(IOError):
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files"""
 
-    latex_count = Integer(3, config=True,
+    latex_count = Integer(3,
         help="How many times latex will be called."
-    )
+    ).tag(config=True)
 
-    latex_command = List([u"xelatex", u"{filename}"], config=True,
+    latex_command = List([u"xelatex", u"{filename}"],
         help="Shell command used to compile latex."
-    )
+    ).tag(config=True)
 
-    bib_command = List([u"bibtex", u"{filename}"], config=True,
+    bib_command = List([u"bibtex", u"{filename}"],
         help="Shell command used to run bibtex."
-    )
+    ).tag(config=True)
 
-    verbose = Bool(False, config=True,
+    verbose = Bool(False,
         help="Whether to display the output of latex commands."
-    )
+    ).tag(config=True)
 
-    temp_file_exts = List(['.aux', '.bbl', '.blg', '.idx', '.log', '.out'], config=True,
+    temp_file_exts = List(['.aux', '.bbl', '.blg', '.idx', '.log', '.out'],
         help="File extensions of temp files to remove after running."
-    )
+    ).tag(config=True)
     
     texinputs = Unicode(help="texinputs dir. A notebook's directory is added")
     writer = Instance("nbconvert.writers.FilesWriter", args=())

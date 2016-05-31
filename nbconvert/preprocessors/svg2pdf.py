@@ -2,7 +2,7 @@
 one format to another.
 """
 
-# Copyright (c) IPython Development Team.
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
 import base64
@@ -13,7 +13,7 @@ import subprocess
 
 from ipython_genutils.py3compat import cast_unicode_py2
 from ipython_genutils.tempdir import TemporaryDirectory
-from traitlets import Unicode
+from traitlets import Unicode, default
 
 from .convertfigures import ConvertFiguresPreprocessor
 
@@ -31,13 +31,16 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     """
     Converts all of the outputs in a notebook from SVG to PDF.
     """
-    
+
+    @default('from_format')
     def _from_format_default(self):
         return 'image/svg+xml'
+
+    @default('to_format')
     def _to_format_default(self):
         return 'application/pdf'
-    
-    command = Unicode(config=True,
+
+    command = Unicode(
         help="""The command to use for converting SVG to PDF
         
         This string is a template, which will be formatted with the keys
@@ -45,13 +48,15 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         
         The conversion call must read the SVG from {from_flename},
         and write a PDF to {to_filename}.
-        """)
-    
+        """).tag(config=True)
+
+    @default('command')
     def _command_default(self):
         return self.inkscape + \
                ' --without-gui --export-pdf="{to_filename}" "{from_filename}"'
     
-    inkscape = Unicode(config=True, help="The path to Inkscape, if necessary")
+    inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
+    @default('inkscape')
     def _inkscape_default(self):
         if sys.platform == "darwin":
             if os.path.isfile(INKSCAPE_APP):

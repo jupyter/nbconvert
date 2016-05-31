@@ -176,7 +176,7 @@ install_requires = setuptools_args['install_requires'] = [
     'mistune!=0.6',
     'jinja2',
     'pygments',
-    'traitlets',
+    'traitlets>=4.2',
     'jupyter_core',
     'nbformat',
     'entrypoints',

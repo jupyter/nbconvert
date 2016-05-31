@@ -1,12 +1,13 @@
 """Module that pre-processes the notebook for export to HTML.
 """
-# Copyright (c) IPython Development Team.
+
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+
 import os
 import io
 import hashlib
 
-from ipython_genutils import path
 from traitlets import Unicode
 from ipython_genutils.py3compat import str_to_bytes
 from .base import Preprocessor
@@ -16,8 +17,9 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     Preprocessor used to pre-process notebook for HTML output.  Adds IPython notebook
     front-end CSS and Pygments CSS to HTML output.
     """
-    highlight_class = Unicode('.highlight', config=True,
-                              help="CSS highlight class identifier")
+    highlight_class = Unicode('.highlight',
+                              help="CSS highlight class identifier"
+    ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
         Preprocessor.__init__(self, *pargs, **kwargs)
