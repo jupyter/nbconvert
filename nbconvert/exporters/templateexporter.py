@@ -19,6 +19,8 @@ from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from ipython_genutils.importstring import import_item
 from ipython_genutils import py3compat
 
+from jupyter_client.kernelspec import get_kernel_spec, find_kernel_specs, NoSuchKernel
+
 from nbconvert import filters
 from .exporter import Exporter
 
@@ -70,28 +72,6 @@ class TemplateExporter(Exporter):
     __doc__ = __doc__.format(filters = '- '+'\n    - '.join(sorted(default_filters.keys())))
 
 
-    _template_cached = None
-    def _invalidate_template_cache(self, change=None):
-        self._template_cached = None
-
-    @property
-    def template(self):
-        if self._template_cached is None:
-            self._template_cached = self._load_template()
-        return self._template_cached
-
-    _environment_cached = None
-    def _invalidate_environment_cache(self):
-        self._environment_cached = None
-        self._invalidate_template_cache()
-
-    @property
-    def environment(self):
-        if self._environment_cached is None:
-            self._environment_cached = self._create_environment()
-        return self._environment_cached
-
-
     template_file = Unicode(
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
@@ -132,6 +112,8 @@ class TemplateExporter(Exporter):
         environment."""
     ).tag(config=True, affects_environment=True)
 
+    _nonuser_filters = {}
+
     raw_mimetypes = List(
         help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
@@ -140,29 +122,7 @@ class TemplateExporter(Exporter):
         return [self.output_mimetype, '']
 
 
-    def __init__(self, config=None, **kw):
-        """
-        Public constructor
-    
-        Parameters
-        ----------
-        config : config
-            User configuration instance.
-        extra_loaders : list[of Jinja Loaders]
-            ordered list of Jinja loader to find templates. Will be tried in order
-            before the default FileSystem ones.
-        template : str (optional, kw arg)
-            Template to use when exporting.
-        """
-        super(TemplateExporter, self).__init__(config=config, **kw)
-
-        self.observe(self._invalidate_environment_cache,
-                     list(self.traits(affects_environment=True)))
-        self.observe(self._invalidate_template_cache,
-                     list(self.traits(affects_template=True)))
-
-
-    def _load_template(self):
+    def get_template(self, kernel_name):
         """Load the Jinja template object from the template file
         
         This is triggered by various trait changes that would change the template.
@@ -182,7 +142,7 @@ class TemplateExporter(Exporter):
         for try_name in try_names:
             self.log.debug("Attempting to load template %s", try_name)
             try:
-                template = self.environment.get_template(try_name)
+                template = self.get_environment(kernel_name).get_template(try_name)
             except (TemplateNotFound, IOError):
                 pass
             else:
@@ -206,7 +166,7 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
 
-        output = self.template.render(nb=nb_copy, resources=resources)
+        output = self.get_template(resources['kernel_name']).render(nb=nb_copy, resources=resources)
         return output, resources
 
     def _register_filter(self, environ, name, jinja_filter):
@@ -219,7 +179,7 @@ class TemplateExporter(Exporter):
         ----------
         name : str
             name to give the filter in the Jinja engine
-        filter : filter
+        jinja_filter : :class:`~collections.Callable` | :class:`str`
         """
         if jinja_filter is None:
             raise TypeError('filter')
@@ -265,9 +225,9 @@ class TemplateExporter(Exporter):
         ----------
         name : str
             name to give the filter in the Jinja engine
-        filter : filter
+        jinja_filter : :class:`~collections.Callable` | :class:`str`
         """
-        return self._register_filter(self.environment, name, jinja_filter)
+        self._nonuser_filters[name] = jinja_filter
 
     def default_filters(self):
         """Override in subclasses to provide extra filters.
@@ -281,7 +241,16 @@ class TemplateExporter(Exporter):
         """
         return default_filters.items()
 
-    def _create_environment(self):
+    def _kernel_template_paths(self, kernel_name):
+        if not kernel_name:
+            return []
+        try:
+            kernel_spec = get_kernel_spec(kernel_name)
+        except NoSuchKernel:
+            return []
+        return [os.path.join(kernel_spec.resource_dir, 'templates')]
+
+    def get_environment(self, kernel_name):
         """
         Create the Jinja templating environment.
         """
@@ -289,6 +258,7 @@ class TemplateExporter(Exporter):
         here = os.path.dirname(os.path.realpath(__file__))
 
         paths = self.template_path + \
+            self._kernel_template_paths(kernel_name) + \
             [os.path.join(here, self.default_template_path),
              os.path.join(here, self.template_skeleton_path)]
 
@@ -302,6 +272,10 @@ class TemplateExporter(Exporter):
 
         # Add default filters to the Jinja2 environment
         for key, value in self.default_filters():
+            self._register_filter(environment, key, value)
+
+        # Add filters we got via self.register_filter
+        for key, value in self._nonuser_filters.items():
             self._register_filter(environment, key, value)
 
         # Load user filters.  Overwrite existing filters if need be.

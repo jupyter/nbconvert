@@ -13,6 +13,8 @@ import copy
 import collections
 import datetime
 
+from ipython_genutils.py3compat import PY3
+from jupyter_client.kernelspec import find_kernel_specs
 from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
 import nbformat
@@ -123,6 +125,9 @@ class Exporter(LoggingConfigurable):
         """
         nb_copy = copy.deepcopy(nb)
         resources = self._init_resources(resources)
+
+        # if found, add a kernel name
+        resources['kernel_name'] = nb['metadata'].get('kernelspec', {}).get('name', None)
         
         if 'language' in nb['metadata']:
             resources['language'] = nb['metadata']['language'].lower()

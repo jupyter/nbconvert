@@ -76,8 +76,8 @@ class LatexExporter(TemplateExporter):
                              Highlight2Latex(pygments_lexer=lexer, parent=self))
         return super(LatexExporter, self).from_notebook_node(nb, resources, **kw)
 
-    def _create_environment(self):
-        environment = super(LatexExporter, self)._create_environment()
+    def get_environment(self, kernel_name):
+        environment = super(LatexExporter, self).get_environment(kernel_name)
 
         # Set special Jinja2 syntax that will not conflict with latex.
         environment.block_start_string = "((*"
