@@ -142,11 +142,13 @@ class TemplateExporter(Exporter):
         for try_name in try_names:
             self.log.debug("Attempting to load template %s", try_name)
             try:
-                template = self.get_environment(kernel_name).get_template(try_name)
+                env = self.get_environment(kernel_name)
+                template = env.get_template(try_name)
             except (TemplateNotFound, IOError):
                 pass
             else:
-                self.log.debug("Loaded template %s", try_name)
+                _source, path, _up_to_date = env.loader.get_source(env, try_name)
+                self.log.debug("Loaded template %s from %s", try_name, path)
                 return template
 
         raise TemplateNotFound(self.template_file)
