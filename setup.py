@@ -57,6 +57,8 @@ package_data = {
         'tests/exporter_entrypoint/*.py',
         'tests/exporter_entrypoint/*/*.*',
         'exporters/tests/files/*.*',
+        'exporters/tests/files/kernels/*/kernel.json',
+        'exporters/tests/files/kernels/*/*/*.*',
         'preprocessors/tests/files/*.*',
     ],
 }
