@@ -103,7 +103,16 @@ class ExecutePreprocessor(Preprocessor):
             """
             )
     ).tag(config=True)
-
+    
+    kill_kernel_at_end = Bool(False,
+        help=dedent(
+            """
+            If `False` (default), then the kernel will given time to clean up
+            after executing all cells, e.g., to execute its `atexit` hooks.
+            If `True`, then the kernel is signaled to immediately terminate.
+            """
+            )
+    ).tag(config=True)
 
     def preprocess(self, nb, resources):
         """
@@ -147,7 +156,7 @@ class ExecutePreprocessor(Preprocessor):
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
-            self.km.shutdown_kernel(now=True)
+            self.km.shutdown_kernel(now=self.kill_kernel_at_end)
 
         return nb, resources
 
