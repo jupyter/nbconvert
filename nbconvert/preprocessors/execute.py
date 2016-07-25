@@ -104,7 +104,7 @@ class ExecutePreprocessor(Preprocessor):
             )
     ).tag(config=True)
     
-    shutdown_kernel = Enum(['graceful', 'immediate', 'now'],
+    shutdown_kernel = Enum(['graceful', 'immediate'],
         default_value='graceful',
         help=dedent(
             """
@@ -158,7 +158,7 @@ class ExecutePreprocessor(Preprocessor):
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
-            self.km.shutdown_kernel(now=self.shutdown_kernel in ['immediate', 'now'])
+            self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
 
         return nb, resources
 
