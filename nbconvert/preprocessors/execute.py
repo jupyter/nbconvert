@@ -1,4 +1,5 @@
-"""Module containing a preprocessor that removes the outputs from code cells"""
+"""Module containing a preprocessor that executes the code cells
+and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
