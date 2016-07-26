@@ -1,4 +1,5 @@
-"""Module containing a preprocessor that removes the outputs from code cells"""
+"""Module containing a preprocessor that executes the code cells
+and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -11,7 +12,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool
+from traitlets import List, Unicode, Bool, Enum
 
 from nbformat.v4 import output_from_msg
 from .base import Preprocessor
@@ -103,7 +104,18 @@ class ExecutePreprocessor(Preprocessor):
             """
             )
     ).tag(config=True)
-
+    
+    shutdown_kernel = Enum(['graceful', 'immediate'],
+        default_value='graceful',
+        help=dedent(
+            """
+            If `graceful` (default), then the kernel is given time to clean
+            up after executing all cells, e.g., to execute its `atexit` hooks.
+            If `immediate`, then the kernel is signaled to immediately
+            terminate.
+            """
+            )
+    ).tag(config=True)
 
     def preprocess(self, nb, resources):
         """
@@ -147,7 +159,7 @@ class ExecutePreprocessor(Preprocessor):
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
-            self.km.shutdown_kernel(now=True)
+            self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
 
         return nb, resources
 
