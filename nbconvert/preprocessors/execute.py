@@ -109,9 +109,9 @@ class ExecutePreprocessor(Preprocessor):
         default_value='graceful',
         help=dedent(
             """
-            If `graceful` (default), then the kernel will given time to clean
+            If `graceful` (default), then the kernel is given time to clean
             up after executing all cells, e.g., to execute its `atexit` hooks.
-            If `immediate` or `now, then the kernel is signaled to immediately
+            If `immediate`, then the kernel is signaled to immediately
             terminate.
             """
             )
