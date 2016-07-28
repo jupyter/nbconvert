@@ -43,7 +43,7 @@ class TestExecute(PreprocessorTestsBase):
             for line in output['traceback']:
                 tb.append(strip_ansi(line))
             output['traceback'] = tb
-            
+
         return output
 
 
@@ -79,7 +79,7 @@ class TestExecute(PreprocessorTestsBase):
 
 
     def run_notebook(self, filename, opts, resources):
-        """Loads and runs a notebook, returning both the version prior to 
+        """Loads and runs a notebook, returning both the version prior to
         running it and the version after running it.
 
         """
@@ -157,6 +157,22 @@ class TestExecute(PreprocessorTestsBase):
             exception = RuntimeError
 
         assert_raises(exception, self.run_notebook, filename, dict(timeout=1), res)
+
+    def test_timeout_func(self):
+        """Check that an error is raised when a computation times out"""
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
+        res = self.build_resources()
+        res['metadata']['path'] = os.path.dirname(filename)
+        try:
+            exception = TimeoutError
+        except NameError:
+            exception = RuntimeError
+
+        def timeout_func(source):
+            return 10
+
+        assert_raises(exception, self.run_notebook, filename, dict(timeout_func=timeout_func), res)
 
     def test_allow_errors(self):
         """
