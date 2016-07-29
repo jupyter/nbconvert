@@ -218,7 +218,7 @@ class ExecutePreprocessor(Preprocessor):
         while True:
             try:
                 if self.timeout_func is not None:
-                    timeout = self.timeout_func(cell.source)
+                    timeout = self.timeout_func(cell)
                 else:
                     timeout = self.timeout
 
