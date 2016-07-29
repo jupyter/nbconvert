@@ -59,6 +59,13 @@ cd nbconvert
 pip install -e .
 ```
 
+Running the tests after a dev install above:
+
+```
+pip install nbconvert[test]
+py.test --pyargs nbconvert
+```
+
 
 ## Resources
 

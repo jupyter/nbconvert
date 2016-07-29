@@ -183,7 +183,9 @@ install_requires = setuptools_args['install_requires'] = [
 ]
 
 extras_require = setuptools_args['extras_require'] = {
-    'test': ['nose', 'ipykernel', 'testpath'],
+    # FIXME: tests still require nose for some utility calls,
+    # but we are running with pytest
+    'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'testpath'],
     'serve': ['tornado'],
     'execute': ['jupyter_client'],
 }

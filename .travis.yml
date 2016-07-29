@@ -20,9 +20,8 @@ install:
     - pip install nbconvert[execute,serve,test]
     - python -m ipykernel.kernelspec --user
 script:
-    - # need to cd or coverage report broken.
-    - cd /tmp/
-    - nosetests nbconvert --with-coverage --cover-package nbconvert --cover-inclusive --cover-xml --cover-xml-file=$TRAVIS_BUILD_DIR/coverage.xml
-    - cd -
+    # cd so we test the install, not the repo
+    - cd `mktemp -d`
+    - py.test --cov nbconvert -v --pyargs nbconvert
 after_success:
     - codecov
