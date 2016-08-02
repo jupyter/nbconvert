@@ -12,7 +12,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool, Enum
+from traitlets import List, Unicode, Bool, Enum, Any
 
 from nbformat.v4 import output_from_msg
 from .base import Preprocessor
@@ -35,7 +35,7 @@ class CellExecutionError(ConversionException):
         if not isinstance(s, str):
             s = s.encode('utf8', 'replace')
         return s
-    
+
     def __unicode__(self):
         return self.traceback
 
@@ -52,7 +52,27 @@ class ExecutePreprocessor(Preprocessor):
             If a cell execution takes longer, an exception (TimeoutError
             on python 3+, RuntimeError on python 2) is raised.
 
-            `None` or `-1` will disable the timeout.
+            `None` or `-1` will disable the timeout. If `timeout_func` is set,
+            it overrides `timeout`.
+            """
+        )
+    ).tag(config=True)
+
+    timeout_func = Any(
+        default_value=None,
+        allow_none=True,
+        help=dedent(
+            """
+            A callable which, when given the cell source as input,
+            returns the time to wait (in seconds) for output from cell
+            executions. If a cell execution takes longer, an exception
+            (TimeoutError on python 3+, RuntimeError on python 2) is
+            raised.
+
+            Returning `None` or `-1` will disable the timeout for the cell.
+            Not setting `timeout_func` will cause the preprocessor to
+            default to using the `timeout` trait for all cells. The
+            `timeout_func` trait overrides `timeout` if it is not `None`.
             """
         )
     ).tag(config=True)
@@ -104,7 +124,7 @@ class ExecutePreprocessor(Preprocessor):
             """
             )
     ).tag(config=True)
-    
+
     shutdown_kernel = Enum(['graceful', 'immediate'],
         default_value='graceful',
         help=dedent(
@@ -197,8 +217,12 @@ class ExecutePreprocessor(Preprocessor):
         # wait for finish, with timeout
         while True:
             try:
-                timeout = self.timeout
-                if timeout < 0:
+                if self.timeout_func is not None:
+                    timeout = self.timeout_func(cell)
+                else:
+                    timeout = self.timeout
+
+                if not timeout or timeout < 0:
                     timeout = None
                 msg = self.kc.shell_channel.get_msg(timeout=timeout)
             except Empty:
