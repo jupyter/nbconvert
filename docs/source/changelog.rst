@@ -9,6 +9,11 @@ Changes in nbconvert
 - Use :command:`xelatex` by default for latex export, improving unicode and font support.
 - Fixes for unicode errors when showing execution errors on Python 2.
 - Update to traitlets 4.2 API.
+- Defautl math font matches default palatino text body font
+- Doc improvements. e.g., testing
+- Use pytest, nose dependency to be removed
+-
+
 
 4.2
 ---
