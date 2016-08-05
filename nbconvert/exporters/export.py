@@ -160,12 +160,13 @@ def export_by_name(format_name, nb, **kw):
     """
     
     warnings.warn("export_by_name is deprecated since nbconvert 5.0", DeprecationWarning, stacklevel=3)
-    function_name = "export_" + format_name.lower()
-    
-    if function_name in globals():
-        return globals()[function_name](nb, **kw)
-    else:
-        raise ExporterNameError("Exporter for `%s` not found" % function_name)
+
+    try:
+        Exporter = get_exporter(format_name) 
+        return export(Exporter, nb, **kw)
+    except ValueError:
+        raise ExporterNameError("Exporter for `%s` not found" % format_name)
+
 
 
 def get_exporter(name):
@@ -173,8 +174,6 @@ def get_exporter(name):
     
     Raises ValueError if exporter is not found
     """
-    if name.lower() in exporter_map:
-        return exporter_map[name.lower()]
 
     try:
         return entrypoints.get_single('nbconvert.exporters', name).load()
