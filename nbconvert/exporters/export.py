@@ -179,8 +179,11 @@ def get_exporter(name):
     try:
         return entrypoints.get_single('nbconvert.exporters', name).load()
     except entrypoints.NoSuchEntryPoint:
-        pass
-
+        try:
+            return entrypoints.get_single('nbconvert.exporters', name.lower()).load()
+        except entrypoints.NoSuchEntryPoint:
+            pass
+        
     if '.' in name:
         try:
             return import_item(name)
