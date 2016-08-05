@@ -69,15 +69,6 @@ def DocDecorator(f):
 
 __all__ = [
     'export',
-    'export_html',
-    'export_custom',
-    'export_slides',
-    'export_latex',
-    'export_pdf',
-    'export_markdown',
-    'export_python',
-    'export_script',
-    'export_rst',
     'export_by_name',
     'get_export_names',
     'ExporterNameError',
@@ -126,16 +117,16 @@ def export(exporter, nb, **kw):
     return output, resources
 
 exporter_map = dict(
-    custom=TemplateExporter,
-    html=HTMLExporter,
-    slides=SlidesExporter,
-    latex=LatexExporter,
-    pdf=PDFExporter,
-    markdown=MarkdownExporter,
-    python=PythonExporter,
-    rst=RSTExporter,
-    notebook=NotebookExporter,
-    script=ScriptExporter,
+    #custom=TemplateExporter,
+    #html=HTMLExporter,
+    #slides=SlidesExporter,
+    #latex=LatexExporter,
+    #pdf=PDFExporter,
+    #markdown=MarkdownExporter,
+    #python=PythonExporter,
+    #rst=RSTExporter,
+    #notebook=NotebookExporter,
+    #script=ScriptExporter,
 )
 
 def _make_exporter(name, E):

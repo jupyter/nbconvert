@@ -197,7 +197,18 @@ if 'setuptools' in sys.modules:
     setup_args['entry_points'] = {
         'console_scripts': [
             'jupyter-nbconvert = nbconvert.nbconvertapp:main',
-        ]
+        ],
+        "nbconvert.exporters" : [
+            'custom=nbconvert.exporters:TemplateExporter',
+            'html=nbconvert.exporters:HTMLExporter',
+            'slides=nbconvert.exporters:SlidesExporter',
+            'latex=nbconvert.exporters:LatexExporter',
+            'pdf=nbconvert.exporters:PDFExporter',
+            'markdown=nbconvert.exporters:MarkdownExporter',
+            'python=nbconvert.exporters:PythonExporter',
+            'rst=nbconvert.exporters:RSTExporter',
+            'notebook=nbconvert.exporters:NotebookExporter',
+            'script=nbconvert.exporters:ScriptExporter'] 
     }
     setup_args.pop('scripts', None)
 
