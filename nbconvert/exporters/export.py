@@ -4,6 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 from functools import wraps
+from itertools import chain
+import warnings
 
 import entrypoints
 
@@ -145,6 +147,8 @@ for name, E in exporter_map.items():
 @DocDecorator
 def export_by_name(format_name, nb, **kw):
     """
+    Deprecated since 5.0 
+
     Export a notebook object to a template type by its name.  Reflection
     (Inspect) is used to find the template's corresponding explicit export
     method defined in this module.  That method is then called directly.
@@ -155,14 +159,12 @@ def export_by_name(format_name, nb, **kw):
         Name of the template style to export to.
     """
     
-    exporter = get_exporter(name)
+    warnings.warn("export_by_name is deprecated since nbconvert 5.0", DeprecationWarning, stacklevel=3)
     function_name = "export_" + format_name.lower()
     
     if function_name in globals():
         return globals()[function_name](nb, **kw)
     else:
-        exporter = get_exporter(name)
-        
         raise ExporterNameError("Exporter for `%s` not found" % function_name)
 
 
