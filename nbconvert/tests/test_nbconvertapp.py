@@ -6,7 +6,6 @@
 
 import os
 import io
-import sys
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
@@ -346,7 +345,7 @@ class TestNbConvertApp(TestsBase):
             with io.open('notebook1.ipynb') as f:
                 notebook = f.read().encode()
                 self.nbconvert('--to markdown --stdin', stdin=notebook)
-            assert os.path.isfile("notebook.md") #default name for stdin input
+            assert os.path.isfile("notebook.md") # default name for stdin input
             with io.open('notebook.md') as f:
                 output1 = f.read()
                 assert_not_in('```python', output1) # shouldn't have language
@@ -373,4 +372,17 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--to latex notebook4_jpeg.ipynb')
             assert os.path.isfile('notebook4_jpeg.tex')
 
-
+    @dec.onlyif_cmds_exist('pandoc')
+    def test_markdown_display_priority(self):
+        """
+        Check to see if markdown conversion embedds PNGs,
+        even if an (unsupported) PDF is present.
+        """
+        with self.create_temp_cwd(['markdown_display_priority.ipynb']):
+            self.nbconvert('--log-level 0 --to markdown '
+                           '"markdown_display_priority.ipynb"')
+            assert os.path.isfile('markdown_display_priority.md')
+            with io.open('markdown_display_priority.md') as f:
+                markdown_output = f.read()
+                assert_in("markdown_display_priority_files/"
+                          "markdown_display_priority_0_1.png", markdown_output)
