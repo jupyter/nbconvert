@@ -4,7 +4,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 from functools import wraps
-from itertools import chain
 
 import entrypoints
 
@@ -177,7 +176,7 @@ def export_by_name(format_name, nb, **kw):
 
 
 def get_exporter(name):
-    """ given an exporter name, return a class ready to be instantiate
+    """ given an exporter name, return a class ready to be instantiated
     
     Raises ValueError if exporter is not found
     """

@@ -30,6 +30,20 @@ class MarkdownExporter(TemplateExporter):
 
     @property
     def default_config(self):
-        c = Config({'ExtractOutputPreprocessor':{'enabled':True}})
+        c = Config({
+            'ExtractOutputPreprocessor':{'enabled':True},
+            'NbConvertBase': {
+                'display_data_priority' : ['application/javascript',
+                                           'text/html',
+                                           'text/markdown',
+                                           'image/svg+xml',
+                                           'text/latex',
+                                           'image/png',
+                                           'image/jpeg',
+                                           'text/plain'
+                                          ]
+                },
+
+        })
         c.merge(super(MarkdownExporter,self).default_config)
         return c
