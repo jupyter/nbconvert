@@ -24,13 +24,9 @@ class ScriptExporter(TemplateExporter):
         exporter_name = langinfo.get('nbconvert_exporter')
         if exporter_name and exporter_name != 'script':
             self.log.debug("Loading script exporter: %s", exporter_name)
-            from .export import exporter_map
+            from .export import get_exporter
             if exporter_name not in self._exporters:
-                if exporter_name in exporter_map:
-                    Exporter = exporter_map[exporter_name]
-                else:
-                    self.log.debug("Importing custom Exporter: %s", exporter_name)
-                    Exporter = import_item(exporter_name)
+                Exporter = get_exporter(exporter_name)
                 self._exporters[exporter_name] = Exporter(parent=self)
             exporter = self._exporters[exporter_name]
             return exporter.from_notebook_node(nb, resources, **kw)
