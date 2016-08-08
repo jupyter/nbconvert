@@ -32,9 +32,14 @@ from .script import ScriptExporter
 #-----------------------------------------------------------------------------
 
 def DocDecorator(f):
-    
+    """
+    Deprecated since version 5.0.
+    """
     #Set docstring of function
-    f.__doc__ = f.__doc__ + """
+    f.__doc__ = """ 
+    Deprecated since version 5.0.  
+    
+    """ + f.__doc__ + """
 
     nb : :class:`~nbformat.NotebookNode`
         The notebook to export.
@@ -60,6 +65,7 @@ def DocDecorator(f):
 
     @wraps(f)
     def decorator(*args, **kwargs):
+        warnings.warn("{} is deprecated since nbconvert 5.0".format(f.__name__), DeprecationWarning, stacklevel=3)
         return f(*args, **kwargs)
     
     return decorator
@@ -80,7 +86,6 @@ __all__ = [
 class ExporterNameError(NameError):
     pass
 
-@DocDecorator
 def export(exporter, nb, **kw):
     """
     Export a notebook object using specific exporter class.
@@ -92,6 +97,26 @@ def export(exporter, nb, **kw):
       method initializes it's own instance of the class, it is ASSUMED that
       the class type provided exposes a constructor (``__init__``) with the same
       signature as the base Exporter class.
+    nb : :class:`~nbformat.NotebookNode`
+        The notebook to export.
+    config : config (optional, keyword arg)
+        User configuration instance.
+    resources : dict (optional, keyword arg)
+        Resources used in the conversion process.
+
+    Returns
+    -------
+    tuple
+        output : str
+            Jinja 2 output.  This is the resulting converted notebook.
+        resources : dictionary
+            Dictionary of resources used prior to and during the conversion 
+            process.
+        exporter_instance : Exporter
+            Instance of the Exporter class used to export the document.  Useful
+            to caller because it provides a 'file_extension' property which
+            specifies what extension the output should be saved as.
+
     """
     
     #Check arguments
@@ -119,16 +144,16 @@ def export(exporter, nb, **kw):
     return output, resources
 
 exporter_map = dict(
-    #custom=TemplateExporter,
-    #html=HTMLExporter,
-    #slides=SlidesExporter,
-    #latex=LatexExporter,
-    #pdf=PDFExporter,
-    #markdown=MarkdownExporter,
-    #python=PythonExporter,
-    #rst=RSTExporter,
-    #notebook=NotebookExporter,
-    #script=ScriptExporter,
+    custom=TemplateExporter,
+    html=HTMLExporter,
+    slides=SlidesExporter,
+    latex=LatexExporter,
+    pdf=PDFExporter,
+    markdown=MarkdownExporter,
+    python=PythonExporter,
+    rst=RSTExporter,
+    notebook=NotebookExporter,
+    script=ScriptExporter,
 )
 
 def _make_exporter(name, E):
@@ -147,7 +172,6 @@ for name, E in exporter_map.items():
 @DocDecorator
 def export_by_name(format_name, nb, **kw):
     """
-    Deprecated since 5.0 
 
     Export a notebook object to a template type by its name.  Reflection
     (Inspect) is used to find the template's corresponding explicit export
