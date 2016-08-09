@@ -13,7 +13,7 @@ class MarkdownExporter(TemplateExporter):
     """
     Exports to a markdown document (.md)
     """
-    
+
     @default('file_extension')
     def _file_extension_default(self):
         return '.md'
@@ -23,7 +23,7 @@ class MarkdownExporter(TemplateExporter):
         return 'markdown'
 
     output_mimetype = 'text/markdown'
-    
+
     @default('raw_mimetypes')
     def _raw_mimetypes_default(self):
         return ['text/markdown', 'text/html', '']
@@ -31,19 +31,18 @@ class MarkdownExporter(TemplateExporter):
     @property
     def default_config(self):
         c = Config({
-            'ExtractOutputPreprocessor':{'enabled':True},
+            'ExtractOutputPreprocessor': {'enabled': True},
             'NbConvertBase': {
-                'display_data_priority' : ['application/javascript',
-                                           'text/html',
-                                           'text/markdown',
-                                           'image/svg+xml',
-                                           'text/latex',
-                                           'image/png',
-                                           'image/jpeg',
-                                           'text/plain'
+                'display_data_priority': ['text/html',
+                                          'text/markdown',
+                                          'image/svg+xml',
+                                          'text/latex',
+                                          'image/png',
+                                          'image/jpeg',
+                                          'text/plain'
                                           ]
-                },
+            },
 
         })
-        c.merge(super(MarkdownExporter,self).default_config)
+        c.merge(super(MarkdownExporter, self).default_config)
         return c
