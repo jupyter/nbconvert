@@ -11,8 +11,8 @@ sudo: false
 addons:
   apt:
     packages:
-    - texlive-latex-recommended
-    - texlive-xetex # both for pdf output tests
+    - texlive-latex-extra # we need this for all the latex package we use, recommended is not enough
+    - texlive-xetex # latex to pdf converter
     - inkscape # for svgs in pdf output
 before_install:
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
