@@ -12,6 +12,7 @@ from traitlets import Integer, List, Bool, Instance, Unicode
 from ipython_genutils.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 
+
 class LatexFailed(IOError):
     """Exception for failed latex run
     
@@ -35,7 +36,7 @@ class PDFExporter(LatexExporter):
         help="How many times latex will be called."
     ).tag(config=True)
 
-    latex_command = List([u"xelatex", u"{filename}"],
+    latex_command = List([u"xelatex", u"-shell-escape", u"{filename}"],
         help="Shell command used to compile latex."
     ).tag(config=True)
 
