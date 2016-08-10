@@ -11,7 +11,8 @@ sudo: false
 addons:
   apt:
     packages:
-    - texlive-base
+    - texlive-latex-recommended
+    - texlive-xetex
 before_install:
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
