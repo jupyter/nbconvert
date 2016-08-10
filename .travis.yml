@@ -14,6 +14,7 @@ addons:
   apt:
     packages:
     - texlive-latex-extra # we need this for all the latex package we use, recommended is not enough
+    - latex-xcolor # ... and we even need another latex package
     - texlive-fonts-recommended # fonts...
     - cm-super # more fonts
     - texlive-xetex # latex to pdf converter
