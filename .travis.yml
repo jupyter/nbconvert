@@ -6,7 +6,7 @@ python:
     - 2.7
 env:
   global:
-    - PATH=$TRAVIS_BUILD_DIR/pandoc:$PATH
+    - PATH=$TRAVIS_BUILD_DIR/bin:$PATH
 sudo: false
 addons:
   apt:
