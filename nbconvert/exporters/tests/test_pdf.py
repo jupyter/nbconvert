@@ -26,7 +26,7 @@ class TestPDF(ExportersTestsBase):
         self.exporter_class()
 
 
-    @dec.onlyif_cmds_exist('pdflatex')
+    @dec.onlyif_cmds_exist('xelatex')
     @dec.onlyif_cmds_exist('pandoc')
     def test_export(self):
         """Smoke test PDFExporter"""
