@@ -170,7 +170,7 @@ class TestExecute(PreprocessorTestsBase):
             exception = RuntimeError
 
         def timeout_func(source):
-            return 10
+            return 1
 
         assert_raises(exception, self.run_notebook, filename, dict(timeout_func=timeout_func), res)
 
