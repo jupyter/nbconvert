@@ -65,7 +65,7 @@ def DocDecorator(f):
 
     @wraps(f)
     def decorator(*args, **kwargs):
-        warnings.warn("{} is deprecated since nbconvert 5.0".format(f.__name__), DeprecationWarning, stacklevel=3)
+#        warnings.warn("{} is deprecated since nbconvert 5.0".format(f.__name__), DeprecationWarning, stacklevel=3)
         return f(*args, **kwargs)
     
     return decorator
