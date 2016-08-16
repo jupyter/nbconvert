@@ -180,7 +180,7 @@ setup_args = dict(
     ],
 )
 
-bdist_check = any(a.startswith('bdist') and not a=='bdist_egg' for a in sys.argv)
+bdist_check = any(a.startswith('bdist') for a in sys.argv)
 
 if 'develop' in sys.argv or bdist_check: 
     import setuptools
