@@ -183,7 +183,7 @@ def export_by_name(format_name, nb, **kw):
         Name of the template style to export to.
     """
     
-    warnings.warn("export_by_name is deprecated since nbconvert 5.0", DeprecationWarning, stacklevel=3)
+    warnings.warn("export_by_name is deprecated since nbconvert 5.0. Instead, use export(get_exporter(format_name), nb, **kw)).", DeprecationWarning, stacklevel=2)
 
     try:
         Exporter = get_exporter(format_name) 
