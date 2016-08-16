@@ -28,6 +28,10 @@ PY3 = (sys.version_info[0] >= 3)
 #-----------------------------------------------------------------------------
 
 import os
+import setuptools
+
+from setuptools.command.bdist_egg import bdist_egg
+
 from glob import glob
 from io import BytesIO
 try:
@@ -39,7 +43,6 @@ from distutils.core import setup
 from distutils.cmd import Command
 from distutils.command.build import build
 from distutils.command.sdist import sdist
-from setuptools.command.bdist_egg import bdist_egg
 
 pjoin = os.path.join
 here = os.path.abspath(os.path.dirname(__file__))
@@ -179,11 +182,6 @@ setup_args = dict(
         'Programming Language :: Python :: 3.3',
     ],
 )
-
-bdist_check = any(a.startswith('bdist') for a in sys.argv)
-
-if 'develop' in sys.argv or bdist_check: 
-    import setuptools
 
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
