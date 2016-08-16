@@ -121,8 +121,8 @@ def _make_exporter(name, E):
     
 g = globals()
 
- for name, E in exporter_map.items():
-     g['export_%s' % name] = _make_exporter(name, E)
+for name, E in exporter_map.items():
+    g['export_%s' % name] = _make_exporter(name, E)
 
 
 def export_by_name(format_name, nb, **kw):
