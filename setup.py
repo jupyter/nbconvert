@@ -39,6 +39,7 @@ from distutils.core import setup
 from distutils.cmd import Command
 from distutils.command.build import build
 from distutils.command.sdist import sdist
+from setuptools.command.bdist_egg import bdist_egg
 
 pjoin = os.path.join
 here = os.path.abspath(os.path.dirname(__file__))
@@ -122,6 +123,16 @@ class FetchCSS(Command):
 
 cmdclass = {'css': FetchCSS}
 
+class bdist_egg_disabled(bdist_egg):
+    """Disabled version of bdist_egg
+ 
+    Prevents setup.py install performing setuptools' default easy_install,
+    which it should never ever do.
+    """
+    def run(self):
+        sys.exit("Aborting implicit building of eggs. Use `pip install .` to install from source.")
+
+
 def css_first(command):
     class CSSFirst(command):
         def run(self):
@@ -131,6 +142,7 @@ def css_first(command):
 
 cmdclass['build'] = css_first(build)
 cmdclass['sdist'] = css_first(sdist)
+cmdclass['bdist_egg'] = bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled
 
 for d, _, _ in os.walk(pjoin(pkg_root, 'templates')):
     g = pjoin(d[len(pkg_root)+1:], '*.*')
@@ -168,7 +180,9 @@ setup_args = dict(
     ],
 )
 
-if 'develop' in sys.argv or any(a.startswith('bdist') for a in sys.argv):
+bdist_check = any(a.startswith('bdist') and not a=='bdist_egg' for a in sys.argv)
+
+if 'develop' in sys.argv or bdist_check: 
     import setuptools
 
 setuptools_args = {}
