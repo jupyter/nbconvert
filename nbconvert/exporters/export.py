@@ -28,50 +28,6 @@ from .notebook import NotebookExporter
 from .script import ScriptExporter
 
 #-----------------------------------------------------------------------------
-# Classes
-#-----------------------------------------------------------------------------
-
-def DocDecorator(f):
-    """
-    Deprecated since version 5.0.
-    """
-    #Set docstring of function
-    f.__doc__ = """ 
-    Deprecated since version 5.0.  
-    
-    """ + f.__doc__ + """
-
-    nb : :class:`~nbformat.NotebookNode`
-        The notebook to export.
-    config : config (optional, keyword arg)
-        User configuration instance.
-    resources : dict (optional, keyword arg)
-        Resources used in the conversion process.
-
-    Returns
-    -------
-    tuple
-        output : str
-            Jinja 2 output.  This is the resulting converted notebook.
-        resources : dictionary
-            Dictionary of resources used prior to and during the conversion 
-            process.
-        exporter_instance : Exporter
-            Instance of the Exporter class used to export the document.  Useful
-            to caller because it provides a 'file_extension' property which
-            specifies what extension the output should be saved as.
-
-    """
-
-    @wraps(f)
-    def decorator(*args, **kwargs):
-#        warnings.warn("{} is deprecated since nbconvert 5.0".format(f.__name__), DeprecationWarning, stacklevel=3)
-        return f(*args, **kwargs)
-    
-    return decorator
-
-
-#-----------------------------------------------------------------------------
 # Functions
 #-----------------------------------------------------------------------------
 
@@ -165,11 +121,10 @@ def _make_exporter(name, E):
     
 g = globals()
 
-for name, E in exporter_map.items():
-    g['export_%s' % name] = DocDecorator(_make_exporter(name, E))
+ for name, E in exporter_map.items():
+     g['export_%s' % name] = _make_exporter(name, E)
 
 
-@DocDecorator
 def export_by_name(format_name, nb, **kw):
     """
 
