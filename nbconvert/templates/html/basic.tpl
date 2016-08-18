@@ -144,7 +144,7 @@ width={{width}}
 {%- if height is not none %}
 height={{height}}
 {%- endif %}
-{%- if output | get_metadata('unconfined', 'image/png') -%}
+{%- if output | get_metadata('unconfined', 'image/png') %}
 class="unconfined"
 {%- endif %}
 >
@@ -166,7 +166,7 @@ width={{width}}
 {%- if height is not none %}
 height={{height}}
 {%- endif %}
-{%- if output | get_metadata('unconfined', 'image/jpeg') -%}
+{%- if output | get_metadata('unconfined', 'image/jpeg') %}
 class="unconfined"
 {%- endif %}
 >
