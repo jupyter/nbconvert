@@ -17,7 +17,7 @@ from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
 import nbformat
 from traitlets import HasTraits, Unicode, List, TraitError
-from ipython_genutils.importstring import import_item
+from traitlets.utils.importstring import import_item
 from ipython_genutils import text, py3compat
 
 
