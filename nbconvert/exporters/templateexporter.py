@@ -16,7 +16,7 @@ import uuid
 
 # IPython imports
 from traitlets import HasTraits, Unicode, List, Dict, default, observe
-from ipython_genutils.importstring import import_item
+from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 
 from nbconvert import filters
