@@ -127,6 +127,7 @@ for name, E in exporter_map.items():
 
 def export_by_name(format_name, nb, **kw):
     """
+    Deprecated since version 5.0. 
 
     Export a notebook object to a template type by its name.  Reflection
     (Inspect) is used to find the template's corresponding explicit export
