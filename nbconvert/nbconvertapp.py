@@ -21,7 +21,7 @@ from traitlets import (
     default, observe,
 )
 
-from ipython_genutils.importstring import import_item
+from traitlets.utils.importstring import import_item
 
 from .exporters.export import get_export_names, get_exporter
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
