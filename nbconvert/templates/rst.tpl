@@ -9,7 +9,14 @@
 
 {% block input %}
 {%- if cell.source.strip() -%}
-.. code:: python
+{{".. code:: "-}}
+{%- if nb.metadata.language_info.pygments_lexer -%}
+    {{ nb.metadata.language_info.pygments_lexer }}
+{%- elif nb.metadata.language_info.codemirror_mode -%}
+    {{ nb.metadata.language_info.codemirror_mode.name }}
+{%- elif nb.metadata.language_info.name -%}
+    {{ nb.metadata.language_info.name }}
+{%- endif %}
 
 {{ cell.source | indent}}
 {% endif -%}

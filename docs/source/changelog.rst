@@ -7,8 +7,13 @@ Changes in nbconvert
 `5.0 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.0>`__
 
 - Use :command:`xelatex` by default for latex export, improving unicode and font support.
-- Fixes for unicode errors when showing execution errors on Python 2.
+- Fixes for Unicode errors when showing execution errors on Python 2.
 - Update to traitlets 4.2 API.
+- Default math font matches default palatino text body font
+- Doc improvements. For example, testing.
+- Use pytest, nose dependency to be removed
+-
+
 
 4.2
 ---
