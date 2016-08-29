@@ -90,7 +90,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook2.py')
 
 
-    @dec.onlyif_cmds_exist('pdflatex')
+    @dec.onlyif_cmds_exist('xelatex')
     @dec.onlyif_cmds_exist('pandoc')
     def test_filename_spaces(self):
         """
@@ -106,7 +106,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook with spaces.pdf')
 
 
-    @dec.onlyif_cmds_exist('pdflatex')
+    @dec.onlyif_cmds_exist('xelatex')
     @dec.onlyif_cmds_exist('pandoc')
     def test_pdf(self):
         """
@@ -227,7 +227,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to Python nb1_*')
             assert os.path.isfile(u'nb1_análisis.py')
 
-    @dec.onlyif_cmds_exist('pdflatex', 'pandoc')
+    @dec.onlyif_cmds_exist('xelatex', 'pandoc')
     def test_filename_accent_pdf(self):
         """
         Generate PDFs if notebooks have an accent in their name?
@@ -351,7 +351,7 @@ class TestNbConvertApp(TestsBase):
                 assert_not_in('```python', output1) # shouldn't have language
                 assert_in("```", output1) # but should have fenced blocks
 
-    @dec.onlyif_cmds_exist('pdflatex')
+    @dec.onlyif_cmds_exist('xelatex')
     @dec.onlyif_cmds_exist('pandoc')
     def test_linked_images(self):
         """
