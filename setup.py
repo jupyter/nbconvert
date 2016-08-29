@@ -28,6 +28,10 @@ PY3 = (sys.version_info[0] >= 3)
 #-----------------------------------------------------------------------------
 
 import os
+import setuptools
+
+from setuptools.command.bdist_egg import bdist_egg
+
 from glob import glob
 from io import BytesIO
 try:
@@ -122,6 +126,16 @@ class FetchCSS(Command):
 
 cmdclass = {'css': FetchCSS}
 
+class bdist_egg_disabled(bdist_egg):
+    """Disabled version of bdist_egg
+ 
+    Prevents setup.py install performing setuptools' default easy_install,
+    which it should never ever do.
+    """
+    def run(self):
+        sys.exit("Aborting implicit building of eggs. Use `pip install .` to install from source.")
+
+
 def css_first(command):
     class CSSFirst(command):
         def run(self):
@@ -131,6 +145,7 @@ def css_first(command):
 
 cmdclass['build'] = css_first(build)
 cmdclass['sdist'] = css_first(sdist)
+cmdclass['bdist_egg'] = bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled
 
 for d, _, _ in os.walk(pjoin(pkg_root, 'templates')):
     g = pjoin(d[len(pkg_root)+1:], '*.*')
@@ -168,9 +183,6 @@ setup_args = dict(
     ],
 )
 
-if 'develop' in sys.argv or any(a.startswith('bdist') for a in sys.argv):
-    import setuptools
-
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
     'mistune!=0.6',
@@ -197,7 +209,18 @@ if 'setuptools' in sys.modules:
     setup_args['entry_points'] = {
         'console_scripts': [
             'jupyter-nbconvert = nbconvert.nbconvertapp:main',
-        ]
+        ],
+        "nbconvert.exporters" : [
+            'custom=nbconvert.exporters:TemplateExporter',
+            'html=nbconvert.exporters:HTMLExporter',
+            'slides=nbconvert.exporters:SlidesExporter',
+            'latex=nbconvert.exporters:LatexExporter',
+            'pdf=nbconvert.exporters:PDFExporter',
+            'markdown=nbconvert.exporters:MarkdownExporter',
+            'python=nbconvert.exporters:PythonExporter',
+            'rst=nbconvert.exporters:RSTExporter',
+            'notebook=nbconvert.exporters:NotebookExporter',
+            'script=nbconvert.exporters:ScriptExporter'] 
     }
     setup_args.pop('scripts', None)
 

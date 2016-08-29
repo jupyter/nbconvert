@@ -4,6 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 from functools import wraps
+from itertools import chain
+import warnings
 
 import entrypoints
 
@@ -26,14 +28,31 @@ from .notebook import NotebookExporter
 from .script import ScriptExporter
 
 #-----------------------------------------------------------------------------
-# Classes
+# Functions
 #-----------------------------------------------------------------------------
 
-def DocDecorator(f):
-    
-    #Set docstring of function
-    f.__doc__ = f.__doc__ + """
+__all__ = [
+    'export',
+    'export_by_name',
+    'get_export_names',
+    'ExporterNameError',
+]
 
+
+class ExporterNameError(NameError):
+    pass
+
+def export(exporter, nb, **kw):
+    """
+    Export a notebook object using specific exporter class.
+    
+    Parameters
+    ----------
+    exporter : class:`~nbconvert.exporters.exporter.Exporter` class or instance
+      Class type or instance of the exporter that should be used.  If the
+      method initializes it's own instance of the class, it is ASSUMED that
+      the class type provided exposes a constructor (``__init__``) with the same
+      signature as the base Exporter class.
     nb : :class:`~nbformat.NotebookNode`
         The notebook to export.
     config : config (optional, keyword arg)
@@ -54,51 +73,6 @@ def DocDecorator(f):
             to caller because it provides a 'file_extension' property which
             specifies what extension the output should be saved as.
 
-    """
-
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        return f(*args, **kwargs)
-    
-    return decorator
-
-
-#-----------------------------------------------------------------------------
-# Functions
-#-----------------------------------------------------------------------------
-
-__all__ = [
-    'export',
-    'export_html',
-    'export_custom',
-    'export_slides',
-    'export_latex',
-    'export_pdf',
-    'export_markdown',
-    'export_python',
-    'export_script',
-    'export_rst',
-    'export_by_name',
-    'get_export_names',
-    'ExporterNameError',
-]
-
-
-class ExporterNameError(NameError):
-    pass
-
-@DocDecorator
-def export(exporter, nb, **kw):
-    """
-    Export a notebook object using specific exporter class.
-    
-    Parameters
-    ----------
-    exporter : class:`~nbconvert.exporters.exporter.Exporter` class or instance
-      Class type or instance of the exporter that should be used.  If the
-      method initializes it's own instance of the class, it is ASSUMED that
-      the class type provided exposes a constructor (``__init__``) with the same
-      signature as the base Exporter class.
     """
     
     #Check arguments
@@ -148,12 +122,13 @@ def _make_exporter(name, E):
 g = globals()
 
 for name, E in exporter_map.items():
-    g['export_%s' % name] = DocDecorator(_make_exporter(name, E))
+    g['export_%s' % name] = _make_exporter(name, E)
 
 
-@DocDecorator
 def export_by_name(format_name, nb, **kw):
     """
+    Deprecated since version 5.0. 
+
     Export a notebook object to a template type by its name.  Reflection
     (Inspect) is used to find the template's corresponding explicit export
     method defined in this module.  That method is then called directly.
@@ -164,15 +139,14 @@ def export_by_name(format_name, nb, **kw):
         Name of the template style to export to.
     """
     
-    exporter = get_exporter(name)
-    function_name = "export_" + format_name.lower()
-    
-    if function_name in globals():
-        return globals()[function_name](nb, **kw)
-    else:
-        exporter = get_exporter(name)
-        
-        raise ExporterNameError("Exporter for `%s` not found" % function_name)
+    warnings.warn("export_by_name is deprecated since nbconvert 5.0. Instead, use export(get_exporter(format_name), nb, **kw)).", DeprecationWarning, stacklevel=2)
+
+    try:
+        Exporter = get_exporter(format_name) 
+        return export(Exporter, nb, **kw)
+    except ValueError:
+        raise ExporterNameError("Exporter for `%s` not found" % format_name)
+
 
 
 def get_exporter(name):
@@ -180,14 +154,15 @@ def get_exporter(name):
     
     Raises ValueError if exporter is not found
     """
-    if name.lower() in exporter_map:
-        return exporter_map[name.lower()]
 
     try:
         return entrypoints.get_single('nbconvert.exporters', name).load()
     except entrypoints.NoSuchEntryPoint:
-        pass
-
+        try:
+            return entrypoints.get_single('nbconvert.exporters', name.lower()).load()
+        except entrypoints.NoSuchEntryPoint:
+            pass
+        
     if '.' in name:
         try:
             return import_item(name)
