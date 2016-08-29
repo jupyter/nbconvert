@@ -14,6 +14,7 @@ from nbconvert.exporters import Exporter
 
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
+from ipython_genutils import tempdir
 from nose.tools import assert_raises, assert_in, assert_not_in
 
 #-----------------------------------------------------------------------------
@@ -386,3 +387,40 @@ class TestNbConvertApp(TestsBase):
                 markdown_output = f.read()
                 assert_in("markdown_display_priority_files/"
                           "markdown_display_priority_0_1.png", markdown_output)
+
+    @dec.onlyif_cmds_exist('pandoc')
+    def test_write_figures_to_custom_path(self):
+        """
+        Check if figure files are copied to configured path.
+        """
+
+        def fig_exists(path):
+            return (len(os.listdir(path)) > 0)
+
+        # check absolute path
+        with self.create_temp_cwd(['notebook4_jpeg.ipynb',
+                                   'containerized_deployments.jpeg']):
+            output_dir = tempdir.TemporaryDirectory()
+            path = os.path.join(output_dir.name, 'files')
+            self.nbconvert(
+                '--log-level 0 notebook4_jpeg.ipynb --to rst '
+                '--NbConvertApp.output_files_dir={}'
+                .format(path))
+            assert fig_exists(path)
+            output_dir.cleanup()
+
+        # check relative path
+        with self.create_temp_cwd(['notebook4_jpeg.ipynb',
+                                   'containerized_deployments.jpeg']):
+            self.nbconvert(
+                '--log-level 0 notebook4_jpeg.ipynb --to rst '
+                '--NbConvertApp.output_files_dir=output')
+            assert fig_exists('output')
+
+        # check default path with notebook name
+        with self.create_temp_cwd(['notebook4_jpeg.ipynb',
+                                   'containerized_deployments.jpeg']):
+            self.nbconvert(
+                '--log-level 0 notebook4_jpeg.ipynb --to rst')
+            assert fig_exists('notebook4_jpeg_files')
+

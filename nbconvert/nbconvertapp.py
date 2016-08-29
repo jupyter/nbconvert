@@ -138,6 +138,12 @@ class NbConvertApp(JupyterApp):
             the exporter, and is usually '.nbconvert'."""
     ).tag(config=True)
 
+    output_files_dir = Unicode('{notebook_name}_files',
+         help='''Directory to copy extra files (figures) to.
+               '{notebook_name}' in the string will be converted to notebook
+               basename'''
+    ).tag(config=True)
+
     examples = Unicode(u"""
         The simplest way to use nbconvert is
         
@@ -329,7 +335,11 @@ class NbConvertApp(JupyterApp):
         resources = {}
         resources['config_dir'] = self.config_dir
         resources['unique_key'] = notebook_name
-        resources['output_files_dir'] = '%s_files' % notebook_name
+
+        output_files_dir = (self.output_files_dir
+                            .format(notebook_name=notebook_name))
+
+        resources['output_files_dir'] = output_files_dir
 
         return resources
 
