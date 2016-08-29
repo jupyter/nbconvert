@@ -10,9 +10,9 @@
 {% block input %}
 {%- if cell.source.strip() -%}
 {{".. code:: "-}}
-{%- if nb.metadata.language_info.pygments_lexer -%}
+{%- if 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.pygments_lexer }}
-{%- elif nb.metadata.language_info.name -%}
+{%- elif 'name' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.name }}
 {%- endif %}
 
