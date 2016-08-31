@@ -1,4 +1,7 @@
 from .export import *
+# These specific functions are deprecated as of 5.0:
+from .export import (export_custom, export_html, export_slides, export_latex,
+    export_pdf, export_markdown, export_python, export_script, export_rst)
 from .html import HTMLExporter
 from .slides import SlidesExporter
 from .templateexporter import TemplateExporter
