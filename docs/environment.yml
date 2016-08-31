@@ -1,12 +1,13 @@
 name: nbconvert_docs
 channels:
-- willingcn
+  - conda-forge
 dependencies:
-- python=3.5
+- python=3
 - pandoc
 - nbformat
 - jupyter_client
+- sphinx>=1.3.6
+- sphinx_rtd_theme
+- entrypoints
 - pip:
-    - sphinx==1.3.6
     - nbsphinx
-    - entrypoints
