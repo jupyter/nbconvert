@@ -9,11 +9,15 @@ is hosted on ReadTheDocs.
 
            $ cd docs
 
-2. Install requirements:
+2. Create conda env (and install relevant dependencies):
 
-           $ pip install -r requirements.txt
+           $ conda env create -f environment.yml
 
-3. Build documentation using Makefile for Linux and OS X:
+3. Activate the newly built conda environment `nbconvert_docs`
+
+           $ source activate nbconvert_docs
+
+4. Build documentation using Makefile for Linux and OS X:
 
            $ make html
 
@@ -21,7 +25,7 @@ is hosted on ReadTheDocs.
 
            $ make.bat html
 
-4. Display the documentation locally by navigating to
+5. Display the documentation locally by navigating to
    ``build/html/index.html`` in your browser:
 
    Or alternatively you may run a local server to display
