@@ -1,4 +1,4 @@
-"""restructuredText Exporter class"""
+"""reStructuredText Exporter class"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -11,7 +11,7 @@ from .templateexporter import TemplateExporter
 
 class RSTExporter(TemplateExporter):
     """
-    Exports restructured text documents.
+    Exports reStructuredText documents.
     """
     
     @default('file_extension')

@@ -63,6 +63,8 @@ class TemplateExporter(Exporter):
     this class.  Instead, override the template_file and file_extension
     traits via a config file.
 
+    Filters available by default for templates:
+
     {filters}
     """
     

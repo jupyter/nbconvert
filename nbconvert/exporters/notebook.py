@@ -8,7 +8,11 @@ import nbformat
 from traitlets import Enum, default
 
 class NotebookExporter(Exporter):
-    """Exports to an IPython notebook."""
+    """Exports to an IPython notebook.
+
+    This is useful when you want to use nbconvert's preprocessors to operate on
+    a notebook (e.g. to execute it) and then write it back to a notebook file.
+    """
 
     nbformat_version = Enum(list(nbformat.versions),
         default_value=nbformat.current_nbformat,
