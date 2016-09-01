@@ -6,6 +6,7 @@ dependencies:
 - pandoc
 - nbformat
 - jupyter_client
+- ipython
 - sphinx>=1.3.6
 - sphinx_rtd_theme
 - entrypoints
