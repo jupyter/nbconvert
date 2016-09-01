@@ -117,8 +117,10 @@ def _make_exporter(name, E):
     
 g = globals()
 
+# These specific functions are deprecated as of 5.0
 for name, E in exporter_map.items():
     g['export_%s' % name] = _make_exporter(name, E)
+    __all__.append('export_%s' % name)
 
 
 def export_by_name(format_name, nb, **kw):
