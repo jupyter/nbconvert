@@ -34,6 +34,7 @@ from .script import ScriptExporter
 __all__ = [
     'export',
     'export_by_name',
+    'get_exporter',
     'get_export_names',
     'ExporterNameError',
 ]
@@ -48,9 +49,9 @@ def export(exporter, nb, **kw):
     
     Parameters
     ----------
-    exporter : class:`~nbconvert.exporters.exporter.Exporter` class or instance
-      Class type or instance of the exporter that should be used.  If the
-      method initializes it's own instance of the class, it is ASSUMED that
+    exporter : :class:`~nbconvert.exporters.exporter.Exporter` class or instance
+      Class or instance of the exporter that should be used.  If the
+      method initializes its own instance of the class, it is ASSUMED that
       the class type provided exposes a constructor (``__init__``) with the same
       signature as the base Exporter class.
     nb : :class:`~nbformat.NotebookNode`
@@ -64,15 +65,10 @@ def export(exporter, nb, **kw):
     -------
     tuple
         output : str
-            Jinja 2 output.  This is the resulting converted notebook.
+            The resulting converted notebook.
         resources : dictionary
             Dictionary of resources used prior to and during the conversion 
             process.
-        exporter_instance : Exporter
-            Instance of the Exporter class used to export the document.  Useful
-            to caller because it provides a 'file_extension' property which
-            specifies what extension the output should be saved as.
-
     """
     
     #Check arguments
@@ -116,13 +112,15 @@ def _make_exporter(name, E):
     """make an export_foo function from a short key and Exporter class E"""
     def _export(nb, **kw):
         return export(E, nb, **kw)
-    _export.__doc__ = """Export a notebook object to {0} format""".format(name)
+    _export.__doc__ = """DEPRECATED: Export a notebook object to {0} format""".format(name)
     return _export
     
 g = globals()
 
+# These specific functions are deprecated as of 5.0
 for name, E in exporter_map.items():
     g['export_%s' % name] = _make_exporter(name, E)
+    __all__.append('export_%s' % name)
 
 
 def export_by_name(format_name, nb, **kw):
@@ -150,7 +148,7 @@ def export_by_name(format_name, nb, **kw):
 
 
 def get_exporter(name):
-    """ given an exporter name, return a class ready to be instantiated
+    """Given an exporter name or import path, return a class ready to be instantiated
     
     Raises ValueError if exporter is not found
     """

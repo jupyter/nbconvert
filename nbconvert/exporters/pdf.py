@@ -29,7 +29,12 @@ class LatexFailed(IOError):
 
 
 class PDFExporter(LatexExporter):
-    """Writer designed to write to PDF files"""
+    """Writer designed to write to PDF files.
+
+    This inherits from :class:`LatexExporter`. It creates a Latex file in
+    a temporary directory using the template machinery, and then runs Latex
+    to create a pdf.
+    """
 
     latex_count = Integer(3,
         help="How many times latex will be called."

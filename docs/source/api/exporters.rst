@@ -8,6 +8,15 @@ Exporters
    :doc:`/config_options`
      Configurable options for the nbconvert application
 
+.. autofunction:: export
+
+.. autofunction:: get_exporter
+
+.. autofunction:: get_export_names
+
+Exporter base classes
+---------------------
+
 .. autoclass:: Exporter
 
     .. automethod:: __init__
@@ -57,14 +66,3 @@ inherit either directly or indirectly from
 .. autoclass:: PythonExporter
 
 .. autoclass:: RSTExporter
-
-Specialized exporter functions
-------------------------------
-
-These functions are essentially convenience functions that
-wrap the functionality of the classes documented in the previous
-section.
-
-
-
-.. autofunction:: export_by_name
