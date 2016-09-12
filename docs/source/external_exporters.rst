@@ -19,12 +19,12 @@ format designated by the ``FORMAT`` string as explained below.
 Extending the built-in format exporters
 ---------------------------------------
 A few built-in formats are available by default: `html`, `pdf`,
-`script`, `latex`. Each of these has its own _exporter_ with many
+`script`, `latex`. Each of these has its own *exporter* with many
 configuration options that can be extended. Having the option to point to a
-different _exporter_ allows authors to create their own fully customized
+different *exporter* allows authors to create their own fully customized
 templates or export formats.
 
-A custom _exporter_ must be an importable Python object. We recommend that
+A custom *exporter* must be an importable Python object. We recommend that
 these be distributed as Python libraries.
 
 .. _entrypoints:
