@@ -104,15 +104,16 @@ class TestExporter(ExportersTestsBase):
 
     def test_relative_template_file(self):
         with tempdir.TemporaryWorkingDirectory() as td:
-            template = os.path.join(td, 'relative_template.tpl')
+            os.mkdir('relative')
+            template = os.path.abspath(os.path.join(td, 'relative', 'relative_template.tpl'))
             test_output = 'relative!'
             with open(template, 'w') as f:
                 f.write(test_output)
             config = Config()
             config.TemplateExporter.template_file = template
             exporter = self._make_exporter(config=config)
-            assert exporter.template.filename == template
-            assert os.path.dirname(template) in exporter.template_path
+            assert os.path.abspath(exporter.template.filename) == template
+            assert os.path.dirname(template) in [ os.path.abspath(d) for d in exporter.template_path ]
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
