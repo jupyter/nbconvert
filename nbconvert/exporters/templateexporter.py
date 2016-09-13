@@ -14,7 +14,6 @@ import uuid
 # to move ImportErrors to runtime when the requirement is actually needed
 
 
-# IPython imports
 from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
@@ -100,8 +99,18 @@ class TemplateExporter(Exporter):
 
     @observe('template_file')
     def _template_file_changed(self, change):
-        if change['new'] == 'default':
+        new = change['new']
+        if new == 'default':
             self.template_file = self.default_template
+            return
+        # check if template_file is a file path
+        # rather than a name already on template_path
+        full_path = os.path.abspath(new)
+        if os.path.isfile(full_path):
+            template_dir, template_file = os.path.split(full_path)
+            if template_dir not in [ os.path.abspath(p) for p in self.template_path ]:
+                self.template_path = [template_dir] + self.template_path
+            self.template_file = template_file
 
     @default('template_file')
     def _template_file_default(self):
@@ -112,7 +121,7 @@ class TemplateExporter(Exporter):
     template_path = List(['.']).tag(config=True, affects_environment=True)
 
     default_template_path = Unicode(
-        os.path.join("..", "templates"), 
+        os.path.join("..", "templates"),
         help="Path where the template files are located."
     ).tag(affects_environment=True)
 
@@ -177,21 +186,20 @@ class TemplateExporter(Exporter):
         # First try to load the
         # template by name with extension added, then try loading the template
         # as if the name is explicitly specified.
-        try_names = [
-            self.template_file + self.template_extension,
-            self.template_file,
-        ]
-        for try_name in try_names:
-            self.log.debug("Attempting to load template %s", try_name)
-            try:
-                template = self.environment.get_template(try_name)
-            except (TemplateNotFound, IOError):
-                pass
-            else:
-                self.log.debug("Loaded template %s", try_name)
-                return template
+        template_file = self.template_file
+        if not template_file.endswith(self.template_extension):
+            template_file = template_file + self.template_extension
+        self.log.debug("Attempting to load template %s", template_file)
+        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+        try:
+            template = self.environment.get_template(template_file)
+        except (TemplateNotFound, IOError):
+            pass
+        else:
+            self.log.debug("Loaded template %s", template.filename)
+            return template
 
-        raise TemplateNotFound(self.template_file)
+        raise TemplateNotFound(template_file)
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """

@@ -14,7 +14,7 @@ from nbconvert.exporters import Exporter
 
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
-from ipython_genutils import tempdir
+from testpath import tempdir
 from nose.tools import assert_raises, assert_in, assert_not_in
 
 #-----------------------------------------------------------------------------
@@ -90,6 +90,32 @@ class TestNbConvertApp(TestsBase):
             assert not os.path.isfile('notebook1.py')
             assert os.path.isfile('notebook2.py')
 
+    def test_absolute_template_file(self):
+        """--template '/path/to/template.tpl'"""
+        with self.create_temp_cwd(['notebook*.ipynb']), tempdir.TemporaryDirectory() as td:
+            template = os.path.join(td, 'mytemplate.tpl')
+            test_output = 'success!'
+            with open(template, 'w') as f:
+                f.write(test_output)
+            self.nbconvert('--log-level 0 notebook2 --template %s' % template)
+            assert os.path.isfile('notebook2.html')
+            with open('notebook2.html') as f:
+                text = f.read()
+            assert text == test_output
+
+    def test_relative_template_file(self):
+        """Test --template 'relative/path.tpl'"""
+        with self.create_temp_cwd(['notebook*.ipynb']):
+            os.mkdir('relative')
+            template = os.path.join('relative', 'path.tpl')
+            test_output = 'success!'
+            with open(template, 'w') as f:
+                f.write(test_output)
+            self.nbconvert('--log-level 0 notebook2 --template %s' % template)
+            assert os.path.isfile('notebook2.html')
+            with open('notebook2.html') as f:
+                text = f.read()
+            assert text == test_output
 
     @dec.onlyif_cmds_exist('xelatex')
     @dec.onlyif_cmds_exist('pandoc')

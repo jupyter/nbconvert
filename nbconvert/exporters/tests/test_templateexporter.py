@@ -2,28 +2,18 @@
 Module with tests for templateexporter.py
 """
 
-#-----------------------------------------------------------------------------
-# Copyright (c) 2013, the IPython Development Team.
-#
+# Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file COPYING.txt, distributed with this software.
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
+import os
 
 from traitlets.config import Config
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
 from ..templateexporter import TemplateExporter
+from testpath import tempdir
 
-
-#-----------------------------------------------------------------------------
-# Class
-#-----------------------------------------------------------------------------
 
 class TestExporter(ExportersTestsBase):
     """Contains test functions for exporter.py"""
@@ -100,9 +90,36 @@ class TestExporter(ExportersTestsBase):
         assert resources is not None
         assert resources['cheese'] == 'real'
 
+    def test_absolute_template_file(self):
+        with tempdir.TemporaryDirectory() as td:
+            template = os.path.join(td, 'abstemplate.tpl')
+            test_output = 'absolute!'
+            with open(template, 'w') as f:
+                f.write(test_output)
+            config = Config()
+            config.TemplateExporter.template_file = template
+            exporter = self._make_exporter(config=config)
+            assert exporter.template.filename == template
+            assert os.path.dirname(template) in exporter.template_path
+
+    def test_relative_template_file(self):
+        with tempdir.TemporaryWorkingDirectory() as td:
+            os.mkdir('relative')
+            template = os.path.abspath(os.path.join(td, 'relative', 'relative_template.tpl'))
+            test_output = 'relative!'
+            with open(template, 'w') as f:
+                f.write(test_output)
+            config = Config()
+            config.TemplateExporter.template_file = template
+            exporter = self._make_exporter(config=config)
+            assert os.path.abspath(exporter.template.filename) == template
+            assert os.path.dirname(template) in [ os.path.abspath(d) for d in exporter.template_path ]
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
         # the base TemplateExporter doesn't have a template associated with it.
-        exporter = TemplateExporter(config=config, template_file='python')
-        return exporter        
+        exporter = TemplateExporter(config=config)
+        if not exporter.template_file:
+            # give it a default if not specified
+            exporter.template_file = 'python'
+        return exporter
