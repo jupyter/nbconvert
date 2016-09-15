@@ -82,7 +82,7 @@ class TemplateExporter(Exporter):
         return self._template_cached
 
     _environment_cached = None
-    def _invalidate_environment_cache(self):
+    def _invalidate_environment_cache(self, change=None):
         self._environment_cached = None
         self._invalidate_template_cache()
 
