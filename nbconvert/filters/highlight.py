@@ -122,13 +122,25 @@ def _pygments_highlight(source, output_formatter, language='ipython', metadata=N
 
         language = metadata['magics_language']
 
+    lexer = None
     if language == 'ipython2':
-        from IPython.lib.lexers import IPythonLexer
-        lexer = IPythonLexer()
+        try:
+            from IPython.lib.lexers import IPythonLexer
+        except ImportError:
+            warn("IPython lexer unavailable, falling back on Python")
+            language = 'python'
+        else:
+            lexer = IPythonLexer()
     elif language == 'ipython3':
-        from IPython.lib.lexers import IPython3Lexer
-        lexer = IPython3Lexer()
-    else:
+        try:
+            from IPython.lib.lexers import IPython3Lexer
+        except ImportError:
+            warn("IPython3 lexer unavailable, falling back on Python 3")
+            language = 'python3'
+        else:
+            lexer = IPython3Lexer()
+
+    if lexer is None:
         try:
             lexer = get_lexer_by_name(language, stripall=True)
         except ClassNotFound:
