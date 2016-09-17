@@ -21,7 +21,7 @@ except ImportError as e:
                           % _mistune_import_error)
 
 from .pandoc import convert_pandoc
-
+import json
 
 __all__ = [
     'markdown2html',
@@ -100,4 +100,20 @@ def markdown2rst(source, extra_args=None):
     out : string
       Output as returned by pandoc.
     """
+    def rawlatex2math_hook(obj):
+        if obj.get('t') == 'RawBlock' and obj['c'][0] == 'latex':
+            obj['t'] = 'Para'
+            obj['c'] = [{
+                't': 'Math',
+                'c': [
+                    {'t': 'DisplayMath', 'c': []},
+                    obj['c'][1],
+                ]
+            }]
+        return obj
+
+    def rawlatex2math(text):
+        json_data = json.loads(text, object_hook=rawlatex2math_hook)
+        return json.dumps(json_data)
+
     return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
