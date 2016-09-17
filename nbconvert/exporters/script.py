@@ -7,7 +7,6 @@ from .templateexporter import TemplateExporter
 
 from traitlets import Dict, default
 from traitlets.utils.importstring import import_item
-from .export import ExporterNameError
 
 class ScriptExporter(TemplateExporter):
     
@@ -38,6 +37,7 @@ class ScriptExporter(TemplateExporter):
                             Exporter = get_exporter(external_exporter_name)
                             self._exporters[external_exporter_name] = Exporter(parent=self)
                         except:
+                            from .export import ExporterNameError
                             raise ExporterNameError("The Exporter named {nbconvert_exporter_package} cannot be found, try pip install {nbconvert_exporter_package}.".format(nbconvert_exporter_package=external_exporter_name))
                     else:
                         raise ExporterNameError("The Exporter named {exporter_name} cannot be found.".format(exporter_name=exporter_name)) 
