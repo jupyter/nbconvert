@@ -6,6 +6,7 @@ dist: trusty
 
 language: python
 python:
+    - "nightly"
     - 3.5
     - 3.4
     - 3.3
@@ -36,3 +37,6 @@ script:
     - py.test --cov nbconvert -v --pyargs nbconvert
 after_success:
     - codecov
+matrix:
+    allow_failures:
+        - python: "nightly"
