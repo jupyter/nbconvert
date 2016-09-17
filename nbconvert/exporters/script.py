@@ -8,6 +8,7 @@ from .templateexporter import TemplateExporter
 from traitlets import Dict, default
 from traitlets.utils.importstring import import_item
 
+
 class ScriptExporter(TemplateExporter):
     
     _exporters = Dict()
@@ -18,6 +19,7 @@ class ScriptExporter(TemplateExporter):
 
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
+        
         # delegate to custom exporter, if specified
         exporter_name = langinfo.get('nbconvert_exporter')
         if exporter_name and exporter_name != 'script':
