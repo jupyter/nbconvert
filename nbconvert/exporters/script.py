@@ -18,7 +18,6 @@ class ScriptExporter(TemplateExporter):
 
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
-        print("I am here") 
         # delegate to custom exporter, if specified
         exporter_name = langinfo.get('nbconvert_exporter')
         if exporter_name and exporter_name != 'script':
@@ -27,10 +26,8 @@ class ScriptExporter(TemplateExporter):
             if exporter_name not in self._exporters:
                 try: 
                     Exporter = get_exporter(exporter_name)
-                    print("i am here")
                     self._exporters[exporter_name] = Exporter(parent=self)
                 except:
-                    print("yes you found me")
                     if langinfo.get('nbconvert_exporter_package',""):
                         external_exporter_name = langinfo.get('nbconvert_exporter_package')
                         try: 
