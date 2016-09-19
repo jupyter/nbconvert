@@ -24,7 +24,7 @@ class ScriptExporter(TemplateExporter):
         exporter_name = langinfo.get('nbconvert_exporter')
         if exporter_name and exporter_name != 'script':
             self.log.debug("Loading script exporter: %s", exporter_name)
-            from .export import get_exporter
+            from .export import get_exporter, ExporterNameError
             if exporter_name not in self._exporters:
                 try: 
                     Exporter = get_exporter(exporter_name)
@@ -36,7 +36,6 @@ class ScriptExporter(TemplateExporter):
                             Exporter = get_exporter(external_exporter_name)
                             self._exporters[external_exporter_name] = Exporter(parent=self)
                         except:
-                            from .export import ExporterNameError
                             raise ExporterNameError("The Exporter named {nbconvert_exporter_package} cannot be found, try pip install {nbconvert_exporter_package}.".format(nbconvert_exporter_package=external_exporter_name))
                     else:
                         raise ExporterNameError("The Exporter named {exporter_name} cannot be found.".format(exporter_name=exporter_name)) 
