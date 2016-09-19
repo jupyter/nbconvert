@@ -178,5 +178,4 @@ def get_export_names():
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
-    return sorted(exporter_map.keys()) + \
-           sorted(entrypoints.get_group_named('nbconvert.exporters'))
+    return sorted(entrypoints.get_group_named('nbconvert.exporters'))
