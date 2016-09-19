@@ -34,7 +34,10 @@ class ScriptExporter(TemplateExporter):
                             Exporter = get_exporter(external_exporter_name)
                             self._exporters[external_exporter_name] = Exporter(parent=self)
                         except ValueError:
-                            raise ExporterNameError("The Exporter named {nbconvert_exporter_package} cannot be found, try pip install {nbconvert_exporter_package}.".format(nbconvert_exporter_package=external_exporter_name))
+                            raise ExporterNameError("The Exporter named "
+                            "{nbconvert_exporter_package} cannot be found"
+                            ", try pip install "
+                            "{nbconvert_exporter_package}.".format(nbconvert_exporter_package=external_exporter_name))
                     else:
                         raise ExporterNameError("The Exporter named {exporter_name} cannot be found.".format(exporter_name=exporter_name)) 
 
