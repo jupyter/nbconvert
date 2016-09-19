@@ -1,4 +1,8 @@
-from .export import *
+class ExporterNameError(NameError):
+    pass
+
+from .base import (export, export_by_name,
+                   get_exporter, get_export_names)
 from .html import HTMLExporter
 from .slides import SlidesExporter
 from .templateexporter import TemplateExporter
