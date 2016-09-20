@@ -22,7 +22,7 @@ class NbConvertBase(LoggingConfigurable):
     ).tag(config=True)
 
     default_language = Unicode('ipython',
-        help='DEPRECATED default highlight language, please use language_info metadata instead'
+        help='Deprecated default highlight language as of 5.0, please use language_info metadata instead'
     ).tag(config=True)
 
     def __init__(self, **kw):

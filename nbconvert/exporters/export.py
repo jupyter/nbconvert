@@ -112,7 +112,7 @@ def _make_exporter(name, E):
     """make an export_foo function from a short key and Exporter class E"""
     def _export(nb, **kw):
         return export(E, nb, **kw)
-    _export.__doc__ = """DEPRECATED: Export a notebook object to {0} format""".format(name)
+    _export.__doc__ = """Deprecated as of 5.0: Export a notebook object to {0} format""".format(name)
     return _export
     
 g = globals()
