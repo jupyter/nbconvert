@@ -3,8 +3,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from functools import wraps
-from itertools import chain
 import warnings
 
 import entrypoints
