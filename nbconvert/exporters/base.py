@@ -24,6 +24,7 @@ from .exporter import Exporter
 
 __all__ = [
     'export',
+    'Exporter',
     'get_exporter',
     'get_export_names',
     'ExporterNameError',

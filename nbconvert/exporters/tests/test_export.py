@@ -11,7 +11,9 @@ import sys
 import nbformat
 
 from .base import ExportersTestsBase
-from ..export import get_exporter, export_by_name, export, Exporter, ExporterNameError, get_export_names
+from ..base import get_exporter, export, ExporterNameError, get_export_names
+from ..exporter import Exporter
+from ..exporter_locator import export_by_name
 from ..python import PythonExporter
 
 
