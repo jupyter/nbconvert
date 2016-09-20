@@ -29,7 +29,7 @@ class Highlight2HTML(NbConvertBase):
     
     @observe('default_language')
     def _default_language_changed(self, change):
-        warn('Setting default_language in config is deprecated, '
+        warn('Setting default_language in config is deprecated as of 5.0, '
              'please use language_info metadata instead.')
         self.pygments_lexer = change['new']
 
@@ -64,7 +64,7 @@ class Highlight2Latex(NbConvertBase):
     
     @observe('default_language')
     def _default_language_changed(self, change):
-        warn('Setting default_language in config is deprecated, '
+        warn('Setting default_language in config is deprecated as of 5.0, '
              'please use language_info metadata instead.')
         self.pygments_lexer = change['new']
 
