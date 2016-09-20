@@ -1,4 +1,4 @@
-"""Module containing single call export functions."""
+"""Deprecated as of 5.0. Module containing hard-coded exporting functions."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -23,6 +23,9 @@ from .script import ScriptExporter
 #-----------------------------------------------------------------------------
 # Functions
 #-----------------------------------------------------------------------------
+
+warnings.warn("""`nbconvert.exporters.exporter_locator` is deprecated in favor of `nbconvert.exporters.base` since nbconvert 5.0.""",
+    DeprecationWarning)
 
 __all__ = [
     'export',

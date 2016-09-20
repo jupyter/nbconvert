@@ -1,4 +1,6 @@
-from .export import *
+from .base import (export, get_exporter, 
+                   ExporterNameError, get_export_names)
+from .exporter_locator import export_by_name
 from .html import HTMLExporter
 from .slides import SlidesExporter
 from .templateexporter import TemplateExporter
