@@ -118,6 +118,5 @@ def markdown2rst(source, extra_args=None):
         json_data = json.loads(text, object_hook=rawlatex2math_hook)
         return json.dumps(json_data)
     
-    temp_text = 
 
-    return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args, filter_func=rawlatex2math)
+    return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args) 
