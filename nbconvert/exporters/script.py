@@ -7,6 +7,7 @@ from .templateexporter import TemplateExporter
 
 from traitlets import Dict, default
 from traitlets.utils.importstring import import_item
+from .base import get_exporter
 
 
 class ScriptExporter(TemplateExporter):
@@ -24,7 +25,6 @@ class ScriptExporter(TemplateExporter):
         exporter_name = langinfo.get('nbconvert_exporter')
         if exporter_name and exporter_name != 'script':
             self.log.debug("Loading script exporter: %s", exporter_name)
-            from .export import get_exporter
             if exporter_name not in self._exporters:
                 Exporter = get_exporter(exporter_name)
                 self._exporters[exporter_name] = Exporter(parent=self)
