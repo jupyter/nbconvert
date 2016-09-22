@@ -23,7 +23,7 @@ from traitlets import (
 
 from traitlets.utils.importstring import import_item
 
-from .exporters.export import get_export_names, get_exporter
+from .exporters.base import get_export_names, get_exporter
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
