@@ -33,6 +33,7 @@ __all__ = [
     'get_exporter',
     'get_export_names',
     'ExporterNameError',
+    'exporter_map',
 ]
 
 exporter_map = dict(
