@@ -126,6 +126,17 @@ We will use the following layout for our package to expose a custom exporter::
         └── templates
             └── test_template.tpl
 
+If you wished to create this same directory structure you could use the following commands 
+when you are at the directory under which you wish to build your ``mypackage`` package:
+
+.. code-block:: bash
+
+    mkdir -p mypackage/mypackage/templates
+    touch mypackage/LICENSE.md
+    touch mypackage/setup.py
+    touch mypackage/mypackage/__init__.py
+    touch mypackage/mypackage/templates/test_template.tpl
+
 As you can see the layout is relatively simple, in the case where a template is not
 needed we would actually have only one file with an Exporter implementation.  Of course
 you can change the layout of your package to have a more fine-grained structure of the
