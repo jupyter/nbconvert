@@ -311,9 +311,9 @@ class NbConvertApp(JupyterApp):
 
         Returns
         -------
+
         dict
-            resources dictionary for a single notebook that MUST include the
-            following keys:
+            resources dictionary for a single notebook that MUST include the following keys:
                 - config_dir: the location of the Jupyter config directory
                 - unique_key: the notebook name
                 - output_files_dir: a directory where output files (not

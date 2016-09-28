@@ -35,6 +35,11 @@ is hosted on ReadTheDocs.
 
    In your browser, go to `http://localhost:8000`.
 
+Note: If you want, you can manually convert this install to an editable install 
+by using ``pip uninstall nbconvert`` and ``pip install -e ..`` while still at the
+top of this ``docs`` directory. This will allow you to rebuild the html on the fly 
+to reflect the current edits you are making to the documentation (though that will still require re-running the `make html` command). 
+
 ## Developing Documentation
 
 ### Helpful files and directories
