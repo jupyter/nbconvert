@@ -139,8 +139,13 @@ when you are at the directory under which you wish to build your ``mypackage`` p
 
 .. important::
     You should not publish this package without adding content to your ``LICENSE.md`` file.
-    ``nbconvert`` follows the Jupyter Project convention of using a Modified BSD License (also 
-    known as New or Revised or 3-Clause BSD). You are not required to use this License.
+    For example, ``nbconvert`` follows the Jupyter Project convention of using a Modified BSD 
+    License (also known as New or Revised or 3-Clause BSD).
+    For a guide on picking the right license for your use case,
+    please see `choose a license <choosealicense.com>`_.
+    If you do not specify the license, your code may be `unusable by many open source projects`_. 
+
+.. _`unusable by many open source projects`: http://choosealicense.com/no-license/
 
 As you can see the layout is relatively simple, in the case where a template is not
 needed we would actually have only one file with an Exporter implementation.  Of course
