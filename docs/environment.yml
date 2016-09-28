@@ -13,3 +13,4 @@ dependencies:
 - entrypoints
 - pip:
     - nbsphinx
+    - ../.
