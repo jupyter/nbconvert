@@ -17,6 +17,7 @@ import uuid
 from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
+from jinja2 import TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader
 
 from nbconvert import filters
 from .exporter import Exporter
@@ -178,7 +179,6 @@ class TemplateExporter(Exporter):
         
         This is triggered by various trait changes that would change the template.
         """
-        from jinja2 import TemplateNotFound
 
         if not self.template_file:
             raise ValueError("No template_file specified!")
