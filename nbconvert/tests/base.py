@@ -10,6 +10,7 @@ import shlex
 import shutil
 import sys
 import unittest
+import nbconvert
 from subprocess import Popen, PIPE
 
 import nose.tools as nt
@@ -124,7 +125,6 @@ class TestsBase(unittest.TestCase):
         
         #Build a path using the nbconvert directory and the relative path we just
         #found.
-        import nbconvert
         path = os.path.dirname(nbconvert.__file__)
         return os.path.join(path, *names)
 
