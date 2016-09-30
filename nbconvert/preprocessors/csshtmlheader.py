@@ -7,6 +7,7 @@
 import os
 import io
 import hashlib
+import nbconvert.resources
 
 from traitlets import Unicode
 from ipython_genutils.py3compat import str_to_bytes
@@ -53,7 +54,6 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         header = []
         
         # Construct path to Jupyter CSS
-        import nbconvert.resources
         sheet_filename = os.path.join(
             os.path.dirname(nbconvert.resources.__file__),
             'style.min.css',
