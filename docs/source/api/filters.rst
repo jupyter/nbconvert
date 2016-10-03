@@ -34,6 +34,8 @@ e.g. a terminal traceback) to HTML colors.
 
 .. autofunction:: get_lines
 
+.. autofunction:: convert_pandoc
+
 .. autoclass:: Highlight2HTML
 
 .. autoclass:: Highlight2Latex

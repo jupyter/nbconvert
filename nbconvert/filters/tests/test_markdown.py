@@ -6,14 +6,17 @@
 
 import re
 from copy import copy
+from functools import partial
 
 from ipython_genutils.py3compat import string_types
 from ipython_genutils.testing import decorators as dec
 
 from ...tests.base import TestsBase
-from ..markdown import markdown2latex, markdown2html, markdown2rst
+from ..pandoc import convert_pandoc
+from ..markdown import markdown2html
 
 from jinja2 import Environment
+
 
 class TestMarkdown(TestsBase):
 
@@ -45,12 +48,13 @@ class TestMarkdown(TestsBase):
         ('test', 'https://google.com/'),
     ]
 
-
     @dec.onlyif_cmds_exist('pandoc')
     def test_markdown2latex(self):
         """markdown2latex test"""
         for index, test in enumerate(self.tests):
-            self._try_markdown(markdown2latex, test, self.tokens[index])
+            self._try_markdown(partial(convert_pandoc, from_format='markdown',
+                                       to_format='latex'), test,
+                               self.tokens[index])
 
     @dec.onlyif_cmds_exist('pandoc')
     def test_markdown2latex_markup(self):
@@ -58,7 +62,7 @@ class TestMarkdown(TestsBase):
         # This string should be passed through unaltered with pandoc's
         # markdown_strict reader
         s = '1) arabic number with parenthesis'
-        self.assertEqual(markdown2latex(s, markup='markdown_strict'), s)
+        self.assertEqual(convert_pandoc(s, 'markdown_strict', 'latex'), s)
         # This string should be passed through unaltered with pandoc's
         # markdown_strict+tex_math_dollars reader
         s = r'$\alpha$ latex math'
@@ -71,21 +75,25 @@ class TestMarkdown(TestsBase):
             # py2
             assertRegex = self.assertRegexpMatches
         assertRegex(
-            markdown2latex(s, markup='markdown_strict+tex_math_dollars'),
+            convert_pandoc(s, 'markdown_strict+tex_math_dollars', 'latex'),
             expected)
 
     @dec.onlyif_cmds_exist('pandoc')
     def test_pandoc_extra_args(self):
         # pass --no-wrap
         s = '\n'.join([
-            "#latex {{long_line | md2l('markdown', ['--no-wrap'])}}",
+            "#latex {{long_line | md2l(['--wrap=none'])}}",
             "#rst {{long_line | md2r(['--columns', '5'])}}",
         ])
         long_line = ' '.join(['long'] * 30)
         env = Environment()
         env.filters.update({
-            'md2l': markdown2latex,
-            'md2r': markdown2rst,
+            'md2l': lambda code, extra_args: convert_pandoc(
+                code, from_format='markdown', to_format='latex',
+                extra_args=extra_args),
+            'md2r': lambda code, extra_args: convert_pandoc(
+                code, from_format='markdown', to_format='rst',
+                extra_args=extra_args),
         })
         tpl = env.from_string(s)
         rendered = tpl.render(long_line=long_line)
@@ -175,8 +183,8 @@ i.e. the $i^{th}$"""
         tokens[1] = r'\*\*test'
 
         for index, test in enumerate(self.tests):
-            self._try_markdown(markdown2rst, test, tokens[index])
-
+            self._try_markdown(partial(convert_pandoc, from_format='markdown',
+                                       to_format='rst'), test, tokens[index])
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)
