@@ -7,10 +7,18 @@
 import os
 import io
 import hashlib
+import nbconvert.resources
 
 from traitlets import Unicode
 from ipython_genutils.py3compat import str_to_bytes
 from .base import Preprocessor
+
+
+try:
+    from notebook import DEFAULT_STATIC_FILES_PATH
+except ImportError:
+    DEFAULT_STATIC_FILES_PATH = None
+
 
 class CSSHTMLHeaderPreprocessor(Preprocessor):
     """
@@ -53,7 +61,6 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         header = []
         
         # Construct path to Jupyter CSS
-        import nbconvert.resources
         sheet_filename = os.path.join(
             os.path.dirname(nbconvert.resources.__file__),
             'style.min.css',
@@ -112,11 +119,6 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Load the user's custom CSS and IPython's default custom CSS.  If they
         # differ, assume the user has made modifications to his/her custom CSS
         # and that we should inline it in the nbconvert output.
-        try:
-            from notebook import DEFAULT_STATIC_FILES_PATH
-        except ImportError:
-            DEFAULT_STATIC_FILES_PATH = None
-        
         config_dir = resources['config_dir']
         custom_css_filename = os.path.join(config_dir, 'custom', 'custom.css')
         if os.path.isfile(custom_css_filename):

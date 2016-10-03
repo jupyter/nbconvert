@@ -8,9 +8,8 @@ from __future__ import print_function
 import os
 import webbrowser
 
-from tornado import web, ioloop, httpserver
+from tornado import web, ioloop, httpserver, log
 from tornado.httpclient import AsyncHTTPClient
-
 from traitlets import Bool, Unicode, Int
 
 from .base import PostProcessorBase
@@ -75,14 +74,10 @@ class ServePostProcessor(PostProcessorBase):
             cdn=self.reveal_cdn,
             client=AsyncHTTPClient(),
         )
+        
         # hook up tornado logging to our logger
-        try:
-            from tornado import log
-            log.app_log = self.log
-        except ImportError:
-            # old tornado (<= 3), ignore
-            pass
-    
+        log.app_log = self.log
+
         http_server = httpserver.HTTPServer(app)
         http_server.listen(self.port, address=self.ip)
         url = "http://%s:%i/%s" % (self.ip, self.port, filename)

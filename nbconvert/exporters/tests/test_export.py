@@ -9,6 +9,7 @@ import os
 import sys
 
 import nbformat
+import nbconvert.tests
 
 from .base import ExportersTestsBase
 from ..base import get_exporter, export, ExporterNameError, get_export_names
@@ -92,7 +93,6 @@ class TestExport(ExportersTestsBase):
             pass
 
 def test_get_exporter_entrypoint():
-    import nbconvert.tests
     p = os.path.join(os.path.dirname(nbconvert.tests.__file__), 'exporter_entrypoint')
     sys.path.insert(0, p)
     assert 'entrypoint_test' in get_export_names()

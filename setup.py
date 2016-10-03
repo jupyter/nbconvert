@@ -198,7 +198,7 @@ extras_require = setuptools_args['extras_require'] = {
     # FIXME: tests still require nose for some utility calls,
     # but we are running with pytest
     'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'testpath'],
-    'serve': ['tornado'],
+    'serve': ['tornado>=4.0'],
     'execute': ['jupyter_client'],
 }
 

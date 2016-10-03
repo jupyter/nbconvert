@@ -10,13 +10,10 @@ from __future__ import print_function, absolute_import
 import os
 import uuid
 
-# other libs/dependencies are imported at runtime
-# to move ImportErrors to runtime when the requirement is actually needed
-
-
 from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
+from jinja2 import TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader
 
 from nbconvert import filters
 from .exporter import Exporter
@@ -178,7 +175,6 @@ class TemplateExporter(Exporter):
         
         This is triggered by various trait changes that would change the template.
         """
-        from jinja2 import TemplateNotFound
 
         if not self.template_file:
             raise ValueError("No template_file specified!")
@@ -295,7 +291,6 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        from jinja2 import Environment, ChoiceLoader, FileSystemLoader
         here = os.path.dirname(os.path.realpath(__file__))
 
         paths = self.template_path + \
