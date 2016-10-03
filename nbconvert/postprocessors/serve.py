@@ -10,7 +10,6 @@ import webbrowser
 
 from tornado import web, ioloop, httpserver, log
 from tornado.httpclient import AsyncHTTPClient
-
 from traitlets import Bool, Unicode, Int
 
 from .base import PostProcessorBase
@@ -76,7 +75,7 @@ class ServePostProcessor(PostProcessorBase):
             client=AsyncHTTPClient(),
         )
         
-
+        # hook up tornado logging to our logger
         log.app_log = self.log
 
         http_server = httpserver.HTTPServer(app)
