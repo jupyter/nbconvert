@@ -12,5 +12,4 @@ dependencies:
 - tornado
 - entrypoints
 - pip:
-    - git+https://github.com/jupyter/nbconvert.git
     - nbsphinx
