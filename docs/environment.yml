@@ -2,7 +2,7 @@ name: nbconvert_docs
 channels:
   - conda-forge
 dependencies:
-- python=3
+- python>=3.5
 - pandoc
 - nbformat
 - jupyter_client
@@ -13,4 +13,3 @@ dependencies:
 - entrypoints
 - pip:
     - nbsphinx
-    - ../.

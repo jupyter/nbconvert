@@ -24,7 +24,10 @@ if os.environ.get('READTHEDOCS', ''):
     # RTD doesn't use the repo's Makefile to build docs. We run
     # autogen_config.py to create the config docs (i.e. Configuration Options
     # page).
-
+    import sys, subprocess
+    
+    subprocess.run([sys.executable,'-m','pip','install','-e','../../.'])
+    
     with open('../autogen_config.py') as f:
         exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
 
