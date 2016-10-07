@@ -70,8 +70,10 @@ PDF conversion on a limited TeX environment
 
 If you are only able to install a limited TeX environment, there are two main routes you could take to convert to PDF:
 
-1. You could convert to ``.tex`` directly, and editing the file to 
-   accord with your local environment and then run ``xelatex`` 
-   directly. 
-2. You could write a :ref:`custom exporter <external_exporters>` 
-   that takes your local system's requirements into account. 
+1. Using TeX by hand
+    a. You could convert to ``.tex`` directly; this requires Pandoc.
+    b. edit the file to accord with your local environment
+    c. run ``xelatex`` directly. 
+2. Custom exporter
+    a. You could write a :ref:`custom exporter <external_exporters>` 
+       that takes your system's limitations into account. 
