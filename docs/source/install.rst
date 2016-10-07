@@ -47,7 +47,7 @@ compiled by the XeTeX engine with the LaTeX2e format (via the
 .. versionadded:: 5.0
     
     We use XeTeX as the rendering engine rather than pdfTeX (as 
-    in earlier versions). XeLaTeX can access fonts through native 
+    in earlier versions). XeTeX can access fonts through native 
     operating system libraries, it has better support for OpenType 
     formatted fonts and Unicode characters. 
 
