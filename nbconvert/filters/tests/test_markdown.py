@@ -82,7 +82,7 @@ class TestMarkdown(TestsBase):
     def test_pandoc_extra_args(self):
         # pass --no-wrap
         s = '\n'.join([
-            "#latex {{long_line | md2l(['--wrap=none'])}}",
+            "#latex {{long_line | md2l(['--no-wrap'])}}",
             "#rst {{long_line | md2r(['--columns', '5'])}}",
         ])
         long_line = ' '.join(['long'] * 30)
