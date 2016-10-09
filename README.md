@@ -3,7 +3,7 @@
 
 [![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)
 [![Build Status](https://travis-ci.org/jupyter/nbconvert.svg?branch=master)](https://travis-ci.org/jupyter/nbconvert)
-[![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=latest)](http://nbconvert.readthedocs.org/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=latest)](https://nbconvert.readthedocs.io/en/latest/?badge=latest)
 [![codecov.io](https://codecov.io/github/jupyter/nbconvert/coverage.svg?branch=master)](https://codecov.io/github/jupyter/nbconvert?branch=master)
 
 
@@ -69,13 +69,13 @@ py.test --pyargs nbconvert
 
 ## Resources
 
-- [Documentation for Jupyter nbconvert](https://nbconvert.readthedocs.org/en/latest/)
+- [Documentation for Jupyter nbconvert](https://nbconvert.readthedocs.io/en/latest/)
   [[PDF](https://media.readthedocs.org/pdf/nbconvert/latest/nbconvert.pdf)]
 - [nbconvert examples on GitHub](https://github.com/jupyter/nbconvert-examples)
 - [Issues](https://github.com/jupyter/nbconvert/issues)
 - [Technical support - Jupyter Google Group](https://groups.google.com/forum/#!forum/jupyter)
 - [Project Jupyter website](https://jupyter.org)
-- [Documentation for Project Jupyter](https://jupyter.readthedocs.org/en/latest/index.html)
+- [Documentation for Project Jupyter](https://jupyter.readthedocs.io/en/latest/index.html)
   [[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)]
 
 

@@ -1,6 +1,6 @@
 # Documenting nbconvert
 
-[Documentation for `nbconvert`](https://nbconvert.readthedocs.org/en/latest/)
+[Documentation for `nbconvert`](https://nbconvert.readthedocs.io/en/latest/)
 is hosted on ReadTheDocs.
 
 ## Build Documentation locally
