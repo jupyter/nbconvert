@@ -62,7 +62,7 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     """
     warnings.warn("`markdown2latex` is deprecated in favor of " 
                   "`nbconvert.filters.pandoc.generic_pandoc` as "
-                  "generic_pandoc(from_format='markdown', to_format='latex', "
+                  "generic_pandoc(source, from_format='markdown', to_format='latex', "
                   "extra_args=extra_args) since nbconvert 5.0")
     return generic_pandoc(source, markup, 'latex', extra_args=extra_args)
 
@@ -76,7 +76,7 @@ def markdown2html_pandoc(source, extra_args=None):
     extra_args = extra_args or ['--mathjax']
     warnings.warn("`markdown2html_pandoc` is deprecated in favor of " 
                   "`nbconvert.filters.pandoc.generic_pandoc` as "
-                  "generic_pandoc(from_format='markdown', to_format='html', "
+                  "generic_pandoc(source, from_format='markdown', to_format='html', "
                   "extra_args=extra_args) since nbconvert 5.0")
     return generic_pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
@@ -105,6 +105,6 @@ def markdown2rst(source, extra_args=None):
     """
     warnings.warn("`markdown2rst` is deprecated in favor of " 
                   "`nbconvert.filters.pandoc.generic_pandoc` as "
-                  "generic_pandoc(from_format='markdown', to_format='rst', "
+                  "generic_pandoc(source, from_format='markdown', to_format='rst', "
                   "extra_args=extra_args) since nbconvert 5.0")
     return generic_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
