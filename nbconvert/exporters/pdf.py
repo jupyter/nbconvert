@@ -93,7 +93,10 @@ class PDFExporter(LatexExporter):
         # This will throw a clearer error if the command is not found
         cmd = which(command_list[0])
         if cmd is None:
-            raise OSError("%s not found on PATH" % command_list[0])
+            link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
+            raise OSError("""{formatter} not found on PATH, if you have not installed
+                             {formatter} you may need to do so. Find further instructions
+                             at {link}.""".format(formatter=command_list[0], link=link))
         
         times = 'time' if count == 1 else 'times'
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
