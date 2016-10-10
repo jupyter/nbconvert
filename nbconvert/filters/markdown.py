@@ -60,9 +60,10 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     out : string
       Output as returned by pandoc.
     """
-    warnings.warn("""`markdown2latex` is deprecated in favor of 
-                  `nbconvert.filters.pandoc.generic_pandoc` with 
-                  appropriate arguments since nbconvert 5.0""")
+    warnings.warn("`markdown2latex` is deprecated in favor of " 
+                  "`nbconvert.filters.pandoc.generic_pandoc` as "
+                  "generic_pandoc(from_format='markdown', to_format='latex', "
+                  "extra_args=extra_args) since nbconvert 5.0")
     return generic_pandoc(source, markup, 'latex', extra_args=extra_args)
 
 
@@ -73,9 +74,10 @@ def markdown2html_pandoc(source, extra_args=None):
     Convert a markdown string to HTML via pandoc.
     """
     extra_args = extra_args or ['--mathjax']
-    warnings.warn("""`markdown2html_pandoc` is deprecated in favor of 
-                  `nbconvert.filters.pandoc.generic_pandoc` with
-                  appropriate arguments since nbconvert 5.0""")
+    warnings.warn("`markdown2html_pandoc` is deprecated in favor of " 
+                  "`nbconvert.filters.pandoc.generic_pandoc` as "
+                  "generic_pandoc(from_format='markdown', to_format='html', "
+                  "extra_args=extra_args) since nbconvert 5.0")
     return generic_pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
 
@@ -101,7 +103,8 @@ def markdown2rst(source, extra_args=None):
     out : string
       Output as returned by pandoc.
     """
-    warnings.warn("""`markdown2rst` is deprecated in favor of 
-                  `nbconvert.filters.pandoc.generic_pandoc` with
-                  appropriate arguments since nbconvert 5.0""")
+    warnings.warn("`markdown2rst` is deprecated in favor of " 
+                  "`nbconvert.filters.pandoc.generic_pandoc` as "
+                  "generic_pandoc(from_format='markdown', to_format='rst', "
+                  "extra_args=extra_args) since nbconvert 5.0")
     return generic_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
