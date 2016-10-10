@@ -10,6 +10,7 @@ from __future__ import print_function
 
 import os
 import subprocess
+import warnings
 from io import TextIOWrapper, BytesIO
 
 try:
