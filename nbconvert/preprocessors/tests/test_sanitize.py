@@ -33,8 +33,8 @@ class TestSanitizer(PreprocessorTestsBase):
         """
         Test to make sure that svgs are handled 'properly'
 
-        We do this by only allowing <img> tags (which can not have JS in svgs)
-        and not <object> or <embed> tags
+        We only allow <img> tags (via markdown syntax) and not all the other ways
+        to embed svg: <object>, <embed>, <iframe> nor inline <svg>
         """
         preprocessor = self.build_preprocessor()
         preprocessor.strip = True
@@ -46,6 +46,11 @@ class TestSanitizer(PreprocessorTestsBase):
                 ![some image](http://example.com/something.svg)
                 <object data="something.svg" type="image/svg+xml" />
                 <embed data="something.svg" type="image/svg+xml" />
+                <iframe src="http://example.com/something.svg" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 65">
+                    <path fill="#1A374D" d="M42 27v-20c0-3.7-3.3-7-7-7s-7 3.3-7 7v21l12 15-7 15.7c14.5 13.9 35 2.8 35-13.7 0-13.3-13.4-21.8-26-18zm6 25c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z"/>
+                    <path d="M14 27v-20c0-3.7-3.3-7-7-7s-7 3.3-7 7v41c0 8.2 9.2 17 20 17s20-9.2 20-20c0-13.3-13.4-21.8-26-18zm6 25c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z"/>
+                </svg>
                 """,
                 preprocessor
             ).strip(),
