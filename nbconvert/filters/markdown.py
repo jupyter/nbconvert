@@ -8,10 +8,7 @@ markdown within Jinja templates.
 
 from __future__ import print_function
 
-import os
-import subprocess
 import warnings
-from io import TextIOWrapper, BytesIO
 
 try:
     from .markdown_mistune import markdown2html_mistune
@@ -22,9 +19,6 @@ except ImportError as e:
         """mistune is unavailable, raise ImportError"""
         raise ImportError("markdown2html requires mistune: %s" % _mistune_import_error)
 
-from nbconvert.utils.exceptions import ConversionException
-from nbconvert.utils.version import check_version
-from ipython_genutils.py3compat import cast_bytes
 from .pandoc import convert_pandoc
 
 
@@ -61,10 +55,10 @@ def markdown2latex(source, markup='markdown', extra_args=None):
       Output as returned by pandoc.
     """
     warnings.warn("`markdown2latex` is deprecated in favor of " 
-                  "`nbconvert.filters.pandoc.generic_pandoc` as "
-                  "generic_pandoc(source, from_format='markdown', to_format='latex', "
+                  "`nbconvert.filters.pandoc.convert_pandoc` as "
+                  "convert_pandoc(source, from_format='markdown', to_format='latex', "
                   "extra_args=extra_args) since nbconvert 5.0")
-    return generic_pandoc(source, markup, 'latex', extra_args=extra_args)
+    return convert_pandoc(source, markup, 'latex', extra_args=extra_args)
 
 
 def markdown2html_pandoc(source, extra_args=None):
@@ -75,10 +69,10 @@ def markdown2html_pandoc(source, extra_args=None):
     """
     extra_args = extra_args or ['--mathjax']
     warnings.warn("`markdown2html_pandoc` is deprecated in favor of " 
-                  "`nbconvert.filters.pandoc.generic_pandoc` as "
-                  "generic_pandoc(source, from_format='markdown', to_format='html', "
+                  "`nbconvert.filters.pandoc.convert_pandoc` as "
+                  "convert_pandoc(source, from_format='markdown', to_format='html', "
                   "extra_args=extra_args) since nbconvert 5.0")
-    return generic_pandoc(source, 'markdown', 'html', extra_args=extra_args)
+    return convert_pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
 
 # The mistune renderer is the default, because it's simple to depend on it
@@ -104,7 +98,7 @@ def markdown2rst(source, extra_args=None):
       Output as returned by pandoc.
     """
     warnings.warn("`markdown2rst` is deprecated in favor of " 
-                  "`nbconvert.filters.pandoc.generic_pandoc` as "
-                  "generic_pandoc(source, from_format='markdown', to_format='rst', "
+                  "`nbconvert.filters.pandoc.convert_pandoc` as "
+                  "convert_pandoc(source, from_format='markdown', to_format='rst', "
                   "extra_args=extra_args) since nbconvert 5.0")
-    return generic_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
+    return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
