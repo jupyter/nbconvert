@@ -29,6 +29,31 @@ class TestSanitizer(PreprocessorTestsBase):
         """Can a SanitizeHTML be constructed?"""
         self.build_preprocessor()
 
+    def test_svg_handling(self):
+        """
+        Test to make sure that svgs are handled 'properly'
+
+        We do this by only allowing <img> tags (which can not have JS in svgs)
+        and not <object> or <embed> tags
+        """
+        preprocessor = self.build_preprocessor()
+        preprocessor.strip = True
+
+        self.assertEqual(
+            self.preprocess_source(
+                'markdown',
+                """
+                ![some image](http://example.com/something.svg)
+                <object data="something.svg" type="image/svg+xml" />
+                <embed data="something.svg" type="image/svg+xml" />
+                """,
+                preprocessor
+            ).strip(),
+            """
+            ![some image](http://example.com/something.svg)
+            """.strip(),
+        )
+
     def test_tag_whitelist_stripping(self):
         """Test tag whitelisting + stripping out offending tags"""
         preprocessor = self.build_preprocessor()
