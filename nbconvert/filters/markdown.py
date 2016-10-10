@@ -57,7 +57,8 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     warnings.warn("`markdown2latex` is deprecated in favor of " 
                   "`nbconvert.filters.pandoc.convert_pandoc` as "
                   "convert_pandoc(source, from_format='markdown', to_format='latex', "
-                  "extra_args=extra_args) since nbconvert 5.0")
+                  "extra_args=extra_args) or (in Jinja templates) "
+                  "convert_pandoc('markdown','latex') since nbconvert 5.0")
     return convert_pandoc(source, markup, 'latex', extra_args=extra_args)
 
 
@@ -71,7 +72,8 @@ def markdown2html_pandoc(source, extra_args=None):
     warnings.warn("`markdown2html_pandoc` is deprecated in favor of " 
                   "`nbconvert.filters.pandoc.convert_pandoc` as "
                   "convert_pandoc(source, from_format='markdown', to_format='html', "
-                  "extra_args=extra_args) since nbconvert 5.0")
+                  "extra_args=extra_args) or (in Jinja templates) "
+                  "convert_pandoc('markdown','html') since nbconvert 5.0")
     return convert_pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
 
@@ -100,5 +102,6 @@ def markdown2rst(source, extra_args=None):
     warnings.warn("`markdown2rst` is deprecated in favor of " 
                   "`nbconvert.filters.pandoc.convert_pandoc` as "
                   "convert_pandoc(source, from_format='markdown', to_format='rst', "
-                  "extra_args=extra_args) since nbconvert 5.0")
+                  "extra_args=extra_args) or (in Jinja templates) "
+                  "convert_pandoc('markdown','rst') since nbconvert 5.0")
     return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
