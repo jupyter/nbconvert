@@ -3,7 +3,7 @@ Installation
 
 .. seealso::
 
-   `Installing Jupyter <https://jupyter.readthedocs.org/en/latest/install.html>`__
+   `Installing Jupyter <https://jupyter.readthedocs.io/en/latest/install.html>`__
      Nbconvert is part of the Jupyter ecosystem.
 
 Installing nbconvert
