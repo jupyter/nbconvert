@@ -33,8 +33,6 @@ __all__ = [
 
 def markdown2latex(source, markup='markdown', extra_args=None):
     """
-    Deprecated since version 5.0.
-
     Convert a markdown string to LaTeX via pandoc.
 
     This function will raise an error if pandoc is not installed.
@@ -54,26 +52,14 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     out : string
       Output as returned by pandoc.
     """
-    warnings.warn("`markdown2latex` is deprecated in favor of " 
-                  "`nbconvert.filters.pandoc.convert_pandoc` as "
-                  "convert_pandoc(source, from_format='markdown', to_format='latex', "
-                  "extra_args=extra_args) or (in Jinja templates) "
-                  "convert_pandoc('markdown','latex') since nbconvert 5.0")
     return convert_pandoc(source, markup, 'latex', extra_args=extra_args)
 
 
 def markdown2html_pandoc(source, extra_args=None):
     """
-    Deprecated since version 5.0.
-    
     Convert a markdown string to HTML via pandoc.
     """
     extra_args = extra_args or ['--mathjax']
-    warnings.warn("`markdown2html_pandoc` is deprecated in favor of " 
-                  "`nbconvert.filters.pandoc.convert_pandoc` as "
-                  "convert_pandoc(source, from_format='markdown', to_format='html', "
-                  "extra_args=extra_args) or (in Jinja templates) "
-                  "convert_pandoc('markdown','html') since nbconvert 5.0")
     return convert_pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
 
@@ -82,8 +68,6 @@ markdown2html = markdown2html_mistune
 
 def markdown2rst(source, extra_args=None):
     """
-    Deprecated since version 5.0.
-
     Convert a markdown string to ReST via pandoc.
 
     This function will raise an error if pandoc is not installed.
@@ -99,9 +83,4 @@ def markdown2rst(source, extra_args=None):
     out : string
       Output as returned by pandoc.
     """
-    warnings.warn("`markdown2rst` is deprecated in favor of " 
-                  "`nbconvert.filters.pandoc.convert_pandoc` as "
-                  "convert_pandoc(source, from_format='markdown', to_format='rst', "
-                  "extra_args=extra_args) or (in Jinja templates) "
-                  "convert_pandoc('markdown','rst') since nbconvert 5.0")
     return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args)
