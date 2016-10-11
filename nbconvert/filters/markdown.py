@@ -8,8 +8,6 @@ markdown within Jinja templates.
 
 from __future__ import print_function
 
-import warnings
-
 try:
     from .markdown_mistune import markdown2html_mistune
 except ImportError as e:
