@@ -37,7 +37,7 @@ default_filters = {
         'strip_ansi': filters.strip_ansi,
         'strip_dollars': filters.strip_dollars,
         'strip_files_prefix': filters.strip_files_prefix,
-        'html2text' : filters.html2text,
+        'html2text': filters.html2text,
         'add_anchor': filters.add_anchor,
         'ansi2latex': filters.ansi2latex,
         'wrap_text': filters.wrap_text,
@@ -48,6 +48,7 @@ default_filters = {
         'ascii_only': filters.ascii_only,
         'prevent_list_blocks': filters.prevent_list_blocks,
         'get_metadata': filters.get_metadata,
+        'convert_pandoc': filters.convert_pandoc,
 }
 
 class TemplateExporter(Exporter):
@@ -63,12 +64,13 @@ class TemplateExporter(Exporter):
 
     {filters}
     """
-    
-    # finish the docstring
-    __doc__ = __doc__.format(filters = '- '+'\n    - '.join(sorted(default_filters.keys())))
 
+    # finish the docstring
+    __doc__ = __doc__.format(filters='- ' + '\n    - '.join(
+        sorted(default_filters.keys())))
 
     _template_cached = None
+
     def _invalidate_template_cache(self, change=None):
         self._template_cached = None
 
@@ -79,6 +81,7 @@ class TemplateExporter(Exporter):
         return self._template_cached
 
     _environment_cached = None
+
     def _invalidate_environment_cache(self, change=None):
         self._environment_cached = None
         self._invalidate_template_cache()
@@ -143,10 +146,10 @@ class TemplateExporter(Exporter):
     raw_mimetypes = List(
         help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
+
     @default('raw_mimetypes')
     def _raw_mimetypes_default(self):
         return [self.output_mimetype, '']
-
 
     def __init__(self, config=None, **kw):
         """
@@ -260,13 +263,12 @@ class TemplateExporter(Exporter):
             #attribute.
             raise TypeError('filter')
 
-
     def register_filter(self, name, jinja_filter):
         """
         Register a filter.
-        A filter is a function that accepts and acts on one string.  
+        A filter is a function that accepts and acts on one string.
         The filters are accessible within the Jinja templating engine.
-    
+
         Parameters
         ----------
         name : str
@@ -299,7 +301,7 @@ class TemplateExporter(Exporter):
 
         loaders = self.extra_loaders + [FileSystemLoader(paths)]
         environment = Environment(
-            loader= ChoiceLoader(loaders),
+            loader=ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS
             )
 

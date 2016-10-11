@@ -30,12 +30,12 @@
 
 % Display latex
 ((* block data_latex -*))
-    ((( output.data['text/latex'] | citation2latex | strip_files_prefix | markdown2latex )))
+    ((( output.data['text/latex'] | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'latex'))))
 ((* endblock data_latex *))
 
 % Display markdown
 ((* block data_markdown -*))
-    ((( output.data['text/markdown'] | citation2latex | strip_files_prefix | markdown2latex )))
+    ((( output.data['text/markdown'] | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'latex'))))
 ((* endblock data_markdown *))
 
 % Default mechanism for rendering figures
@@ -64,7 +64,7 @@
 
 % Render markdown
 ((* block markdowncell scoped *))
-    ((( cell.source | citation2latex | strip_files_prefix | markdown2latex )))
+    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'latex') )))
 ((* endblock markdowncell *))
 
 % Don't display unknown types

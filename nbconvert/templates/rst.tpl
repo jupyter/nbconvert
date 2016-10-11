@@ -55,7 +55,7 @@
 {% endblock data_jpg %}
 
 {% block data_markdown %}
-{{ output.data['text/markdown'] | markdown2rst }}
+{{ output.data['text/markdown'] | convert_pandoc("markdown", "rst") }}
 {% endblock data_markdown %}
 
 {% block data_latex %}
@@ -77,7 +77,7 @@
 {% endblock data_html %}
 
 {% block markdowncell scoped %}
-{{ cell.source | markdown2rst }}
+{{ cell.source | convert_pandoc("markdown", "rst") }}
 {% endblock markdowncell %}
 
 {%- block rawcell scoped -%}
@@ -87,7 +87,7 @@
 {%- endblock rawcell -%}
 
 {% block headingcell scoped %}
-{{ ("#" * cell.level + cell.source) | replace('\n', ' ') | markdown2rst }}
+{{ ("#" * cell.level + cell.source) | replace('\n', ' ') | convert_pandoc("markdown", "rst") }}
 {% endblock headingcell %}
 
 {% block unknowncell scoped %}
