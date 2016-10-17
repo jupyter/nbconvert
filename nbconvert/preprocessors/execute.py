@@ -237,8 +237,7 @@ class ExecutePreprocessor(Preprocessor):
                         exception = TimeoutError
                     except NameError:
                         exception = RuntimeError
-                    raise exception(
-                        "Cell execution timed out, see log for details.")
+                    raise exception("Cell execution timed out")
 
             if msg['parent_header'].get('msg_id') == msg_id:
                 break
