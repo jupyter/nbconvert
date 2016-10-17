@@ -6,6 +6,7 @@ from .slides import SlidesExporter
 from .templateexporter import TemplateExporter
 from .latex import LatexExporter
 from .markdown import MarkdownExporter
+from .asciidoc import ASCIIdocExporter
 from .notebook import NotebookExporter
 from .pdf import PDFExporter
 from .python import PythonExporter
