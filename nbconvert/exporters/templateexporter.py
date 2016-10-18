@@ -25,7 +25,6 @@ default_filters = {
         'indent': filters.indent,
         'markdown2html': filters.markdown2html,
         'markdown2asciidoc': filters.markdown2asciidoc,
-        'latex2asciidoc': filters.latex2asciidoc,
         'ansi2html': filters.ansi2html,
         'filter_data_type': filters.DataTypeFilter,
         'get_lines': filters.get_lines,

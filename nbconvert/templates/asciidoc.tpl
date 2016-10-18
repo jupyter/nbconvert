@@ -55,7 +55,7 @@
 {% endblock data_jpg %}
 
 {% block data_latex %}
-{{ output.data['text/latex'] | latex2asciidoc}}
+{{ output.data['text/latex'] | convert_pandoc(from_format="latex", to_format="asciidoc")}}
 {% endblock data_latex %}
 
 {% block data_html scoped %}
