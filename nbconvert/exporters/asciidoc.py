@@ -1,4 +1,4 @@
-"""Markdown Exporter class"""
+"""ASCIIDoc Exporter class"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -11,7 +11,7 @@ from .templateexporter import TemplateExporter
 
 class ASCIIDocExporter(TemplateExporter):
     """
-    Exports to a markdown document (.asciidoc)
+    Exports to an ASCIIDoc document (.asciidoc)
     """
 
     @default('file_extension')
