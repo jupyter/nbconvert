@@ -14,6 +14,7 @@
 
 from .base import ExportersTestsBase
 from ..asciidoc import ASCIIDocExporter
+from ipython_genutils.testing import decorators as dec
 
 #-----------------------------------------------------------------------------
 # Class
@@ -31,6 +32,7 @@ class TestASCIIDocExporter(ExportersTestsBase):
         ASCIIDocExporter()
 
 
+    @dec.onlyif_cmds_exist('pandoc')
     def test_export(self):
         """
         Can a ASCIIDocExporter export something?
