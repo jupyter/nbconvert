@@ -24,7 +24,7 @@ from .slides import SlidesExporter
 from .latex import LatexExporter
 from .pdf import PDFExporter
 from .markdown import MarkdownExporter
-from .asciidoc import ASCIIdocExporter
+from .asciidoc import ASCIIDocExporter
 from .python import PythonExporter
 from .rst import RSTExporter
 from .notebook import NotebookExporter

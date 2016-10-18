@@ -9,7 +9,7 @@ from traitlets.config import Config
 from .templateexporter import TemplateExporter
 
 
-class ASCIIdocExporter(TemplateExporter):
+class ASCIIDocExporter(TemplateExporter):
     """
     Exports to a markdown document (.asciidoc)
     """
@@ -43,5 +43,5 @@ class ASCIIdocExporter(TemplateExporter):
             },
             'ExtractOutputPreprocessor': {'enabled': True}
         })
-        c.merge(super(ASCIIdocExporter, self).default_config)
+        c.merge(super(ASCIIDocExporter, self).default_config)
         return c
