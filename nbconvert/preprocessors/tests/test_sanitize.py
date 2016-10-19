@@ -155,7 +155,8 @@ class TestSanitizer(PreprocessorTestsBase):
         outputs = [
             nbformat.new_output("display_data", data={
                 'text/plain': 'b',
-                'text/html': '<script>more evil</script>'
+                'text/html': '<script>more evil</script>',
+                'text/css': '<style> * {display:none}</style>'
                 }),
             nbformat.new_output('stream', name='stdout', text="wat"),
             nbformat.new_output('stream', name='stdout', text="<script>Evil tag</script>")
