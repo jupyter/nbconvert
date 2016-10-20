@@ -24,6 +24,7 @@ JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
 default_filters = {
         'indent': filters.indent,
         'markdown2html': filters.markdown2html,
+        'markdown2asciidoc': filters.markdown2asciidoc,
         'ansi2html': filters.ansi2html,
         'filter_data_type': filters.DataTypeFilter,
         'get_lines': filters.get_lines,
@@ -50,6 +51,7 @@ default_filters = {
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
 }
+
 
 class TemplateExporter(Exporter):
     """

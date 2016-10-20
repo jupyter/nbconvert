@@ -221,6 +221,7 @@ if 'setuptools' in sys.modules:
             'python=nbconvert.exporters:PythonExporter',
             'rst=nbconvert.exporters:RSTExporter',
             'notebook=nbconvert.exporters:NotebookExporter',
+            'asciidoc=nbconvert.exporters:ASCIIDocExporter',
             'script=nbconvert.exporters:ScriptExporter'] 
     }
     setup_args.pop('scripts', None)
