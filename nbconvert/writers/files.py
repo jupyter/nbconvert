@@ -19,8 +19,10 @@ class FilesWriter(WriterBase):
 
 
     build_directory = Unicode("",
-                              help="""Directory to write output to.  Leave blank
-                              to output to the current directory"""
+                              help="""Directory to write output(s) to. Defaults
+                              to output to the directory of each notebook. To recover
+                              previous default behaviour (outputting to the current 
+                              working directory) use . as the flag value."""
     ).tag(config=True)
 
     relpath = Unicode(
