@@ -201,7 +201,7 @@ class Exporter(LoggingConfigurable):
 
         """
         if preprocessor is None:
-            raise TypeError('preprocessor')
+            raise TypeError('preprocessor must not be None')
         isclass = isinstance(preprocessor, type)
         constructed = not isclass
 
@@ -232,7 +232,7 @@ class Exporter(LoggingConfigurable):
         else:
             # Preprocessor is an instance of something without a __call__ 
             # attribute.  
-            raise TypeError('preprocessor')
+            raise TypeError('preprocessor must be callable or an importable constructor, got %r' % preprocessor)
 
 
     def _init_preprocessors(self):
