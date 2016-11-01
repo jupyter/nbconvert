@@ -19,7 +19,7 @@ is hosted on ReadTheDocs.
 
 4. Create an editable install for nbconvert using
 
-        $ pip install ../. -e 
+        $ pip install -e ../. 
 
    or if you want, `cd ..` and `pip install . -e`. But then you will need to `cd docs` before
    continuing to the next step.
