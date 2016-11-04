@@ -17,7 +17,7 @@ from jinja2 import TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader
 
 from nbconvert import filters
 from .exporter import Exporter
-
+from ..filters.filter_links import wrapped_convert_link
 #Jinja2 extensions to load.
 JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
 
@@ -50,6 +50,7 @@ default_filters = {
         'prevent_list_blocks': filters.prevent_list_blocks,
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
+        'wrapped_convert_link': wrapped_convert_link,
 }
 
 

@@ -64,7 +64,7 @@
 
 % Render markdown
 ((* block markdowncell scoped *))
-    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'latex') )))
+    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'json',extra_args=[]) | wrapped_convert_link | convert_pandoc('json','latex'))))
 ((* endblock markdowncell *))
 
 % Don't display unknown types
