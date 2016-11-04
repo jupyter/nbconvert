@@ -193,6 +193,7 @@ install_requires = setuptools_args['install_requires'] = [
     'nbformat',
     'entrypoints',
     'bleach',
+    'pandocfilters',
 ]
 
 extras_require = setuptools_args['extras_require'] = {

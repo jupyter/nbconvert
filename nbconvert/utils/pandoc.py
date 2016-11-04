@@ -109,6 +109,28 @@ def check_pandoc_version():
                        RuntimeWarning, stacklevel=2)
     return ok
 
+try: 
+    from pandocfilters import applyJSONFilters
+except ImportError:
+    import json
+    from pandocfilters import walk
+    
+    def applyJSONFilters(actions, source, format=""):
+        
+        doc = json.loads(source)
+        
+        if 'meta' in doc:
+            meta = doc['meta']
+        elif doc[0]:  # old API
+            meta = doc[0]['unMeta']
+        else:
+            meta = {}
+        altered = doc
+        for action in actions:
+            altered = walk(altered, action, format, meta)
+
+        return json.dumps(altered)
+    
 #-----------------------------------------------------------------------------
 # Exception handling
 #-----------------------------------------------------------------------------
