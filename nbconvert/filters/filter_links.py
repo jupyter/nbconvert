@@ -6,7 +6,6 @@ import re
 
 from pandocfilters import applyJSONFilters, RawInline
 
-
 def wrapped_convert_link(source):
     return applyJSONFilters([convert_link], source)
 
