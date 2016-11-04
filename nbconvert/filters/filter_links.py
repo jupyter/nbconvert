@@ -4,7 +4,8 @@ Converts links between notebooks to Latex cross-references.
 """
 import re
 
-from pandocfilters import applyJSONFilters, RawInline
+from pandocfilters import RawInline
+from ..utils.pandoc import applyJSONFilters
 
 def wrapped_convert_link(source):
     return applyJSONFilters([convert_link], source)
