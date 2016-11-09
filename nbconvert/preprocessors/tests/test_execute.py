@@ -187,7 +187,7 @@ class TestExecute(PreprocessorTestsBase):
         self.assertIsInstance(str(exc), str)
 
     def test_custom_kernel_manager(self):
-        from jupyter_client.manager import KernelManager
+        from .fake_kernelmanager import FakeCustomKernelManager
 
         current_dir = os.path.dirname(__file__)
 
@@ -196,24 +196,8 @@ class TestExecute(PreprocessorTestsBase):
         with io.open(filename) as f:
             input_nb = nbformat.read(f, 4)
 
-        expected_methods = {
-            '__init__': 0,
-            'start_kernel': 0
-        }
-
-        class TestCustomKernelManager(KernelManager):
-            def __init__(self, *args, **kwargs):
-                expected_methods['__init__'] += 1
-                super(TestCustomKernelManager, self).__init__(*args, **kwargs)
-
-            def start_kernel(self, *args, **kwargs):
-                expected_methods['start_kernel'] += 1
-                return super(TestCustomKernelManager, self).start_kernel(
-                    *args,
-                    **kwargs)
-
         preprocessor = self.build_preprocessor({
-            'kernel_manager_class': TestCustomKernelManager
+            'kernel_manager_class': FakeCustomKernelManager
         })
 
         cleaned_input_nb = copy.deepcopy(input_nb)
@@ -227,5 +211,7 @@ class TestExecute(PreprocessorTestsBase):
             output_nb, _ = preprocessor(cleaned_input_nb,
                                         self.build_resources())
 
-        for method, call_count in expected_methods.items():
+        expected = FakeCustomKernelManager.expected_methods.items()
+
+        for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
