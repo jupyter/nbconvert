@@ -185,3 +185,33 @@ class TestExecute(PreprocessorTestsBase):
         with assert_raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
         self.assertIsInstance(str(exc), str)
+
+    def test_custom_kernel_manager(self):
+        from .fake_kernelmanager import FakeCustomKernelManager
+
+        current_dir = os.path.dirname(__file__)
+
+        filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+
+        preprocessor = self.build_preprocessor({
+            'kernel_manager_class': FakeCustomKernelManager
+        })
+
+        cleaned_input_nb = copy.deepcopy(input_nb)
+        for cell in cleaned_input_nb.cells:
+            if 'execution_count' in cell:
+                del cell['execution_count']
+            cell['outputs'] = []
+
+        # Override terminal size to standardise traceback format
+        with modified_env({'COLUMNS': '80', 'LINES': '24'}):
+            output_nb, _ = preprocessor(cleaned_input_nb,
+                                        self.build_resources())
+
+        expected = FakeCustomKernelManager.expected_methods.items()
+
+        for method, call_count in expected:
+            self.assertNotEqual(call_count, 0, '{} was called'.format(method))
