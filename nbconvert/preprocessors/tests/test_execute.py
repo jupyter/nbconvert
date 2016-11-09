@@ -185,3 +185,47 @@ class TestExecute(PreprocessorTestsBase):
         with assert_raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
         self.assertIsInstance(str(exc), str)
+
+    def test_custom_kernel_manager(self):
+        from jupyter_client.manager import KernelManager
+
+        current_dir = os.path.dirname(__file__)
+
+        filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+
+        expected_methods = {
+            '__init__': 0,
+            'start_kernel': 0
+        }
+
+        class TestCustomKernelManager(KernelManager):
+            def __init__(self, *args, **kwargs):
+                expected_methods['__init__'] += 1
+                super(TestCustomKernelManager, self).__init__(*args, **kwargs)
+
+            def start_kernel(self, *args, **kwargs):
+                expected_methods['start_kernel'] += 1
+                return super(TestCustomKernelManager, self).start_kernel(
+                    *args,
+                    **kwargs)
+
+        preprocessor = self.build_preprocessor({
+            'kernel_manager_class': TestCustomKernelManager
+        })
+
+        cleaned_input_nb = copy.deepcopy(input_nb)
+        for cell in cleaned_input_nb.cells:
+            if 'execution_count' in cell:
+                del cell['execution_count']
+            cell['outputs'] = []
+
+        # Override terminal size to standardise traceback format
+        with modified_env({'COLUMNS': '80', 'LINES': '24'}):
+            output_nb, _ = preprocessor(cleaned_input_nb,
+                                        self.build_resources())
+
+        for method, call_count in expected_methods.items():
+            self.assertNotEqual(call_count, 0, '{} was called'.format(method))
