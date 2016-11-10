@@ -13,7 +13,6 @@ from nbconvert.utils.version import check_version
 from ipython_genutils.py3compat import cast_bytes, which
 
 from .exceptions import ConversionException
-from pandocfilters import applyJSONFilters
 
 _minimal_version = "1.12.1"
 
