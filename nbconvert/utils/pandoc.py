@@ -13,6 +13,7 @@ from nbconvert.utils.version import check_version
 from ipython_genutils.py3compat import cast_bytes, which
 
 from .exceptions import ConversionException
+from pandocfilters import applyJSONFilters
 
 _minimal_version = "1.12.1"
 
@@ -109,12 +110,6 @@ def check_pandoc_version():
                        RuntimeWarning, stacklevel=2)
     return ok
 
-try: 
-    from pandocfilters import applyJSONFilters
-except ImportError:
-    import json
-    from pandocfilters import walk
-    
     def applyJSONFilters(actions, source, format=""):
         
         doc = json.loads(source)
