@@ -1,5 +1,4 @@
 from nbconvert.utils.pandoc import pandoc
-import os.path
 
 
 def convert_pandoc(source, from_format, to_format, extra_args=None):
@@ -24,8 +23,4 @@ def convert_pandoc(source, from_format, to_format, extra_args=None):
     out : string
       Output as returned by pandoc.
     """
-#    mydir = os.path.dirname(os.path.abspath(__file__))
-#    filter_links = os.path.join(mydir, 'filter_links.py')
-#    if extra_args is not None:
-#        extra_args.extend(['--filter',filter_links])
     return pandoc(source, from_format, to_format, extra_args=extra_args)
