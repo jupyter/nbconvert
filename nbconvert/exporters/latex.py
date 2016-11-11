@@ -10,7 +10,7 @@ from traitlets.config import Config
 
 from nbconvert.filters.highlight import Highlight2Latex
 from .templateexporter import TemplateExporter
-
+from ..filters.filter_links import resolve_references
 
 class LatexExporter(TemplateExporter):
     """
@@ -43,6 +43,10 @@ class LatexExporter(TemplateExporter):
     template_extension = Unicode(".tplx").tag(config=True)
 
     output_mimetype = 'text/latex'
+    
+    def default_filters(self):
+        yield from super(TemplateExporter,self).default_filters()
+        yield ('resolve_references', resolve_references)
 
     @property
     def default_config(self):

@@ -6,10 +6,10 @@ import re
 
 from pandocfilters import RawInline, applyJSONFilters
 
-def wrapped_convert_link(source):
-    return applyJSONFilters([convert_link], source)
+def resolve_references(source):
+    return applyJSONFilters([resolve_one_reference], source)
 
-def convert_link(key, val, fmt, meta):
+def resolve_one_reference(key, val, fmt, meta):
     """
     """
     
