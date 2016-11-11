@@ -17,7 +17,7 @@ from jinja2 import TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader
 
 from nbconvert import filters
 from .exporter import Exporter
-from ..filters.filter_links import wrapped_convert_link
+
 #Jinja2 extensions to load.
 JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
 
