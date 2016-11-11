@@ -50,7 +50,6 @@ default_filters = {
         'prevent_list_blocks': filters.prevent_list_blocks,
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
-        'wrapped_convert_link': wrapped_convert_link,
 }
 
 
