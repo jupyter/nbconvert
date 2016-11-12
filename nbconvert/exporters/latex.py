@@ -45,7 +45,7 @@ class LatexExporter(TemplateExporter):
     output_mimetype = 'text/latex'
 
     def default_filters(self):
-        yield from super(LatexExporter,self).default_filters()
+        yield from super(LatexExporter, self).default_filters()
         yield ('resolve_references', resolve_references)
 
     @property
