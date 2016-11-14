@@ -22,11 +22,6 @@ class EpubExporter(MarkdownExporter):
         markdown, resources = super(EpubExporter, self).from_notebook_node(
             nb, resources=resources, **kw
         )
-        # set texinputs directory, so that local files will be found
-        #  if resources and resources.get('metadata', {}).get('path'):
-            #  self.texinputs = resources['metadata']['path']
-        #  else:
-            #  self.texinputs = os.getcwd()
         
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
