@@ -50,7 +50,7 @@ The entirety of heretofore described process can be described as part of an ``Ex
 ``Exporter``\s often involves ``Preprocessor``\s, ``filters``, ``templates`` and ``Writer``\s. 
 These classes and functions are described in greater detail below.
 
-Finally, one can apply a ``Postprocessing`` step after the writing has occurred. 
+Finally, one can apply a ``Postprocessor`` after the writing has occurred. 
 For example, it is common when converting to slides to start a webserver and open a browser window with the newly created document (``--to slides --post serve``).
 
 Classes
