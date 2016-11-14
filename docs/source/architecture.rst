@@ -47,7 +47,7 @@ Nonetheless, the reason for using nbconvert almost always involves producing som
 We take the in-memory object and write a file appropriate for the output type.
 
 The entirety of heretofore described process can be described as part of an ``Exporter``. 
-``Exporter``s often involves ``Preprocessor``s, ``filters``, ``templates`` and ``Writer``s. 
+``Exporter``\s often involves ``Preprocessor``\s, ``filters``, ``templates`` and ``Writer``\s. 
 These classes and functions are described in greater detail below.
 
 Finally, one can apply a ``Postprocessing`` step after the writing has occurred. 
