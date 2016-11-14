@@ -31,8 +31,8 @@ class LatexFailed(IOError):
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files.
 
-    This inherits from :class:`LatexExporter`. It creates a Latex file in
-    a temporary directory using the template machinery, and then runs Latex
+    This inherits from :class:`LatexExporter`. It creates a LaTeX file in
+    a temporary directory using the template machinery, and then runs LaTeX
     to create a pdf.
     """
 
