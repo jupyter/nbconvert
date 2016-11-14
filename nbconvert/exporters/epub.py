@@ -3,161 +3,21 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import subprocess
-import os
-import sys
-
-from ipython_genutils.py3compat import which, cast_bytes_py2
-from traitlets import Integer, List, Bool, Instance, Unicode
+from traitlets import  Instance
 from ipython_genutils.tempdir import TemporaryWorkingDirectory
 from .markdown import MarkdownExporter
 from ..utils.pandoc import pandoc
 
-#  class LatexFailed(IOError):
-    #  """Exception for failed latex run
-    #
-    #  Captured latex output is in error.output.
-    #  """
-    #  def __init__(self, output):
-        #  self.output = output
-    #
-    #  def __unicode__(self):
-        #  return u"Epub creating failed, captured latex output:\n%s" % self.output
-    #
-    #  def __str__(self):
-        #  u = self.__unicode__()
-        #  return cast_bytes_py2(u)
-
-
 class EpubExporter(MarkdownExporter):
     """Writer designed to write to Epub files.
 
-    This inherits from :class:`MarkdownExporter`. It creates a Latex file in
-    a temporary directory using the template machinery, and then runs Latex
-    to create a pdf.
+    This inherits from :class:`MarkdownExporter`. It creates a markdown file in
+    a temporary directory using the template machinery, and then runs pandoc
+    to create a epub.
     """
 
-    #  latex_count = Integer(3,
-        #  help="How many times latex will be called."
-    #  ).tag(config=True)
-
-    #  latex_command = List([u"xelatex", u"{filename}"],
-        #  help="Shell command used to compile latex."
-    #  ).tag(config=True)
-
-    #  bib_command = List([u"bibtex", u"{filename}"],
-        #  help="Shell command used to run bibtex."
-    #  ).tag(config=True)
-
-    #  verbose = Bool(False,
-        #  help="Whether to display the output of latex commands."
-    #  ).tag(config=True)
-
-    #  temp_file_exts = List(['.aux', '.bbl', '.blg', '.idx', '.log', '.out'],
-        #  help="File extensions of temp files to remove after running."
-    #  ).tag(config=True)
-    
-    #  texinputs = Unicode(help="texinputs dir. A notebook's directory is added")
     writer = Instance("nbconvert.writers.FilesWriter", args=())
-    
-    #  _captured_output = List()
 
-    #  def run_command(self, command_list, filename, count, log_function):
-        #  """Run command_list count times.
-        #
-        #  Parameters
-        #  ----------
-        #  command_list : list
-            #  A list of args to provide to Popen. Each element of this
-            #  list will be interpolated with the filename to convert.
-        #  filename : unicode
-            #  The name of the file to convert.
-        #  count : int
-            #  How many times to run the command.
-        #
-        #  Returns
-        #  -------
-        #  success : bool
-            #  A boolean indicating if the command was successful (True)
-            #  or failed (False).
-        #  """
-        #  command = [c.format(filename=filename) for c in command_list]
-#
-        #  # On windows with python 2.x there is a bug in subprocess.Popen and
-        #  # unicode commands are not supported
-        #  if sys.platform == 'win32' and sys.version_info < (3,0):
-            #  #We must use cp1252 encoding for calling subprocess.Popen
-            #  #Note that sys.stdin.encoding and encoding.DEFAULT_ENCODING
-            #  # could be different (cp437 in case of dos console)
-            #  command = [c.encode('cp1252') for c in command]
-#
-        #  # This will throw a clearer error if the command is not found
-        #  cmd = which(command_list[0])
-        #  if cmd is None:
-            #  link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
-            #  raise OSError("{formatter} not found on PATH, if you have not installed "
-                          #  "{formatter} you may need to do so. Find further instructions "
-                          #  "at {link}.".format(formatter=command_list[0], link=link))
-        #
-        #  times = 'time' if count == 1 else 'times'
-        #  self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
-        #
-        #  shell = (sys.platform == 'win32')
-        #  if shell:
-            #  command = subprocess.list2cmdline(command)
-        #  env = os.environ.copy()
-        #  env['TEXINPUTS'] = os.pathsep.join([
-            #  cast_bytes_py2(self.texinputs),
-            #  env.get('TEXINPUTS', ''),
-        #  ])
-        #  with open(os.devnull, 'rb') as null:
-            #  stdout = subprocess.PIPE if not self.verbose else None
-            #  for index in range(count):
-                #  p = subprocess.Popen(command, stdout=stdout, stderr=subprocess.STDOUT,
-                        #  stdin=null, shell=shell, env=env)
-                #  out, _ = p.communicate()
-                #  if p.returncode:
-                    #  if self.verbose:
-                        #  # verbose means I didn't capture stdout with PIPE,
-                        #  # so it's already been displayed and `out` is None.
-                        #  out = u''
-                    #  else:
-                        #  out = out.decode('utf-8', 'replace')
-                    #  log_function(command, out)
-                    #  self._captured_output.append(out)
-                    #  return False # failure
-        #  return True # success
-
-    #  def run_latex(self, filename):
-        #  """Run pdflatex self.latex_count times."""
-#
-        #  def log_error(command, out):
-            #  self.log.critical(u"%s failed: %s\n%s", command[0], command, out)
-#
-        #  return self.run_command(self.latex_command, filename,
-            #  self.latex_count, log_error)
-#
-    #  #  def run_bib(self, filename):
-        #  """Run bibtex self.latex_count times."""
-        #  filename = os.path.splitext(filename)[0]
-#
-        #  def log_error(command, out):
-            #  self.log.warn('%s had problems, most likely because there were no citations',
-                #  command[0])
-            #  self.log.debug(u"%s output: %s\n%s", command[0], command, out)
-#
-        #  return self.run_command(self.bib_command, filename, 1, log_error)
-
-    #  def clean_temp_files(self, filename):
-        #  """Remove temporary files created by pdflatex/bibtex."""
-        #  self.log.info("Removing temporary LaTeX files")
-        #  filename = os.path.splitext(filename)[0]
-        #  for ext in self.temp_file_exts:
-            #  try:
-                #  os.remove(filename+ext)
-            #  except OSError:
-                #  pass
-    #
     def from_notebook_node(self, nb, resources=None, **kw):
         markdown, resources = super(EpubExporter, self).from_notebook_node(
             nb, resources=resources, **kw
@@ -175,19 +35,16 @@ class EpubExporter(MarkdownExporter):
             with open(md_file) as fp:
                 in_mem_md = fp.read()
             self.log.info("Building Epub")
-            #  rc = self.run_latex(tex_file)
             epub_file = notebook_name + '.epub'
             pandoc(in_mem_md,'markdown','epub',extra_args=['-o',epub_file]) 
-            #  if not os.path.isfile(epub_file):
-                #  raise LatexFailed('\n'.join(self._captured_output))
             self.log.info("Epub successfully created")
             with open(epub_file, 'rb') as f:
                 epub_data = f.read()
         
         # convert output extension to epub
-        # the writer above required it to be tex
+        # the writer above required it to be markdown
         resources['output_extension'] = '.epub'
-        # clear figure outputs, extracted by latex export,
+        # clear figure outputs, extracted by markdown export,
         # so we don't claim to be a multi-file export.
         resources.pop('outputs', None)
         
