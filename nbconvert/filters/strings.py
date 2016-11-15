@@ -77,8 +77,17 @@ def html2text(element):
     return text
 
 
+def _convert_header_id(header_contents):
+    """Convert header contents to valid id value. Takes string as input, returns string.
+    
+    Note: this may be subject to change in the case of changes to how we wish to generate ids.
+
+    For use on markdown headings.
+    """
+    return header_contents.replace(' ', '-')
+
 def add_anchor(html):
-    """Add an anchor-link to an html header
+    """Add an id and an anchor-link to an html header
     
     For use on markdown headings
     """
@@ -87,7 +96,7 @@ def add_anchor(html):
     except Exception:
         # failed to parse, just return it unmodified
         return html
-    link = html2text(h).replace(' ', '-')
+    link = _convert_header_id(html2text(h))
     h.set('id', link)
     a = ElementTree.Element("a", {"class" : "anchor-link", "href" : "#" + link})
     a.text = u'¶'
