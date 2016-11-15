@@ -194,7 +194,6 @@ class ExecutePreprocessor(Preprocessor):
         self.km, self.kc = start_new_kernel(
             kernel_name=kernel_name,
             extra_arguments=self.extra_arguments,
-            stderr=open(os.devnull, 'w'),
             cwd=path)
         self.kc.allow_stdin = False
 
