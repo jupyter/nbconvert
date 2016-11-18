@@ -12,7 +12,7 @@ from ..latex import LatexExporter
 from nbformat import write
 from nbformat import v4
 from ipython_genutils.testing.decorators import onlyif_cmds_exist
-from ipython_genutils.tempdir import TemporaryDirectory
+from tempfile import TemporaryDirectory
 
 
 class TestLatexExporter(ExportersTestsBase):

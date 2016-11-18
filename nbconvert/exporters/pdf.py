@@ -9,7 +9,7 @@ import sys
 
 from ipython_genutils.py3compat import which, cast_bytes_py2
 from traitlets import Integer, List, Bool, Instance, Unicode
-from ipython_genutils.tempdir import TemporaryWorkingDirectory
+from testpath.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 
 class LatexFailed(IOError):
