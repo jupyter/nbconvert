@@ -194,12 +194,13 @@ install_requires = setuptools_args['install_requires'] = [
     'entrypoints',
     'bleach',
     'pandocfilters>=1.4.1',
+    'testpath', 
 ]
 
 extras_require = setuptools_args['extras_require'] = {
     # FIXME: tests still require nose for some utility calls,
     # but we are running with pytest
-    'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'testpath'],
+    'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel'],
     'serve': ['tornado>=4.0'],
     'execute': ['jupyter_client'],
 }
