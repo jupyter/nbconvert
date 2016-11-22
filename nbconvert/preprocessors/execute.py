@@ -162,6 +162,8 @@ class ExecutePreprocessor(Preprocessor):
             raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
         return KernelManager
 
+    _display_id_map = {}
+
     def preprocess(self, nb, resources):
         """
         Preprocess notebook executing each code cell.
@@ -187,6 +189,10 @@ class ExecutePreprocessor(Preprocessor):
         path = resources.get('metadata', {}).get('path', '')
         if path == '':
             path = None
+        
+        # clear display_id map
+        self._display_id_map = {}
+        self._cell_index = 0
 
         # from jupyter_client.manager import start_new_kernel
 
@@ -214,12 +220,15 @@ class ExecutePreprocessor(Preprocessor):
             extra_arguments=self.extra_arguments,
             cwd=path)
         self.kc.allow_stdin = False
+        self.nb = nb
 
         try:
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
+
+        delattr(self, 'nb')
 
         return nb, resources
 
@@ -248,8 +257,27 @@ class ExecutePreprocessor(Preprocessor):
                         """
                     msg = dedent(pattern).format(out=out, cell=cell)
                     raise CellExecutionError(msg)
+        self._cell_index += 1
         return cell, resources
 
+
+    def _update_display_id(self, display_id, msg):
+        """Update outputs with a given display_id"""
+        if display_id not in self._display_id_map:
+            return
+
+        try:
+            out = output_from_msg(msg)
+        except ValueError:
+            self.log.error("unhandled iopub msg: " + msg_type)
+            return
+        
+        for cell_idx, output_indices in self._display_id_map[display_id].items():
+            cell = self.nb['cells'][cell_idx]
+            outputs = cell['outputs']
+            for output_idx in output_indices:
+                outputs[output_idx]['data'] = out['data']
+                outputs[output_idx]['metadata'] = out['metadata']
 
     def run_cell(self, cell):
         msg_id = self.kc.execute(cell.source)
@@ -322,15 +350,35 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type == 'clear_output':
                 outs = []
+                # clear display_id mapping for this cell
+                for display_id, cell_map in self._display_id_map.items():
+                    if self._cell_idx in cell_map:
+                        cell_map[self._cell_idx] = []
                 continue
             elif msg_type.startswith('comm'):
                 continue
+            
+            display_id = None
+            if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
+                display_id = msg['content'].get('transient', {}).get('display_id', None)
+                if display_id:
+                    self._update_display_id(display_id, msg)
+                if msg_type == 'update_display_data':
+                    # update_display_data doesn't get recorded
+                    continue
 
             try:
                 out = output_from_msg(msg)
             except ValueError:
                 self.log.error("unhandled iopub msg: " + msg_type)
-            else:
-                outs.append(out)
+                continue
+            if display_id:
+                # record output index in:
+                #   _display_id_map[display_id][cell_idx]
+                output_idx_list = cell_map.setdefault(self._cell_idx, [])
+                cell_map = self._display_id_map.setdefault(display_id, {})
+                output_idx_list.append(len(outs))
+
+            outs.append(out)
 
         return outs
