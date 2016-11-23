@@ -16,7 +16,7 @@ from subprocess import Popen, PIPE
 import nose.tools as nt
 
 from nbformat import v4, write
-from ipython_genutils.tempdir import TemporaryWorkingDirectory
+from testpath.tempdir import TemporaryWorkingDirectory
 
 from ipython_genutils.py3compat import string_types, bytes_to_str
 

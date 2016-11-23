@@ -12,7 +12,7 @@ import sys
 import subprocess
 
 from ipython_genutils.py3compat import cast_unicode_py2
-from ipython_genutils.tempdir import TemporaryDirectory
+from testpath.tempdir import TemporaryDirectory
 from traitlets import Unicode, default
 
 from .convertfigures import ConvertFiguresPreprocessor
