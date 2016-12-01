@@ -42,7 +42,6 @@ This template does not define a docclass, the inheriting class must define this.
     \usepackage{geometry} % Used to adjust the document margins
     \usepackage{mathtools} % Equations
     \usepackage{amssymb} % Equations
-    \usepackage{amsfonts}
     \usepackage{textcomp} % defines textquotesingle
     % Hack from http://tex.stackexchange.com/a/47451/13684:
     \AtBeginDocument{%
