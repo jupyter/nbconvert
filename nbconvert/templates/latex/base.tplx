@@ -13,8 +13,14 @@ This template does not define a docclass, the inheriting class must define this.
     ((* block docclass *))((* endblock docclass *))
     
     ((* block packages *))
-    % Nicer default font (+ math font) than Computer Modern for most use cases
-    \usepackage{mathpazo}
+    \usepackage{polyglossia}
+	\usepackage{fontspec}
+    \usepackage{mathtools} % Equations
+    \usepackage{amssymb} % Equations
+	\usepackage{unicode-math}
+	\setmainfont{XITS}
+	\setmathfont{Latin Modern Math}
+	\setmathfont[range=\mathbb]{xits-math.otf}
 
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
@@ -39,9 +45,7 @@ This template does not define a docclass, the inheriting class must define this.
     \usepackage{adjustbox} % Used to constrain images to a maximum size 
     \usepackage{xcolor} % Allow colors to be defined
     \usepackage{enumerate} % Needed for markdown enumerations to work
-    \usepackage{geometry} % Used to adjust the document margins
-    \usepackage{mathtools} % Equations
-    \usepackage{amssymb} % Equations
+    \usepackage[a4paper]{geometry} % Used to adjust the document margins
     \usepackage{textcomp} % defines textquotesingle
     % Hack from http://tex.stackexchange.com/a/47451/13684:
     \AtBeginDocument{%
