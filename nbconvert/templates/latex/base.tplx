@@ -18,9 +18,7 @@ This template does not define a docclass, the inheriting class must define this.
     \usepackage{mathtools} % Equations
     \usepackage{amssymb} % Equations
     \usepackage{unicode-math}
-    \setmainfont{XITS}
     \setmathfont{Latin Modern Math}
-    \setmathfont[range=\mathbb]{xits-math.otf}
 
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
