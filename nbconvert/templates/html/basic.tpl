@@ -209,3 +209,31 @@ var element = $('#{{ div_id }}');
 </script>
 </div>
 {%- endblock -%}
+
+{%- block data_widget_state scoped %}
+{% set div_id = uuid4() %}
+{% set content = output.data['application/vnd.jupyter.widget-state+json'] %}
+<div id="{{ div_id }}"></div>
+<div class="output_subarea output_widget_state {{extra_class}}">
+<script type="tapplication/vnd.jupyter.widget-state+json">
+var element = $('#{{ div_id }}');
+{
+"model_id": "{{content.model_id}}"
+}
+</script>
+</div>
+{%- endblock data_widget_state -%}
+
+{%- block data_widget_view scoped %}
+{% set div_id = uuid4() %}
+{% set content = output.data['application/vnd.jupyter.widget-view+json'] %}
+<div id="{{ div_id }}"></div>
+<div class="output_subarea output_widget_view {{extra_class}}">
+<script type="tapplication/vnd.jupyter.widget-view+json">
+var element = $('#{{ div_id }}');
+{
+"model_id": "{{content.model_id}}"
+}
+</script>
+</div>
+{%- endblock data_widget_view -%}
