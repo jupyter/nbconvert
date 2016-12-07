@@ -215,7 +215,7 @@ var element = $('#{{ div_id }}');
 {% set content = output.data['application/vnd.jupyter.widget-state+json'] %}
 <div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_state {{extra_class}}">
-<script type="tapplication/vnd.jupyter.widget-state+json">
+<script type="application/vnd.jupyter.widget-state+json">
 var element = $('#{{ div_id }}');
 {
 "model_id": "{{content.model_id}}"
@@ -229,7 +229,7 @@ var element = $('#{{ div_id }}');
 {% set content = output.data['application/vnd.jupyter.widget-view+json'] %}
 <div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_view {{extra_class}}">
-<script type="tapplication/vnd.jupyter.widget-view+json">
+<script type="application/vnd.jupyter.widget-view+json">
 var element = $('#{{ div_id }}');
 {
 "model_id": "{{content.model_id}}"
