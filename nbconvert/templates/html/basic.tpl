@@ -218,7 +218,7 @@ var element = $('#{{ div_id }}');
 <script type="application/vnd.jupyter.widget-state+json">
 var element = $('#{{ div_id }}');
 {
-"model_id": "{{content.model_id}}"
+{{content}}
 }
 </script>
 </div>
@@ -232,7 +232,7 @@ var element = $('#{{ div_id }}');
 <script type="application/vnd.jupyter.widget-view+json">
 var element = $('#{{ div_id }}');
 {
-"model_id": "{{content.model_id}}"
+{{content}}
 }
 </script>
 </div>
