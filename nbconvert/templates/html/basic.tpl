@@ -212,7 +212,7 @@ var element = $('#{{ div_id }}');
 
 {%- block data_widget_state scoped %}
 {% set div_id = uuid4() %}
-{% set datatype = 'application/vnd.jupyter.widget-state+json' %}
+{% set datatype = output.data|filter_data_type %} 
 <div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_state {{extra_class}}">
 <script type="text/javascript">
@@ -224,7 +224,7 @@ var element = $('#{{ div_id }}');
 
 {%- block data_widget_view scoped %}
 {% set div_id = uuid4() %}
-{% set datatype = 'application/vnd.jupyter.widget-view+json' %}
+{% set datatype = output.data|filter_data_type %} 
 <div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_view {{extra_class}}">
 <script type="text/javascript">
