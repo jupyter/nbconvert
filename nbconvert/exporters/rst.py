@@ -26,20 +26,6 @@ class RSTExporter(TemplateExporter):
 
     @property
     def default_config(self):
-        c = Config({'ExtractOutputPreprocessor':{'enabled':True},
-                    'NbConvertBase':{
-                        'display_data_priority' : ['application/vnd.jupyter.widget-state+json',
-                                                   'application/vnd.jupyter.widget-view+json',
-                                                   'application/javascript',
-                                                   'text/html',
-                                                   'text/markdown',
-                                                   'image/svg+xml',
-                                                   'text/latex',
-                                                   'image/png',
-                                                   'image/jpeg',
-                                                   'text/plain'
-                                                  ]
-                        }
-                    })
+        c = Config({'ExtractOutputPreprocessor':{'enabled':True}})
         c.merge(super(RSTExporter,self).default_config)
         return c

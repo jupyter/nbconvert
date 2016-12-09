@@ -93,20 +93,3 @@
 {% block unknowncell scoped %}
 unknown type  {{cell.type}}
 {% endblock unknowncell %}
-
-
-{%- block data_widget_state scoped %}
-{% set datatype = output.data|filter_data_type %} 
-
-.. raw:: html
-
-    <script type="{{datatype}}">{{output.data[datatype]}}</script>
-{%- endblock data_widget_state -%}
-
-{%- block data_widget_view scoped %}
-{% set datatype = output.data|filter_data_type %} 
-
-.. raw:: html
-    
-    <script type="{{datatype}}">{{output.data[datatype]}}</script>
-{%- endblock data_widget_view -%}
