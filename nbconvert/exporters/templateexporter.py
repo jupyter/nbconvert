@@ -9,6 +9,7 @@ from __future__ import print_function, absolute_import
 
 import os
 import uuid
+import json
 
 from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from traitlets.utils.importstring import import_item
@@ -50,6 +51,7 @@ default_filters = {
         'prevent_list_blocks': filters.prevent_list_blocks,
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
+        'json_dumps': json.dumps,
 }
 
 
