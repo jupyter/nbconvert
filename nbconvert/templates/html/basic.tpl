@@ -219,7 +219,7 @@ var element = $('#{{ div_id }}');
 var element = $('#{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
-{{ output.data[datatype] }}
+{{ output.data[datatype] | json_dumps }}
 </script>
 </div>
 {%- endblock data_widget_state -%}
@@ -233,7 +233,7 @@ var element = $('#{{ div_id }}');
 var element = $('#{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
-{{ output.data[datatype] | json.dumps }}
+{{ output.data[datatype] | json_dumps }}
 </script>
 </div>
 {%- endblock data_widget_view -%}
