@@ -108,9 +108,9 @@ unknown type  {{ cell.type }}
 {%- endblock stream_stderr %}
 
 {% block data_svg scoped -%}
-<div class="output_svg output_subarea {{extra_class}}">
+<div class="output_svg output_subarea {{ extra_class }}">
 {%- if output.svg_filename %}
-<img src="{{output.svg_filename | posix_path}}"
+<img src="{{ output.svg_filename | posix_path }}"
 {%- else %}
 {{ output.data['image/svg+xml'] }}
 {%- endif %}
@@ -118,31 +118,31 @@ unknown type  {{ cell.type }}
 {%- endblock data_svg %}
 
 {% block data_html scoped -%}
-<div class="output_html rendered_html output_subarea {{extra_class}}">
+<div class="output_html rendered_html output_subarea {{ extra_class }}">
 {{ output.data['text/html'] }}
 </div>
 {%- endblock data_html %}
 
 {% block data_markdown scoped -%}
-<div class="output_markdown rendered_html output_subarea {{extra_class}}">
+<div class="output_markdown rendered_html output_subarea {{ extra_class }}">
 {{ output.data['text/markdown'] | markdown2html }}
 </div>
 {%- endblock data_markdown %}
 
 {% block data_png scoped %}
-<div class="output_png output_subarea {{extra_class}}">
+<div class="output_png output_subarea {{ extra_class }}">
 {%- if 'image/png' in output.metadata.get('filenames', {}) %}
-<img src="{{output.metadata.filenames['image/png'] | posix_path}}"
+<img src="{{ output.metadata.filenames['image/png'] | posix_path }}"
 {%- else %}
 <img src="data:image/png;base64,{{ output.data['image/png'] }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/png') -%}
 {%- if width is not none %}
-width={{width}}
+width={{ width }}
 {%- endif %}
 {%- set height=output | get_metadata('height', 'image/png') -%}
 {%- if height is not none %}
-height={{height}}
+height={{ height }}
 {%- endif %}
 {%- if output | get_metadata('unconfined', 'image/png') -%}
 class="unconfined"
@@ -152,19 +152,19 @@ class="unconfined"
 {%- endblock data_png %}
 
 {% block data_jpg scoped %}
-<div class="output_jpeg output_subarea {{extra_class}}">
+<div class="output_jpeg output_subarea {{ extra_class }}">
 {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
-<img src="{{output.metadata.filenames['image/jpeg'] | posix_path}}"
+<img src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}"
 {%- else %}
 <img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/jpeg') -%}
 {%- if width is not none %}
-width={{width}}
+width={{ width }}
 {%- endif %}
 {%- set height=output | get_metadata('height', 'image/jpeg') -%}
 {%- if height is not none %}
-height={{height}}
+height={{ height }}
 {%- endif %}
 {%- if output | get_metadata('unconfined', 'image/jpeg') -%}
 class="unconfined"
@@ -174,7 +174,7 @@ class="unconfined"
 {%- endblock data_jpg %}
 
 {% block data_latex scoped %}
-<div class="output_latex output_subarea {{extra_class}}">
+<div class="output_latex output_subarea {{ extra_class }}">
 {{ output.data['text/latex'] }}
 </div>
 {%- endblock data_latex %}
@@ -192,7 +192,7 @@ class="unconfined"
 {%- endblock traceback_line %}
 
 {%- block data_text scoped %}
-<div class="output_text output_subarea {{extra_class}}">
+<div class="output_text output_subarea {{ extra_class }}">
 <pre>
 {{- output.data['text/plain'] | ansi2html -}}
 </pre>
@@ -202,10 +202,50 @@ class="unconfined"
 {%- block data_javascript scoped %}
 {% set div_id = uuid4() %}
 <div id="{{ div_id }}"></div>
-<div class="output_subarea output_javascript {{extra_class}}">
+<div class="output_subarea output_javascript {{ extra_class }}">
 <script type="text/javascript">
 var element = $('#{{ div_id }}');
 {{ output.data['application/javascript'] }}
 </script>
 </div>
 {%- endblock -%}
+
+{%- block data_widget_state scoped %}
+{% set div_id = uuid4() %}
+{% set datatype_list = output.data | filter_data_type %} 
+{% set datatype = datatype_list[0]%} 
+<div id="{{ div_id }}"></div>
+<div class="output_subarea output_widget_state {{ extra_class }}">
+<script type="text/javascript">
+var element = $('#{{ div_id }}');
+</script>
+<script type="{{ datatype }}">
+{{ output.data[datatype] | json_dumps }}
+</script>
+</div>
+{%- endblock data_widget_state -%}
+
+{%- block data_widget_view scoped %}
+{% set div_id = uuid4() %}
+{% set datatype_list = output.data | filter_data_type %} 
+{% set datatype = datatype_list[0]%} 
+<div id="{{ div_id }}"></div>
+<div class="output_subarea output_widget_view {{ extra_class }}">
+<script type="text/javascript">
+var element = $('#{{ div_id }}');
+</script>
+<script type="{{ datatype }}">
+{{ output.data[datatype] | json_dumps }}
+</script>
+</div>
+{%- endblock data_widget_view -%}
+
+{%- block footer %}
+{% set mimetype = 'application/vnd.jupyter.widget-state+json'%} 
+{% if mimetype in nb.metadata.widgets %}
+<script type="{{ mimetype }}">
+{{ nb.metadata.widgets[mimetype] | json_dumps }}
+</script>
+{% endif %}
+{{ super() }}
+{%- endblock footer-%}

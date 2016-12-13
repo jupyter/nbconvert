@@ -37,7 +37,9 @@ class HTMLExporter(TemplateExporter):
     def default_config(self):
         c = Config({
             'NbConvertBase': {
-                'display_data_priority' : ['application/javascript',
+                'display_data_priority' : ['application/vnd.jupyter.widget-state+json',
+                                           'application/vnd.jupyter.widget-view+json',
+                                           'application/javascript',
                                            'text/html',
                                            'text/markdown',
                                            'image/svg+xml',

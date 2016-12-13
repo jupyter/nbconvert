@@ -67,5 +67,6 @@ div#notebook {
 {%- endblock body %}
 
 {% block footer %}
+{{ super() }}
 </html>
 {% endblock footer %}

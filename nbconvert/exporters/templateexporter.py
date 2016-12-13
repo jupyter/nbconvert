@@ -9,6 +9,7 @@ from __future__ import print_function, absolute_import
 
 import os
 import uuid
+import json
 
 # other libs/dependencies are imported at runtime
 # to move ImportErrors to runtime when the requirement is actually needed
@@ -52,6 +53,7 @@ default_filters = {
         'ascii_only': filters.ascii_only,
         'prevent_list_blocks': filters.prevent_list_blocks,
         'get_metadata': filters.get_metadata,
+        'json_dumps': json.dumps,
 }
 
 class TemplateExporter(Exporter):
