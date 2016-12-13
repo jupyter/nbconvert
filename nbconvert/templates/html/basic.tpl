@@ -242,7 +242,7 @@ var element = $('#{{ div_id }}');
 
 {%- block footer %}
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%} 
-{% if mimetype in nb.metadata.widgets %}
+{% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
 {{ nb.metadata.widgets[mimetype] | json_dumps }}
 </script>
