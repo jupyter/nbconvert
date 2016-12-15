@@ -17,6 +17,10 @@ Changes in nbconvert
 - Fixes for Unicode errors when showing execution errors on Python 2.
 - Default math font matches default Palatino body text font.
 - General documentation improvements. For example, testing, installation, custom exporters.
+- Improved link handling for LaTeX output
+- Refactored the automatic id generation.
+- New kernel_manager_class configuration option for allowing systems to be set up to resolve kernels in different ways. 
+- Kernel errors now will be logged for debugging purposes when executing notebooks. 
 
 4.3
 ---
