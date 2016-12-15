@@ -18,6 +18,13 @@ Changes in nbconvert
 - Default math font matches default Palatino body text font.
 - General documentation improvements. For example, testing, installation, custom exporters.
 
+4.3
+---
+
+`4.3 on GitHub <https://github.com/jupyter/nbconvert/milestones/4.3>`_
+
+- added live widget rendering for html output, nbviewer by extension
+
 4.2
 ---
 
