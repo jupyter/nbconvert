@@ -26,7 +26,7 @@ if os.environ.get('READTHEDOCS', ''):
     # page).
     import sys, subprocess
     
-    subprocess.run([sys.executable,'-m','pip','install','-e','../../.'])
+    #  subprocess.run([sys.executable,'-m','pip','install','-e','../../.'])
     
     with open('../autogen_config.py') as f:
         exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
