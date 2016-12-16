@@ -14,7 +14,9 @@ import json
 from traitlets import HasTraits, Unicode, List, Dict, default, observe
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
-from jinja2 import TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader
+from jinja2 import (
+    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader
+)
 
 from nbconvert import filters
 from .exporter import Exporter
@@ -53,6 +55,29 @@ default_filters = {
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
 }
+
+class ExtensionTolerantLoader(BaseLoader):
+    """A template loader which optionally adds a given extension when searching.
+
+    Constructor takes two arguments: *loader* is another Jinja loader instance
+    to wrap. *extension* is the extension, which will be added to the template
+    name if finding the template without it fails. This should include the dot,
+    e.g. '.tpl'.
+    """
+    def __init__(self, loader, extension):
+        self.loader = loader
+        self.extension = extension
+
+    def get_source(self, environment, template):
+        try:
+            return self.loader.get_source(environment, template)
+        except TemplateNotFound:
+            if template.endswith(self.extension):
+                raise
+            return self.loader.get_source(environment, template+self.extension)
+
+    def list_templates(self):
+        return self.loader.list_templates()
 
 
 class TemplateExporter(Exporter):
@@ -135,7 +160,7 @@ class TemplateExporter(Exporter):
     ).tag(affects_environment=True)
     
     #Extension that the template files use.
-    template_extension = Unicode(".tpl").tag(config=True, affects_template=True)
+    template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
 
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
@@ -190,19 +215,9 @@ class TemplateExporter(Exporter):
         # template by name with extension added, then try loading the template
         # as if the name is explicitly specified.
         template_file = self.template_file
-        if not template_file.endswith(self.template_extension):
-            template_file = template_file + self.template_extension
         self.log.debug("Attempting to load template %s", template_file)
         self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
-        try:
-            template = self.environment.get_template(template_file)
-        except (TemplateNotFound, IOError):
-            pass
-        else:
-            self.log.debug("Loaded template %s", template.filename)
-            return template
-
-        raise TemplateNotFound(template_file)
+        return self.environment.get_template(template_file)
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """
@@ -303,7 +318,9 @@ class TemplateExporter(Exporter):
             [os.path.join(here, self.default_template_path),
              os.path.join(here, self.template_skeleton_path)]
 
-        loaders = self.extra_loaders + [FileSystemLoader(paths)]
+        loaders = self.extra_loaders + [
+            ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension)
+        ]
         environment = Environment(
             loader=ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS
