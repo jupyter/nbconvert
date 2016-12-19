@@ -7,9 +7,9 @@ dependencies:
 - nbformat
 - jupyter_client
 - ipython
-- sphinx>=1.3.6,!=1.5.0,!=1.5.1
+- sphinx>=1.5.1
 - sphinx_rtd_theme
 - tornado
 - entrypoints
 - pip:
-    - nbsphinx
+    - nbsphinx>=0.2.12
