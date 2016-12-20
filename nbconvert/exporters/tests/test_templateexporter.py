@@ -130,16 +130,6 @@ class TestExporter(ExportersTestsBase):
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
 
-        my_loader2 = DictLoader({'my_template.tpl': "{%- extends 'python.tpl' -%}"})
-       
-        # Does the same as above (load in in memory template, create class, &c.) 
-        # But it does so for a key that explicitly has the extension
-        class MyExporter2(TemplateExporter):
-            template_file = 'my_template.tpl'
-        
-        exporter2 = MyExporter2(extra_loaders=[my_loader2])
-        out, resources = exporter2.from_notebook_node(nb)
-
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
         # the base TemplateExporter doesn't have a template associated with it.
