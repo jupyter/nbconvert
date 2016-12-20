@@ -8,6 +8,8 @@ Module with tests for templateexporter.py
 import os
 
 from traitlets.config import Config
+from jinja2 import DictLoader
+from nbformat import v4
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
@@ -114,6 +116,29 @@ class TestExporter(ExportersTestsBase):
             exporter = self._make_exporter(config=config)
             assert os.path.abspath(exporter.template.filename) == template
             assert os.path.dirname(template) in [ os.path.abspath(d) for d in exporter.template_path ]
+    
+    def test_in_memory_template(self):
+        # Loads in an in memory template using jinja2.DictLoader
+        # creates a class that uses this template with the template_file argument
+        # converts an empty notebook using this mechanism
+        my_loader = DictLoader({'my_template': "{%- extends 'rst.tpl' -%}"})
+        
+        class MyExporter(TemplateExporter):
+            template_file = 'my_template'
+        
+        exporter = MyExporter(extra_loaders=[my_loader])
+        nb = v4.new_notebook()
+        out, resources = exporter.from_notebook_node(nb)
+
+        my_loader2 = DictLoader({'my_template.tpl': "{%- extends 'python.tpl' -%}"})
+       
+        # Does the same as above (load in in memory template, create class, &c.) 
+        # But it does so for a key that explicitly has the extension
+        class MyExporter2(TemplateExporter):
+            template_file = 'my_template.tpl'
+        
+        exporter2 = MyExporter2(extra_loaders=[my_loader2])
+        out, resources = exporter2.from_notebook_node(nb)
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
