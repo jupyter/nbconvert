@@ -13,7 +13,7 @@ from nbformat import v4
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
-from ..templateexporter import TemplateExporter, ExtensionTolerantLoader, FileSystemLoader
+from ..templateexporter import TemplateExporter
 from testpath import tempdir
 
 import pytest
@@ -134,21 +134,24 @@ class TestExporter(ExportersTestsBase):
 
     @pytest.mark.xfail(strict=True, raises=TemplateNotFound)
     def test_in_memory_template_failure_to_find(self):
-        # Loads in an in memory template using jinja2.DictLoader
-        # creates a class that uses this template with the template_file argument
-        # converts an empty notebook using this mechanism
+        
+        # Create a class with a custom template. Opens a temporary diectory, in
+        # which it writes a file at the appropriate location to be found in
+        # that template. Creates a class instance and then then it manually
+        # adds the template extension (erroneously) to the template file name,
+        # and tries to convert an empty notebook using this mechanism (at which
+        # point it should fail).
         
         class MyExporter(TemplateExporter):
-            self.template_file = 'my_template'
+            self.template_file = 'my_template.tpl'
         
         with tempdir.TemporaryDirectory() as td:
-            template = os.path.join(td, 'my_template')
+            template = os.path.join(td, 'my_template.tpl')
             test_output = 'absolute!'
             with open(template, 'w') as f:
                 f.write(test_output)
-            
-            exporter = MyExporter(extra_loaders=[ExtensionTolerantLoader(FileSystemLoader(td), ".tpl")])
-            exporter.template_file = template + ".tpl"
+            exporter = MyExporter()
+            exporter.template_file = template + exporter.template_extension
             nb = v4.new_notebook()
             out, resources = exporter.from_notebook_node(nb)
         
