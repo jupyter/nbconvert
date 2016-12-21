@@ -18,7 +18,6 @@ from nbformat.v4 import output_from_msg
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 from traitlets import Integer
-from jupyter_client.manager import KernelManager
 
 
 class CellExecutionError(ConversionException):
@@ -139,7 +138,7 @@ class ExecutePreprocessor(Preprocessor):
     ).tag(config=True)
 
     kernel_manager_class = Type(
-        default_value=KernelManager,
+        default_value='jupyter_client.manager.KernelManager',
         config=True,
         help='The kernel manager class to use.'
     )
