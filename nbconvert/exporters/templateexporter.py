@@ -56,6 +56,7 @@ default_filters = {
         'json_dumps': json.dumps,
 }
 
+
 class ExtensionTolerantLoader(BaseLoader):
     """A template loader which optionally adds a given extension when searching.
 
@@ -67,13 +68,15 @@ class ExtensionTolerantLoader(BaseLoader):
     def __init__(self, loader, extension):
         self.loader = loader
         self.extension = extension
+   
 
     def get_source(self, environment, template):
         try:
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
+            print(template,str(template.endswith(self.extension)))
             if template.endswith(self.extension):
-                raise
+                raise TemplateNotFound(template)
             return self.loader.get_source(environment, template+self.extension)
 
     def list_templates(self):

@@ -8,14 +8,15 @@ Module with tests for templateexporter.py
 import os
 
 from traitlets.config import Config
-from jinja2 import DictLoader
+from jinja2 import DictLoader, TemplateNotFound
 from nbformat import v4
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
-from ..templateexporter import TemplateExporter
+from ..templateexporter import TemplateExporter, ExtensionTolerantLoader, FileSystemLoader
 from testpath import tempdir
 
+import pytest
 
 class TestExporter(ExportersTestsBase):
     """Contains test functions for exporter.py"""
@@ -129,6 +130,30 @@ class TestExporter(ExportersTestsBase):
         exporter = MyExporter(extra_loaders=[my_loader])
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
+
+
+    @pytest.mark.xfail(strict=True, raises=TemplateNotFound)
+    def test_in_memory_template_failure_to_find(self):
+        # Loads in an in memory template using jinja2.DictLoader
+        # creates a class that uses this template with the template_file argument
+        # converts an empty notebook using this mechanism
+        
+        class MyExporter(TemplateExporter):
+            self.template_file = 'my_template'
+        
+        with tempdir.TemporaryDirectory() as td:
+            template = os.path.join(td, 'my_template')
+            test_output = 'absolute!'
+            with open(template, 'w') as f:
+                f.write(test_output)
+            
+            exporter = MyExporter(extra_loaders=[ExtensionTolerantLoader(FileSystemLoader(td), ".tpl")])
+            exporter.template_file = template + ".tpl"
+            nb = v4.new_notebook()
+            out, resources = exporter.from_notebook_node(nb)
+        
+        
+        
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
