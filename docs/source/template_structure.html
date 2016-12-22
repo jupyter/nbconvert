@@ -88,12 +88,18 @@ This is an HTML fragment that gets included into a notebook & rst document
     <div class="big_vertical_ellipsis">&#8942;</div>
 </div>
 
-<h3>Extra HTML blocks (full.tpl)</h3>
-<div class="template_block">header
-    <pre>&lt;head&gt;</pre>
-    <div class="template_block">html_head</div>
-    <pre>&lt;/head&gt;</pre>
-</div>
+<h3>Extra HTML blocks</h3>
+    <h4><pre>basic.tpl</pre></h4>
+        <div class="template_block">output
+            <div class="template_block">output_area_prompt</div>
+            <div class="template_block"><pre>{&#37; super &#37;}</pre></div>
+        </div>
+    <h4><pre>full.tpl</pre></h4>
+        <div class="template_block">header
+            <pre>&lt;head&gt;</pre>
+            <div class="template_block">html_head</div>
+            <pre>&lt;/head&gt;</pre>
+        </div>
 
 <h3>Extra Latex blocks</h3>
 <div class="template_block">header
