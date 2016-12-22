@@ -138,7 +138,9 @@ class TestExporter(ExportersTestsBase):
         # Create exporter with invalid template file, try to convert empty notebook
         # failure is expected due to nonexistant template file.
         
-        exporter = TemplateExporter(template_file='does_not_exist.tpl')
+        template = 'does_not_exist.tpl'
+        exporter = TemplateExporter(template_file=template)
+        assert template not in exporter.environment.loader.list_templates()
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
         

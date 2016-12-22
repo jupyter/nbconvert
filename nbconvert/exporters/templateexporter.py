@@ -74,7 +74,6 @@ class ExtensionTolerantLoader(BaseLoader):
         try:
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
-            print(template,str(template.endswith(self.extension)))
             if template.endswith(self.extension):
                 raise TemplateNotFound(template)
             return self.loader.get_source(environment, template+self.extension)
