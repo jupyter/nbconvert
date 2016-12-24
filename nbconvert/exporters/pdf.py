@@ -7,7 +7,7 @@ import subprocess
 import os
 import sys
 
-from ipython_genutils.py3compat import which, cast_bytes_py2
+from ipython_genutils.py3compat import which, cast_bytes_py2, getcwd
 from traitlets import Integer, List, Bool, Instance, Unicode
 from testpath.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
@@ -165,7 +165,7 @@ class PDFExporter(LatexExporter):
         if resources and resources.get('metadata', {}).get('path'):
             self.texinputs = resources['metadata']['path']
         else:
-            self.texinputs = os.getcwd()
+            self.texinputs = getcwd()
         
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
