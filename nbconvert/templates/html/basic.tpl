@@ -53,6 +53,7 @@ In&nbsp;[&nbsp;]:
 
 {% block output %}
 <div class="output_area">
+{% block output_area_prompt %}
 {%- if output.output_type == 'execute_result' -%}
     <div class="prompt output_prompt">
 {%- if cell.execution_count is defined -%}
@@ -64,6 +65,7 @@ In&nbsp;[&nbsp;]:
     <div class="prompt">
 {%- endif -%}
     </div>
+{% endblock output_area_prompt %}
 {{ super() }}
 </div>
 {% endblock output %}
