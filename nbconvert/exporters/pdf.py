@@ -14,15 +14,15 @@ from .latex import LatexExporter
 
 class LatexFailed(IOError):
     """Exception for failed latex run
-    
+
     Captured latex output is in error.output.
     """
     def __init__(self, output):
         self.output = output
-    
+
     def __unicode__(self):
         return u"PDF creating failed, captured latex output:\n%s" % self.output
-    
+
     def __str__(self):
         u = self.__unicode__()
         return cast_bytes_py2(u)
@@ -55,15 +55,15 @@ class PDFExporter(LatexExporter):
     temp_file_exts = List(['.aux', '.bbl', '.blg', '.idx', '.log', '.out'],
         help="File extensions of temp files to remove after running."
     ).tag(config=True)
-    
+
     texinputs = Unicode(help="texinputs dir. A notebook's directory is added")
     writer = Instance("nbconvert.writers.FilesWriter", args=())
-    
+
     _captured_output = List()
 
     def run_command(self, command_list, filename, count, log_function):
         """Run command_list count times.
-        
+
         Parameters
         ----------
         command_list : list
@@ -73,7 +73,7 @@ class PDFExporter(LatexExporter):
             The name of the file to convert.
         count : int
             How many times to run the command.
-        
+
         Returns
         -------
         success : bool
@@ -97,10 +97,10 @@ class PDFExporter(LatexExporter):
             raise OSError("{formatter} not found on PATH, if you have not installed "
                           "{formatter} you may need to do so. Find further instructions "
                           "at {link}.".format(formatter=command_list[0], link=link))
-        
+
         times = 'time' if count == 1 else 'times'
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
-        
+
         shell = (sys.platform == 'win32')
         if shell:
             command = subprocess.list2cmdline(command)
@@ -156,7 +156,7 @@ class PDFExporter(LatexExporter):
                 os.remove(filename+ext)
             except OSError:
                 pass
-    
+
     def from_notebook_node(self, nb, resources=None, **kw):
         latex, resources = super(PDFExporter, self).from_notebook_node(
             nb, resources=resources, **kw
@@ -166,31 +166,28 @@ class PDFExporter(LatexExporter):
             self.texinputs = resources['metadata']['path']
         else:
             self.texinputs = os.getcwd()
-        
+
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
             notebook_name = 'notebook'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
             rc = self.run_latex(tex_file)
-            if rc:
+            if not rc:
                 rc = self.run_bib(tex_file)
-            if rc:
-                rc = self.run_latex(tex_file)
-            
+
             pdf_file = notebook_name + '.pdf'
             if not os.path.isfile(pdf_file):
                 raise LatexFailed('\n'.join(self._captured_output))
             self.log.info('PDF successfully created')
             with open(pdf_file, 'rb') as f:
                 pdf_data = f.read()
-        
+
         # convert output extension to pdf
         # the writer above required it to be tex
         resources['output_extension'] = '.pdf'
         # clear figure outputs, extracted by latex export,
         # so we don't claim to be a multi-file export.
         resources.pop('outputs', None)
-        
+
         return pdf_data, resources
-    
