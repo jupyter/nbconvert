@@ -148,7 +148,12 @@ class Exporter(LoggingConfigurable):
           Ignored
 
         """
-
+        # Convert full filename string to unicode
+        # In python 2.7.x if filename comes as unicode string,
+        # just skip converting it.
+        if isinstance(filename, str):
+           filename = py3compat.str_to_unicode(filename)
+           
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
