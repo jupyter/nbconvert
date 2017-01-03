@@ -133,14 +133,14 @@ class TestExporter(ExportersTestsBase):
 
 
     @pytest.mark.xfail(strict=True, raises=TemplateNotFound)
-    def test_in_memory_template_failure_to_find(self):
-        
-        # Create exporter with invalid template file, try to convert empty notebook
-        # failure is expected due to nonexistant template file.
+    def test_fail_to_find_template_file(self):
+        # Create exporter with invalid template file, check that it doesn't
+        # exist in the environment, try to convert empty notebook. Failure is
+        # expected due to nonexistant template file.
         
         template = 'does_not_exist.tpl'
         exporter = TemplateExporter(template_file=template)
-        assert template not in exporter.environment.loader.list_templates()
+        assert template not in exporter.environment.list_templates(extensions=['tpl'])
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
         
