@@ -188,7 +188,39 @@ def get_lines(text, start=None,end=None):
     # Return the right lines.
     return "\n".join(lines[start:end]) #re-join
 
-def ipython2python(code):
+def _mpl_magic_regex_generator(forbidden_backends=None):
+    """Create regex for detecting incompatible backends in mpl magics.
+    
+    Parameters
+    ----------
+
+    forbidden_backens: List
+        List of strings, each of which is a forbidden matplotlib backend. 
+    """
+    if forbidden_backends is None:
+        forbidden_backends = ["notebook","inline"]
+    no_mpl_be_str = "|".join(forbidden_backends)
+    mpl_magic_backend_extractor = re.compile(r'(^%matplotlib \w*)({})'.format(no_mpl_be_str))
+    return mpl_magic_backend_extractor
+
+mpl_magic_regex = _mpl_magic_regex_generator()
+
+def _remove_gui_mpl_backends(code):
+    """Remove incompatible backends from mpl magics.
+    
+    Parameters
+    ----------
+
+    code : str
+        IPython code with matplotlib magic
+    """
+    lines = code.split('\n',maxsplit=1)
+    if mpl_magic_regex.match(lines[0]):
+        lines[0] = mpl_magic_regex.match(lines[0]).group(1)
+        code = "\n".join(lines)
+    return code
+
+def ipython2python(code, no_gui=False):
     """Transform IPython syntax to pure Python syntax
 
     Parameters
@@ -206,6 +238,8 @@ def ipython2python(code):
         )
         return code
     else:
+        if no_gui and "%matplotlib" in code:
+            code = _remove_gui_mpl_backends(code)
         isp = IPythonInputSplitter(line_input_checker=False)
         return isp.transform_cell(code)
 
