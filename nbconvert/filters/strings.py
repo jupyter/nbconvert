@@ -222,8 +222,10 @@ def _remove_gui_mpl_backends(code, bad_backends=None):
         mpl_magic_regex_local = mpl_magic_regex
 
     lines = code.split('\n',1)
-    if mpl_magic_regex.match(lines[0]) and bad_backends is None:
-        lines[0] = mpl_magic_regex_local.match(lines[0]).group(1)
+    notebook_magic = mpl_magic_regex_local.match(lines[0])
+    if notebook_magic: 
+        lines[0] = notebook_magic.group(1)
+        lines[0] += "\n# nbconvert removed: " + notebook_magic.group(2)
         code = "\n".join(lines)
     return code
 
