@@ -203,6 +203,8 @@ def _mpl_magic_regex_generator(forbidden_backends=None):
     mpl_magic_backend_extractor = re.compile(r'(^%matplotlib \w*)({})'.format(no_mpl_be_str))
     return mpl_magic_backend_extractor
 
+mpl_magic_regex = _mpl_magic_regex_generator()
+
 def _remove_gui_mpl_backends(code, bad_backends=None):
     """Remove incompatible backends from mpl magics.
     
@@ -211,8 +213,12 @@ def _remove_gui_mpl_backends(code, bad_backends=None):
 
     code : str
         IPython code with matplotlib magic
+    bad_backends: list of str
+        List of strings, each of which is a forbidden matplotlib backend.
     """
-    mpl_magic_regex = _mpl_magic_regex_generator(bad_backends)
+    if bad_backends is not None:
+        mpl_magic_regex = _mpl_magic_regex_generator(bad_backends)
+    
     lines = code.split('\n',maxsplit=1)
     if mpl_magic_regex.match(lines[0]):
         lines[0] = mpl_magic_regex.match(lines[0]).group(1)
