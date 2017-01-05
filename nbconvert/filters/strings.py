@@ -233,6 +233,10 @@ def ipython2python(code, no_gui=False, bad_backends=None):
 
     code : str
         IPython code, to be transformed to pure Python
+    no_gui : Boolean
+        True if matplotlib backends should be filtered
+    bad_backends: list of str
+        List of strings, each of which is a forbidden matplotlib backend.
     """
     try:
         from IPython.core.inputsplitter import IPythonInputSplitter
