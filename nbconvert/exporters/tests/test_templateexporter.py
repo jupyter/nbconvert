@@ -8,12 +8,15 @@ Module with tests for templateexporter.py
 import os
 
 from traitlets.config import Config
+from jinja2 import DictLoader, TemplateNotFound
+from nbformat import v4
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
 from ..templateexporter import TemplateExporter
 from testpath import tempdir
 
+import pytest
 
 class TestExporter(ExportersTestsBase):
     """Contains test functions for exporter.py"""
@@ -114,6 +117,35 @@ class TestExporter(ExportersTestsBase):
             exporter = self._make_exporter(config=config)
             assert os.path.abspath(exporter.template.filename) == template
             assert os.path.dirname(template) in [ os.path.abspath(d) for d in exporter.template_path ]
+    
+    def test_in_memory_template(self):
+        # Loads in an in memory template using jinja2.DictLoader
+        # creates a class that uses this template with the template_file argument
+        # converts an empty notebook using this mechanism
+        my_loader = DictLoader({'my_template': "{%- extends 'rst.tpl' -%}"})
+        
+        class MyExporter(TemplateExporter):
+            template_file = 'my_template'
+        
+        exporter = MyExporter(extra_loaders=[my_loader])
+        nb = v4.new_notebook()
+        out, resources = exporter.from_notebook_node(nb)
+
+
+    @pytest.mark.xfail(strict=True, raises=TemplateNotFound)
+    def test_fail_to_find_template_file(self):
+        # Create exporter with invalid template file, check that it doesn't
+        # exist in the environment, try to convert empty notebook. Failure is
+        # expected due to nonexistant template file.
+        
+        template = 'does_not_exist.tpl'
+        exporter = TemplateExporter(template_file=template)
+        assert template not in exporter.environment.list_templates(extensions=['tpl'])
+        nb = v4.new_notebook()
+        out, resources = exporter.from_notebook_node(nb)
+        
+        
+        
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
