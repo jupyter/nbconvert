@@ -100,9 +100,9 @@ class IPythonRenderer(mistune.Renderer):
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
 
-    def header(self, text, level, raw=None):
+    def header(self, text, level, raw=None, anchor_text=''):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
-        return add_anchor(html)
+        return add_anchor(html, anchor_text=self.options['anchor_text'])
 
     # Pass math through unaltered - mathjax does the rendering in the browser
     def block_math(self, text):
@@ -114,6 +114,6 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % text
 
-def markdown2html_mistune(source):
+def markdown2html_mistune(source, anchor_text=u''):
     """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer(escape=False)).render(source)
+    return MarkdownWithMath(renderer=IPythonRenderer(escape=False,anchor_text=anchor_text)).render(source)

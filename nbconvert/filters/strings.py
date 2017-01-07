@@ -86,7 +86,7 @@ def _convert_header_id(header_contents):
     """
     return header_contents.replace(' ', '-')
 
-def add_anchor(html):
+def add_anchor(html, anchor_text=u'¶'):
     """Add an id and an anchor-link to an html header
     
     For use on markdown headings
@@ -99,9 +99,8 @@ def add_anchor(html):
     link = _convert_header_id(html2text(h))
     h.set('id', link)
     a = ElementTree.Element("a", {"class" : "anchor-link", "href" : "#" + link})
-    a.text = u'¶'
+    a.text = anchor_text
     h.append(a)
-
     # Known issue of Python3.x, ElementTree.tostring() returns a byte string
     # instead of a text string.  See issue http://bugs.python.org/issue10942
     # Workaround is to make sure the bytes are casted to a string.
