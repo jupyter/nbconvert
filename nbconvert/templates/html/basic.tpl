@@ -75,7 +75,7 @@ In&nbsp;[&nbsp;]:
 {{ self.empty_in_prompt() }}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-{{ cell.source  | markdown2html | strip_files_prefix }}
+{{ cell.source  | markdown2html(anchor_text=resources.anchor_text) | strip_files_prefix }}
 </div>
 </div>
 </div>

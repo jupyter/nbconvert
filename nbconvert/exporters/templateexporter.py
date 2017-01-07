@@ -54,7 +54,43 @@ default_filters = {
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
+        'multiplier' : MyDummyFilterMultiplier,
 }
+
+class Adder:
+
+
+    def __init__(self, adding):
+        self.adding = adding
+
+    def __call__(self, other):
+        return other + self.adding
+
+plusone = Adder(1)
+
+plusone(6) # 7
+
+
+class ConfigurableFilter(Configurable):
+
+    def __init__(self, config=None, parents=None):
+        super().__init__(****)
+
+    def __call__(self, *args):
+        return doyoustuff(*args,)
+
+
+class MyDummyFilterMultiplier(ConfigurableFilter):
+
+    count = Integer(1).tag(config=True)
+
+    def __call__(self, thing:str):
+        return thing*self.count
+
+
+
+
+
 
 
 class ExtensionTolerantLoader(BaseLoader):
@@ -332,6 +368,10 @@ class TemplateExporter(Exporter):
 
         # Add default filters to the Jinja2 environment
         for key, value in self.default_filters():
+            if issubclass(value, ConfigurableFilter):
+                value = value(parent=self) # this is calling __init__
+
+            value('heyho') # this is caling __call__
             self._register_filter(environment, key, value)
 
         # Load user filters.  Overwrite existing filters if need be.
