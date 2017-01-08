@@ -114,6 +114,6 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % text
 
-def markdown2html_mistune(source, anchor_text=u''):
+def markdown2html_mistune(source, anchor_text=u'¶'):
     """Convert a markdown string to HTML using mistune"""
     return MarkdownWithMath(renderer=IPythonRenderer(escape=False,anchor_text=anchor_text)).render(source)
