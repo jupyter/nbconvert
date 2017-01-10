@@ -26,6 +26,7 @@ __all__ = [
     'get_exporter',
     'get_export_names',
     'ExporterNameError',
+    'ExporterNotFound',
 ]
 
 
@@ -85,10 +86,18 @@ def export(exporter, nb, **kw):
     return output, resources
 
 
+class ExporterNotFound(ValueError):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return ('Unknown exporter "%s", did you mean one of: %s?'
+                 % (self.name, ', '.join(get_export_names())))
+
 def get_exporter(name):
     """Given an exporter name or import path, return a class ready to be instantiated
     
-    Raises ValueError if exporter is not found
+    Raises ExporterNotFound if exporter is not found
     """
 
     try:
@@ -106,8 +115,7 @@ def get_exporter(name):
             log = get_logger()
             log.error("Error importing %s" % name, exc_info=True)
 
-    raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
-                     % (name, ', '.join(get_export_names())))
+    raise ExporterNotFound(name)
 
 
 def get_export_names():
