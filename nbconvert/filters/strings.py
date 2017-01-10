@@ -188,24 +188,24 @@ def get_lines(text, start=None,end=None):
     # Return the right lines.
     return "\n".join(lines[start:end]) #re-join
 
-def _mpl_magic_regex_generator(forbidden_backends=None):
+def _mpl_magic_regex_generator(browser_backends=None):
     """Create regex for detecting incompatible backends in mpl magics.
     
     Parameters
     ----------
 
-    forbidden_backens: List
+    interactive_backends: List
         List of strings, each of which is a forbidden matplotlib backend. 
     """
-    if forbidden_backends is None:
-        forbidden_backends = ["notebook", "inline"]
-    no_mpl_be_str = "|".join(forbidden_backends)
-    mpl_magic_backend_extractor = re.compile(r'(^%matplotlib \w*)({})'.format(no_mpl_be_str))
+    if browser_backends is None:
+        browser_backends = ["notebook", "inline"]
+    no_mpl_be_str = "|".join(browser_backends)
+    mpl_magic_backend_extractor = re.compile(r'(^% *matplotlib *\w*)({})'.format(no_mpl_be_str))
     return mpl_magic_backend_extractor
 
 mpl_magic_regex = _mpl_magic_regex_generator()
 
-def _remove_gui_mpl_backends(code, bad_backends=None):
+def _remove_browser_mpl_backends(code, browser_backends=None):
     """Remove incompatible backends from mpl magics.
     
     Parameters
@@ -213,11 +213,11 @@ def _remove_gui_mpl_backends(code, bad_backends=None):
 
     code : str
         IPython code with matplotlib magic
-    bad_backends: list of str
+    notebook_backends: list of str
         List of strings, each of which is a forbidden matplotlib backend.
     """
-    if bad_backends is not None:
-        mpl_magic_regex_local = _mpl_magic_regex_generator(bad_backends)
+    if browser_backends is not None:
+        mpl_magic_regex_local = _mpl_magic_regex_generator(browser_backends)
     else: 
         mpl_magic_regex_local = mpl_magic_regex
 
@@ -229,7 +229,7 @@ def _remove_gui_mpl_backends(code, bad_backends=None):
         code = "\n".join(lines)
     return code
 
-def ipython2python(code, no_gui=False, bad_backends=None):
+def ipython2python(code, no_browser=False, browser_backends=None):
     """Transform IPython syntax to pure Python syntax
 
     Parameters
@@ -237,7 +237,7 @@ def ipython2python(code, no_gui=False, bad_backends=None):
 
     code : str
         IPython code, to be transformed to pure Python
-    no_gui : Boolean
+    no_browser: Boolean
         True if matplotlib backends should be filtered
     bad_backends: list of str
         List of strings, each of which is a forbidden matplotlib backend.
@@ -251,8 +251,8 @@ def ipython2python(code, no_gui=False, bad_backends=None):
         )
         return code
     else:
-        if no_gui and "%matplotlib" in code:
-            code = _remove_gui_mpl_backends(code, bad_backends)
+        if no_browser and re.match("% *matplotlib", code):
+            code = _remove_browser_mpl_backends(code, browser_backends)
         isp = IPythonInputSplitter(line_input_checker=False)
         return isp.transform_cell(code)
 
