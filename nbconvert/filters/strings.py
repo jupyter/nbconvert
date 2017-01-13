@@ -222,11 +222,11 @@ def _remove_browser_mpl_backends(code, browser_backends=None):
         mpl_magic_regex_local = mpl_magic_regex
 
     lines = code.split('\n')
-    magic_line = [i for i,x in enumerate(lines) if mpl_magic_regex_local.match(lines[x])]
+    magic_line = [i for i,x in enumerate(lines) if mpl_magic_regex_local.match(lines[i])]
     if len(magic_line)!=0: 
         # only change first backend declaration (since the rest shouldn't work anyway)
-        lines[magic_line[0]] = mpl_magic_regex_local.match(lines[magic_line[0]]).group(1)
-        lines[magic_line[0]] += "\n# nbconvert removed: " + mpl_magic_regex_local.match(lines[magic_line[0]]).group(2)
+        regex_match = mpl_magic_regex_local.match(lines[magic_line[0]])
+        lines[magic_line[0]] = regex_match.group(1) + "\n# nbconvert removed: " + regex_match.group(2)
         code = "\n".join(lines)
     return code
 
