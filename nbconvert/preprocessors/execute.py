@@ -125,6 +125,17 @@ class ExecutePreprocessor(Preprocessor):
             )
     ).tag(config=True)
 
+    iopub_timeout = Integer(4, allow_none=False,
+        help=dedent(
+            """
+            The time to wait (in seconds) for IOPub output. This generally
+            doesn't need to be set, but on some slow networks (such as CI
+            systems) the default timeout might not be long enough to get all
+            messages.
+            """
+        )
+    ).tag(config=True)
+
     shutdown_kernel = Enum(['graceful', 'immediate'],
         default_value='graceful',
         help=dedent(
@@ -275,7 +286,7 @@ class ExecutePreprocessor(Preprocessor):
                 # in certain CI systems, waiting < 1 second might miss messages.
                 # So long as the kernel sends a status:idle message when it
                 # finishes, we won't actually have to wait this long, anyway.
-                msg = self.kc.iopub_channel.get_msg(timeout=4)
+                msg = self.kc.iopub_channel.get_msg(timeout=self.iopub_timeout)
             except Empty:
                 self.log.warn("Timeout waiting for IOPub output")
                 if self.raise_on_iopub_timeout:
