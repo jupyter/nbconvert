@@ -200,10 +200,9 @@ def _mpl_magic_regex_generator(browser_backends=None):
     if browser_backends is None:
         browser_backends = ["notebook", "inline"]
     no_mpl_be_str = "|".join(browser_backends)
-    mpl_magic_backend_extractor = re.compile(r'(^% *matplotlib *\w*)({})'.format(no_mpl_be_str))
-    return mpl_magic_backend_extractor
-
-mpl_magic_regex = _mpl_magic_regex_generator()
+    #  mpl_magic_backend_extractor = re.compile(r'(^% *matplotlib *\w*)({})'.format(no_mpl_be_str))
+    #  return mpl_magic_backend_extractor
+    return r'(^% *matplotlib *\w*)({})'.format(no_mpl_be_str)
 
 def _remove_browser_mpl_backends(code, browser_backends=None):
     """Remove incompatible backends from mpl magics.
@@ -216,16 +215,16 @@ def _remove_browser_mpl_backends(code, browser_backends=None):
     notebook_backends: list of str
         List of strings, each of which is a forbidden matplotlib backend.
     """
-    if browser_backends is not None:
-        mpl_magic_regex_local = _mpl_magic_regex_generator(browser_backends)
-    else: 
-        mpl_magic_regex_local = mpl_magic_regex
+    #  mpl_magic_regex_local = _mpl_magic_regex_generator(browser_backends)
 
     lines = code.split('\n')
-    magic_line = [i for i,x in enumerate(lines) if mpl_magic_regex_local.match(lines[i])]
+    magic_line = [i for i,x in enumerate(lines) if re.match(_mpl_magic_regex_generator(browser_backends),lines[i])]
+    import logging; logging.warn("hi", magic_line); 
+    assert False, lines
     if len(magic_line)!=0: 
         # only change first backend declaration (since the rest shouldn't work anyway)
-        regex_match = mpl_magic_regex_local.match(lines[magic_line[0]])
+        #  regex_match = mpl_magic_regex_local.match(lines[magic_line[0]])
+        regex_match = re.match(_mpl_magic_regex_generator(browser_backends),lines[magic_line[0]])
         lines[magic_line[0]] = regex_match.group(1) + "\n# nbconvert removed: " + regex_match.group(2)
         code = "\n".join(lines)
     return code
