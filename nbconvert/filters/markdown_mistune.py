@@ -8,7 +8,7 @@ Used from markdown.py
 from __future__ import print_function
 
 import re
-import html
+import cgi
 
 import mistune
 
@@ -105,8 +105,12 @@ class IPythonRenderer(mistune.Renderer):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
         return add_anchor(html)
 
+    # We must be careful here for compatibility
+    # html.escape() is not availale on python 2.7
+    # For more details, see:
+    # https://wiki.python.org/moin/EscapingHtml
     def escape_html(self,text):
-        return html.escape(text,quote=False)
+        return cgi.escape(text)
 
     def block_math(self, text):
         return '$$%s$$' % self.escape_html(text)

@@ -5,7 +5,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
-import html
 from copy import copy
 from functools import partial
 
@@ -147,7 +146,7 @@ class TestMarkdown(TestsBase):
             self.assertNotIn(">", math)
             self.assertNotRegex(math,"&(?![gt;|lt;|amp;])")
             # the result should be able to be unescaped correctly
-            self.assertEquals(case,html.unescape(math))
+            self.assertEquals(case,self._unescape(math))
 
     def test_markdown2html_math_mixed(self):
         """ensure markdown between inline and inline-block math"""
@@ -188,7 +187,8 @@ i.e. the $i^{th}$"""
         ]
 
         for case in cases:
-            self.assertIn(case, html.unescape(markdown2html(case)))
+            s = markdown2html(case)
+            self.assertIn(case,self._unescape(s))
 
     @dec.onlyif_cmds_exist('pandoc')
     def test_markdown2rst(self):
@@ -210,3 +210,14 @@ i.e. the $i^{th}$"""
         else:
             for token in tokens:
                 self.assertIn(token, results)
+
+    def _unescape(self,s):
+        # undo cgi.escape() manually
+        # We must be careful here for compatibility
+        # html.unescape() is not availale on python 2.7
+        # For more information, see:
+        # https://wiki.python.org/moin/EscapingHtml
+        s = s.replace("&lt;", "<")
+        s = s.replace("&gt;", ">")
+        s = s.replace("&amp;", "&")
+        return s
