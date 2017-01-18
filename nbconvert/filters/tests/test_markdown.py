@@ -5,6 +5,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
+import html
 from copy import copy
 from functools import partial
 
@@ -118,8 +119,8 @@ class TestMarkdown(TestsBase):
         ]:
             self._try_markdown(markdown2html, md, tokens)
 
-    def test_markdown2html_math(self):
-        # Mathematical expressions should be passed through unaltered
+    def test_markdown2html_math_noescape(self):
+        # Mathematical expressions not containing <, >, & should be passed through unaltered
         cases = [("\\begin{equation*}\n"
                   "\\left( \\sum_{k=1}^n a_k b_k \\right)^2 \\leq \\left( \\sum_{k=1}^n a_k^2 \\right) \\left( \\sum_{k=1}^n b_k^2 \\right)\n"
                   "\\end{equation*}"),
@@ -131,7 +132,23 @@ class TestMarkdown(TestsBase):
                 ]
         for case in cases:
             self.assertIn(case, markdown2html(case))
-    
+
+    def test_markdown2html_math_escape(self):
+        # all the "<", ">", "&" must be escaped correctly
+        cases = [ "$a<b&b<lt$",
+                  "$a<b&lt;b>a;a-b<0$",
+                  "$<k'>$"]
+        for case in cases:
+            result = markdown2html(case)
+            math = re.search("\$.*\$",result).group(0)
+            # the resulting math part can not contain "<", ">" or
+            # "&" not followed by "lt;", "gt;", or "amp;".
+            self.assertNotIn("<", math)
+            self.assertNotIn(">", math)
+            self.assertNotRegex(math,"&(?![gt;|lt;|amp;])")
+            # the result should be able to be unescaped correctly
+            self.assertEquals(case,html.unescape(math))
+
     def test_markdown2html_math_mixed(self):
         """ensure markdown between inline and inline-block math"""
         case = """The entries of $C$ are given by the exact formula:
@@ -171,7 +188,7 @@ i.e. the $i^{th}$"""
         ]
 
         for case in cases:
-            self.assertIn(case, markdown2html(case))
+            self.assertIn(case, html.unescape(markdown2html(case)))
 
     @dec.onlyif_cmds_exist('pandoc')
     def test_markdown2rst(self):

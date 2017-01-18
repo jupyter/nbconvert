@@ -8,6 +8,7 @@ Used from markdown.py
 from __future__ import print_function
 
 import re
+import html
 
 import mistune
 
@@ -104,20 +105,19 @@ class IPythonRenderer(mistune.Renderer):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
         return add_anchor(html)
 
-    def escape_lt(self,text):
-        return text.replace('<','&lt;')
+    def escape_html(self,text):
+        return html.escape(text,quote=False)
 
-    # Pass math through unaltered - mathjax does the rendering in the browser
     def block_math(self, text):
-        return '$$%s$$' % self.escape_lt(text)
+        return '$$%s$$' % self.escape_html(text)
 
     def latex_environment(self, name, text):
-        name = self.escape_lt(name)
-        text = self.escape_lt(text)
+        name = self.escape_html(name)
+        text = self.escape_html(text)
         return r'\begin{%s}%s\end{%s}' % (name, text, name)
 
     def inline_math(self, text):
-        return '$%s$' % self.escape_lt(text)
+        return '$%s$' % self.escape_html(text)
 
 def markdown2html_mistune(source):
     """Convert a markdown string to HTML using mistune"""
