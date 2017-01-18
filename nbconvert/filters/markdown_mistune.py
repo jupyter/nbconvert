@@ -104,15 +104,20 @@ class IPythonRenderer(mistune.Renderer):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
         return add_anchor(html)
 
+    def escape_lt(self,text):
+        return text.replace('<','&lt;')
+
     # Pass math through unaltered - mathjax does the rendering in the browser
     def block_math(self, text):
-        return '$$%s$$' % text
+        return '$$%s$$' % self.escape_lt(text)
 
     def latex_environment(self, name, text):
+        name = self.escape_lt(name)
+        text = self.escape_lt(text)
         return r'\begin{%s}%s\end{%s}' % (name, text, name)
 
     def inline_math(self, text):
-        return '$%s$' % text
+        return '$%s$' % self.escape_lt(text)
 
 def markdown2html_mistune(source):
     """Convert a markdown string to HTML using mistune"""
