@@ -144,6 +144,9 @@ class TestMarkdown(TestsBase):
             # "&" not followed by "lt;", "gt;", or "amp;".
             self.assertNotIn("<", math)
             self.assertNotIn(">", math)
+            # python 2.7 has assertNotRegexpMatches instead of assertNotRegex
+            if not hasattr(self, 'assertNotRegex'):
+                self.assertNotRegex = self.assertNotRegexpMatches
             self.assertNotRegex(math,"&(?![gt;|lt;|amp;])")
             # the result should be able to be unescaped correctly
             self.assertEquals(case,self._unescape(math))
