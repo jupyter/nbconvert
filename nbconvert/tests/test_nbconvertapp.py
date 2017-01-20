@@ -33,7 +33,7 @@ class TestNbConvertApp(TestsBase):
         """Will help show if no notebooks are specified?"""
         with self.create_temp_cwd():
             out, err = self.nbconvert('--log-level 0', ignore_return_code=True)
-            self.assertIn("see '--help-all'", out)
+            self.assertIn("--help-all", out)
 
     def test_help_output(self):
         """ipython nbconvert --help-all works"""
