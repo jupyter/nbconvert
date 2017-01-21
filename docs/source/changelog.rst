@@ -1,6 +1,19 @@
 Changes in nbconvert
 ====================
 
+5.1
+---
+
+`5.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.0>`__
+
+- improved CSS (specifically tables, in line with notebook) #498
+- improve in-memory templates handling #491
+- test improvements #516 #509 #505
+- new configuration option: IOPub timeout #513
+- doc improvements #489 #500 #493 #506
+- newly customizable: output prompt #500
+- more python2/3 compatibile unicode handling #502
+
 5.0
 ---
 
