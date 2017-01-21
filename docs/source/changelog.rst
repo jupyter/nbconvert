@@ -1,10 +1,17 @@
 Changes in nbconvert
 ====================
 
+5.1.1
+-----
+
+`5.1.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.1.1>`__
+
+- fix version numbering because of incomplete previous version number
+
 5.1
 ---
 
-`5.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.0>`__
+`5.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.1>`__
 
 - improved CSS (specifically tables, in line with notebook) #498
 - improve in-memory templates handling #491
