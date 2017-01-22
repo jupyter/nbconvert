@@ -204,6 +204,12 @@ class TemplateExporter(Exporter):
         self.observe(self._invalidate_template_cache,
                      list(self.traits(affects_template=True)))
 
+    def _log_template_loading(self,template_file):
+        """ abstract away some of the loggging for finding templates
+        """
+        self.log.debug("Attempting to load template %s", template_file)
+        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+        pass
 
     def _load_template(self):
         """Load the Jinja template object from the template file
@@ -220,33 +226,24 @@ class TemplateExporter(Exporter):
         template_file = self.template_file
         
         try:
-            _log_template_loading(template_file)
+            self._log_template_loading(template_file)
             return self.environment.get_template(template_file)
         except TemplateNotFound:
             if self.template_file.endswith(self.template_extension):
                 try: 
                     template_file = self.template_file[:-len(self.template_extension)]
-                    _log_template_loading(template_file)
+                    self._log_template_loading(template_file)
+                    return self.environment.get_template(template_file)
                 except TemplateNotFound:
                     raise TemplateNotFound(template_file)
             else:
                 try:
                     template_file = self.template_file + self.template_extension
-                    _log_template_loading(template_file)
+                    self._log_template_loading(template_file)
                     return self.environment.get_template(template_file)
                 except TemplateNotFound:
                     raise TemplateNotFound(template_file)
-        
-        self.log.debug("Attempting to load template %s", template_file)
-        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
-        return self.environment.get_template(template_file)
 
-    def _log_template_loading(template_file):
-        """ abstract away some of the loggging for finding templates
-        """
-        self.log.debug("Attempting to load template %s", template_file)
-        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
-        pass
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """
