@@ -123,7 +123,6 @@ class TestExporter(ExportersTestsBase):
         # creates a class that uses this template with the template_file argument
         # converts an empty notebook using this mechanism
         my_loader = DictLoader({'my_template': "{%- extends 'rst.tpl' -%}"})
-        
         class MyExporter(TemplateExporter):
             template_file = 'my_template'
         
@@ -131,6 +130,18 @@ class TestExporter(ExportersTestsBase):
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
 
+    def test_in_memory_template_extensions(self):
+        # Loads in an in memory template using jinja2.DictLoader
+        # creates a class that uses this template with the template_file argument
+        # converts an empty notebook using this mechanism
+        my_loader = DictLoader({'my_template.tpl': "{%- extends 'rst.tpl' -%}"})
+
+        class MyExporter(TemplateExporter):
+            template_file = 'my_template'
+        
+        exporter = MyExporter(extra_loaders=[my_loader])
+        nb = v4.new_notebook()
+        out, resources = exporter.from_notebook_node(nb)
 
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't

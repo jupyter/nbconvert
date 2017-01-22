@@ -71,12 +71,13 @@ class ExtensionTolerantLoader(BaseLoader):
    
 
     def get_source(self, environment, template):
+        
         try:
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
             if template.endswith(self.extension):
                 raise TemplateNotFound(template)
-            return self.loader.get_source(environment, template+self.extension)
+            return self.loader.get_source(environment, template + self.extension)
 
     def list_templates(self):
         return self.loader.list_templates()
@@ -217,6 +218,34 @@ class TemplateExporter(Exporter):
         # template by name with extension added, then try loading the template
         # as if the name is explicitly specified.
         template_file = self.template_file
+        
+        if not self.template_file.endswith(self.template_extension):
+            try: 
+                self.log.debug("Attempting to load template %s", template_file)
+                self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+                return self.environment.get_template(template_file)
+            except TemplateNotFound:
+                try: 
+                    template_file = self.template_file + self.template_extension
+                    self.log.debug("Attempting to load template %s", template_file)
+                    self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+                    return self.environment.get_template(template_file)
+                except TemplateNotFound:
+                    raise TemplateNotFound(template_file)
+        else:
+            try: 
+                self.log.debug("Attempting to load template %s", template_file)
+                self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+                return self.environment.get_template(template_file)
+            except TemplateNotFound:
+                try: 
+                    template_file = self.template_file[:-len(self.template_extension)]
+                    self.log.debug("Attempting to load template %s", template_file)
+                    self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+                    return self.environment.get_template(template_file)
+                except TemplateNotFound:
+                    raise TemplateNotFound(template_file)
+        
         self.log.debug("Attempting to load template %s", template_file)
         self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
         return self.environment.get_template(template_file)
