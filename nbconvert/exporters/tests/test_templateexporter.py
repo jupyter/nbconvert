@@ -155,8 +155,12 @@ class TestExporter(ExportersTestsBase):
         with pytest.raises(TemplateNotFound):
             out, resources = exporter.from_notebook_node(nb)
         
-        
-        
+        template_2 = 'does_not_exist'
+        exporter = TemplateExporter(template_file=template_2)
+        assert template_2 not in exporter.environment.list_templates(extensions=['tpl'])
+        nb = v4.new_notebook()
+        with pytest.raises(TemplateNotFound):
+            out, resources = exporter.from_notebook_node(nb)
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
