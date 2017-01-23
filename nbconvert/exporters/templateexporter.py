@@ -209,7 +209,6 @@ class TemplateExporter(Exporter):
         """
         self.log.debug("Attempting to load template %s", template_file)
         self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
-        pass
 
     def _load_template(self):
         """Load the Jinja template object from the template file
