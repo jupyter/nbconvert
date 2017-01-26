@@ -15,6 +15,7 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
+from traitlets.config import LoggingConfigurable
 
 from nbconvert.filters.strings import add_anchor
 from nbconvert.utils.exceptions import ConversionException
@@ -100,9 +101,13 @@ class IPythonRenderer(mistune.Renderer):
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
 
-    def header(self, text, level, raw=None, anchor_text=''):
+    def header(self, text, level, raw=None):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
-        return add_anchor(html, anchor_text=self.options['anchor_text'])
+        if hasattr(self, 'local_config'):
+            # if this does have a config, pass it in to the add_anchor class instance 
+            return add_anchor(config=self.local_config)(html)
+        else:
+            return add_anchor()(html)
 
     # Pass math through unaltered - mathjax does the rendering in the browser
     def block_math(self, text):
@@ -114,6 +119,15 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % text
 
-def markdown2html_mistune(source, anchor_text=u'¶'):
-    """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer(escape=False,anchor_text=anchor_text)).render(source)
+class Markdown2Html_Mistune(LoggingConfigurable):
+    def __init__(self, **kw):
+        super(Markdown2Html_Mistune, self).__init__(**kw)
+
+    def __call__(self, source):
+        """Convert a markdown string to HTML using mistune"""
+        renderer=IPythonRenderer(escape=False)
+        # when called appropriately by register filter, it will inherit from template's config
+        renderer.local_config = self.config
+        return MarkdownWithMath(renderer=renderer).render(source)
+
+markdown2html_mistune = Markdown2Html_Mistune

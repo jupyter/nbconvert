@@ -5,7 +5,7 @@
 
 import os
 
-from traitlets import default, Unicode
+from traitlets import default
 from traitlets.config import Config
 
 from nbconvert.filters.highlight import Highlight2HTML
@@ -35,14 +35,6 @@ class HTMLExporter(TemplateExporter):
     
     output_mimetype = 'text/html'
     
-    anchor_link_text = Unicode(
-            help="The text used as the target for anchor links.").tag(config=True)
-
-    @default('anchor_link_text')
-    def _anchor_link_text(self):
-        """ Defaults to pilcrow (¶)"""
-        return u'¶'
-
     @property
     def default_config(self):
         c = Config({
@@ -74,7 +66,4 @@ class HTMLExporter(TemplateExporter):
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         self.register_filter('highlight_code',
                              Highlight2HTML(pygments_lexer=lexer, parent=self))
-        if resources is None:
-            resources = {}
-        resources['anchor_text'] = self.anchor_link_text
         return super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)

@@ -20,7 +20,9 @@ except ImportError:
 from xml.etree import ElementTree
 
 from ipython_genutils import py3compat
-
+#  from ..utils.base import NbConvertBase
+from traitlets import Unicode
+from traitlets.config import LoggingConfigurable
 
 __all__ = [
     'wrap_text',
@@ -86,26 +88,34 @@ def _convert_header_id(header_contents):
     """
     return header_contents.replace(' ', '-')
 
-def add_anchor(html, anchor_text=u'¶'):
-    """Add an id and an anchor-link to an html header
-    
-    For use on markdown headings
-    """
-    try:
-        h = ElementTree.fromstring(py3compat.cast_bytes_py2(html, encoding='utf-8'))
-    except Exception:
-        # failed to parse, just return it unmodified
-        return html
-    link = _convert_header_id(html2text(h))
-    h.set('id', link)
-    a = ElementTree.Element("a", {"class" : "anchor-link", "href" : "#" + link})
-    a.text = anchor_text
-    h.append(a)
-    # Known issue of Python3.x, ElementTree.tostring() returns a byte string
-    # instead of a text string.  See issue http://bugs.python.org/issue10942
-    # Workaround is to make sure the bytes are casted to a string.
-    return py3compat.decode(ElementTree.tostring(h), 'utf-8')
 
+class AddAnchor(LoggingConfigurable):
+    
+    anchor_link_text = Unicode(u'¶',
+            help="The text used as the target for anchor links.").tag(config=True)
+    
+    def __init__(self, **kw):
+        super(AddAnchor, self).__init__(**kw)
+
+    def __call__(self, html, **kw):
+        
+        try:
+            h = ElementTree.fromstring(py3compat.cast_bytes_py2(html, encoding='utf-8'))
+        except Exception:
+            # failed to parse, just return it unmodified
+            return html
+
+        link = _convert_header_id(html2text(h))
+        h.set('id', link)
+        a = ElementTree.Element("a", {"class" : "anchor-link", "href" : "#" + link})
+        a.text = self.anchor_link_text
+        h.append(a)
+        # Known issue of Python3.x, ElementTree.tostring() returns a byte string
+        # instead of a text string.  See issue http://bugs.python.org/issue10942
+        # Workaround is to make sure the bytes are casted to a string.
+        return py3compat.decode(ElementTree.tostring(h), 'utf-8')
+
+add_anchor = AddAnchor
 
 def add_prompts(code, first='>>> ', cont='... '):
     """Add prompts to code snippets"""

@@ -80,7 +80,7 @@ def markdown2asciidoc(source, extra_args=None):
 
 
 # The mistune renderer is the default, because it's simple to depend on it
-markdown2html = markdown2html_mistune
+markdown2html = markdown2html_mistune()
 
 
 def markdown2rst(source, extra_args=None):

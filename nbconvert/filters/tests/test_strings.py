@@ -53,7 +53,8 @@ class TestStrings(TestsBase):
     def test_add_anchor(self):
         """add_anchor test"""
         #TODO: More tests
-        results = add_anchor('<b>Hello World!</b>')
+        a = add_anchor()
+        results = a('<b>Hello World!</b>')
         assert 'Hello World!' in results
         assert 'id="' in results
         assert 'class="anchor-link"' in results
@@ -63,7 +64,8 @@ class TestStrings(TestsBase):
     def test_add_anchor_fail(self):
         """add_anchor does nothing when it fails"""
         html = '<h1>Hello <br>World!</h1>'
-        results = add_anchor(html)
+        a = add_anchor()
+        results = a(html)
         self.assertEqual(html, results)
 
     def test_strip_dollars(self):

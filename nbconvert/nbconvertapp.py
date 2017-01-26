@@ -24,7 +24,7 @@ from traitlets import (
 from traitlets.utils.importstring import import_item
 
 from .exporters.base import get_export_names, get_exporter
-from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
+from nbconvert import exporters, preprocessors, writers, postprocessors, __version__, filters
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 from .utils.io import unicode_stdin_stream
@@ -113,7 +113,7 @@ class NbConvertApp(JupyterApp):
     @default('classes')
     def _classes_default(self):
         classes = [NbConvertBase]
-        for pkg in (exporters, preprocessors, writers, postprocessors):
+        for pkg in (exporters, preprocessors, writers, postprocessors, filters):
             for name in dir(pkg):
                 cls = getattr(pkg, name)
                 if isinstance(cls, type) and issubclass(cls, Configurable):
