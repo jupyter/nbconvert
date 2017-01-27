@@ -13,5 +13,6 @@
 
 class ConversionException(Exception):
     """An exception raised by the conversion process."""
-
-    pass
+    
+    def __init__(self, message):
+        super(ConversionException, self).__init__(message)
