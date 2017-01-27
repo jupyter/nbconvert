@@ -74,7 +74,7 @@ def markdown2html_pandoc(source, extra_args=None):
             "markdown2html_pandoc has been deprecated as of nbconvert 5.2."
             "Using markdown2html_pandoc will not respect some configuration parameters."
             "If you wish to continue using pandoc for html conversion, please use"
-            "convert_pandoc(source, 'markdown', 'html', extra_args=extra_args) directly."
+            "convert_pandoc(source, 'markdown', 'html', extra_args=extra_args) directly.",
             FutureWarning)
    
     extra_args = extra_args or ['--mathjax']
