@@ -11,14 +11,22 @@ import re
 
 try:
     from .markdown_mistune import markdown2html_mistune
+    markdown2html = markdown2html_mistune()
 except ImportError as e:
     # store in variable for Python 3
     _mistune_import_error = e
 
+    import warnings
+    warnings.warn(
+            "Conversion to other formats without mistune has been deprecated as of nbconvert 5.2."
+            "It has been required for html export since at least nbconvert 4.0.",
+            FutureWarning)
     def markdown2html_mistune(source):
         """mistune is unavailable, raise ImportError"""
         raise ImportError("markdown2html requires mistune: %s"
                           % _mistune_import_error)
+
+    markdown2html = markdown2html_mistune
 
 from .pandoc import convert_pandoc
 
@@ -61,6 +69,7 @@ def markdown2html_pandoc(source, extra_args=None):
     """
     Convert a markdown string to HTML via pandoc.
     """
+
     extra_args = extra_args or ['--mathjax']
     return convert_pandoc(source, 'markdown', 'html', extra_args=extra_args)
 
@@ -77,11 +86,6 @@ def markdown2asciidoc(source, extra_args=None):
         asciidoc = re.sub(r'\(__([\w\/-:\.]+)__\)', r'(_\1_)', asciidoc)
 
     return asciidoc
-
-
-# The mistune renderer is the default, because it's simple to depend on it
-markdown2html = markdown2html_mistune()
-
 
 def markdown2rst(source, extra_args=None):
     """

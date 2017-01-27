@@ -86,6 +86,10 @@ class MarkdownWithMath(mistune.Markdown):
 
 
 class IPythonRenderer(mistune.Renderer):
+    
+    def __init__(self,*args,**kwargs):
+        super(IPythonRenderer,self).__init__(*args,**kwargs)
+
     def block_code(self, code, lang):
         if lang:
             try:
@@ -125,7 +129,7 @@ class Markdown2Html_Mistune(LoggingConfigurable):
 
     def __call__(self, source):
         """Convert a markdown string to HTML using mistune"""
-        renderer=IPythonRenderer(escape=False)
+        renderer = IPythonRenderer(escape=False)
         # when called appropriately by register filter, it will inherit from template's config
         renderer.local_config = self.config
         return MarkdownWithMath(renderer=renderer).render(source)
