@@ -12,7 +12,6 @@ import warnings
 
 try:
     from .markdown_mistune import markdown2html_mistune
-    markdown2html = markdown2html_mistune()
 except ImportError as e:
     # store in variable for Python 3
     _mistune_import_error = e
@@ -26,7 +25,6 @@ except ImportError as e:
         raise ImportError("markdown2html requires mistune: %s"
                           % _mistune_import_error)
 
-    markdown2html = markdown2html_mistune
 
 from .pandoc import convert_pandoc
 
@@ -40,6 +38,7 @@ __all__ = [
     'markdown2asciidoc',
 ]
 
+markdown2html = markdown2html_mistune
 
 def markdown2latex(source, markup='markdown', extra_args=None):
     """

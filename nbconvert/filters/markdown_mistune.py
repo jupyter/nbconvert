@@ -134,4 +134,4 @@ class Markdown2Html_Mistune(LoggingConfigurable):
         renderer.local_config = self.config
         return MarkdownWithMath(renderer=renderer).render(source)
 
-markdown2html_mistune = Markdown2Html_Mistune
+markdown2html_mistune = Markdown2Html_Mistune()
