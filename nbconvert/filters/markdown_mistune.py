@@ -17,7 +17,7 @@ from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
 from traitlets.config import LoggingConfigurable
 
-from nbconvert.filters.strings import add_anchor
+from nbconvert.filters.strings import add_anchor, AddAnchor
 from nbconvert.utils.exceptions import ConversionException
 
 
@@ -109,9 +109,9 @@ class IPythonRenderer(mistune.Renderer):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
         if hasattr(self, 'local_config'):
             # if this does have a config, pass it in to the add_anchor class instance 
-            return add_anchor(config=self.local_config)(html)
+            return AddAnchor(config=self.local_config)(html)
         else:
-            return add_anchor()(html)
+            return add_anchor(html)
 
     # Pass math through unaltered - mathjax does the rendering in the browser
     def block_math(self, text):

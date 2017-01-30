@@ -115,7 +115,7 @@ class AddAnchor(LoggingConfigurable):
         # Workaround is to make sure the bytes are casted to a string.
         return py3compat.decode(ElementTree.tostring(h), 'utf-8')
 
-add_anchor = AddAnchor
+add_anchor = AddAnchor()
 
 def add_prompts(code, first='>>> ', cont='... '):
     """Add prompts to code snippets"""
