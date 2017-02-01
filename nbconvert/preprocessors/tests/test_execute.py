@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Module with tests for the execute preprocessor.
 """
@@ -12,12 +14,13 @@ import os
 import re
 
 import nbformat
+import sys
 
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError
 
 from nbconvert.filters import strip_ansi
-from nose.tools import assert_raises
+from nose.tools import assert_raises, assert_in
 from testpath import modified_env
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
@@ -184,7 +187,12 @@ class TestExecute(PreprocessorTestsBase):
         res['metadata']['path'] = os.path.dirname(filename)
         with assert_raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
-        self.assertIsInstance(str(exc), str)
+        self.assertIsInstance(str(exc.exception), str)
+        if sys.version_info >= (3, 0):
+            assert_in(u"# üñîçø∂é", str(exc.exception))
+        else:
+            assert_in(u"# üñîçø∂é".encode('utf8', 'replace'),
+                      str(exc.exception))
 
     def test_custom_kernel_manager(self):
         from .fake_kernelmanager import FakeCustomKernelManager
