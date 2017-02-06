@@ -136,7 +136,16 @@ class TestMarkdown(TestsBase):
         # all the "<", ">", "&" must be escaped correctly
         cases = [ "$a<b&b<lt$",
                   "$a<b&lt;b>a;a-b<0$",
-                  "$<k'>$"]
+                  "$<k'>$",
+                  "$$a<b&b<lt$$",
+                  "$$a<b&lt;b>a;a-b<0$$",
+                  "$$<k'>$$",
+                  """$
+\begin{tabular}{ l c r }
+  1 & 2 & 3 \\
+  4 & 5 & 6 \\
+  7 & 8 & 9 \\
+\end{tabular}$"""]
         for case in cases:
             result = markdown2html(case)
             math = re.search("\$.*\$",result).group(0)
