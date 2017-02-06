@@ -136,15 +136,19 @@ class TestMarkdown(TestsBase):
                   "$$a<b&lt;b>a;a-b<0$$",
                   "$$<k'>$$",
                   """$
-\begin{tabular}{ l c r }
+\\begin{tabular}{ l c r }
   1 & 2 & 3 \\
   4 & 5 & 6 \\
   7 & 8 & 9 \\
-\end{tabular}$"""]
+\\end{tabular}$"""]
 
         for case in cases:
             result = markdown2html(case)
-            math = re.search("\$.*\$",result).group(0)
+            # find the equation in the generated texts
+            search_result = re.search("\$.*\$",result,re.DOTALL)
+            if search_result is None:
+                search_result = re.search("\\\\begin\\{equation.*\\}.*\\\\end\\{equation.*\\}",result,re.DOTALL)
+            math = search_result.group(0)
             # the resulting math part can not contain "<", ">" or
             # "&" not followed by "lt;", "gt;", or "amp;".
             self.assertNotIn("<", math)
