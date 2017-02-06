@@ -118,8 +118,9 @@ class TestMarkdown(TestsBase):
         ]:
             self._try_markdown(markdown2html, md, tokens)
 
-    def test_markdown2html_math_noescape(self):
+    def test_markdown2html_math(self):
         # Mathematical expressions not containing <, >, & should be passed through unaltered
+        # all the "<", ">", "&" must be escaped correctly
         cases = [("\\begin{equation*}\n"
                   "\\left( \\sum_{k=1}^n a_k b_k \\right)^2 \\leq \\left( \\sum_{k=1}^n a_k^2 \\right) \\left( \\sum_{k=1}^n b_k^2 \\right)\n"
                   "\\end{equation*}"),
@@ -127,14 +128,8 @@ class TestMarkdown(TestsBase):
                   "a = 1 *3* 5\n"
                   "$$"),
                   "$ a = 1 *3* 5 $",
-                  "$s_i = s_{i}\n$"
-                ]
-        for case in cases:
-            self.assertIn(case, markdown2html(case))
-
-    def test_markdown2html_math_escape(self):
-        # all the "<", ">", "&" must be escaped correctly
-        cases = [ "$a<b&b<lt$",
+                  "$s_i = s_{i}\n$",
+                  "$a<b&b<lt$",
                   "$a<b&lt;b>a;a-b<0$",
                   "$<k'>$",
                   "$$a<b&b<lt$$",
@@ -146,6 +141,7 @@ class TestMarkdown(TestsBase):
   4 & 5 & 6 \\
   7 & 8 & 9 \\
 \end{tabular}$"""]
+
         for case in cases:
             result = markdown2html(case)
             math = re.search("\$.*\$",result).group(0)
