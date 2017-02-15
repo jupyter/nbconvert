@@ -28,6 +28,7 @@ class CellExecutionError(ConversionException):
     failures gracefully.
     """
     def __init__(self, traceback):
+        super(CellExecutionError, self).__init__(traceback)
         self.traceback = traceback
 
     def __str__(self):
