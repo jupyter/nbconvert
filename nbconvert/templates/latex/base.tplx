@@ -13,10 +13,10 @@ This template does not define a docclass, the inheriting class must define this.
     ((* block docclass *))((* endblock docclass *))
     
     ((* block packages *))
-    \usepackage[T1]{fontenc}
     % Nicer default font (+ math font) than Computer Modern for most use cases
     \usepackage{mathpazo}
-
+    \usepackage{fontspec}
+    \setmainfont[Numbers=OldStyle, Ligatures={Common, TeX}, Scale=1.0]{Palatino}
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
     \usepackage{graphicx}
