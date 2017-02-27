@@ -14,15 +14,15 @@ This template does not define a docclass, the inheriting class must define this.
     
     ((* block packages *))
 % Nicer default font (+ math font) than Computer Modern for most use cases
-
+\XeTeXtracingfonts=1
+\listfiles
 \usepackage{amsmath} % Equations
 \usepackage{mathspec}
-\setmonofont[Ligatures=TeX,Numbers=, Scale=1,Extension = .otf, 
-WordSpace={1,0,0}, PunctuationSpace=WordSpace, UprightFont=*-Regular,
-ItalicFont=*-RegularIt, BoldFont=*-Bold, BoldItalicFont=*-BoldIt]{SourceCodePro}
+% \setmonofont[Ligatures=TeX,Numbers=, Scale=1,Extension = .otf, 
+% WordSpace={1,0,0}, PunctuationSpace=WordSpace, UprightFont=*-Regular,
+% ItalicFont=*-RegularIt, BoldFont=*-Bold, BoldItalicFont=*-BoldIt]{SourceCodePro}
 
-\usepackage{mathpazo}
-\usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+% \usepackage{mathpazo}
 
 % Basic figure setup, for now with no caption control since it's done
 % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
@@ -45,10 +45,9 @@ ItalicFont=*-RegularIt, BoldFont=*-Bold, BoldItalicFont=*-BoldIt]{SourceCodePro}
 \captionsetup{labelformat=nolabel}
 
 \usepackage{adjustbox} % Used to constrain images to a maximum size 
+
 \usepackage{xcolor} % Allow colors to be defined
-\usepackage{enumerate} % Needed for markdown enumerations to work
 \usepackage{geometry} % Used to adjust the document margins
-\usepackage{amssymb} % Equations
 \usepackage{textcomp} % defines textquotesingle
 % Hack from http://tex.stackexchange.com/a/47451/13684:
 \AtBeginDocument{%
@@ -59,13 +58,19 @@ ItalicFont=*-RegularIt, BoldFont=*-Bold, BoldItalicFont=*-BoldIt]{SourceCodePro}
 \usepackage{fancyvrb} % verbatim replacement that allows latex
 \usepackage{grffile} % extends the file name processing of package graphics 
                      % to support a larger range 
+
 % The hyperref package gives us a pdf with properly built
 % internal navigation ('pdf bookmarks' for the table of contents,
 % internal cross-reference links, web links for URLs, etc.)
 \usepackage{hyperref}
+
+% longtable and booktabs make for better tabular displays. 
 \usepackage{longtable} % longtable support required by pandoc >1.10
 \usepackage{booktabs}  % table support for pandoc > 1.12.2
+
+\usepackage{enumerate} % Needed for markdown enumerations to work
 \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+
 \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
                             % normalem makes italics be italics, not underlines
     ((* endblock packages *))
