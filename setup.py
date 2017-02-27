@@ -202,7 +202,7 @@ extras_require = setuptools_args['extras_require'] = {
     # but we are running with pytest
     'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'jupyter_client'],
     'serve': ['tornado>=4.0'],
-    'execute': ['jupyter_client'],
+    'execute': ['jupyter_client>=4.2'],
 }
 
 if 'setuptools' in sys.modules:
