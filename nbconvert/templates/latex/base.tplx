@@ -18,7 +18,7 @@ This template does not define a docclass, the inheriting class must define this.
 \listfiles
 \usepackage{amsmath} % Equations
 \usepackage{mathspec}
-\setmainfont{Arial}
+\setmainfont{TeX Gyre Pagella}
 \setmonofont[Ligatures=TeX, PunctuationSpace=WordSpace, Extension=.otf,
 Numbers={OldStyle,Monospaced}, WordSpace={1,0,0}, Scale=1.0, 
 UprightFont=*-Regular, BoldFont=*-Bold]{SourceCodePro}
