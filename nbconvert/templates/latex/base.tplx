@@ -18,9 +18,9 @@ This template does not define a docclass, the inheriting class must define this.
 \listfiles
 \usepackage{amsmath} % Equations
 \usepackage{mathspec}
-% \setmonofont[Ligatures = TeX, PunctuationSpace = WordSpace, Extension = .otf,
-% Numbers = OldStyle, WordSpace = {1,0,0}, Scale = 1, 
-% UprightFont = *-Regular, BoldFont = *-Bold]{SourceCodePro}
+\setmonofont[Ligatures=TeX, PunctuationSpace=WordSpace, Extension=.otf,
+Numbers={OldStyle,Monospaced}, WordSpace={1,0,0}, Scale=1.0, 
+UprightFont=*-Regular, BoldFont=*-Bold]{SourceCodePro}
 
 % \usepackage{mathpazo}
 
