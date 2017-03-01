@@ -18,10 +18,12 @@ This template does not define a docclass, the inheriting class must define this.
 \listfiles
 \usepackage{amsmath} % Equations
 \usepackage{mathspec}
-\setmainfont[Extension=.otf, Ligatures=TeX, Numbers=OldStyle, UprightFont=*-regular, BoldFont=*-bold, ItalicFont=*-italic]{texgyrepagella}
+\setmainfont[Ligatures=TeX, PunctuationSpace=WordSpace, Extension=.otf, 
+Numbers=OldStyle, WordSpace={1,0,0},
+UprightFont=*-regular, BoldFont=*-bold, ItalicFont=*-italic ]{texgyrepagella}
 \setmonofont[Ligatures=TeX, PunctuationSpace=WordSpace, Extension=.otf,
 Numbers={OldStyle,Monospaced}, WordSpace={1,0,0}, Scale=1.0, 
-UprightFont=*-Regular, BoldFont=*-Bold]{SourceCodePro}
+UprightFont=*-Regular, BoldFont=*-Bold ]{SourceCodePro}
 
 % \usepackage{mathpazo}
 
