@@ -112,6 +112,33 @@ class SlidesExporter(HTMLExporter):
     def _template_file_default(self):
         return 'slides_reveal'
 
+    jquery_url = Unicode(
+        help="""
+        URL to load jQuery from.
+
+        Defaults to loading from cdnjs.
+        """,
+        default="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"
+    ).tag(config=True)
+
+    require_js_url = Unicode(
+        help="""
+        URL to load require.js from.
+
+        Defaults to loading from cdnjs.
+        """,
+        default="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"
+    ).tag(config=True)
+
+    font_awesome_url = Unicode(
+        help="""
+        URL to load font awesome from.
+
+        Defaults to loading from cdnjs.
+        """,
+        default="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css"
+    ).tag(config=True)
+
     output_mimetype = 'text/html'
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -120,6 +147,9 @@ class SlidesExporter(HTMLExporter):
             resources['reveal'] = {}
         resources['reveal']['url_prefix'] = self.reveal_url_prefix
         resources['reveal']['theme'] = self.reveal_theme
+        resources['reveal']['jquery_url'] = self.jquery_url
+        resources['reveal']['font_awesome_url'] = self.font_awesome_url
+        resources['reveal']['require_js_url'] = self.require_js_url
 
         nb = prepare(nb)
 
