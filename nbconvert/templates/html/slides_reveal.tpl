@@ -51,7 +51,7 @@
 
 <!-- General and theme style sheets -->
 <link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/reveal.css">
-<link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/theme/simple.css" id="theme">
+<link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/theme/{{resources.reveal.theme}}.css" id="theme">
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
