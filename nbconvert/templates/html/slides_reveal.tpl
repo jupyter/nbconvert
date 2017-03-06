@@ -46,12 +46,12 @@
 
 <title>{{resources['metadata']['name']}} slides</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="{{resources.reveal.require_js_url}}"></script>
+<script src="{{resources.reveal.jquery_url}}"></script>
 
 <!-- General and theme style sheets -->
 <link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/reveal.css">
-<link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/theme/simple.css" id="theme">
+<link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/theme/{{resources.reveal.theme}}.css" id="theme">
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -73,7 +73,7 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 {{ mathjax() }}
 
 <!-- Get Font-awesome from cdn -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css">
+<link rel="stylesheet" href="{{resources.reveal.font_awesome_url}}">
 
 {% for css in resources.inlining.css -%}
     <style type="text/css">
