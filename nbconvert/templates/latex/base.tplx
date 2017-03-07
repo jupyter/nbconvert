@@ -18,14 +18,18 @@ This template does not define a docclass, the inheriting class must define this.
 \listfiles
 \usepackage{amsmath} % Equations
 \usepackage{mathspec}
-\setmainfont[Ligatures=TeX, PunctuationSpace=WordSpace, Extension=.otf, 
-Numbers=OldStyle, WordSpace={1,0,0},
-UprightFont=*-regular, BoldFont=*-bold, ItalicFont=*-italic ]{texgyrepagella}
-\setmonofont[Ligatures=TeX, PunctuationSpace=WordSpace, Extension=.otf,
-Numbers={OldStyle,Monospaced}, WordSpace={1,0,0}, Scale=1.0, 
-UprightFont=*-Regular, BoldFont=*-Bold ]{SourceCodePro}
 
-% \usepackage{mathpazo}
+\setmainfont[Ligatures=TeX,PunctuationSpace=WordSpace,Extension=.otf,
+Numbers=OldStyle,WordSpace={1,0,0},UprightFont=*-regular,BoldFont=*-bold,
+ItalicFont=*-italic]{texgyrepagella}
+
+\setmonofont[Ligatures=TeX,PunctuationSpace=WordSpace,Extension=.otf,
+Numbers={OldStyle,Monospaced},WordSpace={1,0,0},Scale=1.0, 
+UprightFont=*-Regular,BoldFont=*-Bold]{SourceCodePro}
+
+\setmathsfont(Latin,Greek,Digits){TeX Gyre Pagella Math}
+% \setmathrm{TeX Gyre Pagella Math}
+\usepackage{newunicodechar}
 
 % Basic figure setup, for now with no caption control since it's done
 % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
@@ -79,6 +83,7 @@ UprightFont=*-Regular, BoldFont=*-Bold ]{SourceCodePro}
     ((* endblock packages *))
 
     ((* block definitions *))
+% \newunicodechar{β}{\ifmmode\beta\elseβ\fi}
     % Colors for the hyperref package
     \definecolor{urlcolor}{rgb}{0,.145,.698}
     \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
