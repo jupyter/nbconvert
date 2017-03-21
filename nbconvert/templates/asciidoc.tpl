@@ -2,10 +2,12 @@
 
 
 {% block input %}
+{% if resources.global_content_filter.include_input_prompt %}
 {% if cell.execution_count is defined -%}
     +*In[{{ cell.execution_count|replace(None, " ") }}]:*+
 {% else %}
     +*In[]:*+
+{%- endif -%}
 {%- endif -%}
 [source{% if nb.metadata.language_info %}, {{ nb.metadata.language_info.name }}{% endif %}]
 ----
@@ -14,10 +16,12 @@
 {% endblock input %}
 
 {% block output_group %}
+{% if resources.global_content_filter.include_output_prompt %}
 {% if cell.execution_count is defined -%}
     +*Out[{{ cell.execution_count|replace(None, " ") }}]:*+
 {%- else -%}
     +*Out[]:*+
+{%- endif -%}
 {%- endif %}
 ----
 {{- super() -}}
