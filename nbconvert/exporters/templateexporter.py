@@ -11,7 +11,7 @@ import os
 import uuid
 import json
 
-from traitlets import HasTraits, Unicode, List, Dict, default, observe
+from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
@@ -163,6 +163,31 @@ class TemplateExporter(Exporter):
     
     #Extension that the template files use.
     template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
+    
+    include_input = Bool(True,
+        help = "This allows you to exclude code cell inputs from all templates if set to False."
+        ).tag(config=True)
+
+    include_input_prompt = Bool(True,
+        help = "This allows you to exclude input prompts from all templates if set to False."
+        ).tag(config=True)
+
+    include_output = Bool(True,
+        help = "This allows you to exclude code cell outputs from all templates if set to False."
+        ).tag(config=True)
+
+    include_output_prompt = Bool(True,
+        help = "This allows you to exclude output prompts from all templates if set to False."
+        ).tag(config=True)
+
+    include_code = Bool(True,
+        help = "This allows you to exclude code cells from all templates if set to False."
+        ).tag(config=True)
+
+    include_markdown = Bool(True,
+        help = "This allows you to exclude markdown cells from all templates if set to False."
+        ).tag(config=True)
+
 
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
@@ -235,7 +260,16 @@ class TemplateExporter(Exporter):
         """
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
+        resources['global_content_filter'] = {
+                'include_code': self.include_code,
+                'include_markdown': self.include_markdown,
+                'include_input': self.include_input,
+                'include_output': self.include_output,
+                'include_input_prompt': self.include_input_prompt,
+                'include_output_prompt': self.include_output_prompt,
+                }
 
+        # Top level variables are passed to the template_exporter here.
         output = self.template.render(nb=nb_copy, resources=resources)
         return output, resources
 
