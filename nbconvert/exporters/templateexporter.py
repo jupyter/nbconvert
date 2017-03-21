@@ -164,28 +164,28 @@ class TemplateExporter(Exporter):
     #Extension that the template files use.
     template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
     
-    include_input = Bool(True,
-        help = "This allows you to exclude code cell inputs from all templates if set to False."
+    exclude_input = Bool(False,
+        help = "This allows you to exclude code cell inputs from all templates if set to True."
         ).tag(config=True)
 
-    include_input_prompt = Bool(True,
-        help = "This allows you to exclude input prompts from all templates if set to False."
+    exclude_input_prompt = Bool(False,
+        help = "This allows you to exclude input prompts from all templates if set to True."
         ).tag(config=True)
 
-    include_output = Bool(True,
-        help = "This allows you to exclude code cell outputs from all templates if set to False."
+    exclude_output = Bool(False,
+        help = "This allows you to exclude code cell outputs from all templates if set to True."
         ).tag(config=True)
 
-    include_output_prompt = Bool(True,
-        help = "This allows you to exclude output prompts from all templates if set to False."
+    exclude_output_prompt = Bool(False,
+        help = "This allows you to exclude output prompts from all templates if set to True."
         ).tag(config=True)
 
-    include_code = Bool(True,
-        help = "This allows you to exclude code cells from all templates if set to False."
+    exclude_code = Bool(False,
+        help = "This allows you to exclude code cells from all templates if set to True."
         ).tag(config=True)
 
-    include_markdown = Bool(True,
-        help = "This allows you to exclude markdown cells from all templates if set to False."
+    exclude_markdown = Bool(False,
+        help = "This allows you to exclude markdown cells from all templates if set to True."
         ).tag(config=True)
 
 
@@ -261,12 +261,12 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
         resources['global_content_filter'] = {
-                'include_code': self.include_code,
-                'include_markdown': self.include_markdown,
-                'include_input': self.include_input,
-                'include_output': self.include_output,
-                'include_input_prompt': self.include_input_prompt,
-                'include_output_prompt': self.include_output_prompt,
+                'include_code': not self.exclude_code,
+                'include_markdown': not self.exclude_markdown,
+                'include_input': not self.exclude_input,
+                'include_output': not self.exclude_output,
+                'include_input_prompt': not self.exclude_input_prompt,
+                'include_output_prompt': not self.exclude_output_prompt,
                 }
 
         # Top level variables are passed to the template_exporter here.
