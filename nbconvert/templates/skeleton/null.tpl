@@ -81,14 +81,18 @@ consider calling super even if it is a leave block, we might insert more blocks 
                 {%- block markdowncell scoped-%} {%- endblock markdowncell -%}
             {%- endif -%}
         {%- elif cell.cell_type in ['raw'] -%}
-            {%- block rawcell scoped -%}
-            {%- if cell.metadata.get('raw_mimetype', '').lower() in resources.get('raw_mimetypes', ['']) -%}
-            {{ cell.source }}
+            {%- if resources.global_content_filter.include_raw -%}
+                {%- block rawcell scoped -%}
+                {%- if cell.metadata.get('raw_mimetype', '').lower() in resources.get('raw_mimetypes', ['']) -%}
+                {{ cell.source }}
+                {%- endif -%}
+                {%- endblock rawcell -%}
             {%- endif -%}
-            {%- endblock rawcell -%}
         {%- else -%}
-            {%- block unknowncell scoped-%}
-            {%- endblock unknowncell -%}
+            {%- if resources.global_content_filter.include_unknown -%}
+                {%- block unknowncell scoped-%}
+                {%- endblock unknowncell -%}
+            {%- endif -%}
         {%- endif -%}
     {%- endblock any_cell -%}
 {%- endfor -%}

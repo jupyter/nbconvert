@@ -188,7 +188,14 @@ class TemplateExporter(Exporter):
         help = "This allows you to exclude markdown cells from all templates if set to True."
         ).tag(config=True)
 
+    exclude_raw = Bool(False,
+        help = "This allows you to exclude raw cells from all templates if set to True."
+        ).tag(config=True)
 
+    exclude_unknown = Bool(False,
+        help = "This allows you to exclude unknown cells from all templates if set to True."
+        ).tag(config=True)
+    
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
              "before the default FileSystem ones.",
@@ -263,6 +270,8 @@ class TemplateExporter(Exporter):
         resources['global_content_filter'] = {
                 'include_code': not self.exclude_code,
                 'include_markdown': not self.exclude_markdown,
+                'include_raw': not self.exclude_raw,
+                'include_unknown': not self.exclude_unknown,
                 'include_input': not self.exclude_input,
                 'include_output': not self.exclude_output,
                 'include_input_prompt': not self.exclude_input_prompt,
