@@ -26,7 +26,8 @@ consider calling super even if it is a leave block, we might insert more blocks 
 {%- block body -%}
 {%- for cell in nb.cells -%}
     {%- block any_cell scoped -%}
-        {%- if cell.cell_type == 'code' and resources.global_content_filter.include_code -%}
+        {%- if cell.cell_type == 'code'-%} 
+            {%- if resources.global_content_filter.include_code -%}
             {%- block codecell scoped -%}
                 {%- if resources.global_content_filter.include_input -%}
                     {%- block input_group -%}
@@ -74,6 +75,7 @@ consider calling super even if it is a leave block, we might insert more blocks 
                     {%- endblock output_group -%}
                 {%- endif -%}
             {%- endblock codecell -%}
+            {%- endif -%}
         {%- elif cell.cell_type in ['markdown'] -%}
             {%- if resources.global_content_filter.include_markdown -%}
                 {%- block markdowncell scoped-%} {%- endblock markdowncell -%}
