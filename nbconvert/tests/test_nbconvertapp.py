@@ -306,6 +306,25 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('empty.ipynb')
             assert not os.path.isfile('empty.nbconvert.ipynb')
             assert not os.path.isfile('empty.html')
+    
+    def test_no_prompt(self):
+        """
+        Verify that the notebook is converted in place
+        """
+        with self.create_temp_cwd(["notebook1.ipynb"]):
+            self.nbconvert('notebook1.ipynb --log-level 0 --no-prompt --to html')
+            assert os.path.isfile('notebook1.html')
+            with open("notebook1.html",'r') as f:
+                text = f.read()
+                assert "In&nbsp;[" not in text
+                assert "Out[" not in text
+            self.nbconvert('notebook1.ipynb --log-level 0 --to html')
+            assert os.path.isfile('notebook1.html')
+            with open("notebook1.html",'r') as f:
+                text2 = f.read()
+                print(text2)
+                assert "In&nbsp;[" in text2
+                assert "Out[" in text2
 
     def test_allow_errors(self):
         """
