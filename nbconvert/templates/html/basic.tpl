@@ -24,16 +24,20 @@
 {% block in_prompt -%}
 <div class="prompt input_prompt">
 {%- if cell.execution_count is defined -%}
+{%- if resources.global_content_filter.include_input_prompt-%}
 In&nbsp;[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
 {%- else -%}
 In&nbsp;[&nbsp;]:
+{%- endif -%}
 {%- endif -%}
 </div>
 {%- endblock in_prompt %}
 
 {% block empty_in_prompt -%}
+{%- if resources.global_content_filter.include_input_prompt-%}
 <div class="prompt input_prompt">
 </div>
+{% endif %}
 {%- endblock empty_in_prompt %}
 
 {# 
@@ -74,7 +78,9 @@ In&nbsp;[&nbsp;]:
 
 {% block markdowncell scoped %}
 <div class="cell border-box-sizing text_cell rendered">
+{%- if resources.global_content_filter.include_input_prompt-%}
 {{ self.empty_in_prompt() }}
+{%- endif -%}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 {{ cell.source  | markdown2html | strip_files_prefix }}
