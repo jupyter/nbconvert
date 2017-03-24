@@ -276,6 +276,7 @@ class TemplateExporter(Exporter):
                 'include_output': not self.exclude_output,
                 'include_input_prompt': not self.exclude_input_prompt,
                 'include_output_prompt': not self.exclude_output_prompt,
+                'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
                 }
 
         # Top level variables are passed to the template_exporter here.
