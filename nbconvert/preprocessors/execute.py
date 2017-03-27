@@ -156,7 +156,10 @@ class ExecutePreprocessor(Preprocessor):
     @default('kernel_manager_class')
     def _km_default(self):
         """Use a dynamic default to avoid importing jupyter_client at startup"""
-        from jupyter_client import KernelManager
+        try:
+            from jupyter_client import KernelManager
+        except ImportError:
+            raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
         return KernelManager
 
     def preprocess(self, nb, resources):
