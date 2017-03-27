@@ -12,7 +12,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool, Enum, Any, Type
+from traitlets import List, Unicode, Bool, Enum, Any, Type, default
 
 from nbformat.v4 import output_from_msg
 from .base import Preprocessor
@@ -150,10 +150,17 @@ class ExecutePreprocessor(Preprocessor):
     ).tag(config=True)
 
     kernel_manager_class = Type(
-        default_value='jupyter_client.manager.KernelManager',
         config=True,
         help='The kernel manager class to use.'
     )
+    @default('kernel_manager_class')
+    def _km_default(self):
+        """Use a dynamic default to avoid importing jupyter_client at startup"""
+        try:
+            from jupyter_client import KernelManager
+        except ImportError:
+            raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
+        return KernelManager
 
     def preprocess(self, nb, resources):
         """
