@@ -180,7 +180,7 @@ class TemplateExporter(Exporter):
         help = "This allows you to exclude output prompts from all templates if set to True."
         ).tag(config=True)
 
-    exclude_code = Bool(False,
+    exclude_code_cell = Bool(False,
         help = "This allows you to exclude code cells from all templates if set to True."
         ).tag(config=True)
 
@@ -268,7 +268,7 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
         resources['global_content_filter'] = {
-                'include_code': not self.exclude_code,
+                'include_code': not self.exclude_code_cell,
                 'include_markdown': not self.exclude_markdown,
                 'include_raw': not self.exclude_raw,
                 'include_unknown': not self.exclude_unknown,

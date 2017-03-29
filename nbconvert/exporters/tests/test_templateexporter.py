@@ -146,7 +146,7 @@ class TestExporter(ExportersTestsBase):
         with pytest.raises(TemplateNotFound):
             out, resources = exporter.from_notebook_node(nb)
         
-    def test_exclude_codecells(self):
+    def test_exclude_code_cell(self):
         no_io = {
             "TemplateExporter":{
                 "exclude_output": True,
@@ -154,7 +154,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_input_prompt": False,
                 "exclude_output_prompt": False,
                 "exclude_markdown": False,
-                "exclude_code": False,
+                "exclude_code_cell": False,
             }
         }
         c_no_io = Config(no_io)
@@ -172,7 +172,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_input_prompt": False,
                 "exclude_output_prompt": False,
                 "exclude_markdown": False,
-                "exclude_code": True,
+                "exclude_code_cell": True,
             }
         }
         c_no_code = Config(no_code)
@@ -192,7 +192,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_input_prompt": True,
                 "exclude_output_prompt": False,
                 "exclude_markdown": False,
-                "exclude_code": False,
+                "exclude_code_cell": False,
             }
         }
         c_no_input_prompt = Config(no_input_prompt)
@@ -211,7 +211,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_input_prompt": False,
                 "exclude_output_prompt": False,
                 "exclude_markdown": True,
-                "exclude_code": False,
+                "exclude_code_cell": False,
             }
         }
 
@@ -231,7 +231,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_input_prompt": False,
                 "exclude_output_prompt": True,
                 "exclude_markdown": False,
-                "exclude_code": False,
+                "exclude_code_cell": False,
             }
         }
         c_no_output_prompt = Config(no_output_prompt)
