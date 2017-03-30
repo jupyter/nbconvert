@@ -49,7 +49,6 @@ default_filters = {
         'citation2latex': filters.citation2latex,
         'path2url': filters.path2url,
         'add_prompts': filters.add_prompts,
-        'ascii_only': filters.ascii_only,
         'prevent_list_blocks': filters.prevent_list_blocks,
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,

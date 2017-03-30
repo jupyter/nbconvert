@@ -22,8 +22,6 @@ e.g. a terminal traceback) to HTML colors.
 
 .. autofunction:: ansi2latex
 
-.. autofunction:: ascii_only
-
 .. autofunction:: citation2latex
 
 .. autofunction:: comment_lines
