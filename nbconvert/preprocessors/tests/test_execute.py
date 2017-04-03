@@ -24,6 +24,7 @@ from nose.tools import assert_raises, assert_in
 from testpath import modified_env
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
+current_dir = os.path.dirname(__file__)
 
 class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
@@ -104,7 +105,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_run_notebooks(self):
         """Runs a series of test notebooks and compares them to their actual output"""
-        current_dir = os.path.dirname(__file__)
         input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
         for filename in input_files:
             if os.path.basename(filename) == "Disable Stdin.ipynb":
@@ -122,7 +122,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_empty_path(self):
         """Can the kernel be started when the path is empty?"""
-        current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = ''
@@ -131,7 +130,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_disable_stdin(self):
         """Test disabling standard input"""
-        current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'Disable Stdin.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
@@ -223,3 +221,4 @@ class TestExecute(PreprocessorTestsBase):
 
         for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
+
