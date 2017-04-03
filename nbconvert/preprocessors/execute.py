@@ -313,7 +313,7 @@ class ExecutePreprocessor(Preprocessor):
                 # not our reply
                 continue
 
-        outs = []
+        outs = cell.outputs = []
 
         while True:
             try:
@@ -349,7 +349,7 @@ class ExecutePreprocessor(Preprocessor):
             elif msg_type == 'execute_input':
                 continue
             elif msg_type == 'clear_output':
-                outs = []
+                outs[:] = []
                 # clear display_id mapping for this cell
                 for display_id, cell_map in self._display_id_map.items():
                     if self._cell_idx in cell_map:
