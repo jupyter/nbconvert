@@ -4,7 +4,6 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import os
 from textwrap import dedent
 
 try:
@@ -192,7 +191,6 @@ class ExecutePreprocessor(Preprocessor):
         
         # clear display_id map
         self._display_id_map = {}
-        self._cell_index = 0
 
         # from jupyter_client.manager import start_new_kernel
 
@@ -241,7 +239,7 @@ class ExecutePreprocessor(Preprocessor):
         if cell.cell_type != 'code':
             return cell, resources
 
-        outputs = self.run_cell(cell)
+        outputs = self.run_cell(cell, cell_index)
         cell.outputs = outputs
 
         if not self.allow_errors:
@@ -257,7 +255,6 @@ class ExecutePreprocessor(Preprocessor):
                         """
                     msg = dedent(pattern).format(out=out, cell=cell)
                     raise CellExecutionError(msg)
-        self._cell_index += 1
         return cell, resources
 
 
@@ -279,7 +276,7 @@ class ExecutePreprocessor(Preprocessor):
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
 
-    def run_cell(self, cell):
+    def run_cell(self, cell, cell_index=0):
         msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
         # wait for finish, with timeout
@@ -352,8 +349,8 @@ class ExecutePreprocessor(Preprocessor):
                 outs[:] = []
                 # clear display_id mapping for this cell
                 for display_id, cell_map in self._display_id_map.items():
-                    if self._cell_idx in cell_map:
-                        cell_map[self._cell_idx] = []
+                    if cell_index in cell_map:
+                        cell_map[cell_index] = []
                 continue
             elif msg_type.startswith('comm'):
                 continue
@@ -375,8 +372,8 @@ class ExecutePreprocessor(Preprocessor):
             if display_id:
                 # record output index in:
                 #   _display_id_map[display_id][cell_idx]
-                output_idx_list = cell_map.setdefault(self._cell_idx, [])
                 cell_map = self._display_id_map.setdefault(display_id, {})
+                output_idx_list = cell_map.setdefault(cell_index, [])
                 output_idx_list.append(len(outs))
 
             outs.append(out)
