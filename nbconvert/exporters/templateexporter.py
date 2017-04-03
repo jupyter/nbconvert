@@ -71,12 +71,13 @@ class ExtensionTolerantLoader(BaseLoader):
    
 
     def get_source(self, environment, template):
+        
         try:
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
             if template.endswith(self.extension):
                 raise TemplateNotFound(template)
-            return self.loader.get_source(environment, template+self.extension)
+            return self.loader.get_source(environment, template + self.extension)
 
     def list_templates(self):
         return self.loader.list_templates()
@@ -203,6 +204,11 @@ class TemplateExporter(Exporter):
         self.observe(self._invalidate_template_cache,
                      list(self.traits(affects_template=True)))
 
+    def _log_template_loading(self,template_file):
+        """ abstract away some of the loggging for finding templates
+        """
+        self.log.debug("Attempting to load template %s", template_file)
+        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
 
     def _load_template(self):
         """Load the Jinja template object from the template file
@@ -217,9 +223,26 @@ class TemplateExporter(Exporter):
         # template by name with extension added, then try loading the template
         # as if the name is explicitly specified.
         template_file = self.template_file
-        self.log.debug("Attempting to load template %s", template_file)
-        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
-        return self.environment.get_template(template_file)
+        
+        try:
+            self._log_template_loading(template_file)
+            return self.environment.get_template(template_file)
+        except TemplateNotFound:
+            if self.template_file.endswith(self.template_extension):
+                try: 
+                    template_file = self.template_file[:-len(self.template_extension)]
+                    self._log_template_loading(template_file)
+                    return self.environment.get_template(template_file)
+                except TemplateNotFound:
+                    raise TemplateNotFound(template_file)
+            else:
+                try:
+                    template_file = self.template_file + self.template_extension
+                    self._log_template_loading(template_file)
+                    return self.environment.get_template(template_file)
+                except TemplateNotFound:
+                    raise TemplateNotFound(template_file)
+
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """
