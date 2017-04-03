@@ -261,12 +261,16 @@ class ExecutePreprocessor(Preprocessor):
     def _update_display_id(self, display_id, msg):
         """Update outputs with a given display_id"""
         if display_id not in self._display_id_map:
+            self.log.debug("display id %r not in %s", display_id, self._display_id_map)
             return
+
+        if msg['header']['msg_type'] == 'update_display_data':
+            msg['header']['msg_type'] = 'display_data'
 
         try:
             out = output_from_msg(msg)
         except ValueError:
-            self.log.error("unhandled iopub msg: " + msg_type)
+            self.log.error("unhandled iopub msg: " + msg['msg_type'])
             return
         
         for cell_idx, output_indices in self._display_id_map[display_id].items():
