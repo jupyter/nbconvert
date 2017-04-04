@@ -87,13 +87,21 @@ nbconvert_flags.update({
         {
             'NbConvertApp' : {
                 'use_output_suffix' : False,
-                'export_format': 'notebook',
+                'export_format' : 'notebook',
             },
-            'FilesWriter': {'build_directory': ''},
+            'FilesWriter' : {'build_directory': ''},
         },
         """Run nbconvert in place, overwriting the existing notebook (only 
         relevant when converting to notebook format)"""
-        )
+        ),
+    'no-prompt' : (
+        {'TemplateExporter' : {
+            'exclude_input_prompt' : True,
+            'exclude_output_prompt' : True,
+            }
+        },
+        "Exclude input and output prompts from converted document."
+        ),
 })
 
 

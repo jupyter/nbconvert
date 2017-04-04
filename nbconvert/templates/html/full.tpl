@@ -35,6 +35,12 @@ div#notebook {
   border-top: none;
 }
 
+{%- if resources.global_content_filter.no_prompt-%}
+div#notebook-container{
+  padding: 6ex 12ex 8ex 12ex;
+}
+{%- endif -%}
+
 @media print {
   div.cell {
     display: block;

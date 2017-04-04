@@ -14,6 +14,8 @@ from nbformat import v4
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
 from ..templateexporter import TemplateExporter
+from ..html import HTMLExporter
+from ..markdown import MarkdownExporter
 from testpath import tempdir
 
 import pytest
@@ -144,8 +146,100 @@ class TestExporter(ExportersTestsBase):
         with pytest.raises(TemplateNotFound):
             out, resources = exporter.from_notebook_node(nb)
         
+    def test_exclude_code_cell(self):
+        no_io = {
+            "TemplateExporter":{
+                "exclude_output": True,
+                "exclude_input": True,
+                "exclude_input_prompt": False,
+                "exclude_output_prompt": False,
+                "exclude_markdown": False,
+                "exclude_code_cell": False,
+            }
+        }
+        c_no_io = Config(no_io)
+        exporter_no_io  = TemplateExporter(config=c_no_io )
+        exporter_no_io.template_file = 'markdown'
+        nb_no_io, resources_no_io = exporter_no_io.from_filename(self._get_notebook())
         
+        assert not resources_no_io['global_content_filter']['include_input']
+        assert not resources_no_io['global_content_filter']['include_output']
         
+        no_code = {
+            "TemplateExporter":{
+                "exclude_output": False,
+                "exclude_input": False,
+                "exclude_input_prompt": False,
+                "exclude_output_prompt": False,
+                "exclude_markdown": False,
+                "exclude_code_cell": True,
+            }
+        }
+        c_no_code = Config(no_code)
+        exporter_no_code  = TemplateExporter(config=c_no_code )
+        exporter_no_code.template_file = 'markdown'
+        nb_no_code, resources_no_code = exporter_no_code.from_filename(self._get_notebook())
+
+        assert not resources_no_code['global_content_filter']['include_code']
+        assert nb_no_io == nb_no_code
+
+        
+    def test_exclude_input_prompt(self):
+        no_input_prompt = {
+            "TemplateExporter":{
+                "exclude_output": False,
+                "exclude_input": False,
+                "exclude_input_prompt": True,
+                "exclude_output_prompt": False,
+                "exclude_markdown": False,
+                "exclude_code_cell": False,
+            }
+        }
+        c_no_input_prompt = Config(no_input_prompt)
+        exporter_no_input_prompt  = MarkdownExporter(config=c_no_input_prompt)
+        nb_no_input_prompt, resources_no_input_prompt = exporter_no_input_prompt.from_filename(self._get_notebook())
+        
+        assert not resources_no_input_prompt['global_content_filter']['include_input_prompt']
+        assert "# In[" not in nb_no_input_prompt
+        
+    def test_exclude_markdown(self):
+
+        no_md= {
+            "TemplateExporter":{
+                "exclude_output": False,
+                "exclude_input": False,
+                "exclude_input_prompt": False,
+                "exclude_output_prompt": False,
+                "exclude_markdown": True,
+                "exclude_code_cell": False,
+            }
+        }
+
+        c_no_md = Config(no_md)
+        exporter_no_md = TemplateExporter(config=c_no_md)
+        exporter_no_md.template_file = 'python'
+        nb_no_md, resources_no_md = exporter_no_md.from_filename(self._get_notebook())
+        
+        assert not resources_no_md['global_content_filter']['include_markdown']
+        assert "First import NumPy and Matplotlib" not in nb_no_md
+    
+    def test_exclude_output_prompt(self):
+        no_output_prompt = {
+            "TemplateExporter":{
+                "exclude_output": False,
+                "exclude_input": False,
+                "exclude_input_prompt": False,
+                "exclude_output_prompt": True,
+                "exclude_markdown": False,
+                "exclude_code_cell": False,
+            }
+        }
+        c_no_output_prompt = Config(no_output_prompt)
+        exporter_no_output_prompt  = HTMLExporter(config=c_no_output_prompt)
+        nb_no_output_prompt, resources_no_output_prompt = exporter_no_output_prompt.from_filename(self._get_notebook())
+
+        assert not resources_no_output_prompt['global_content_filter']['include_output_prompt']
+        assert "Out[" not in nb_no_output_prompt
 
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
