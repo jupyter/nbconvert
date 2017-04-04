@@ -11,7 +11,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool, Enum, Any, Type, default
+from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, default
 
 from nbformat.v4 import output_from_msg
 from .base import Preprocessor
@@ -161,7 +161,15 @@ class ExecutePreprocessor(Preprocessor):
             raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
         return KernelManager
 
-    _display_id_map = {}
+    # mapping of locations of outputs with a given display_id
+    # tracks cell index and output index within cell.outputs for
+    # each appearance of the display_id
+    # {
+    #   'display_id': {
+    #     cell_idx: [output_idx,]
+    #   }
+    # }
+    _display_id_map = Dict()
 
     def preprocess(self, nb, resources):
         """
