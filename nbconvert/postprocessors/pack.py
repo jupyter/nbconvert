@@ -19,6 +19,7 @@ class ZipPostProcessor(PostProcessorBase):
             zipf.write(input, arcname = filename)
             for output_path, _, output_filenames in os.walk(os.path.join(dirname,output_files_dir)):
                 for output_filename in output_filenames: 
-                    zipf.write(output_path, arcname = os.path.join(output_files_dir,output_filename))
+                    zipf.write(os.path.join(output_path,output_filename), 
+                               arcname = os.path.join(output_files_dir,output_filename))
 
 
