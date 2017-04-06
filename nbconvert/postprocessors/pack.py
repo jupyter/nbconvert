@@ -16,7 +16,7 @@ class ZipPostProcessor(PostProcessorBase):
         zip_filename = base_name + '.zip'
         zippath = os.path.join(dirname,zip_filename)
         with ZipFile(zippath, mode='w', compression=ZIP_DEFLATED) as zipf:
-            zipf.write(input, arcname = base_name)
+            zipf.write(input, arcname = filename)
             for output_path, _, output_filenames in os.walk(os.path.join(dirname,output_files_dir)):
                 for output_filename in output_filenames: 
                     zipf.write(output_path, arcname = os.path.join(output_files_dir,output_filename))
