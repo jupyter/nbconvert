@@ -149,7 +149,7 @@ class TemplateExporter(Exporter):
 
     default_template = Unicode(u'').tag(affects_template=True)
 
-    template_path = List(['.']).tag(config=True, affects_environment=True)
+    template_path = List(['.', '/']).tag(config=True, affects_environment=True)
 
     default_template_path = Unicode(
         os.path.join("..", "templates"),
