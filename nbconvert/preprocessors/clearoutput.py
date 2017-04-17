@@ -17,4 +17,8 @@ class ClearOutputPreprocessor(Preprocessor):
         if cell.cell_type == 'code':
             cell.outputs = []
             cell.execution_count = None
+            # Remove metadata associated with output
+            if 'metadata' in cell:
+                for field in ['collapsed', 'scrolled', 'ExecuteTime']:
+                    del cell.metadata[field]
         return cell, resources
