@@ -20,5 +20,5 @@ class ClearOutputPreprocessor(Preprocessor):
             # Remove metadata associated with output
             if 'metadata' in cell:
                 for field in ['collapsed', 'scrolled', 'ExecuteTime']:
-                    del cell.metadata[field]
+                    cell.metadata.pop(field, None)
         return cell, resources
