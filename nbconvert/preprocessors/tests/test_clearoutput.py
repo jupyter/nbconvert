@@ -33,4 +33,4 @@ class TestClearOutput(PreprocessorTestsBase):
         assert nb.cells[0].execution_count is None
         if 'metadata' in nb.cells[0]:
             for field in ['collapsed', 'scrolled', 'ExecuteTime']:
-            assert field not in nb.cells[0].metadata
+                assert field not in nb.cells[0].metadata
