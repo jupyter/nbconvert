@@ -29,6 +29,7 @@ before_install:
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
 install:
     - wget https://github.com/jgm/pandoc/releases/download/1.19.1/pandoc-1.19.1-1-amd64.deb && sudo dpkg -i pandoc-1.19.1-1-amd64.deb
+    - pip install --upgrade setuptools pip
     - pip install -f travis-wheels/wheelhouse . codecov coverage
     - pip install nbconvert[execute,serve,test]
     - python -m ipykernel.kernelspec --user
