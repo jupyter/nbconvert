@@ -306,6 +306,12 @@ class NbConvertApp(JupyterApp):
         self._postprocessor_class_changed({'new': self.postprocessor_class})
         if self.postprocessor_factory:
             self.postprocessor = self.postprocessor_factory(parent=self)
+            # Ensure that the --reveal-prefix option is passed on to the postprocessor if necessary
+            if hasattr(self.postprocessor, 'reveal_prefix'):
+                for _, config_dict in self.config.items():
+                    if 'reveal_url_prefix' in config_dict:
+                        self.postprocessor.reveal_prefix = config_dict['reveal_url_prefix']
+                        break
 
     def start(self):
         """Run start after initialization process has completed"""
