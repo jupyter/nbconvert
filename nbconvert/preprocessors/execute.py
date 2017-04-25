@@ -391,3 +391,25 @@ class ExecutePreprocessor(Preprocessor):
             outs.append(out)
 
         return outs
+
+
+def executenb(nb, cwd=None, **kwargs):
+    """Execute a notebook's code, updating outputs within the notebook object.
+    
+    This is a convenient wrapper around ExecutePreprocessor. It returns the
+    modified notebook object.
+    
+    Parameters
+    ----------
+    nb : NotebookNode
+      The notebook object to be executed
+    cwd : str, optional
+      If supplied, the kernel will run in this directory
+    kwargs :
+      Any other options for ExecutePreprocessor, e.g. timeout, kernel_name
+    """
+    resources = {}
+    if cwd is not None:
+        resources['metadata'] = {'path': cwd}
+    ep = ExecutePreprocessor(**kwargs)
+    return ep.preprocess(nb, resources)[0]

@@ -17,7 +17,7 @@ import nbformat
 import sys
 
 from .base import PreprocessorTestsBase
-from ..execute import ExecutePreprocessor, CellExecutionError
+from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 from nbconvert.filters import strip_ansi
 from nose.tools import assert_raises, assert_in
@@ -222,3 +222,14 @@ class TestExecute(PreprocessorTestsBase):
         for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
 
+    def test_execute_function(self):
+        # Test the executenb() convenience API
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+
+        original = copy.deepcopy(input_nb)
+        executed = executenb(original, os.path.dirname(filename))
+        self.assert_notebooks_equal(original, executed)
