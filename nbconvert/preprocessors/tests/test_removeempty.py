@@ -5,6 +5,7 @@ Module with tests for the RemoveEmptyPreprocessor.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import re
 from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
@@ -18,9 +19,9 @@ class TestRemoveEmpty(PreprocessorTestsBase):
         notebook = super(TestRemoveEmpty, self).build_notebook()
         # Add a few empty cells
         notebook.cells.extend([
-            nbformat.new_code_cell(),
-            nbformat.new_markdown_cell(),
-            nbformat.new_raw_cell()
+            nbformat.new_code_cell(''),
+            nbformat.new_markdown_cell(' '),
+            nbformat.new_raw_cell('\n')
         ])
 
         return notebook
@@ -39,8 +40,22 @@ class TestRemoveEmpty(PreprocessorTestsBase):
         """Test the output of the RemoveEmptyPreprocessor"""
         nb = self.build_notebook()
         res = self.build_resources()
-        preprocessor = self.build_preprocessor()
-        nb, res = preprocessor(nb, res)
 
-        for cell in nb.cells:
-            assert cell.source.strip(), "found unexpected empty cell"
+        # Run one test that removes only strictly empty cells and
+        # one test that also removes cells containing whitespace
+        for keep_whitespace in [True, False]:
+            preprocessor = self.build_preprocessor()
+            # Keep only strictly empty cells
+            if keep_whitespace:
+                preprocessor.empty_pattern = r""
+            nb, res = preprocessor(nb, res)
+
+            if keep_whitespace:
+                self.assertEqual(len(nb.cells), 4)
+            else:
+                self.assertEqual(len(nb.cells), 2)
+
+            # Make sure none of the cells match the empty pattern
+            pattern = re.compile(preprocessor.empty_pattern)
+            for cell in nb.cells:
+                self.assertFalse(pattern.fullmatch(cell.source))
