@@ -47,7 +47,7 @@ class TestRemoveEmpty(PreprocessorTestsBase):
             preprocessor = self.build_preprocessor()
             # Keep only strictly empty cells
             if keep_whitespace:
-                preprocessor.empty_pattern = r""
+                preprocessor.empty_pattern = r"\Z"
             nb, res = preprocessor(nb, res)
 
             if keep_whitespace:
@@ -58,4 +58,4 @@ class TestRemoveEmpty(PreprocessorTestsBase):
             # Make sure none of the cells match the empty pattern
             pattern = re.compile(preprocessor.empty_pattern)
             for cell in nb.cells:
-                self.assertFalse(pattern.fullmatch(cell.source))
+                self.assertFalse(pattern.match(cell.source))

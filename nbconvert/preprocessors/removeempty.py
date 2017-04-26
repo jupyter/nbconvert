@@ -13,7 +13,7 @@ class RemoveEmptyPreprocessor(Preprocessor):
     by the regular expression traitlet `empty_pattern`.
     """
 
-    empty_pattern = Unicode(r"\s*")
+    empty_pattern = Unicode(r"\s*\Z")
 
     def preprocess(self, nb, resources):
         """
@@ -21,5 +21,5 @@ class RemoveEmptyPreprocessor(Preprocessor):
         """
         empty_pattern = re.compile(self.empty_pattern)
         nb.cells = [cell for cell in nb.cells
-                    if not empty_pattern.fullmatch(cell.source)]
+                    if not empty_pattern.match(cell.source)]
         return nb, resources
