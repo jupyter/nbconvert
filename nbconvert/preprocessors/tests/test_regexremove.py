@@ -1,5 +1,5 @@
 """
-Module with tests for the RemoveEmptyPreprocessor.
+Module with tests for the RegexRemovePreprocessor.
 """
 
 # Copyright (c) IPython Development Team.
@@ -9,14 +9,14 @@ import re
 from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
-from ..removeempty import RemoveEmptyPreprocessor
+from ..regexremove import RegexRemovePreprocessor
 
 
-class TestRemoveEmpty(PreprocessorTestsBase):
-    """Contains test functions for removeempty.py"""
+class TestRegexRemove(PreprocessorTestsBase):
+    """Contains test functions for regexremove.py"""
 
     def build_notebook(self):
-        notebook = super(TestRemoveEmpty, self).build_notebook()
+        notebook = super(TestRegexRemove, self).build_notebook()
         # Add a few empty cells
         notebook.cells.extend([
             nbformat.new_code_cell(''),
@@ -28,16 +28,16 @@ class TestRemoveEmpty(PreprocessorTestsBase):
 
     def build_preprocessor(self):
         """Make an instance of a preprocessor"""
-        preprocessor = RemoveEmptyPreprocessor()
+        preprocessor = RegexRemovePreprocessor()
         preprocessor.enabled = True
         return preprocessor
 
     def test_constructor(self):
-        """Can a RemoveEmptyPreprocessor be constructed?"""
+        """Can a RegexRemovePreprocessor be constructed?"""
         self.build_preprocessor()
 
     def test_output(self):
-        """Test the output of the RemoveEmptyPreprocessor"""
+        """Test the output of the RegexRemovePreprocessor"""
         nb = self.build_notebook()
         res = self.build_resources()
 
@@ -47,7 +47,7 @@ class TestRemoveEmpty(PreprocessorTestsBase):
             preprocessor = self.build_preprocessor()
             # Keep only strictly empty cells
             if keep_whitespace:
-                preprocessor.empty_pattern = r"\Z"
+                preprocessor.pattern = r"\Z"
             nb, res = preprocessor(nb, res)
 
             if keep_whitespace:
@@ -55,7 +55,7 @@ class TestRemoveEmpty(PreprocessorTestsBase):
             else:
                 self.assertEqual(len(nb.cells), 2)
 
-            # Make sure none of the cells match the empty pattern
-            pattern = re.compile(preprocessor.empty_pattern)
+            # Make sure none of the cells match the pattern
+            pattern = re.compile(preprocessor.pattern)
             for cell in nb.cells:
                 self.assertFalse(pattern.match(cell.source))

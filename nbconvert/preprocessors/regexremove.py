@@ -7,19 +7,18 @@ import re
 from traitlets import Unicode
 from .base import Preprocessor
 
-class RemoveEmptyPreprocessor(Preprocessor):
+class RegexRemovePreprocessor(Preprocessor):
     """
-    Removes empty cells from a notebook, where "empty" is defined
-    by the regular expression traitlet `empty_pattern`.
+    Removes cells from a notebook that match a regular expression.
     """
 
-    empty_pattern = Unicode(r"\s*\Z")
+    pattern = Unicode(r"\s*\Z", config=True)
 
     def preprocess(self, nb, resources):
         """
         Preprocessing to apply to each notebook. See base.py for details.
         """
-        empty_pattern = re.compile(self.empty_pattern)
+        pattern = re.compile(self.pattern)
         nb.cells = [cell for cell in nb.cells
-                    if not empty_pattern.match(cell.source)]
+                    if not pattern.match(cell.source)]
         return nb, resources
