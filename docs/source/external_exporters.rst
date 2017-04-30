@@ -142,7 +142,7 @@ when you are at the directory under which you wish to build your ``mypackage`` p
     For example, ``nbconvert`` follows the Jupyter Project convention of using a Modified BSD 
     License (also known as New or Revised or 3-Clause BSD).
     For a guide on picking the right license for your use case,
-    please see `choose a license <choosealicense.com>`_.
+    please see `choose a license <http://choosealicense.com>`_.
     If you do not specify the license, your code may be `unusable by many open source projects`_. 
 
 .. _`unusable by many open source projects`: http://choosealicense.com/no-license/
