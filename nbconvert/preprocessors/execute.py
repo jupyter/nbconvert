@@ -212,13 +212,13 @@ class ExecutePreprocessor(Preprocessor):
 
         # from jupyter_client.manager import start_new_kernel
 
-        def start_new_kernel(kernel_name='python', **kwargs):
+        def start_new_kernel(startup_timeout=60, kernel_name='python', **kwargs):
             km = self.kernel_manager_class(kernel_name=kernel_name)
             km.start_kernel(**kwargs)
             kc = km.client()
             kc.start_channels()
             try:
-                kc.wait_for_ready(timeout=self.startup_timeout)
+                kc.wait_for_ready(timeout=startup_timeout)
             except RuntimeError:
                 kc.stop_channels()
                 km.shutdown_kernel()
@@ -231,6 +231,7 @@ class ExecutePreprocessor(Preprocessor):
             kernel_name = self.kernel_name
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(
+            startup_timeout=self.startup_timeout,
             kernel_name=kernel_name,
             extra_arguments=self.extra_arguments,
             cwd=path)
