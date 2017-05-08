@@ -87,6 +87,16 @@ class ExecutePreprocessor(Preprocessor):
         )
     ).tag(config=True)
 
+    startup_timeout = Integer(60,
+        help=dedent(
+            """
+            The time to wait (in seconds) for the kernel to start.
+            If kernel startup takes longer, a RuntimeError is
+            raised.
+            """
+        )
+    ).tag(config=True)
+
     allow_errors = Bool(False,
         help=dedent(
             """
@@ -202,8 +212,7 @@ class ExecutePreprocessor(Preprocessor):
 
         # from jupyter_client.manager import start_new_kernel
 
-        def start_new_kernel(startup_timeout=60, kernel_name='python',
-                             **kwargs):
+        def start_new_kernel(startup_timeout=60, kernel_name='python', **kwargs):
             km = self.kernel_manager_class(kernel_name=kernel_name)
             km.start_kernel(**kwargs)
             kc = km.client()
@@ -222,6 +231,7 @@ class ExecutePreprocessor(Preprocessor):
             kernel_name = self.kernel_name
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(
+            startup_timeout=self.startup_timeout,
             kernel_name=kernel_name,
             extra_arguments=self.extra_arguments,
             cwd=path)
