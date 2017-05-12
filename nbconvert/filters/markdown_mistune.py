@@ -101,9 +101,9 @@ class IPythonRenderer(mistune.Renderer):
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
 
-    def header(self, text, level, raw=None):
+    def header(self, text, level, raw=None, anchor_text=''):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
-        return add_anchor(html)
+        return add_anchor(html, anchor_text=self.options['anchor_text'])
 
     # We must be careful here for compatibility
     # html.escape() is not availale on python 2.7
@@ -123,6 +123,6 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % self.escape_html(text)
 
-def markdown2html_mistune(source):
+def markdown2html_mistune(source, anchor_text=u'¶'):
     """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer(escape=False)).render(source)
+    return MarkdownWithMath(renderer=IPythonRenderer(escape=False,anchor_text=anchor_text)).render(source)
