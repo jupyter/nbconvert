@@ -21,7 +21,7 @@
 
 ((* block input scoped *))
 ((*- if resources.global_content_filter.include_input_prompt *))
-    ((( add_prompt(cell.source | highlight_code(strip_verbatim=True), cell, 'In ', 'incolor') )))
+    ((( add_prompt(cell.source | highlight_code(strip_verbatim=True, metadata=cell.metadata), cell, 'In ', 'incolor') )))
 ((* endif *))
 ((* endblock input *))
 
