@@ -7,10 +7,12 @@
 {% block output_prompt %}
 {% endblock output_prompt %}
 
-{% block input %}
+{% block input scoped%}
 {%- if cell.source.strip() -%}
 {{".. code:: "-}}
-{%- if 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
+{%- if 'magics_language' in cell.metadata  -%}
+    {{ cell.metadata.magics_language}}
+{%- elif 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.pygments_lexer }}
 {%- elif 'name' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.name }}

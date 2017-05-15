@@ -9,7 +9,14 @@
     +*In[]:*+
 {%- endif -%}
 {%- endif -%}
-[source{% if nb.metadata.language_info %}, {{ nb.metadata.language_info.name }}{% endif %}]
+[source
+{%- if 'magics_language' in cell.metadata  -%}
+   , {{ cell.metadata.magics_language}}
+{%- elif 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
+   , {{ nb.metadata.language_info.pygments_lexer }}
+{%- elif 'name' in nb.metadata.get('language_info', {}) -%}
+   , {{ nb.metadata.language_info.name }}
+{%- endif -%}]
 ----
 {{ cell.source}}
 ----
