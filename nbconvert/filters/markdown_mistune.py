@@ -103,7 +103,8 @@ class IPythonRenderer(mistune.Renderer):
 
     def header(self, text, level, raw=None):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
-        return add_anchor(html)
+        anchor_link_text = self.options.get('anchor_link_text', u'¶')
+        return add_anchor(html, anchor_link_text=anchor_link_text)
 
     # We must be careful here for compatibility
     # html.escape() is not availale on python 2.7
