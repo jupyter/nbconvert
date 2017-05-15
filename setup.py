@@ -74,10 +74,10 @@ class FetchCSS(Command):
     user_options = []
     def initialize_options(self):
         pass
-    
+
     def finalize_options(self):
         pass
-    
+
     def _download(self):
         try:
             return urlopen(css_url).read()
@@ -92,7 +92,7 @@ class FetchCSS(Command):
                     print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
                     return self._download_pycurl()
             raise e
-    
+
     def _download_pycurl(self):
         """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
         import pycurl
@@ -102,7 +102,7 @@ class FetchCSS(Command):
         c.setopt(c.WRITEDATA, buf)
         c.perform()
         return buf.getvalue()
-    
+
     def run(self):
         dest = os.path.join('nbconvert', 'resources', 'style.min.css')
         if not os.path.exists('.git') and os.path.exists(dest):
@@ -119,7 +119,7 @@ class FetchCSS(Command):
             else:
                 raise OSError("Need Notebook CSS to proceed: %s" % dest)
             return
-        
+
         with open(dest, 'wb') as f:
             f.write(css)
         print("Downloaded Notebook CSS to %s" % dest)
@@ -128,7 +128,7 @@ cmdclass = {'css': FetchCSS}
 
 class bdist_egg_disabled(bdist_egg):
     """Disabled version of bdist_egg
- 
+
     Prevents setup.py install performing setuptools' default easy_install,
     which it should never ever do.
     """
@@ -194,13 +194,15 @@ install_requires = setuptools_args['install_requires'] = [
     'entrypoints>=0.2.2',
     'bleach',
     'pandocfilters>=1.4.1',
-    'testpath', 
+    'testpath',
 ]
 
+# Explicity demand ipython5 for python2 (otherwise ipython6 is installed)
+test_requirements = [] if PY3 else ['ipython==5.0.0']
 extras_require = setuptools_args['extras_require'] = {
     # FIXME: tests still require nose for some utility calls,
     # but we are running with pytest
-    'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'jupyter_client'],
+    'test': test_requirements + ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'jupyter_client'],
     'serve': ['tornado>=4.0'],
     'execute': ['jupyter_client>=4.2'],
 }
@@ -224,7 +226,7 @@ if 'setuptools' in sys.modules:
             'rst=nbconvert.exporters:RSTExporter',
             'notebook=nbconvert.exporters:NotebookExporter',
             'asciidoc=nbconvert.exporters:ASCIIDocExporter',
-            'script=nbconvert.exporters:ScriptExporter'] 
+            'script=nbconvert.exporters:ScriptExporter']
     }
     setup_args.pop('scripts', None)
 
