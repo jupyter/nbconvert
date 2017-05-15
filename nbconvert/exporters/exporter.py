@@ -46,8 +46,8 @@ class FilenameExtension(Unicode):
 
 class Exporter(LoggingConfigurable):
     """
-    Class containing methods that sequentially run a list of preprocessors on a 
-    NotebookNode object and then return the modified NotebookNode object and 
+    Class containing methods that sequentially run a list of preprocessors on a
+    NotebookNode object and then return the modified NotebookNode object and
     accompanying resources dict.
     """
 
@@ -68,6 +68,7 @@ class Exporter(LoggingConfigurable):
     _preprocessors = List()
 
     default_preprocessors = List([
+                                  'nbconvert.preprocessors.RegexRemovePreprocessor',
                                   'nbconvert.preprocessors.ClearOutputPreprocessor',
                                   'nbconvert.preprocessors.ExecutePreprocessor',
                                   'nbconvert.preprocessors.coalesce_streams',
@@ -77,7 +78,7 @@ class Exporter(LoggingConfigurable):
                                   'nbconvert.preprocessors.HighlightMagicsPreprocessor',
                                   'nbconvert.preprocessors.ExtractOutputPreprocessor',
                               ],
-        help="""List of preprocessors available by default, by name, namespace, 
+        help="""List of preprocessors available by default, by name, namespace,
         instance, or type."""
     ).tag(config=True)
 
@@ -96,7 +97,7 @@ class Exporter(LoggingConfigurable):
         with_default_config = self.default_config
         if config:
             with_default_config.merge(config)
-        
+
         super(Exporter, self).__init__(config=with_default_config, **kw)
 
         self._init_preprocessors()
@@ -123,7 +124,7 @@ class Exporter(LoggingConfigurable):
         """
         nb_copy = copy.deepcopy(nb)
         resources = self._init_resources(resources)
-        
+
         if 'language' in nb['metadata']:
             resources['language'] = nb['metadata']['language'].lower()
 
@@ -153,7 +154,7 @@ class Exporter(LoggingConfigurable):
         # just skip converting it.
         if isinstance(filename, str):
            filename = py3compat.str_to_unicode(filename)
-           
+
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
@@ -226,7 +227,7 @@ class Exporter(LoggingConfigurable):
             return preprocessor
 
         elif isclass and issubclass(preprocessor, HasTraits):
-            # Preprocessor is configurable.  Make sure to pass in new default for 
+            # Preprocessor is configurable.  Make sure to pass in new default for
             # the enabled flag if one was specified.
             self.register_preprocessor(preprocessor(parent=self), enabled)
 
@@ -235,8 +236,8 @@ class Exporter(LoggingConfigurable):
             self.register_preprocessor(preprocessor(), enabled)
 
         else:
-            # Preprocessor is an instance of something without a __call__ 
-            # attribute.  
+            # Preprocessor is an instance of something without a __call__
+            # attribute.
             raise TypeError('preprocessor must be callable or an importable constructor, got %r' % preprocessor)
 
 
