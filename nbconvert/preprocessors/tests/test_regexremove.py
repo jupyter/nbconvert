@@ -21,7 +21,8 @@ class TestRegexRemove(PreprocessorTestsBase):
         notebook.cells.extend([
             nbformat.new_code_cell(''),
             nbformat.new_markdown_cell(' '),
-            nbformat.new_raw_cell('\n')
+            nbformat.new_raw_cell('\n'),
+            nbformat.new_raw_cell('\t'),
         ])
 
         return notebook
@@ -38,24 +39,32 @@ class TestRegexRemove(PreprocessorTestsBase):
 
     def test_output(self):
         """Test the output of the RegexRemovePreprocessor"""
-        nb = self.build_notebook()
-        res = self.build_resources()
+        pattern_lookup = {
+            'disallow_whitespace': [r'\s*\Z'],
+            'disallow_tab_newline': [r'\t\Z', r'\n\Z']
+        }
+        expected_cell_count = {
+            'default': 5,  # only strictly empty cells
+            'disallow_whitespace': 2,  # all "empty" cells are removed
+            'disallow_tab_newline': 3, # all "empty" cells but the single space
+            'none': 6,
+        }
+        for method in ['default', 'disallow_whitespace', 'disallow_tab_newline', 'none']:
+            nb = self.build_notebook()
+            res = self.build_resources()
 
-        # Run one test that removes only strictly empty cells and
-        # one test that also removes cells containing whitespace
-        for keep_whitespace in [True, False]:
+            # Build the preprocessor and extend the list of patterns or use an empty list
             preprocessor = self.build_preprocessor()
-            # Keep only strictly empty cells
-            if keep_whitespace:
-                preprocessor.pattern = r"\Z"
+            if method == 'none':
+                preprocessor.patterns = []
+            else:
+                preprocessor.patterns.extend(pattern_lookup.get(method, []))
             nb, res = preprocessor(nb, res)
 
-            if keep_whitespace:
-                self.assertEqual(len(nb.cells), 4)
-            else:
-                self.assertEqual(len(nb.cells), 2)
+            self.assertEqual(len(nb.cells), expected_cell_count[method])
 
             # Make sure none of the cells match the pattern
-            pattern = re.compile(preprocessor.pattern)
+            patterns = list(map(re.compile, preprocessor.patterns))
             for cell in nb.cells:
-                self.assertFalse(pattern.match(cell.source))
+                for pattern in patterns:
+                    self.assertFalse(pattern.match(cell.source))

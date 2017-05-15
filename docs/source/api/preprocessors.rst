@@ -33,6 +33,8 @@ Specialized preprocessors
 
 .. autoclass:: ClearOutputPreprocessor
 
+.. autoclass:: RegexRemovePreprocessor
+
 .. autoclass:: ExecutePreprocessor
     :members:
 
