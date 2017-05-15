@@ -21,12 +21,18 @@ from jinja2 import (
 from nbconvert import filters
 from .exporter import Exporter
 
+try:
+    from nbconvert.filters.markdown_mistune import Markdown2Html_Mistune as _md2html
+except ImportError:
+    _md2html = filters.markdown2html
+
+
 #Jinja2 extensions to load.
 JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
 
 default_filters = {
         'indent': filters.indent,
-        'markdown2html': filters.markdown2html,
+        'markdown2html': _md2html,
         'markdown2asciidoc': filters.markdown2asciidoc,
         'ansi2html': filters.ansi2html,
         'filter_data_type': filters.DataTypeFilter,

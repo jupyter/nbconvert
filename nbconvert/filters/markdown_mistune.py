@@ -16,8 +16,9 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
+from traitlets.config import LoggingConfigurable
 
-from nbconvert.filters.strings import add_anchor
+from nbconvert.filters.strings import add_anchor, AddAnchor
 from nbconvert.utils.exceptions import ConversionException
 
 
@@ -86,6 +87,10 @@ class MarkdownWithMath(mistune.Markdown):
 
 
 class IPythonRenderer(mistune.Renderer):
+    
+    def __init__(self,*args,**kwargs):
+        super(IPythonRenderer,self).__init__(*args,**kwargs)
+
     def block_code(self, code, lang):
         if lang:
             try:
@@ -103,7 +108,11 @@ class IPythonRenderer(mistune.Renderer):
 
     def header(self, text, level, raw=None):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
-        return add_anchor(html)
+        if hasattr(self, 'local_config'):
+            # if this does have a config, pass it in to the add_anchor class instance 
+            return AddAnchor(config=self.local_config)(html)
+        else:
+            return add_anchor(html)
 
     # We must be careful here for compatibility
     # html.escape() is not availale on python 2.7
@@ -123,6 +132,16 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % self.escape_html(text)
 
-def markdown2html_mistune(source):
-    """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer(escape=False)).render(source)
+class Markdown2Html_Mistune(LoggingConfigurable):
+    def __init__(self, **kw):
+        super(Markdown2Html_Mistune, self).__init__(**kw)
+
+    def __call__(self, source):
+        """Convert a markdown string to HTML using mistune"""
+        renderer = IPythonRenderer(escape=False)
+        # when called appropriately by register filter, it will inherit from template's config
+        renderer.local_config = self.config
+        return MarkdownWithMath(renderer=renderer).render(source)
+
+def markdown2html_mistune(*args, **kwargs):
+    return Markdown2Html_Mistune()(*args, **kwargs)
