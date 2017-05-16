@@ -50,10 +50,16 @@
 
 {% block data_png %}
 .. image:: {{ output.metadata.filenames['image/png'] | urlencode }}
+{%- if output.metadata['image/png'].get('width', '') %}
+   :width: {{ output.metadata['image/png'].width}}px
+{% endif -%}
 {% endblock data_png %}
 
 {% block data_jpg %}
 .. image:: {{ output.metadata.filenames['image/jpeg'] | urlencode }}
+{%- if output.metadata['image/jpeg'].get('width', '') %}
+   :width: {{ output.metadata['image/jpeg'].width}}px
+{% endif -%}
 {% endblock data_jpg %}
 
 {% block data_markdown %}
