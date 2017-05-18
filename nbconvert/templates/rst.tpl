@@ -50,16 +50,26 @@
 
 {% block data_png %}
 .. image:: {{ output.metadata.filenames['image/png'] | urlencode }}
-{%- if 'image/png' in output.metadata and output.metadata['image/png'].get('width', '') %}
-   :width: {{ output.metadata['image/png'].width}}px
-{% endif -%}
+{%- set width=output | get_metadata('width', 'image/png') -%}
+{%- if width is not none %}
+   :width: {{ width }}px
+{%- endif %}
+{%- set height=output | get_metadata('height', 'image/png') -%}
+{%- if height is not none %}
+   :height: {{ height }}px
+{%- endif %}
 {% endblock data_png %}
 
 {% block data_jpg %}
 .. image:: {{ output.metadata.filenames['image/jpeg'] | urlencode }}
-{%- if 'image/jpeg' in output.metadata and output.metadata['image/jpeg'].get('width', '') %}
-   :width: {{ output.metadata['image/jpeg'].width}}px
-{% endif -%}
+{%- set width=output | get_metadata('width', 'image/jpeg') -%}
+{%- if width is not none %}
+   :width: {{ width }}px
+{%- endif %}
+{%- set height=output | get_metadata('height', 'image/jpeg') -%}
+{%- if height is not none %}
+   :height: {{ height }}px
+{%- endif %}
 {% endblock data_jpg %}
 
 {% block data_markdown %}
