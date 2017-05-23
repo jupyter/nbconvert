@@ -197,12 +197,19 @@ install_requires = setuptools_args['install_requires'] = [
     'testpath', 
 ]
 
-extras_require = setuptools_args['extras_require'] = {
+extra_requirements = {
     # FIXME: tests still require nose for some utility calls,
     # but we are running with pytest
-    'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'jupyter_client'],
+    'test': ['pytest', 'pytest-cov', 'nose', 'ipykernel', 'jupyter_client>=4.2'],
     'serve': ['tornado>=4.0'],
     'execute': ['jupyter_client>=4.2'],
+}
+s = [] 
+[s.extend(values) for values in extra_requirements.values()]
+extra_requirements['all'] = list(set(s))
+
+extras_require = setuptools_args['extras_require'] = {
+    **extra_requirements
 }
 
 if 'setuptools' in sys.modules:
