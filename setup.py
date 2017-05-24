@@ -205,7 +205,7 @@ extra_requirements = {
     'execute': ['jupyter_client>=4.2'],
 }
 extra_requirements['all'] = sum(extra_requirements.values(), [])
-extras_require = setuptools_args['extras_require'] = extra_requirements
+setuptools_args['extras_require'] = extra_requirements
 
 if 'setuptools' in sys.modules:
     from setuptools.command.develop import develop
