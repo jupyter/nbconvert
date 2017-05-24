@@ -3,6 +3,38 @@
 Changes in nbconvert
 ====================
 
+5.2
+---
+
+`5.2 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.2>`__
+
+- new: configurable ExecutePreprocessor.startup_timeout configurable #583
+- new: RemoveCell preprocessor based on cell content (defaults to empty cell) #575
+- new: function for executing notebooks: `executenb` #573
+- new: global filtering to remove inputs, outputs, markdown cells (&c.), this works on all templates #554
+- new: script exporter entrypoint #531
+- new: configurable anchor link text (previously ¶) `HTMLExporter.anchor_link_text` #522
+
+- new: configurable values for slides exporter #542 #558
+
+- improved releases (how-to documentation, version-number generation and checking) #593
+- doc improvements  #593 #580 #565 #554
+- language information from cell magics (for highlighting) is now included in more formats #586
+- mathjax upgrades and cdn fixes #584 #567
+- better CI #571 #540
+- better traceback behaviour when execution errs #521
+- deprecated nose test features removed #519
+
+- bug fixed: we now respect width and height metadata on jpeg and png mimetype outputs #588
+- bug fixed: now we respect the `resolve_references` filter in `report.tplx` #577
+- bug fixed: output metadata now is removed by ClearOutputPreprocessor #569
+- bug fixed: display id respected in execute preproessor #563 
+- bug fixed: dynamic defaults for optional jupyter_client import #559
+- bug fixed: don't self-close non-void HTML tags #548
+- buf fixed: upgrade jupyter_client dependency to 4.2 #539
+- bug fixed: LaTeX output through md→LaTeX conversion shouldn't be touched #535
+- bug fixed: now we escape `<` inside math formulas when converting to html #514
+
 5.1.1
 -----
 
