@@ -1,3 +1,5 @@
+.. _changelog:
+
 Changes in nbconvert
 ====================
 
