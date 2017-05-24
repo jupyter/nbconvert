@@ -1,5 +1,9 @@
-import pep440
+# import pep440 # cannot be imported as described below
 
+version_info = (5, 2, 0)
+pre_info = ''
+dev_info = '.dev'
+__version__ = create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info) 
 
 def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
     '''
@@ -44,16 +48,40 @@ def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
 
     out_version = ''.join([epoch_seg, release_seg, pre_seg, dev_seg])
 
-    if pep440.is_canonical(out_version):
+    if is_canonical(out_version):
         return out_version
     else:
         raise ValueError(pep440_err)
 
+# This has been ported directly from the pep440 package since it cannot be 
+# installed as part of a setuptools based install without using pyproject.toml
+
+posint = '(0|[1-9]\d*)'
+
+# 0!0.0.0rc0.post0.dev0
+
+tpl_string_re = ('^' # Start
+            '([1-9]\d*!)?'        # [N!]
+            '{posint}'            # N
+            '(\.{posint})*'        # (.N)*
+            '((a|b|rc){posint})?' # [{a|b|rc}N]
+            '(\.post{posint})?'  # [.postN]
+            '(\.dev{postdev})?'   # [.devN]
+            '$')
+string_re = tpl_string_re.format(posint=posint, postdev=posint)
+loose440re = re.compile(tpl_string_re.format(posint=posint, postdev=(posint+'?')))
+pep440re = re.compile(string_re)
+
+def is_canonical(version, loosedev=False):
+    """
+    Return whether or not the version string is canonical according to Pep 440
+    """
+    if loosedev:
+        return loose440re.match(version) is not None
+    return pep440re.match(version) is not None
 
 
-version_info = (5, 2, 0)
-pre_info = ''
-dev_info = '.dev'
-__version__ = create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info) 
+# this is the end of the direct port from pep440
+
 
 

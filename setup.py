@@ -195,7 +195,6 @@ install_requires = setuptools_args['install_requires'] = [
     'bleach',
     'pandocfilters>=1.4.1',
     'testpath', 
-    'pep440'
 ]
 
 extra_requirements = {
