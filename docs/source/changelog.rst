@@ -3,10 +3,10 @@
 Changes in nbconvert
 ====================
 
-5.2
----
+5.2.1
+-----
 
-`5.2 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.2>`__
+`5.2.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.2.1>`__
 
 - new: configurable ExecutePreprocessor.startup_timeout configurable #583
 - new: RemoveCell preprocessor based on cell content (defaults to empty cell) #575
