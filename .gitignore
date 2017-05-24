@@ -23,3 +23,7 @@ htmlcov
 .cache
 docs/source/*.tpl
 docs/source/config_options.rst
+# Eclipse pollutes the filesystem
+.project
+.pydevproject
+.settings
