@@ -9,8 +9,11 @@ This document guides a contributor through creating a release of ``nbconvert``.
 Assign all merged PRs to milestones
 -----------------------------------
 
-Go to GitHub and assign all PRs that have been merged to milestones. 
-This will be helpful when you update the changelog.
+Go to GitHub and assign all PRs that have been merged to milestones.  This will
+be helpful when you update the changelog. If you go to this `GitHub page <Github
+no milestones_>`_ you will find all the PRs that currently have no milestones.
+
+.. _GitHub no milestones: https://github.com/jupyter/nbconvert/pulls?utf8=%E2%9C%93&q=is%3Amerged%20is%3Apr%20no%3Amilestone%20`
 
 Check installed tools
 ---------------------
@@ -34,7 +37,7 @@ previous attempts.
 Create the release
 ------------------
 
-#.  Update the changelog to account for all the PRs assigned to this milestone.
+#.  Update the :doc:`changelog <changelog>` to account for all the PRs assigned to this milestone.
 
 #.  Update version number in ``notebook/_version.py``.
 
@@ -63,18 +66,16 @@ Create the release
 Release the new version
 -----------------------
 
-#.  Push directly on master, including --tags separately
+Push directly on master, including --tags separately
     
     .. code:: bash
 
         git push upstream 
         git push upstream --tags
 
-#.  Push tages on master forgetting to push ``--tags`` too.
-
 
 Return to development state
 ---------------------------
 
-#.  If all went well, change the ``notebook/_version.py`` back adding the
+If all went well, change the ``notebook/_version.py`` back adding the
     ``.dev`` suffix.
