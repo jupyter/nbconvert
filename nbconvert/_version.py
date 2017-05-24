@@ -1,5 +1,5 @@
 # import pep440 # replace once the import issue is resolved, origin https://github.com/Carreau/pep440 
-import re 
+
 
 version_info = (5, 2, 0)
 pre_info = ''
@@ -48,42 +48,46 @@ def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
 
     out_version = ''.join([epoch_seg, release_seg, pre_seg, dev_seg])
 
+    # This has been ported directly from the pep440 package since it cannot be 
+    # installed as part of a setuptools based install without using pyproject.toml
+    # You can find the source at 
+    # https://github.com/Carreau/pep440/blob/b2b8daf90522f368446d8da0cce2701459f86929/pep440/__init__.py
+    # It is licensed with an MIT license, Copyright (c) 2015 Matthias Bussonnier
+    # When you can, just use pep440
+
+    import re 
+
+    posint = '(0|[1-9]\d*)'
+
+
+    tpl_string_re = ('^' # Start
+                '([1-9]\d*!)?'        # [N!]
+                '{posint}'            # N
+                '(\.{posint})*'        # (.N)*
+                '((a|b|rc){posint})?' # [{a|b|rc}N]
+                '(\.post{posint})?'  # [.postN]
+                '(\.dev{postdev})?'   # [.devN]
+                '$')
+    string_re = tpl_string_re.format(posint=posint, postdev=posint)
+    loose440re = re.compile(tpl_string_re.format(posint=posint, postdev=(posint+'?')))
+    pep440re = re.compile(string_re)
+
+    def is_canonical(version, loosedev=False):
+        """
+        Return whether or not the version string is canonical according to Pep 440
+        """
+        if loosedev:
+            return loose440re.match(version) is not None
+        return pep440re.match(version) is not None
+
+
+# this is the end of the direct port from pep440
+
+
     if is_canonical(out_version):
         return out_version
     else:
         raise ValueError(pep440_err)
 
-# This has been ported directly from the pep440 package since it cannot be 
-# installed as part of a setuptools based install without using pyproject.toml
-# You can find the source at 
-# https://github.com/Carreau/pep440/blob/b2b8daf90522f368446d8da0cce2701459f86929/pep440/__init__.py
-# It is licensed with an MIT license, Copyright (c) 2015 Matthias Bussonnier
-# When you can, just use pep440
-
-posint = '(0|[1-9]\d*)'
-
-
-tpl_string_re = ('^' # Start
-            '([1-9]\d*!)?'        # [N!]
-            '{posint}'            # N
-            '(\.{posint})*'        # (.N)*
-            '((a|b|rc){posint})?' # [{a|b|rc}N]
-            '(\.post{posint})?'  # [.postN]
-            '(\.dev{postdev})?'   # [.devN]
-            '$')
-string_re = tpl_string_re.format(posint=posint, postdev=posint)
-loose440re = re.compile(tpl_string_re.format(posint=posint, postdev=(posint+'?')))
-pep440re = re.compile(string_re)
-
-def is_canonical(version, loosedev=False):
-    """
-    Return whether or not the version string is canonical according to Pep 440
-    """
-    if loosedev:
-        return loose440re.match(version) is not None
-    return pep440re.match(version) is not None
-
-
-# this is the end of the direct port from pep440
 
 __version__ = create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info) 
