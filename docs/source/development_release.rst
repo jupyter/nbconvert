@@ -13,7 +13,7 @@ Go to GitHub and assign all PRs that have been merged to milestones.  This will
 be helpful when you update the changelog. If you go to this `GitHub page <Github
 no milestones_>`_ you will find all the PRs that currently have no milestones.
 
-.. _GitHub no milestones: https://github.com/jupyter/nbconvert/pulls?utf8=%E2%9C%93&q=is%3Amerged%20is%3Apr%20no%3Amilestone%20`
+.. _GitHub no milestones: https://github.com/jupyter/nbconvert/pulls?utf8=%E2%9C%93&q=is%3Amerged%20is%3Apr%20no%3Amilestone%20
 
 Check installed tools
 ---------------------
