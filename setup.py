@@ -204,13 +204,8 @@ extra_requirements = {
     'serve': ['tornado>=4.0'],
     'execute': ['jupyter_client>=4.2'],
 }
-s = [] 
-[s.extend(values) for values in extra_requirements.values()]
-extra_requirements['all'] = list(set(s))
-
-extras_require = setuptools_args['extras_require'] = {
-    **extra_requirements
-}
+extra_requirements['all'] = sum(extra_requirements.values(), [])
+extras_require = setuptools_args['extras_require'] = extra_requirements
 
 if 'setuptools' in sys.modules:
     from setuptools.command.develop import develop
