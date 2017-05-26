@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """HTML Exporter class"""
 
 # Copyright (c) Jupyter Development Team.
