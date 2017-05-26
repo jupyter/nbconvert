@@ -33,7 +33,7 @@ def test_UnicodeStdStream():
         unicode_std_stream().write(sample)
 
         output = stdoutb.getvalue().decode('utf-8')
-        nt.assert_equal(output, sample)
+        assert output == sample
         assert not stdout.closed
     finally:
         sys.stdout = orig_stdout
@@ -44,7 +44,7 @@ def test_UnicodeStdStream_nowrap():
     orig_stdout = sys.stdout
     sys.stdout = StringIO()
     try:
-        nt.assert_is(unicode_std_stream(), sys.stdout)
+        assert unicode_std_stream() is sys.stdout
         assert not sys.stdout.closed
     finally:
         sys.stdout = orig_stdout
