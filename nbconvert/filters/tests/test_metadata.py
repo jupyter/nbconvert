@@ -1,5 +1,3 @@
-import nose.tools as nt
-
 from nbconvert.filters import get_metadata
 
 def test_get_metadata():
@@ -13,9 +11,9 @@ def test_get_metadata():
             }
         }
     }
-    nt.assert_is(get_metadata(output, 'nowhere'), None)
-    nt.assert_equal(get_metadata(output, 'height'), 2)
-    nt.assert_equal(get_metadata(output, 'unconfined'), None)
-    nt.assert_equal(get_metadata(output, 'unconfined', 'image/png'), True)
-    nt.assert_equal(get_metadata(output, 'width', 'image/png'), 1)
-    nt.assert_equal(get_metadata(output, 'height', 'image/png'), 3)
+    assert get_metadata(output, 'nowhere') is None
+    assert get_metadata(output, 'height') == 2
+    assert get_metadata(output, 'unconfined') == None
+    assert get_metadata(output, 'unconfined', 'image/png') == True
+    assert get_metadata(output, 'width', 'image/png') == 1
+    assert get_metadata(output, 'height', 'image/png') == 3
