@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Markdown filters with mistune
 
 Used from markdown.py
