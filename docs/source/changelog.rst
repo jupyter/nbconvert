@@ -1,12 +1,52 @@
 .. _changelog:
 
+====================
 Changes in nbconvert
 ====================
 
 5.2.1
 -----
 
-`5.2.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.2.1>`__
+`5.2 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.2>`__
+
+Major features
+~~~~~~~~~~~~~~
+
+In this release (along with the usual bugfixes and documentation improvements,
+which are legion) we have a few new major features that have been requested for
+a long time:
+
+Global Content Filtering
+++++++++++++++++++++++++
+
+You now have the ability to remove input or output from code cells, markdown
+cells and the input and output prompts. The easiest way to access all of these
+is by using traitlets like TemplateExporter.exclude_input = True (or, for
+example HTMLExporter.exclude_markdown = True if you wanted to make it specific
+to HTML output). On the command line if you just want to not have input or
+output prompts just use --no-prompt.
+
+Execute notebooks from a function
++++++++++++++++++++++++++++++++++
+
+You can now use the executenb function to execute notebooks as though you ran
+the execute preprocessor on the notebooks. It returns the standard notebook and
+resources options.
+
+Remove cells based on regex pattern
++++++++++++++++++++++++++++++++++++
+
+This removes cells based on their matching a regex pattern (by default, empty
+cells). This is the RegexRemovePreprocessor.
+
+Script exporter entrypoints for nonpython scripts
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Now there is an entrypoint for having an exporter specific to the type of script
+that is being exported. While designed for use with the IRkernel in particular
+(with a script exporter focused on exporting R scripts) other non-python kernels
+that wish to have a language specific exporter can now surface that directly.
+
 
 - new: configurable ExecutePreprocessor.startup_timeout configurable #583
 - new: RemoveCell preprocessor based on cell content (defaults to empty cell) #575
@@ -28,12 +68,56 @@ Changes in nbconvert
 - bug fixed: we now respect width and height metadata on jpeg and png mimetype outputs #588
 - bug fixed: now we respect the `resolve_references` filter in `report.tplx` #577
 - bug fixed: output metadata now is removed by ClearOutputPreprocessor #569
-- bug fixed: display id respected in execute preproessor #563 
+- bug fixed: display id respected in execute preproessor #563
 - bug fixed: dynamic defaults for optional jupyter_client import #559
 - bug fixed: don't self-close non-void HTML tags #548
 - buf fixed: upgrade jupyter_client dependency to 4.2 #539
 - bug fixed: LaTeX output through md→LaTeX conversion shouldn't be touched #535
 - bug fixed: now we escape `<` inside math formulas when converting to html #514
+
+Credits
+~~~~~~~
+
+This release has been larger than previous releases. In it 33 authors
+contributed a total of 546 commits.
+
+Many thanks to the following individuals who contributed to this release (in
+alphabetical order):
+
+- Adam Chainz
+- Andreas Mueller
+- Bartosz T
+- Benjamin Ragan-Kelley
+- Carol Willing
+- Damián Avila
+- Elliot Marsden
+- Gao, Xiang
+- Jaeho Shin
+- Jan Schulz
+- Jeremy Kun
+- Jessica B. Hamrick
+- John B Nelson
+- juhasch
+- Livia Barazzetti
+- M Pacer
+- Matej Urbas
+- Matthias Bussonnier
+- Matthias Geier
+- Maximilian Albert
+- Michael Scott Cuthbert
+- Nicholas Bollweg
+- Paul Gowder
+- Paulo Villegas
+- Peter Parente
+- Philipp A
+- Scott Sanderson
+- Srinivas Reddy Thatiparthy
+- Sylvain Corlay
+- Thomas Kluyver
+- Till Hoffmann
+- Xiang Gao
+- YuviPanda
+
 
 5.1.1
 -----
