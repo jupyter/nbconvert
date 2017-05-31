@@ -45,7 +45,7 @@ class ServePostProcessor(PostProcessorBase):
     open_in_browser = Bool(True,
         help="""Should the browser be opened automatically?"""
     ).tag(config=True)
-    reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0",
+    reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0",
         help="""URL for reveal.js CDN."""
     ).tag(config=True)
     reveal_prefix = Unicode("reveal.js", help="URL prefix for reveal.js").tag(config=True)

@@ -85,7 +85,6 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 /* Overrides of notebook CSS for static HTML export */
 .reveal {
   font-size: 160%;
-  overflow-y: scroll;
 }
 .reveal pre {
   width: inherit;
@@ -190,8 +189,7 @@ require(
             progress: true,
             history: true,
 
-            theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-            transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
+            transition: "{{resources.reveal.transition}}",
 
             // Optional libraries used to extend on reveal.js
             dependencies: [
@@ -211,13 +209,29 @@ require(
 
         Reveal.addEventListener('slidechanged', update);
 
-        var update_scroll = function(event){
-          $(".reveal").scrollTop(0);
-        };
+        function setScrollingSlide(scroll) {
 
-        Reveal.addEventListener('slidechanged', update_scroll);
+            if (scroll === "True") {
+              var h = $('.reveal').height() * 0.95;
+              var hpx = "" + h + "px";
+              $('section.present').find('section')
+                .filter(function() {
+                  return $(this).height() > h;
+                })
+                .css('height', hpx)
+                .css('overflow-y', 'scroll')
+                .css('margin-top', '20px');
+            }
+        }
+
+        Reveal.addEventListener( 'slidechanged', function( event ) {
+          // check and set the scrolling slide every time the slide change
+          var scroll = "{{resources.reveal.scroll}}";
+          setScrollingSlide(scroll);
+        });
 
     }
+
 );
 </script>
 
