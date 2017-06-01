@@ -103,12 +103,12 @@ class SlidesExporter(HTMLExporter):
         """
     ).tag(config=True)
 
-    reveal_transition = Unicode('linear',
+    reveal_transition = Unicode('slide',
         help="""
         Name of the reveal.js transition to use.
 
-        The list of themes that ship by default with reveal.js are:
-        default, cube, page, concave, zoom, none.
+        The list of transitions that ships by default with reveal.js are:
+        none, fade, slide, convex, concave and zoom.
         """
     ).tag(config=True)
 
