@@ -209,9 +209,9 @@ require(
 
         Reveal.addEventListener('slidechanged', update);
 
-        function setScrollingSlide(scroll) {
-
-            if (scroll === "True") {
+        function setScrollingSlide() {
+            var scroll = {{ resources.reveal.scroll | json_dumps }}
+            if (scroll === true) {
               var h = $('.reveal').height() * 0.95;
               var hpx = "" + h + "px";
               $('section.present').find('section')
@@ -224,11 +224,8 @@ require(
             }
         }
 
-        Reveal.addEventListener( 'slidechanged', function( event ) {
-          // check and set the scrolling slide every time the slide change
-          var scroll = "{{resources.reveal.scroll}}";
-          setScrollingSlide(scroll);
-        });
+        // check and set the scrolling slide every time the slide change
+        Reveal.addEventListener('slidechanged', setScrollingSlide);
 
     }
 
