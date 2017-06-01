@@ -114,7 +114,7 @@ class SlidesExporter(HTMLExporter):
 
     reveal_scroll = Bool(False,
         help="""
-        Whether to enable/disable scrolling per slide basis
+        If True, enable scrolling within each slide
         """
     ).tag(config=True)
 
