@@ -261,12 +261,11 @@ require(
             var scroll = {{ resources.reveal.scroll | json_dumps }}
             if (scroll === true) {
               var h = $('.reveal').height() * 0.95;
-              var hpx = "" + h + "px";
               $('section.present').find('section')
                 .filter(function() {
                   return $(this).height() > h;
                 })
-                .css('height', hpx)
+                .css('height', 'calc(95vh)')
                 .css('overflow-y', 'scroll')
                 .css('margin-top', '20px');
             }
