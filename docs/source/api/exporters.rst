@@ -10,8 +10,6 @@ Exporters
 
 .. autofunction:: export
 
-.. autofunction:: get_exporter
-
 .. autofunction:: get_export_names
 
 Exporter base classes
@@ -66,3 +64,13 @@ inherit either directly or indirectly from
 .. autoclass:: PythonExporter
 
 .. autoclass:: RSTExporter
+
+
+Export functions
+----------------
+
+.. module:: nbconvert.exporters.export
+
+.. autofunction:: get_exporter
+
+
