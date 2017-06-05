@@ -15,12 +15,12 @@ import re
 
 import nbformat
 import sys
+import pytest
 
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 from nbconvert.filters import strip_ansi
-from nose.tools import assert_raises, assert_in
 from testpath import modified_env
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
@@ -157,7 +157,8 @@ class TestExecute(PreprocessorTestsBase):
         except NameError:
             exception = RuntimeError
 
-        assert_raises(exception, self.run_notebook, filename, dict(timeout=1), res)
+        with pytest.raises(exception):
+            self.run_notebook(filename, dict(timeout=1), res)
 
     def test_timeout_func(self):
         """Check that an error is raised when a computation times out"""
@@ -173,7 +174,8 @@ class TestExecute(PreprocessorTestsBase):
         def timeout_func(source):
             return 10
 
-        assert_raises(exception, self.run_notebook, filename, dict(timeout_func=timeout_func), res)
+        with pytest.raises(exception):
+            self.run_notebook(filename, dict(timeout_func=timeout_func), res)
 
     def test_allow_errors(self):
         """
@@ -183,14 +185,13 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        with assert_raises(CellExecutionError) as exc:
+        with pytest.raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
-        self.assertIsInstance(str(exc.exception), str)
+        self.assertIsInstance(str(exc.value), str)
         if sys.version_info >= (3, 0):
-            assert_in(u"# üñîçø∂é", str(exc.exception))
+            assert u"# üñîçø∂é" in str(exc.value)
         else:
-            assert_in(u"# üñîçø∂é".encode('utf8', 'replace'),
-                      str(exc.exception))
+            assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
 
     def test_custom_kernel_manager(self):
         from .fake_kernelmanager import FakeCustomKernelManager

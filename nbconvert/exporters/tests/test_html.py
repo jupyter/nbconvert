@@ -66,7 +66,11 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         (output, resources) = HTMLExporter(template_file='basic').from_filename(
             self._get_notebook(nb_name="pngmetadata.ipynb"))
-        assert len(output) > 0
+        check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
+        result = check_for_png.search(output)
+        attr_string = result.group(1)
+        assert 'width' in attr_string
+        assert 'height' in attr_string
 
     def test_javascript_output(self):
         nb = v4.new_notebook(

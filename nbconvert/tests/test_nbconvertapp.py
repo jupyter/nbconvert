@@ -15,7 +15,7 @@ from nbconvert.exporters import Exporter
 from traitlets.tests.utils import check_help_all_output
 from ipython_genutils.testing import decorators as dec
 from testpath import tempdir
-from nose.tools import assert_raises, assert_in, assert_not_in
+import pytest
 
 #-----------------------------------------------------------------------------
 # Classes and functions
@@ -351,7 +351,7 @@ class TestNbConvertApp(TestsBase):
             assert '42' in output3
 
             # Executing the notebook should raise an exception if --allow-errors is not specified
-            with assert_raises(OSError):
+            with pytest.raises(OSError):
                 self.nbconvert('--execute --to markdown --stdout notebook3*.ipynb')
 
     def test_errors_print_traceback(self):
@@ -361,9 +361,9 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(['notebook3_with_errors.ipynb']):
             _, error_output = self.nbconvert('--execute --to markdown --stdout notebook3_with_errors.ipynb',
                                              ignore_return_code=True)
-            assert_in('print("Some text before the error")', error_output)
-            assert_in('raise RuntimeError("This is a deliberate exception")', error_output)
-            assert_in('RuntimeError: This is a deliberate exception', error_output)
+            assert 'print("Some text before the error")' in error_output
+            assert 'raise RuntimeError("This is a deliberate exception")' in error_output
+            assert 'RuntimeError: This is a deliberate exception' in error_output
 
     def test_fenced_code_blocks_markdown(self):
         """
@@ -391,8 +391,8 @@ class TestNbConvertApp(TestsBase):
             with io.open('notebook1.ipynb') as f:
                 notebook = f.read().encode()
                 output1, _ = self.nbconvert('--to markdown --stdin --stdout', stdin=notebook)
-            assert_not_in('```python', output1) # shouldn't have language
-            assert_in("```", output1) # but should have fenced blocks
+            assert '```python' not in output1 # shouldn't have language
+            assert "```" in output1 # but should have fenced blocks
 
     def test_convert_from_stdin(self):
         """
@@ -405,8 +405,8 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook.md") # default name for stdin input
             with io.open('notebook.md') as f:
                 output1 = f.read()
-                assert_not_in('```python', output1) # shouldn't have language
-                assert_in("```", output1) # but should have fenced blocks
+                assert '```python' not in output1 # shouldn't have language
+                assert "```" in output1 # but should have fenced blocks
 
     @dec.onlyif_cmds_exist('xelatex')
     @dec.onlyif_cmds_exist('pandoc')
@@ -441,8 +441,8 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('markdown_display_priority.md')
             with io.open('markdown_display_priority.md') as f:
                 markdown_output = f.read()
-                assert_in("markdown_display_priority_files/"
-                          "markdown_display_priority_0_1.png", markdown_output)
+                assert ("markdown_display_priority_files/"
+                        "markdown_display_priority_0_1.png") in markdown_output
 
     @dec.onlyif_cmds_exist('pandoc')
     def test_write_figures_to_custom_path(self):

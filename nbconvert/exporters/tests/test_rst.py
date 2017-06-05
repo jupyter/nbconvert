@@ -52,3 +52,12 @@ class TestRSTExporter(ExportersTestsBase):
         # adding an empty code cell shouldn't change output
         self.assertEqual(output.strip(), output2.strip())
         
+
+    @onlyif_cmds_exist('pandoc')
+    def test_png_metadata(self):
+        """
+        Does RSTExporter treat pngs with width/height metadata correctly?
+        """
+        (output, resources) = RSTExporter().from_filename(
+            self._get_notebook(nb_name="pngmetadata.ipynb"))
+        assert len(output) > 0

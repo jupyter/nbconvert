@@ -54,6 +54,7 @@ batch of notebook files to another format.
 
    architecture
    api/index
+   development_release
 
 .. toctree::
    :maxdepth: 2
