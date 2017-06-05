@@ -223,7 +223,9 @@ class NbConvertApp(JupyterApp):
                                     help="""PostProcessor class used to write the
                                     results of the conversion"""
     ).tag(config=True)
-    postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
+    postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor',
+                             'zip': 'nbconvert.postprocessors.pack.ZipPostProcessor'
+            }
     postprocessor_factory = Type(None, allow_none=True)
     
     @observe('postprocessor_class')
