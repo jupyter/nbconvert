@@ -63,13 +63,11 @@ class TestRSTExporter(ExportersTestsBase):
             self._get_notebook(nb_name="pngmetadata.ipynb"))
         assert len(output) > 0
         check_for_png = re.compile(
-            r'.. image:: .*?\n\s+(:.*?: \d+px)\n\s+(:.*?: \d+px)\n\s*\n', 
+            r'.. image::.*?\n\s+(?s:(.*?))\n\s*\n', 
             re.MULTILINE)
         result = check_for_png.search(output)
         assert result is not None
         attr_string = result.group(1)
         assert ':width:' in attr_string
-        assert 'px' in attr_string
-        attr_string = result.group(2)
         assert ':height:' in attr_string
         assert 'px' in attr_string
