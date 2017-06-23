@@ -20,20 +20,17 @@ from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
 
-inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
-block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
 
 class MathInlineGrammar(mistune.InlineGrammar):
-    inline_math = inline_math
-    block_math = block_math
-    # inline_block_math = block_math
-    text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
+    inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
+    block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
     latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
                                    re.DOTALL)
+    text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
 
 
 class MathInlineLexer(mistune.InlineLexer):
-    default_rules = (['block_math', 'latex_environment', 'inline_math']
+    default_rules = (['block_math', 'inline_math', 'latex_environment']
                      + mistune.InlineLexer.default_rules)
 
     def __init__(self, renderer, rules=None, **kwargs):
@@ -50,7 +47,6 @@ class MathInlineLexer(mistune.InlineLexer):
     def output_latex_environment(self, m):
         return self.renderer.latex_environment(m.group(1),
                                                m.group(2))
-    
 
 
 class MarkdownWithMath(mistune.Markdown):
