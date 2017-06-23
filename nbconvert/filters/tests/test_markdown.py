@@ -165,14 +165,20 @@ class TestMarkdown(TestsBase):
             self.assertEquals(case, self._unescape(math))
 
     def test_markdown2html_math_mixed(self):
-        """ensure markdown between inline and inline-block math"""
+        """ensure markdown between inline and inline-block math works and
+        test multiple LaTeX markup syntaxes.
+        """
         case = """The entries of \\\\(C\\\\) are given by the exact formula:
 $$
-C_{ik} = \sum_{j=1}^n A_{ij} B_{jk}
+C_{ik} = \sum_{j=1}^n A_{ij} B_{jk},
 $$
-but there are many ways to _implement_ this computation.   $\approx 2mnp$ flops"""
-        self._try_markdown(markdown2html, case,
-                           case.replace("_implement_", "<em>implement</em>"))
+but you can _implement_ this computation in many ways.
+$\approx 2mnp$ flops are needed for \\\\[ C_{ik} = \sum_{j=1}^n A_{ij} B_{jk} \\\\]."""
+        output_check = (case.replace("_implement_", "<em>implement</em>")
+                            .replace("\\\\(", "$").replace("\\\\)", "$")
+                            .replace("\\\\[", "$$").replace("\\\\]", "$$"))
+        # these replacements are needed because we use $ and $$ in our html output
+        self._try_markdown(markdown2html, case, output_check)
 
     def test_markdown2html_math_paragraph(self):
         """these should all parse without modification"""
