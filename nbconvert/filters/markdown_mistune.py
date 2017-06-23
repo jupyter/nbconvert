@@ -19,16 +19,19 @@ from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
-from nbconvert.utils.exceptions import ConversionException
+
+block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
 
 
 class MathBlockGrammar(mistune.BlockGrammar):
-    block_math = re.compile(r"^\$\$(.*?)\$\$", re.DOTALL)
+    block_math = block_math
     latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
-                                                re.DOTALL)
+                                   re.DOTALL)
+
 
 class MathBlockLexer(mistune.BlockLexer):
-    default_rules = ['block_math', 'latex_environment'] + mistune.BlockLexer.default_rules
+    default_rules = ['block_math', 'latex_environment'
+                     ] + mistune.BlockLexer.default_rules
 
     def __init__(self, rules=None, **kwargs):
         if rules is None:
@@ -39,7 +42,7 @@ class MathBlockLexer(mistune.BlockLexer):
         """Parse a $$math$$ block"""
         self.tokens.append({
             'type': 'block_math',
-            'text': m.group(1)
+            'text': m.group(1) or m.group(2)
         })
 
     def parse_latex_environment(self, m):
@@ -52,7 +55,7 @@ class MathBlockLexer(mistune.BlockLexer):
 
 class MathInlineGrammar(mistune.InlineGrammar):
     math = re.compile(r"^\$(.+?)\$", re.DOTALL)
-    block_math = re.compile(r"^\$\$(.+?)\$\$", re.DOTALL)
+    block_math = block_math
     text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
 
 
@@ -83,7 +86,8 @@ class MarkdownWithMath(mistune.Markdown):
         return self.renderer.block_math(self.token['text'])
 
     def output_latex_environment(self):
-        return self.renderer.latex_environment(self.token['name'], self.token['text'])
+        return self.renderer.latex_environment(self.token['name'],
+                                               self.token['text'])
 
 
 class IPythonRenderer(mistune.Renderer):
@@ -111,7 +115,7 @@ class IPythonRenderer(mistune.Renderer):
     # html.escape() is not availale on python 2.7
     # For more details, see:
     # https://wiki.python.org/moin/EscapingHtml
-    def escape_html(self,text):
+    def escape_html(self, text):
         return cgi.escape(text)
 
     def block_math(self, text):
@@ -125,6 +129,8 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % self.escape_html(text)
 
+
 def markdown2html_mistune(source):
     """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer(escape=False)).render(source)
+    return MarkdownWithMath(renderer=IPythonRenderer(
+        escape=False)).render(source)
