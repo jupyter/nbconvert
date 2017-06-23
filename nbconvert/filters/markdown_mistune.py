@@ -20,48 +20,55 @@ from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
 
-block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
 inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
 
+# block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
+block_math = re.compile(r"^\\\\\[(.*?)\\\\\]", re.DOTALL)
 
-class MathBlockGrammar(mistune.BlockGrammar):
-    block_math = block_math
-    latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
-                                   re.DOTALL)
+# class MathBlockGrammar(mistune.BlockGrammar):
+    # block_math = re.compile(r"^\$\$(.*?)\$\$$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
+    # # block_math = block_math
+    # latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
+                                   # re.DOTALL)
 
 
-class MathBlockLexer(mistune.BlockLexer):
-    default_rules = ['block_math', 'latex_environment'
-                     ] + mistune.BlockLexer.default_rules
+# class MathBlockLexer(mistune.BlockLexer):
+    # default_rules = ['block_math', 'latex_environment'
+                     # ] + mistune.BlockLexer.default_rules
 
-    def __init__(self, rules=None, **kwargs):
-        if rules is None:
-            rules = MathBlockGrammar()
-        super(MathBlockLexer, self).__init__(rules, **kwargs)
+    # def __init__(self, rules=None, **kwargs):
+        # if rules is None:
+            # rules = MathBlockGrammar()
+        # super(MathBlockLexer, self).__init__(rules, **kwargs)
 
-    def parse_block_math(self, m):
-        """Parse a $$math$$ block"""
-        self.tokens.append({
-            'type': 'block_math',
-            'text': m.group(1) or m.group(2)
-        })
+    # def parse_block_math(self, m):
+        # """Parse a $$math$$ block"""
+        # # import pdb; pdb.set_trace()
+        # import ipdb; ipdb.set_trace()
+        # self.tokens.append({
+            # 'type': 'block_math',
+            # 'text': m.group(1) or m.group(2)
+        # })
 
-    def parse_latex_environment(self, m):
-        self.tokens.append({
-            'type': 'latex_environment',
-            'name': m.group(1),
-            'text': m.group(2)
-        })
+    # def parse_latex_environment(self, m):
+        # self.tokens.append({
+            # 'type': 'latex_environment',
+            # 'name': m.group(1),
+            # 'text': m.group(2)
+        # })
 
 
 class MathInlineGrammar(mistune.InlineGrammar):
     inline_math = inline_math
     block_math = block_math
+    # inline_block_math = block_math
     text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
+    latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
+                                   re.DOTALL)
 
 
 class MathInlineLexer(mistune.InlineLexer):
-    default_rules = (['block_math', 'inline_math']
+    default_rules = (['block_math', 'latex_environment', 'inline_math']
                      + mistune.InlineLexer.default_rules)
 
     def __init__(self, renderer, rules=None, **kwargs):
@@ -75,13 +82,25 @@ class MathInlineLexer(mistune.InlineLexer):
     def output_block_math(self, m):
         return self.renderer.block_math(m.group(1) or m.group(2))
 
+    # def output_latex_environment(self, m):
+        # self.tokens.append({
+            # 'type': 'latex_environment',
+            # 'name': m.group(1),
+            # 'text': m.group(2)
+        # })
+
+    def output_latex_environment(self, m):
+        return self.renderer.latex_environment(m.group(1),
+                                               m.group(2))
+    
+
 
 class MarkdownWithMath(mistune.Markdown):
     def __init__(self, renderer, **kwargs):
         if 'inline' not in kwargs:
             kwargs['inline'] = MathInlineLexer
-        if 'block' not in kwargs:
-            kwargs['block'] = MathBlockLexer
+        # if 'block' not in kwargs:
+            # kwargs['block'] = MathBlockLexer
         super(MarkdownWithMath, self).__init__(renderer, **kwargs)
 
     def output_block_math(self):
