@@ -21,6 +21,7 @@ from pygments.util import ClassNotFound
 from nbconvert.filters.strings import add_anchor
 
 block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
+inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
 
 
 class MathBlockGrammar(mistune.BlockGrammar):
@@ -54,24 +55,25 @@ class MathBlockLexer(mistune.BlockLexer):
 
 
 class MathInlineGrammar(mistune.InlineGrammar):
-    math = re.compile(r"^\$(.+?)\$", re.DOTALL)
+    inline_math = inline_math
     block_math = block_math
     text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
 
 
 class MathInlineLexer(mistune.InlineLexer):
-    default_rules = ['block_math', 'math'] + mistune.InlineLexer.default_rules
+    default_rules = (['block_math', 'inline_math']
+                     + mistune.InlineLexer.default_rules)
 
     def __init__(self, renderer, rules=None, **kwargs):
         if rules is None:
             rules = MathInlineGrammar()
         super(MathInlineLexer, self).__init__(renderer, rules, **kwargs)
 
-    def output_math(self, m):
-        return self.renderer.inline_math(m.group(1))
+    def output_inline_math(self, m):
+        return self.renderer.inline_math(m.group(1) or m.group(2))
 
     def output_block_math(self, m):
-        return self.renderer.block_math(m.group(1))
+        return self.renderer.block_math(m.group(1) or m.group(2))
 
 
 class MarkdownWithMath(mistune.Markdown):
