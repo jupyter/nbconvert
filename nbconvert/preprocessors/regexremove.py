@@ -44,6 +44,9 @@ class RegexRemovePreprocessor(Preprocessor):
         """
         Checks that a cell matches the pattern and that (if a code cell)
         it does not have any outputs.
+
+        Returns: Boolean.
+        True means cell should *not* be removed.
         """
 
         # Compile all the patterns into one: each pattern is first wrapped
@@ -53,7 +56,7 @@ class RegexRemovePreprocessor(Preprocessor):
                              for pattern in self.patterns))
 
         # check that output is not present if it is a code cell
-        code_w_output = cell.get('cell_type', {}) and cell.outputs != []
+        code_w_output = cell.cell_type == 'code' and cell.get('outputs',[]) != []
 
         # Filter out cells that meet the pattern and have no output
         return code_w_output or not pattern.match(cell.source)
