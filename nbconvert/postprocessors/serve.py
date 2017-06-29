@@ -47,17 +47,21 @@ class ServePostProcessor(PostProcessorBase):
     ).tag(config=True)
 
     browser = Unicode(u'', 
-                      help="""Specify what command to use awhen opening a browser.
-                      If not specified, the default browser will be determined 
-                      by the `webbrowser` standard library module, which allows 
-                      setting of the BROWSER environment variable to override it.
+                      help="""Specify what browser should be used to open slides. See
+                      https://docs.python.org/3/library/webbrowser.html#webbrowser.register
+                      to see how keys are mapped to browser executables. If 
+                      not specified, the default browser will be determined 
+                      by the `webbrowser` 
+                      standard library module, which allows setting of the BROWSER 
+                      environment variable to override it.
                       """).tag(config=True)
 
     reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0",
-        help="""URL for reveal.js CDN."""
-    ).tag(config=True)
-    reveal_prefix = Unicode("reveal.js", help="URL prefix for reveal.js").tag(config=True)
-    ip = Unicode("127.0.0.1", help="The IP address to listen on.").tag(config=True)
+                         help="""URL for reveal.js CDN.""").tag(config=True)
+    reveal_prefix = Unicode("reveal.js",
+                            help="URL prefix for reveal.js").tag(config=True)
+    ip = Unicode("127.0.0.1",
+                 help="The IP address to listen on.").tag(config=True)
     port = Int(8000, help="port for the server to listen on.").tag(config=True)
 
     def postprocess(self, input):
