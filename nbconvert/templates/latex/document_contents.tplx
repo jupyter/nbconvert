@@ -35,7 +35,7 @@
 
 % Display markdown
 ((* block data_markdown -*))
-    ((( output.data['text/markdown'] | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'latex'))))
+    ((( output.data['text/markdown'] | citation2latex | strip_files_prefix | convert_pandoc('markdown+tex_math_double_backslash', 'latex'))))
 ((* endblock data_markdown *))
 
 % Default mechanism for rendering figures
@@ -64,7 +64,7 @@
 
 % Render markdown
 ((* block markdowncell scoped *))
-    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'json',extra_args=[]) | resolve_references | convert_pandoc('json','latex'))))
+    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown+tex_math_double_backslash', 'json',extra_args=[]) | resolve_references | convert_pandoc('json','latex'))))
 ((* endblock markdowncell *))
 
 % Don't display unknown types
