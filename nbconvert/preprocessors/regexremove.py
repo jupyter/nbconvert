@@ -55,11 +55,8 @@ class RegexRemovePreprocessor(Preprocessor):
         pattern = re.compile('|'.join('(?:%s)' % pattern
                              for pattern in self.patterns))
 
-        # check that output is not present if it is a code cell
-        code_w_output = cell.cell_type == 'code' and cell.get('outputs',[]) != []
-
-        # Filter out cells that meet the pattern and have no output
-        return code_w_output or not pattern.match(cell.source)
+        # Filter out cells that meet the pattern and have no outputs
+        return cell.get('outputs') or not pattern.match(cell.source)
 
     def preprocess(self, nb, resources):
         """
