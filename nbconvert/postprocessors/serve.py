@@ -45,6 +45,14 @@ class ServePostProcessor(PostProcessorBase):
     open_in_browser = Bool(True,
         help="""Should the browser be opened automatically?"""
     ).tag(config=True)
+
+    browser = Unicode(u'', 
+                      help="""Specify what command to use awhen opening a browser.
+                      If not specified, the default browser will be determined 
+                      by the `webbrowser` standard library module, which allows 
+                      setting of the BROWSER environment variable to override it.
+                      """).tag(config=True)
+
     reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0",
         help="""URL for reveal.js CDN."""
     ).tag(config=True)
@@ -84,7 +92,13 @@ class ServePostProcessor(PostProcessorBase):
         print("Serving your slides at %s" % url)
         print("Use Control-C to stop this server")
         if self.open_in_browser:
-            webbrowser.open(url, new=2)
+            try: 
+                browser = webbrowser.get(self.browser or None)
+            except webbrowser.Error as e:
+                self.log.warning('No web browser found: %s.' % e)
+                browser = None
+
+            browser.open(url, new=2)
         try:
             ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
