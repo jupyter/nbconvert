@@ -111,7 +111,7 @@ class TestLatexExporter(ExportersTestsBase):
         in_regex = r"In \[\{\\color\{incolor\}(.*)\}\]:"
         out_regex = r"Out\[\{\\color\{outcolor\}(.*)\}\]:"
 
-        ins = ["2", "10", " ", " ", "*", "0"]
+        ins = ["2", "10", " ", " ",  "0"]
         outs = ["10"]
 
         assert re.findall(in_regex, output) == ins
