@@ -12,6 +12,7 @@ import uuid
 import json
 
 from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
+from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
@@ -21,7 +22,7 @@ from jinja2 import (
 from nbconvert import filters
 from .exporter import Exporter
 
-#Jinja2 extensions to load.
+# Jinja2 extensions to load.
 JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
 
 default_filters = {
@@ -68,7 +69,6 @@ class ExtensionTolerantLoader(BaseLoader):
     def __init__(self, loader, extension):
         self.loader = loader
         self.extension = extension
-   
 
     def get_source(self, environment, template):
         try:
@@ -123,6 +123,15 @@ class TemplateExporter(Exporter):
             self._environment_cached = self._create_environment()
         return self._environment_cached
 
+    @property
+    def default_config(self):
+        c = Config({
+            'RegexRemovePreprocessor':{
+                'enabled': True
+                }
+            })
+        c.merge(super(TemplateExporter, self).default_config)
+        return c
 
     template_file = Unicode(
             help="Name of the template file to use"

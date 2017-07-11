@@ -10,6 +10,7 @@ import re
 from traitlets import List, Unicode
 from .base import Preprocessor
 
+
 class RegexRemovePreprocessor(Preprocessor):
     """
     Removes cells from a notebook that match one or more regular expression.
@@ -39,6 +40,24 @@ class RegexRemovePreprocessor(Preprocessor):
 
     patterns = List(Unicode, default_value=[r'\Z']).tag(config=True)
 
+    def check_conditions(self, cell):
+        """
+        Checks that a cell matches the pattern and that (if a code cell)
+        it does not have any outputs.
+
+        Returns: Boolean.
+        True means cell should *not* be removed.
+        """
+
+        # Compile all the patterns into one: each pattern is first wrapped
+        # by a non-capturing group to ensure the correct order of precedence
+        # and the patterns are joined with a logical or
+        pattern = re.compile('|'.join('(?:%s)' % pattern
+                             for pattern in self.patterns))
+
+        # Filter out cells that meet the pattern and have no outputs
+        return cell.get('outputs') or not pattern.match(cell.source)
+
     def preprocess(self, nb, resources):
         """
         Preprocessing to apply to each notebook. See base.py for details.
@@ -46,12 +65,8 @@ class RegexRemovePreprocessor(Preprocessor):
         # Skip preprocessing if the list of patterns is empty
         if not self.patterns:
             return nb, resources
-        # Compile all the patterns into one: each pattern is first wrapped
-        # by a non-capturing group to ensure the correct order of precedence
-        # and the patterns are joined with a logical or
-        pattern = re.compile('|'.join('(?:%s)' % pattern
-                             for pattern in self.patterns))
-        # Filter out cells that match any of the patterns
-        nb.cells = [cell for cell in nb.cells
-                    if not pattern.match(cell.source)]
+
+        # Filter out cells that meet the conditions
+        nb.cells = [cell for cell in nb.cells if self.check_conditions(cell)]
+
         return nb, resources

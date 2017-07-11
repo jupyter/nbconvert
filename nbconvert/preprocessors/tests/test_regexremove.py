@@ -6,7 +6,7 @@ Module with tests for the RegexRemovePreprocessor.
 # Distributed under the terms of the Modified BSD License.
 
 import re
-from nbformat import v4 as nbformat
+from nbformat import v4 as nbformat, from_dict
 
 from .base import PreprocessorTestsBase
 from ..regexremove import RegexRemovePreprocessor
@@ -46,7 +46,7 @@ class TestRegexRemove(PreprocessorTestsBase):
         expected_cell_count = {
             'default': 5,  # only strictly empty cells
             'disallow_whitespace': 2,  # all "empty" cells are removed
-            'disallow_tab_newline': 3, # all "empty" cells but the single space
+            'disallow_tab_newline': 3,  # all "empty" cells but the single space
             'none': 6,
         }
         for method in ['default', 'disallow_whitespace', 'disallow_tab_newline', 'none']:
@@ -68,3 +68,25 @@ class TestRegexRemove(PreprocessorTestsBase):
             for cell in nb.cells:
                 for pattern in patterns:
                     self.assertFalse(pattern.match(cell.source))
+
+    def test_nosource_with_output(self):
+        """
+        Test that the check_conditions returns true when given a code-cell
+        that has non-empty outputs but no source.
+        """
+
+        cell = {
+            'cell_type': 'code',
+            'execution_count': 2,
+            'metadata': {},
+            'outputs': [{
+                'name': 'stdout',
+                'output_type': 'stream',
+                'text': 'I exist.\n'
+            }],
+            'source': ''
+        }
+        preprocessor = self.build_preprocessor()
+        node = from_dict(cell)
+        assert preprocessor.check_conditions(node)
+
