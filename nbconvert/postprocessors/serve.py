@@ -7,6 +7,7 @@ from __future__ import print_function
 
 import os
 import webbrowser
+import threading
 
 from tornado import web, ioloop, httpserver, log
 from tornado.httpclient import AsyncHTTPClient
@@ -83,9 +84,9 @@ class ServePostProcessor(PostProcessorBase):
             handlers.insert(0, (r"/(%s)/(.*)" % self.reveal_prefix, ProxyHandler))
         
         app = web.Application(handlers,
-            cdn=self.reveal_cdn,
-            client=AsyncHTTPClient(),
-        )
+                              cdn=self.reveal_cdn,
+                              client=AsyncHTTPClient(),
+                              )
         
         # hook up tornado logging to our logger
         log.app_log = self.log
@@ -98,11 +99,12 @@ class ServePostProcessor(PostProcessorBase):
         if self.open_in_browser:
             try: 
                 browser = webbrowser.get(self.browser or None)
+                threading.Thread(target=(browser.open(url, new=2))).start()
+                                          
             except webbrowser.Error as e:
                 self.log.warning('No web browser found: %s.' % e)
                 browser = None
 
-            browser.open(url, new=2)
         try:
             ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
