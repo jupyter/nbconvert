@@ -94,6 +94,18 @@ nbconvert_flags.update({
         """Run nbconvert in place, overwriting the existing notebook (only 
         relevant when converting to notebook format)"""
         ),
+    'clear-output' : (
+        {
+            'NbConvertApp' : {
+                'use_output_suffix' : False,
+                'export_format' : 'notebook',
+            },
+            'FilesWriter' : {'build_directory': ''},
+            'ClearOutputPreprocessor' : {'enabled' : True},
+        },
+        """Clear output of current file and save in place, 
+        overwriting the existing notebook. """
+        ),
     'no-prompt' : (
         {'TemplateExporter' : {
             'exclude_input_prompt' : True,
