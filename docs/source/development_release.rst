@@ -74,6 +74,12 @@ Push directly on master, including --tags separately
         git push upstream --tags
 
 
+Update nbviewer
+---------------
+
+On nbviewer-deploy run `invoke trigger_build` and then once it's built on
+dockerhub run `invoke doitall`. 
+
 Return to development state
 ---------------------------
 
