@@ -97,10 +97,10 @@ class ServePostProcessor(PostProcessorBase):
         print("Serving your slides at %s" % url)
         print("Use Control-C to stop this server")
         if self.open_in_browser:
-            try: 
+            try:
                 browser = webbrowser.get(self.browser or None)
-                threading.Thread(target=(browser.open(url, new=2))).start()
-                                          
+                b = lambda: browser.open(url, new=2)
+                threading.Thread(target=b).start()
             except webbrowser.Error as e:
                 self.log.warning('No web browser found: %s.' % e)
                 browser = None
