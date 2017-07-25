@@ -4,7 +4,6 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import os
 from textwrap import dedent
 
 try:
@@ -12,7 +11,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool, Enum, Any, Type
+from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, default
 
 from nbformat.v4 import output_from_msg
 from .base import Preprocessor
@@ -28,6 +27,7 @@ class CellExecutionError(ConversionException):
     failures gracefully.
     """
     def __init__(self, traceback):
+        super(CellExecutionError, self).__init__(traceback)
         self.traceback = traceback
 
     def __str__(self):
@@ -83,6 +83,16 @@ class ExecutePreprocessor(Preprocessor):
             If execution of a cell times out, interrupt the kernel and
             continue executing other cells rather than throwing an error and
             stopping.
+            """
+        )
+    ).tag(config=True)
+
+    startup_timeout = Integer(60,
+        help=dedent(
+            """
+            The time to wait (in seconds) for the kernel to start.
+            If kernel startup takes longer, a RuntimeError is
+            raised.
             """
         )
     ).tag(config=True)
@@ -149,10 +159,27 @@ class ExecutePreprocessor(Preprocessor):
     ).tag(config=True)
 
     kernel_manager_class = Type(
-        default_value='jupyter_client.manager.KernelManager',
         config=True,
         help='The kernel manager class to use.'
     )
+    @default('kernel_manager_class')
+    def _km_default(self):
+        """Use a dynamic default to avoid importing jupyter_client at startup"""
+        try:
+            from jupyter_client import KernelManager
+        except ImportError:
+            raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
+        return KernelManager
+
+    # mapping of locations of outputs with a given display_id
+    # tracks cell index and output index within cell.outputs for
+    # each appearance of the display_id
+    # {
+    #   'display_id': {
+    #     cell_idx: [output_idx,]
+    #   }
+    # }
+    _display_id_map = Dict()
 
     def preprocess(self, nb, resources):
         """
@@ -179,11 +206,13 @@ class ExecutePreprocessor(Preprocessor):
         path = resources.get('metadata', {}).get('path', '')
         if path == '':
             path = None
+        
+        # clear display_id map
+        self._display_id_map = {}
 
         # from jupyter_client.manager import start_new_kernel
 
-        def start_new_kernel(startup_timeout=60, kernel_name='python',
-                             **kwargs):
+        def start_new_kernel(startup_timeout=60, kernel_name='python', **kwargs):
             km = self.kernel_manager_class(kernel_name=kernel_name)
             km.start_kernel(**kwargs)
             kc = km.client()
@@ -202,16 +231,20 @@ class ExecutePreprocessor(Preprocessor):
             kernel_name = self.kernel_name
         self.log.info("Executing notebook with kernel: %s" % kernel_name)
         self.km, self.kc = start_new_kernel(
+            startup_timeout=self.startup_timeout,
             kernel_name=kernel_name,
             extra_arguments=self.extra_arguments,
             cwd=path)
         self.kc.allow_stdin = False
+        self.nb = nb
 
         try:
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
+
+        delattr(self, 'nb')
 
         return nb, resources
 
@@ -224,7 +257,7 @@ class ExecutePreprocessor(Preprocessor):
         if cell.cell_type != 'code':
             return cell, resources
 
-        outputs = self.run_cell(cell)
+        outputs = self.run_cell(cell, cell_index)
         cell.outputs = outputs
 
         if not self.allow_errors:
@@ -243,7 +276,29 @@ class ExecutePreprocessor(Preprocessor):
         return cell, resources
 
 
-    def run_cell(self, cell):
+    def _update_display_id(self, display_id, msg):
+        """Update outputs with a given display_id"""
+        if display_id not in self._display_id_map:
+            self.log.debug("display id %r not in %s", display_id, self._display_id_map)
+            return
+
+        if msg['header']['msg_type'] == 'update_display_data':
+            msg['header']['msg_type'] = 'display_data'
+
+        try:
+            out = output_from_msg(msg)
+        except ValueError:
+            self.log.error("unhandled iopub msg: " + msg['msg_type'])
+            return
+        
+        for cell_idx, output_indices in self._display_id_map[display_id].items():
+            cell = self.nb['cells'][cell_idx]
+            outputs = cell['outputs']
+            for output_idx in output_indices:
+                outputs[output_idx]['data'] = out['data']
+                outputs[output_idx]['metadata'] = out['metadata']
+
+    def run_cell(self, cell, cell_index=0):
         msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
         # wait for finish, with timeout
@@ -277,7 +332,7 @@ class ExecutePreprocessor(Preprocessor):
                 # not our reply
                 continue
 
-        outs = []
+        outs = cell.outputs = []
 
         while True:
             try:
@@ -313,16 +368,58 @@ class ExecutePreprocessor(Preprocessor):
             elif msg_type == 'execute_input':
                 continue
             elif msg_type == 'clear_output':
-                outs = []
+                outs[:] = []
+                # clear display_id mapping for this cell
+                for display_id, cell_map in self._display_id_map.items():
+                    if cell_index in cell_map:
+                        cell_map[cell_index] = []
                 continue
             elif msg_type.startswith('comm'):
                 continue
+            
+            display_id = None
+            if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
+                display_id = msg['content'].get('transient', {}).get('display_id', None)
+                if display_id:
+                    self._update_display_id(display_id, msg)
+                if msg_type == 'update_display_data':
+                    # update_display_data doesn't get recorded
+                    continue
 
             try:
                 out = output_from_msg(msg)
             except ValueError:
                 self.log.error("unhandled iopub msg: " + msg_type)
-            else:
-                outs.append(out)
+                continue
+            if display_id:
+                # record output index in:
+                #   _display_id_map[display_id][cell_idx]
+                cell_map = self._display_id_map.setdefault(display_id, {})
+                output_idx_list = cell_map.setdefault(cell_index, [])
+                output_idx_list.append(len(outs))
+
+            outs.append(out)
 
         return outs
+
+
+def executenb(nb, cwd=None, **kwargs):
+    """Execute a notebook's code, updating outputs within the notebook object.
+    
+    This is a convenient wrapper around ExecutePreprocessor. It returns the
+    modified notebook object.
+    
+    Parameters
+    ----------
+    nb : NotebookNode
+      The notebook object to be executed
+    cwd : str, optional
+      If supplied, the kernel will run in this directory
+    kwargs :
+      Any other options for ExecutePreprocessor, e.g. timeout, kernel_name
+    """
+    resources = {}
+    if cwd is not None:
+        resources['metadata'] = {'path': cwd}
+    ep = ExecutePreprocessor(**kwargs)
+    return ep.preprocess(nb, resources)[0]

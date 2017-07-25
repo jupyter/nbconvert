@@ -2,22 +2,33 @@
 
 
 {% block input %}
+{% if resources.global_content_filter.include_input_prompt %}
 {% if cell.execution_count is defined -%}
     +*In[{{ cell.execution_count|replace(None, " ") }}]:*+
 {% else %}
     +*In[]:*+
 {%- endif -%}
-[source{% if nb.metadata.language_info %}, {{ nb.metadata.language_info.name }}{% endif %}]
+{%- endif -%}
+[source
+{%- if 'magics_language' in cell.metadata  -%}
+   , {{ cell.metadata.magics_language}}
+{%- elif 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
+   , {{ nb.metadata.language_info.pygments_lexer }}
+{%- elif 'name' in nb.metadata.get('language_info', {}) -%}
+   , {{ nb.metadata.language_info.name }}
+{%- endif -%}]
 ----
 {{ cell.source}}
 ----
 {% endblock input %}
 
 {% block output_group %}
+{% if resources.global_content_filter.include_output_prompt %}
 {% if cell.execution_count is defined -%}
     +*Out[{{ cell.execution_count|replace(None, " ") }}]:*+
 {%- else -%}
     +*Out[]:*+
+{%- endif -%}
 {%- endif %}
 ----
 {{- super() -}}

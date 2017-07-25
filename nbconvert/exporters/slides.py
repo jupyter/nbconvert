@@ -6,7 +6,7 @@
 from copy import deepcopy
 from warnings import warn
 
-from traitlets import Unicode, default
+from traitlets import Bool, Unicode, default
 
 from .html import HTMLExporter
 
@@ -83,7 +83,7 @@ class SlidesExporter(HTMLExporter):
         For speaker notes to work, a local reveal.js prefix must be used.
         """
     ).tag(config=True)
-    
+
     @default('reveal_url_prefix')
     def _reveal_url_prefix_default(self):
         if 'RevealHelpPreprocessor.url_prefix' in self.config:
@@ -91,7 +91,60 @@ class SlidesExporter(HTMLExporter):
                  "SlidesExporter.reveal_url_prefix in config files.")
             return self.config.RevealHelpPreprocessor.url_prefix
         return 'reveal.js'
-    
+
+    reveal_theme = Unicode('simple',
+        help="""
+        Name of the reveal.js theme to use.
+
+        We look for a file with this name under `reveal_url_prefix`/css/theme/`reveal_theme`.css.
+
+        https://github.com/hakimel/reveal.js/tree/master/css/theme has
+        list of themes that ship by default with reveal.js.
+        """
+    ).tag(config=True)
+
+    reveal_transition = Unicode('slide',
+        help="""
+        Name of the reveal.js transition to use.
+
+        The list of transitions that ships by default with reveal.js are:
+        none, fade, slide, convex, concave and zoom.
+        """
+    ).tag(config=True)
+
+    reveal_scroll = Bool(False,
+        help="""
+        If True, enable scrolling within each slide
+        """
+    ).tag(config=True)
+
+    require_js_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js",
+        help="""
+        URL to load require.js from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
+    jquery_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
+        help="""
+        URL to load jQuery from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
+    font_awesome_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css",
+        help="""
+        URL to load font awesome from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
     @default('file_extension')
     def _file_extension_default(self):
         return '.slides.html'
@@ -107,6 +160,12 @@ class SlidesExporter(HTMLExporter):
         if 'reveal' not in resources:
             resources['reveal'] = {}
         resources['reveal']['url_prefix'] = self.reveal_url_prefix
+        resources['reveal']['theme'] = self.reveal_theme
+        resources['reveal']['transition'] = self.reveal_transition
+        resources['reveal']['scroll'] = self.reveal_scroll
+        resources['reveal']['require_js_url'] = self.require_js_url
+        resources['reveal']['jquery_url'] = self.jquery_url
+        resources['reveal']['font_awesome_url'] = self.font_awesome_url
 
         nb = prepare(nb)
 

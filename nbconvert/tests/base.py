@@ -13,8 +13,6 @@ import unittest
 import nbconvert
 from subprocess import Popen, PIPE
 
-import nose.tools as nt
-
 from nbformat import v4, write
 from testpath.tempdir import TemporaryWorkingDirectory
 
@@ -161,14 +159,11 @@ def assert_big_text_equal(a, b, chunk_size=80):
     for i in range(0, len(a), chunk_size):
         chunk_a = a[i:i + chunk_size]
         chunk_b = b[i:i + chunk_size]
-        nt.assert_equal(chunk_a, chunk_b, "[offset: %i]\n%r != \n%r" % (
-            i, chunk_a, chunk_b))
+        assert chunk_a == chunk_b, "[offset: %i]\n%r != \n%r" % (i, chunk_a, chunk_b)
 
     if len(a) > len(b):
-        nt.fail("Length doesn't match (%i > %i). Extra text:\n%r" % (
-            len(a), len(b), a[len(b):]
-        ))
+        raise AssertionError("Length doesn't match (%i > %i). Extra text:\n%r" % (
+                             len(a), len(b), a[len(b):]))
     elif len(a) < len(b):
-        nt.fail("Length doesn't match (%i < %i). Extra text:\n%r" % (
-            len(a), len(b), b[len(a):]
-        ))
+        raise AssertionError("Length doesn't match (%i < %i). Extra text:\n%r" % (
+                             len(a), len(b), a[len(b):]))

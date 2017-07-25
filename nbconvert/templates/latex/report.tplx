@@ -22,5 +22,5 @@
 ((* endblock docclass *))
 
 ((* block markdowncell scoped *))
-((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'latex', extra_args=["--chapters"]) )))
+((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown+tex_math_double_backslash', 'json',extra_args=[]) | resolve_references | convert_pandoc('json','latex', extra_args=["--chapters"]) )))
 ((* endblock markdowncell *))

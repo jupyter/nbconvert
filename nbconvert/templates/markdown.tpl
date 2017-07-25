@@ -8,7 +8,12 @@
 {%- endblock output_prompt %}
 
 {% block input %}
-```{% if nb.metadata.language_info %}{{ nb.metadata.language_info.name }}{% endif %}
+```
+{%- if 'magics_language' in cell.metadata  -%}
+    {{ cell.metadata.magics_language}}
+{%- elif 'name' in nb.metadata.get('language_info', {}) -%}
+    {{ nb.metadata.language_info.name }}
+{%- endif %}
 {{ cell.source}}
 ```
 {% endblock input %}

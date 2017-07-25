@@ -7,10 +7,12 @@
 {% block output_prompt %}
 {% endblock output_prompt %}
 
-{% block input %}
+{% block input scoped%}
 {%- if cell.source.strip() -%}
 {{".. code:: "-}}
-{%- if 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
+{%- if 'magics_language' in cell.metadata  -%}
+    {{ cell.metadata.magics_language}}
+{%- elif 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.pygments_lexer }}
 {%- elif 'name' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.name }}
@@ -48,10 +50,26 @@
 
 {% block data_png %}
 .. image:: {{ output.metadata.filenames['image/png'] | urlencode }}
+{%- set width=output | get_metadata('width', 'image/png') -%}
+{%- if width is not none %}
+   :width: {{ width }}px
+{%- endif %}
+{%- set height=output | get_metadata('height', 'image/png') -%}
+{%- if height is not none %}
+   :height: {{ height }}px
+{%- endif %}
 {% endblock data_png %}
 
 {% block data_jpg %}
 .. image:: {{ output.metadata.filenames['image/jpeg'] | urlencode }}
+{%- set width=output | get_metadata('width', 'image/jpeg') -%}
+{%- if width is not none %}
+   :width: {{ width }}px
+{%- endif %}
+{%- set height=output | get_metadata('height', 'image/jpeg') -%}
+{%- if height is not none %}
+   :height: {{ height }}px
+{%- endif %}
 {% endblock data_jpg %}
 
 {% block data_markdown %}

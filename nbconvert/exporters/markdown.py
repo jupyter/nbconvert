@@ -42,7 +42,9 @@ class MarkdownExporter(TemplateExporter):
                                           'text/plain'
                                           ]
             },
-
+            'HighlightMagicsPreprocessor': {
+                'enabled':True
+                },
         })
         c.merge(super(MarkdownExporter, self).default_config)
         return c

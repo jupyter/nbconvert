@@ -41,7 +41,10 @@ class ASCIIDocExporter(TemplateExporter):
                                           'text/latex'
                                           ]
             },
-            'ExtractOutputPreprocessor': {'enabled': True}
+            'ExtractOutputPreprocessor': {'enabled': True},
+            'HighlightMagicsPreprocessor': {
+                'enabled':True
+                },
         })
         c.merge(super(ASCIIDocExporter, self).default_config)
         return c

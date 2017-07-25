@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """HTML Exporter class"""
 
 # Copyright (c) Jupyter Development Team.
@@ -5,10 +6,11 @@
 
 import os
 
-from traitlets import default
+from traitlets import default, Unicode
 from traitlets.config import Config
 
 from nbconvert.filters.highlight import Highlight2HTML
+from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 
 from .templateexporter import TemplateExporter
 
@@ -20,6 +22,9 @@ class HTMLExporter(TemplateExporter):
     custom preprocessors/filters.  If you don't need custom preprocessors/
     filters, just change the 'template_file' config option.
     """
+
+    anchor_link_text = Unicode(u'¶',
+        help="The text used as the text for anchor links.").tag(config=True)
 
     @default('file_extension')
     def _file_extension_default(self):
@@ -60,6 +65,17 @@ class HTMLExporter(TemplateExporter):
             })
         c.merge(super(HTMLExporter,self).default_config)
         return c
+
+    def markdown2html(self, source):
+        """Markdown to HTML filter respecting the anchor_link_text setting"""
+        renderer = IPythonRenderer(escape=False,
+                                   anchor_link_text=self.anchor_link_text)
+        return MarkdownWithMath(renderer=renderer).render(source)
+
+    def default_filters(self):
+        for pair in super(HTMLExporter, self).default_filters():
+            yield pair
+        yield ('markdown2html', self.markdown2html)
 
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})

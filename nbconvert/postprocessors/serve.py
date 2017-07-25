@@ -7,6 +7,7 @@ from __future__ import print_function
 
 import os
 import webbrowser
+import threading
 
 from tornado import web, ioloop, httpserver, log
 from tornado.httpclient import AsyncHTTPClient
@@ -45,11 +46,23 @@ class ServePostProcessor(PostProcessorBase):
     open_in_browser = Bool(True,
         help="""Should the browser be opened automatically?"""
     ).tag(config=True)
-    reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0",
-        help="""URL for reveal.js CDN."""
-    ).tag(config=True)
-    reveal_prefix = Unicode("reveal.js", help="URL prefix for reveal.js").tag(config=True)
-    ip = Unicode("127.0.0.1", help="The IP address to listen on.").tag(config=True)
+
+    browser = Unicode(u'', 
+                      help="""Specify what browser should be used to open slides. See
+                      https://docs.python.org/3/library/webbrowser.html#webbrowser.register
+                      to see how keys are mapped to browser executables. If 
+                      not specified, the default browser will be determined 
+                      by the `webbrowser` 
+                      standard library module, which allows setting of the BROWSER 
+                      environment variable to override it.
+                      """).tag(config=True)
+
+    reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0",
+                         help="""URL for reveal.js CDN.""").tag(config=True)
+    reveal_prefix = Unicode("reveal.js",
+                            help="URL prefix for reveal.js").tag(config=True)
+    ip = Unicode("127.0.0.1",
+                 help="The IP address to listen on.").tag(config=True)
     port = Int(8000, help="port for the server to listen on.").tag(config=True)
 
     def postprocess(self, input):
@@ -71,9 +84,9 @@ class ServePostProcessor(PostProcessorBase):
             handlers.insert(0, (r"/(%s)/(.*)" % self.reveal_prefix, ProxyHandler))
         
         app = web.Application(handlers,
-            cdn=self.reveal_cdn,
-            client=AsyncHTTPClient(),
-        )
+                              cdn=self.reveal_cdn,
+                              client=AsyncHTTPClient(),
+                              )
         
         # hook up tornado logging to our logger
         log.app_log = self.log
@@ -84,7 +97,14 @@ class ServePostProcessor(PostProcessorBase):
         print("Serving your slides at %s" % url)
         print("Use Control-C to stop this server")
         if self.open_in_browser:
-            webbrowser.open(url, new=2)
+            try:
+                browser = webbrowser.get(self.browser or None)
+                b = lambda: browser.open(url, new=2)
+                threading.Thread(target=b).start()
+            except webbrowser.Error as e:
+                self.log.warning('No web browser found: %s.' % e)
+                browser = None
+
         try:
             ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:

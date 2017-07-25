@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Module with tests for the execute preprocessor.
 """
@@ -12,16 +14,18 @@ import os
 import re
 
 import nbformat
+import sys
+import pytest
 
 from .base import PreprocessorTestsBase
-from ..execute import ExecutePreprocessor, CellExecutionError
+from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 from nbconvert.filters import strip_ansi
-from nose.tools import assert_raises
 from testpath import modified_env
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
+current_dir = os.path.dirname(__file__)
 
 class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
@@ -103,7 +107,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_run_notebooks(self):
         """Runs a series of test notebooks and compares them to their actual output"""
-        current_dir = os.path.dirname(__file__)
         input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
         for filename in input_files:
             if os.path.basename(filename) == "Disable Stdin.ipynb":
@@ -121,7 +124,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_empty_path(self):
         """Can the kernel be started when the path is empty?"""
-        current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = ''
@@ -130,7 +132,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_disable_stdin(self):
         """Test disabling standard input"""
-        current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'Disable Stdin.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
@@ -158,7 +159,8 @@ class TestExecute(PreprocessorTestsBase):
         except NameError:
             exception = RuntimeError
 
-        assert_raises(exception, self.run_notebook, filename, dict(timeout=1), res)
+        with pytest.raises(exception):
+            self.run_notebook(filename, dict(timeout=1), res)
 
     def test_timeout_func(self):
         """Check that an error is raised when a computation times out"""
@@ -174,7 +176,8 @@ class TestExecute(PreprocessorTestsBase):
         def timeout_func(source):
             return 10
 
-        assert_raises(exception, self.run_notebook, filename, dict(timeout_func=timeout_func), res)
+        with pytest.raises(exception):
+            self.run_notebook(filename, dict(timeout_func=timeout_func), res)
 
     def test_allow_errors(self):
         """
@@ -184,9 +187,13 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        with assert_raises(CellExecutionError) as exc:
+        with pytest.raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
-        self.assertIsInstance(str(exc), str)
+        self.assertIsInstance(str(exc.value), str)
+        if sys.version_info >= (3, 0):
+            assert u"# üñîçø∂é" in str(exc.value)
+        else:
+            assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
 
     def test_custom_kernel_manager(self):
         from .fake_kernelmanager import FakeCustomKernelManager
@@ -217,3 +224,15 @@ class TestExecute(PreprocessorTestsBase):
 
         for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
+
+    def test_execute_function(self):
+        # Test the executenb() convenience API
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+
+        original = copy.deepcopy(input_nb)
+        executed = executenb(original, os.path.dirname(filename))
+        self.assert_notebooks_equal(original, executed)

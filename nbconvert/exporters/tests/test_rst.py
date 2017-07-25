@@ -4,6 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import io
+import re
 
 import nbformat
 from nbformat import v4
@@ -52,3 +53,21 @@ class TestRSTExporter(ExportersTestsBase):
         # adding an empty code cell shouldn't change output
         self.assertEqual(output.strip(), output2.strip())
         
+
+    @onlyif_cmds_exist('pandoc')
+    def test_png_metadata(self):
+        """
+        Does RSTExporter treat pngs with width/height metadata correctly?
+        """
+        (output, resources) = RSTExporter().from_filename(
+            self._get_notebook(nb_name="pngmetadata.ipynb"))
+        assert len(output) > 0
+        check_for_png = re.compile(
+            r'.. image::.*?\n\s+(.*?)\n\s*\n', 
+            re.DOTALL)
+        result = check_for_png.search(output)
+        assert result is not None
+        attr_string = result.group(1)
+        assert ':width:' in attr_string
+        assert ':height:' in attr_string
+        assert 'px' in attr_string
