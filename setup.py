@@ -185,7 +185,7 @@ setup_args = dict(
 
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
-    'mistune!=0.6',
+    'mistune>=0.7.4',
     'jinja2',
     'pygments',
     'traitlets>=4.2',
