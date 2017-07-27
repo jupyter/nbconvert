@@ -24,6 +24,7 @@ from nbconvert.filters import strip_ansi
 from testpath import modified_env
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
+ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
 current_dir = os.path.dirname(__file__)
 
 class TestExecute(PreprocessorTestsBase):
@@ -43,9 +44,10 @@ class TestExecute(PreprocessorTestsBase):
             output['data']['text/plain'] = \
                 re.sub(addr_pat, '<HEXADDR>', output['data']['text/plain'])
         if 'traceback' in output:
-            tb = []
-            for line in output['traceback']:
-                tb.append(strip_ansi(line))
+            tb = [
+                re.sub(ipython_input_pat, '<IPY-INPUT>', strip_ansi(line))
+                for line in output['traceback']
+            ]
             output['traceback'] = tb
 
         return output
