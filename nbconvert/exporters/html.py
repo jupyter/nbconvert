@@ -36,7 +36,7 @@ class HTMLExporter(TemplateExporter):
 
     @default('template_file')
     def _template_file_default(self):
-        return 'full'
+        return 'full.tpl'
     
     output_mimetype = 'text/html'
     

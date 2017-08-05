@@ -28,7 +28,7 @@ class LatexExporter(TemplateExporter):
 
     @default('template_file')
     def _template_file_default(self):
-        return 'article'
+        return 'article.tplx'
 
     # Latex constants
     @default('default_template_path')
