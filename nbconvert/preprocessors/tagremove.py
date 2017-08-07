@@ -6,7 +6,7 @@ one or more regular expression.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from traitlets import List, Unicode
+from traitlets import Set, Unicode
 from . import ClearOutputPreprocessor
 
 
@@ -25,9 +25,16 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
 
     """
 
-    remove_cell_tags = List(Unicode, default_value=[]).tag(config=True)
-    remove_all_outputs_tags = List(Unicode, default_value=[]).tag(config=True)
-    remove_single_output_tags = List(Unicode, default_value=[]).tag(config=True)
+    remove_cell_tags = Set(Unicode, default_value=[],
+            help=("Tags indicated individual outputs to be removed,"
+                  "matches tags in cell.metadata.tags")).tag(config=True)
+    remove_all_outputs_tags = Set(Unicode, default_value=[],
+            help=("Tags indicated individual outputs to be removed,"
+                  "matches tags in cell.metadata.tags")).tag(config=True)
+    remove_single_output_tags = Set(Unicode, default_value=[],
+            help=("Tags indicated individual outputs to be removed,"
+                  "matches output *i* tags in cell.outputs[i].metadata.tags")
+            ).tag(config=True)
 
     def check_cell_conditions(self, cell, resources, index):
         """
@@ -38,8 +45,8 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         """
 
         # Return true if any of the tags in the cell are removable.
-        return not any([tag in cell.get('metadata', {}).get('tags', [])
-                        for tag in self.remove_cell_tags])
+        return not self.remove_cell_tags.intersection(
+                cell.get('metadata', {}).get('tags', []))
 
     def preprocess(self, nb, resources):
         """
@@ -63,8 +70,8 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         Apply a transformation on each cell. See base.py for details.
         """
 
-        if (any([tag in cell.get('metadata', {}).get('tags', [])
-                 for tag in self.remove_all_outputs_tags])
+        if (self.remove_all_outputs_tags.intersection(
+                cell.get('metadata', {}).get('tags', []))
             and cell.cell_type == 'code'):
             cell.outputs = []
             cell.execution_count = None
@@ -72,11 +79,8 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
             if 'metadata' in cell:
                 for field in self.remove_metadata_fields:
                     cell.metadata.pop(field, None)
-        if cell.get('outputs', {}):
-            cell.outputs = [self.preprocess_output(output,
-                                                   resources,
-                                                   cell_index,
-                                                   output_index)[0]
+        if cell.get('outputs', []):
+            cell.outputs = [output
                             for output_index, output in enumerate(cell.outputs)
                             if self.check_output_conditions(output,
                                                             resources,
@@ -93,9 +97,5 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         Returns: Boolean.
         True means output should *not* be removed.
         """
-        return not any([tag in output.get('metadata', {}).get('tags', [])
-                        for tag in self.remove_single_output_tags])
-
-    def preprocess_output(self, output, resources,
-                          cell_index, output_index):
-        return output, resources
+        return not self.remove_single_output_tags.intersection(
+                output.get('metadata', {}).get('tags', []))
