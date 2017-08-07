@@ -18,6 +18,6 @@ class PythonExporter(TemplateExporter):
 
     @default('template_file')
     def _template_file_default(self):
-        return 'python'
+        return 'python.tpl'
 
     output_mimetype = 'text/x-python'

@@ -151,7 +151,7 @@ class SlidesExporter(HTMLExporter):
 
     @default('template_file')
     def _template_file_default(self):
-        return 'slides_reveal'
+        return 'slides_reveal.tpl'
 
     output_mimetype = 'text/html'
 
