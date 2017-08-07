@@ -25,10 +25,7 @@ class TestTagRemove(PreprocessorTestsBase):
              ])
         outputs_to_be_removed = [
             nbformat.new_output("display_data",
-                                data={'text/plain': "remove_my_output"},
-                                metadata={
-                                    "tags": ["hide_all_outputs"]
-                                    }),
+                                data={'text/plain': "remove_my_output"}),
         ]
         outputs_to_be_kept = [
             nbformat.new_output("stream",
@@ -39,7 +36,8 @@ class TestTagRemove(PreprocessorTestsBase):
         notebook.cells.extend(
             [nbformat.new_code_cell(source="display('remove_my_output')",
                                     execution_count=2,
-                                    outputs=outputs_to_be_removed),
+                                    outputs=outputs_to_be_removed,
+                                    metadata={"tags": ["hide_all_outputs"]}),
 
              nbformat.new_code_cell(source="print('remove this cell')",
                                     execution_count=3,
@@ -74,5 +72,5 @@ class TestTagRemove(PreprocessorTestsBase):
         nb, res = preprocessor(nb, res)
 
         self.assertEqual(len(nb.cells), 3)
-        self.assertEqaul(len(nb.cells[-1].outputs), 0)
+        self.assertEqual(len(nb.cells[-1].outputs), 0)
         self.assertEqual(len(nb.cells[0].outputs), 8)

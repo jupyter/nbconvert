@@ -38,7 +38,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         """
 
         # Return true if any of the tags in the cell are removable.
-        return not any([tag in cell.get('tags', [])
+        return not any([tag in cell.get('metadata', {}).get('tags', [])
                         for tag in self.remove_cell_tags])
 
     def preprocess(self, nb, resources):
@@ -63,15 +63,16 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         Apply a transformation on each cell. See base.py for details.
         """
 
-        if any([tag in cell.get('tags', [])
-                for tag in self.remove_all_output_tags]):
+        if (any([tag in cell.get('metadata', {}).get('tags',[])
+                for tag in self.remove_all_output_tags])
+            and cell.cell_type == 'code'):
             cell.outputs = []
             cell.execution_count = None
             # Remove metadata associated with output
             if 'metadata' in cell:
                 for field in self.remove_metadata_fields:
                     cell.metadata.pop(field, None)
-        if cell.outputs:
+        if cell.get('outputs', {}):
             cell.outputs = [self.preprocess_output(output,
                                                    resources,
                                                    cell_index,
@@ -84,7 +85,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
                             ]
         return cell, resources
 
-    def check_output_conditions(self, output, resources, 
+    def check_output_conditions(self, output, resources,
                                 cell_index, output_index):
         """
         Checks that an output has a tag that indicates removal.
@@ -92,9 +93,8 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         Returns: Boolean.
         True means output should *not* be removed.
         """
-        return not any([tag in output.metadata.get('tags', [])
+        return not any([tag in output.get('metadata', {}).get('tags', [])
                         for tag in self.remove_single_output_tags])
-
 
     def preprocess_output(self, output, resources,
                           cell_index, output_index):
