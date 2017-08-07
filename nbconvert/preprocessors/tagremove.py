@@ -26,14 +26,14 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
     """
 
     remove_cell_tags = Set(Unicode, default_value=[],
-            help=("Tags indicated individual outputs to be removed,"
-                  "matches tags in cell.metadata.tags")).tag(config=True)
+            help=("Tags indicating which cells are to be removed,"
+                  "matches tags in `cell.metadata.tags`.")).tag(config=True)
     remove_all_outputs_tags = Set(Unicode, default_value=[],
-            help=("Tags indicated individual outputs to be removed,"
-                  "matches tags in cell.metadata.tags")).tag(config=True)
+            help=("Tags indicating cells for which the outputs are to be removed,"
+                  "matches tags in `cell.metadata.tags`.")).tag(config=True)
     remove_single_output_tags = Set(Unicode, default_value=[],
-            help=("Tags indicated individual outputs to be removed,"
-                  "matches output *i* tags in cell.outputs[i].metadata.tags")
+            help=("Tags indicating which individual outputs are to be removed,"
+                  "matches output *i* tags in `cell.outputs[i].metadata.tags`.")
             ).tag(config=True)
 
     def check_cell_conditions(self, cell, resources, index):
