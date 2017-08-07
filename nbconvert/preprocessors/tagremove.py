@@ -26,7 +26,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
     """
 
     remove_cell_tags = List(Unicode, default_value=[]).tag(config=True)
-    remove_all_output_tags = List(Unicode, default_value=[]).tag(config=True)
+    remove_all_outputs_tags = List(Unicode, default_value=[]).tag(config=True)
     remove_single_output_tags = List(Unicode, default_value=[]).tag(config=True)
 
     def check_cell_conditions(self, cell, resources, index):
@@ -47,8 +47,8 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         """
         # Skip preprocessing if the list of patterns is empty
         if not any([self.remove_cell_tags,
-                   self.remove_all_output_tags,
-                   self.remove_single_output_tags]):
+                    self.remove_all_outputs_tags,
+                    self.remove_single_output_tags]):
             return nb, resources
 
         # Filter out cells that meet the conditions
@@ -63,8 +63,8 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         Apply a transformation on each cell. See base.py for details.
         """
 
-        if (any([tag in cell.get('metadata', {}).get('tags',[])
-                for tag in self.remove_all_output_tags])
+        if (any([tag in cell.get('metadata', {}).get('tags', [])
+                 for tag in self.remove_all_outputs_tags])
             and cell.cell_type == 'code'):
             cell.outputs = []
             cell.execution_count = None

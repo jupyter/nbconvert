@@ -15,6 +15,10 @@ class TestTagRemove(PreprocessorTestsBase):
     """Contains test functions for tagremove.py"""
 
     def build_notebook(self):
+        """
+        Build a notebook to have metadata tags for cells, output_areas, and
+        individual outputs.
+        """
         notebook = super(TestTagRemove, self).build_notebook()
         # Add a few empty cells
         notebook.cells[0].outputs.extend(
@@ -42,9 +46,7 @@ class TestTagRemove(PreprocessorTestsBase):
              nbformat.new_code_cell(source="print('remove this cell')",
                                     execution_count=3,
                                     outputs=outputs_to_be_kept,
-                                    metadata={
-                                        "tags": ["hide_this_cell"]
-                                        })
+                                    metadata={"tags": ["hide_this_cell"]}),
              ]
             )
 
@@ -66,11 +68,16 @@ class TestTagRemove(PreprocessorTestsBase):
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
         preprocessor.remove_cell_tags.append("hide_this_cell")
-        preprocessor.remove_all_output_tags.append('hide_all_outputs')
+        preprocessor.remove_all_outputs_tags.append('hide_all_outputs')
         preprocessor.remove_single_output_tags.append('hide_one_output')
 
         nb, res = preprocessor(nb, res)
 
+        # checks that we can remove entire cells
         self.assertEqual(len(nb.cells), 3)
+
+        # checks that we can remove output areas
         self.assertEqual(len(nb.cells[-1].outputs), 0)
+
+        # checks that we can remove individual outputs
         self.assertEqual(len(nb.cells[0].outputs), 8)
