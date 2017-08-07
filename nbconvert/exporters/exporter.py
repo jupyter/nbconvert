@@ -68,6 +68,7 @@ class Exporter(LoggingConfigurable):
     _preprocessors = List()
 
     default_preprocessors = List([
+                                  'nbconvert.preprocessors.TagRemovePreprocessor',
                                   'nbconvert.preprocessors.RegexRemovePreprocessor',
                                   'nbconvert.preprocessors.ClearOutputPreprocessor',
                                   'nbconvert.preprocessors.ExecutePreprocessor',
