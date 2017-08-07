@@ -18,7 +18,7 @@ class TagRemoveInputSieve(Sieve):
             return nb, resources
 
         # Filter out cells that meet the conditions
-        nb.cells = [self.seive(cell, resources, index)[0]
+        nb.cells = [self.sieve_cell(cell, resources, index)[0]
                     for index, cell in enumerate(nb.cells)]
 
         return nb, resources
@@ -29,3 +29,5 @@ class TagRemoveInputSieve(Sieve):
         if (self.remove_input_tags.intersection(
                 cell.get('metadata', {}).get('tags', []))):
             cell.source = None
+
+        return cell, resources
