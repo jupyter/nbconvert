@@ -6,7 +6,6 @@ one or more regular expression.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import re
 from traitlets import List, Unicode
 from . import ClearOutputPreprocessor
 
@@ -15,11 +14,11 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
     """
     Removes cells from a notebook that have tags that designate they are to be
     removed prior to exporting the notebook.
-    
+
     Traitlets:
     ----------
     remove_cell_tags: removes cells tagged with these values
-    remove_all_output_tags: removes entire output areas on cells 
+    remove_all_output_tags: removes entire output areas on cells
                             tagged with these values
     remove_single_output_tags: removes individual output objects on
                                outputs tagged with these values
@@ -40,14 +39,16 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
 
         # Return true if any of the tags in the cell are removable.
         return not any([tag in cell.get('tags', [])
-                        for tag in self.cell_remove_tags])
+                        for tag in self.remove_cell_tags])
 
     def preprocess(self, nb, resources):
         """
         Preprocessing to apply to each notebook. See base.py for details.
         """
         # Skip preprocessing if the list of patterns is empty
-        if not (self.cell_remove_tags or self.output_remove_tags):
+        if not any([self.remove_cell_tags,
+                   self.remove_all_output_tags,
+                   self.remove_single_output_tags]):
             return nb, resources
 
         # Filter out cells that meet the conditions
@@ -63,7 +64,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         """
 
         if any([tag in cell.get('tags', [])
-                for tag in self.output_remove_tags]):
+                for tag in self.remove_all_output_tags]):
             cell.outputs = []
             cell.execution_count = None
             # Remove metadata associated with output
