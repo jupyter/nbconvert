@@ -39,6 +39,26 @@ class CellExecutionError(ConversionException):
     def __unicode__(self):
         return self.traceback
 
+    @classmethod
+    def from_cell_and_msg(cls, cell, msg):
+        """Instantiate from a code cell object and a message contents
+        (message is either execute_reply or error)
+        """
+        tb = '\n'.join(msg.get('traceback', []))
+        return cls(exec_err_msg.format(cell=cell, traceback=tb,
+                                       ename=msg.get('ename', '<Error>'),
+                                       evalue=msg.get('evalue', '')
+                                      ))
+
+exec_err_msg = u"""\
+An error occurred while executing the following cell:
+------------------
+{cell.source}
+------------------
+
+{traceback}
+{ename}: {evalue}
+"""
 
 class ExecutePreprocessor(Preprocessor):
     """
@@ -257,24 +277,16 @@ class ExecutePreprocessor(Preprocessor):
         if cell.cell_type != 'code':
             return cell, resources
 
-        outputs = self.run_cell(cell, cell_index)
+        reply, outputs = self.run_cell(cell, cell_index)
         cell.outputs = outputs
 
         if not self.allow_errors:
             for out in outputs:
                 if out.output_type == 'error':
-                    pattern = u"""\
-                        An error occurred while executing the following cell:
-                        ------------------
-                        {cell.source}
-                        ------------------
-
-                        {out.ename}: {out.evalue}
-                        """
-                    msg = dedent(pattern).format(out=out, cell=cell)
-                    raise CellExecutionError(msg)
+                    raise CellExecutionError.from_cell_and_msg(cell, out)
+            if (reply is not None) and reply['content']['status'] == 'error':
+                raise CellExecutionError.from_cell_and_msg(cell, reply['content'])
         return cell, resources
-
 
     def _update_display_id(self, display_id, msg):
         """Update outputs with a given display_id"""
@@ -298,9 +310,7 @@ class ExecutePreprocessor(Preprocessor):
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
 
-    def run_cell(self, cell, cell_index=0):
-        msg_id = self.kc.execute(cell.source)
-        self.log.debug("Executing cell:\n%s", cell.source)
+    def _wait_for_reply(self, msg_id, cell):
         # wait for finish, with timeout
         while True:
             try:
@@ -327,10 +337,15 @@ class ExecutePreprocessor(Preprocessor):
                     raise exception("Cell execution timed out")
 
             if msg['parent_header'].get('msg_id') == msg_id:
-                break
+                return msg
             else:
                 # not our reply
                 continue
+
+    def run_cell(self, cell, cell_index=0):
+        msg_id = self.kc.execute(cell.source)
+        self.log.debug("Executing cell:\n%s", cell.source)
+        exec_reply = self._wait_for_reply(msg_id, cell)
 
         outs = cell.outputs = []
 
@@ -400,7 +415,7 @@ class ExecutePreprocessor(Preprocessor):
 
             outs.append(out)
 
-        return outs
+        return exec_reply, outs
 
 
 def executenb(nb, cwd=None, **kwargs):
