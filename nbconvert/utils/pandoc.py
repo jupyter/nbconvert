@@ -75,11 +75,10 @@ def get_pandoc_version():
         if not which('pandoc'):
             raise PandocMissing()
 
-        out = subprocess.check_output(['pandoc', '-v'],
-                                      universal_newlines=True)
+        out = subprocess.check_output(['pandoc', '-v'])
         out_lines = out.splitlines()
         version_pattern = re.compile(r"^\d+(\.\d+){1,}$")
-        for tok in out_lines[0].split():
+        for tok in out_lines[0].decode('ascii', 'replace').split():
             if version_pattern.match(tok):
                 __version = tok
                 break
