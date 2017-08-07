@@ -67,9 +67,9 @@ class TestTagRemove(PreprocessorTestsBase):
         nb = self.build_notebook()
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
-        preprocessor.remove_cell_tags.append("hide_this_cell")
-        preprocessor.remove_all_outputs_tags.append('hide_all_outputs')
-        preprocessor.remove_single_output_tags.append('hide_one_output')
+        preprocessor.remove_cell_tags.add("hide_this_cell")
+        preprocessor.remove_all_outputs_tags.add('hide_all_outputs')
+        preprocessor.remove_single_output_tags.add('hide_one_output')
 
         nb, res = preprocessor(nb, res)
 
