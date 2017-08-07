@@ -346,7 +346,6 @@ class ExecutePreprocessor(Preprocessor):
         msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_reply = self._wait_for_reply(msg_id, cell)
-        print(exec_reply)
 
         outs = cell.outputs = []
 
