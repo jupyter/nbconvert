@@ -10,6 +10,7 @@ from __future__ import print_function, absolute_import
 import os
 import uuid
 import json
+import copy
 
 from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
 from traitlets.config import Config
@@ -131,6 +132,9 @@ class TemplateExporter(Exporter):
                 },
             'TagRemovePreprocessor': {
                 'enabled': True
+                },
+            'TagInputRemoveSieve': {
+                'enabled': True
                 }
             })
         c.merge(super(TemplateExporter, self).default_config)
@@ -226,6 +230,12 @@ class TemplateExporter(Exporter):
     def _raw_mimetypes_default(self):
         return [self.output_mimetype, '']
 
+    _sieves = List()
+
+    default_sieves = List([
+        'nbconvert.sieves.TagRemoveInputSieve',
+        ])
+
     def __init__(self, config=None, **kw):
         """
         Public constructor
@@ -246,6 +256,7 @@ class TemplateExporter(Exporter):
                      list(self.traits(affects_environment=True)))
         self.observe(self._invalidate_template_cache,
                      list(self.traits(affects_template=True)))
+        self._init_sieves()
 
 
     def _load_template(self):
@@ -292,9 +303,101 @@ class TemplateExporter(Exporter):
                 }
 
         # Top level variables are passed to the template_exporter here.
-        output = self.template.render(nb=nb_copy, resources=resources)
+        pseudo_nb, resources = self._sieve(nb_copy, resources)
+        output = self.template.render(nb=pseudo_nb, resources=resources)
         return output, resources
 
+    def _init_sieves(self):
+            
+        """
+        Register all of the sieves needed for this exporter, disabled
+        unless specified explicitly.
+        """
+        self._sieves = []
+
+        # Load default sieves (not necessarly enabled by default).
+        for sieve in self.default_sieves:
+            self.register_sieve(sieve)
+
+        # Load user-specified sieves.  Enable by default.
+        # for sieve in self.sieves:
+            # self.register_sieve(sieve, enabled=True)
+
+    def register_sieve(self, sieve, enabled=False):
+        """
+        Register a sieve.
+        Sieves are classes that are last to act upon the notebook before it is
+        passed into the Jinja templating engine. 
+
+        Parameters
+        ----------
+        sieve : :class:`~nbconvert.sieves.Sieve`
+            A dotted module name, a type, or an instance
+        enabled : bool
+            Mark the sieve as enabled
+
+        """
+        if sieve is None:
+            raise TypeError('sieve must not be None')
+        isclass = isinstance(sieve, type)
+        constructed = not isclass
+
+        # Handle sieve's registration based on it's type
+        if constructed and isinstance(sieve, py3compat.string_types):
+            # Sieve is a string, import the namespace and recursively call
+            # this register_sieve method
+            sieve_cls = import_item(sieve)
+            return self.register_sieve(sieve_cls, enabled)
+
+        if constructed and hasattr(sieve, '__call__'):
+            # Sieve is a function, no need to construct it.
+            # Register and return the sieve.
+            if enabled:
+                sieve.enabled = True
+            self._sieves.append(sieve)
+            return sieve
+
+        elif isclass and issubclass(sieve, HasTraits):
+            # Sieve is configurable.  Make sure to pass in new default for
+            # the enabled flag if one was specified.
+            self.register_sieve(sieve(parent=self), enabled)
+
+        elif isclass:
+            # Sieve is not configurable, construct it
+            self.register_sieve(sieve(), enabled)
+
+        else:
+            # Sieve is an instance of something without a __call__
+            # attribute.
+            raise TypeError('sieve must be callable or an importable constructor, got %r' % sieve)
+
+    def _sieve(self, nb, resources):
+        """
+        Seive the notebook before passing it into the Jinja engine.
+        Seiving the notebook may not result in an invalid notebook, as elements
+        such as input areas, may be removed.
+        Seives may be applied in sequence.
+
+        Parameters
+        ----------
+        nb : notebook node
+            notebook that is being exported.
+        resources : a dict of additional resources that
+            can be accessed read/write by preprocessors
+        """
+
+        # Do a copy.deepcopy first,
+        # we are never safe enough with what the preprocessors could do.
+        nbc =  copy.deepcopy(nb)
+        resc = copy.deepcopy(resources)
+
+        #Run each preprocessor on the notebook.  Carry the output along
+        #to each preprocessor
+        for preprocessor in self._sieves:
+            nbc, resc = preprocessor(nbc, resc)
+        return nbc, resc
+
+    
     def _register_filter(self, environ, name, jinja_filter):
         """
         Register a filter.
