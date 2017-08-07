@@ -11,9 +11,9 @@ class TagRemoveInputSieve(Sieve):
 
     def sieve(self, nb, resources):
         """
-        Preprocessing to apply to each notebook. See base.py for details.
+        Sieve to apply to each notebook. See base.py for details.
         """
-        # Skip preprocessing if the list of patterns is empty
+        # Skip sieve if the list of patterns is empty
         if not self.remove_input_tags:
             return nb, resources
 
@@ -25,6 +25,9 @@ class TagRemoveInputSieve(Sieve):
 
 
     def sieve_cell(self, cell, resources, cell_index):
+        """
+        Apply sieve to individual cell.
+        """
         
         if (self.remove_input_tags.intersection(
                 cell.get('metadata', {}).get('tags', []))):

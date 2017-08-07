@@ -133,7 +133,7 @@ class TemplateExporter(Exporter):
             'TagRemovePreprocessor': {
                 'enabled': True
                 },
-            'TagInputRemoveSieve': {
+            'TagRemoveInputSieve': {
                 'enabled': True
                 }
             })

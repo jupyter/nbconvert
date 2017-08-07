@@ -10,15 +10,14 @@ from traitlets import Bool
 class Sieve(NbConvertBase):
     """ A configurable sieve
 
-    Inherit from this class if you wish to have configurability for your
-    sieve.
+    Inherit from this class if you wish to have a configurable sieve.
 
-    Any configurable traitlets this class exposed will be configurable in
+    Any configurable traitlets this class exposes will be configurable in
     profiles using c.SubClassName.attribute = value
 
-    you can overwrite :meth:`sieve_cell` to apply a transformation
+    You can overwrite :meth:`sieve_cell` to apply a transformation
     independently on each cell or :meth:`sieve` if you prefer your own
-    logic. See corresponding docstring for informations.
+    logic. See corresponding docstring for further information.
 
     Disabled by default and can be enabled via the config by
         'c.YourSieveName.enabled = True'
@@ -50,12 +49,12 @@ class Sieve(NbConvertBase):
 
     def sieve(self, nb, resources):
         """
-        Preprocessing to apply on each notebook.
+        Sieve to apply on each notebook.
 
         Must return modified nb, resources.
 
-        If you wish to apply your preprocessing to each cell, you might want
-        to override preprocess_cell method instead.
+        If you wish to apply your sieve to each cell, you might want
+        to override sieve_cell method instead.
 
         Parameters
         ----------
@@ -65,15 +64,15 @@ class Sieve(NbConvertBase):
             Additional resources used in the conversion process.  Allows
             sieves to pass variables into the Jinja engine.
         """
-        for index, cell in enumerate(nb.cells):
-            nb.cells[index], resources = self.sieve_cell(cell, resources, index)
+        for ind, cell in enumerate(nb.cells):
+            nb.cells[ind], resources = self.sieve_cell(cell, resources, ind)
         return nb, resources
 
     def sieve_cell(self, cell, resources, index):
         """
         Override if you want to sieve each cell.
         Must return modified cell and resource dictionary.
-        
+
         Parameters
         ----------
         cell : NotebookNode cell
@@ -82,9 +81,8 @@ class Sieve(NbConvertBase):
             Additional resources used in the conversion process.  Allows
             sieves to pass variables into the Jinja engine.
         index : int
-            Index of the cell being processed
+            Index of the cell being sieved
         """
 
         raise NotImplementedError('should be implemented by subclass')
         return cell, resources
-
