@@ -126,7 +126,10 @@ class TemplateExporter(Exporter):
     @property
     def default_config(self):
         c = Config({
-            'RegexRemovePreprocessor':{
+            'RegexRemovePreprocessor': {
+                'enabled': True
+                },
+            'TagRemovePreprocessor': {
                 'enabled': True
                 }
             })
