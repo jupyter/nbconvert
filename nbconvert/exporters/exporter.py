@@ -308,4 +308,5 @@ class Exporter(LoggingConfigurable):
         #to each preprocessor
         for preprocessor in self._preprocessors:
             nbc, resc = preprocessor(nbc, resc)
+            nbformat.validate(nbc, relax_add_props=True)
         return nbc, resc
