@@ -241,6 +241,23 @@ class TestExporter(ExportersTestsBase):
         assert not resources_no_output_prompt['global_content_filter']['include_output_prompt']
         assert "Out[" not in nb_no_output_prompt
 
+    def test_remove_input_tags(self):
+        # conf = {
+                # "TagRemoveInputSieve.remove_input_tags": {"remove_source"},
+                # "TagRemovePreprocessor.remove_cell_tags": {"remove_cell"},
+                # "TagRemovePreprocessor.remove_all_outputs_tags": {"remove_output"},
+                # }
+        config = Config()
+        config.TagRemoveInputSieve.remove_input_tags.add("remove_input")
+        config.TagRemovePreprocessor.remove_cell_tags.add("remove_cell")
+        config.TagRemovePreprocessor.remove_all_outputs_tags.add("remove_output")
+        exporter = MarkdownExporter(config=config)
+        nb, resources = exporter.from_filename(self._get_notebook())
+
+        assert "hist(evs.real)" not in nb
+        assert "cell is just markdown testing whether" not in nb
+        assert "(100,)" not in nb
+
     def _make_exporter(self, config=None):
         # Create the exporter instance, make sure to set a template name since
         # the base TemplateExporter doesn't have a template associated with it.
@@ -249,3 +266,4 @@ class TestExporter(ExportersTestsBase):
             # give it a default if not specified
             exporter.template_file = 'python'
         return exporter
+
