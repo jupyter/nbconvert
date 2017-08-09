@@ -244,12 +244,10 @@ class TestExporter(ExportersTestsBase):
     def test_remove_elements_with_tags(self):
 
         conf = Config({
-            "TagRemoveInputSieve": {
-                "remove_input_tags": ["remove_input"]
-                },
             "TagRemovePreprocessor": {
                 "remove_cell_tags": ["remove_cell"],
-                "remove_all_outputs_tags": ["remove_output"]
+                "remove_all_outputs_tags": ["remove_output"],
+                "remove_input_tags": ["remove_input"]
                 },
             })
 
