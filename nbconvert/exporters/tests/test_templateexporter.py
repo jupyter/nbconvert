@@ -118,7 +118,7 @@ class TestExporter(ExportersTestsBase):
             config.TemplateExporter.template_file = template
             exporter = self._make_exporter(config=config)
             assert os.path.abspath(exporter.template.filename) == template
-            assert os.path.dirname(template) in [ os.path.abspath(d) for d in exporter.template_path ]
+            assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_path]
     
     def test_in_memory_template(self):
         # Loads in an in memory template using jinja2.DictLoader
@@ -158,7 +158,7 @@ class TestExporter(ExportersTestsBase):
             }
         }
         c_no_io = Config(no_io)
-        exporter_no_io  = TemplateExporter(config=c_no_io )
+        exporter_no_io = TemplateExporter(config=c_no_io)
         exporter_no_io.template_file = 'markdown'
         nb_no_io, resources_no_io = exporter_no_io.from_filename(self._get_notebook())
         
@@ -176,7 +176,7 @@ class TestExporter(ExportersTestsBase):
             }
         }
         c_no_code = Config(no_code)
-        exporter_no_code  = TemplateExporter(config=c_no_code )
+        exporter_no_code = TemplateExporter(config=c_no_code)
         exporter_no_code.template_file = 'markdown'
         nb_no_code, resources_no_code = exporter_no_code.from_filename(self._get_notebook())
 
@@ -196,7 +196,7 @@ class TestExporter(ExportersTestsBase):
             }
         }
         c_no_input_prompt = Config(no_input_prompt)
-        exporter_no_input_prompt  = MarkdownExporter(config=c_no_input_prompt)
+        exporter_no_input_prompt = MarkdownExporter(config=c_no_input_prompt)
         nb_no_input_prompt, resources_no_input_prompt = exporter_no_input_prompt.from_filename(self._get_notebook())
         
         assert not resources_no_input_prompt['global_content_filter']['include_input_prompt']
@@ -241,17 +241,19 @@ class TestExporter(ExportersTestsBase):
         assert not resources_no_output_prompt['global_content_filter']['include_output_prompt']
         assert "Out[" not in nb_no_output_prompt
 
-    def test_remove_input_tags(self):
-        # conf = {
-                # "TagRemoveInputSieve.remove_input_tags": {"remove_source"},
-                # "TagRemovePreprocessor.remove_cell_tags": {"remove_cell"},
-                # "TagRemovePreprocessor.remove_all_outputs_tags": {"remove_output"},
-                # }
-        config = Config()
-        config.TagRemoveInputSieve.remove_input_tags.add("remove_input")
-        config.TagRemovePreprocessor.remove_cell_tags.add("remove_cell")
-        config.TagRemovePreprocessor.remove_all_outputs_tags.add("remove_output")
-        exporter = MarkdownExporter(config=config)
+    def test_remove_elements_with_tags(self):
+
+        conf = Config({
+            "TagRemoveInputSieve": {
+                "remove_input_tags": ["remove_input"]
+                },
+            "TagRemovePreprocessor": {
+                "remove_cell_tags": ["remove_cell"],
+                "remove_all_outputs_tags": ["remove_output"]
+                },
+            })
+
+        exporter = MarkdownExporter(config=conf)
         nb, resources = exporter.from_filename(self._get_notebook())
 
         assert "hist(evs.real)" not in nb
@@ -266,4 +268,3 @@ class TestExporter(ExportersTestsBase):
             # give it a default if not specified
             exporter.template_file = 'python'
         return exporter
-
