@@ -1,10 +1,10 @@
 
 from traitlets import Set, Unicode
-from .base import Sieve 
+from .base import Sieve
 
 
 class TagRemoveInputSieve(Sieve):
-    
+
     remove_input_tags = Set(Unicode, default_value=[],
             help=("Tags indicating cells for which input is to be removed,"
                   "matches tags in `cell.metadata.tags`.")).tag(config=True)
@@ -23,14 +23,15 @@ class TagRemoveInputSieve(Sieve):
 
         return nb, resources
 
-
     def sieve_cell(self, cell, resources, cell_index):
         """
         Apply sieve to individual cell.
         """
-        
+
         if (self.remove_input_tags.intersection(
                 cell.get('metadata', {}).get('tags', []))):
-            cell.source = None
+            cell.transient = {
+                'remove_source': True
+                }
 
         return cell, resources

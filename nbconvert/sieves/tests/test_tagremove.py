@@ -62,7 +62,9 @@ class TestTagRemoveInput(SieveTestsBase):
         nb, res = sieve(nb, res)
 
         # checks that we can remove source from code cells
-        self.assertEqual(nb.cells[-1].source, None)
+        self.assertEqual(nb.cells[-1].transient.get("remove_source", False), True)
 
         # checks that we can remove source from markdown
-        self.assertEqual(nb.cells[-2].source, None)
+        self.assertEqual(nb.cells[-2].transient.get("remove_source", False), True)
+
+
