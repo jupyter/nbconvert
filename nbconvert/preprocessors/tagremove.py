@@ -36,6 +36,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
                   "matches output *i* tags in `cell.outputs[i].metadata.tags`.")
             ).tag(config=True)
 
+
     def check_cell_conditions(self, cell, resources, index):
         """
         Checks that a cell has a tag that is to be removed
@@ -69,16 +70,18 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         """
         Apply a transformation on each cell. See base.py for details.
         """
-
+        
         if (self.remove_all_outputs_tags.intersection(
-                cell.get('metadata', {}).get('tags', []))
+            cell.get('metadata', {}).get('tags', []))
             and cell.cell_type == 'code'):
+
             cell.outputs = []
             cell.execution_count = None
             # Remove metadata associated with output
             if 'metadata' in cell:
                 for field in self.remove_metadata_fields:
                     cell.metadata.pop(field, None)
+
         if cell.get('outputs', []):
             cell.outputs = [output
                             for output_index, output in enumerate(cell.outputs)

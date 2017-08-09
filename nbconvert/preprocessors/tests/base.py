@@ -26,12 +26,10 @@ class PreprocessorTestsBase(TestsBase):
             nbformat.new_output("display_data", data={'image/png': 'Zw=='}), # g
             nbformat.new_output("display_data", data={'application/pdf': 'aA=='}), # h
         ]
-        
         cells=[nbformat.new_code_cell(source="$ e $", execution_count=1, outputs=outputs),
                nbformat.new_markdown_cell(source="$ e $")]
 
         return nbformat.new_notebook(cells=cells)
-
 
     def build_resources(self):
         """Build an empty resources dictionary."""

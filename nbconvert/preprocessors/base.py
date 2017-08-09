@@ -40,14 +40,13 @@ class Preprocessor(NbConvertBase):
         
         super(Preprocessor, self).__init__(**kw)
 
-       
     def __call__(self, nb, resources):
         if self.enabled:
-            self.log.debug("Applying preprocessor: %s", self.__class__.__name__)
-            return self.preprocess(nb,resources)
+            self.log.debug("Applying preprocessor: %s",
+                           self.__class__.__name__)
+            return self.preprocess(nb, resources)
         else:
             return nb, resources
-
 
     def preprocess(self, nb, resources):
         """
@@ -69,7 +68,6 @@ class Preprocessor(NbConvertBase):
         for index, cell in enumerate(nb.cells):
             nb.cells[index], resources = self.preprocess_cell(cell, resources, index)
         return nb, resources
-
 
     def preprocess_cell(self, cell, resources, index):
         """
