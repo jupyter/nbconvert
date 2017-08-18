@@ -7,6 +7,7 @@ Module with tests for the execute preprocessor.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from binascii import b2a_base64, a2b_base64
 import copy
 import glob
 import io
@@ -22,13 +23,23 @@ from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
+from ipython_genutils.py3compat import string_types
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
 current_dir = os.path.dirname(__file__)
 
+def _normalize_base64(b64_text):
+    # if it's base64, pass it through b64 decode/encode to avoid
+    # equivalent values from being considered unequal
+    try:
+        return b2a_base64(a2b_base64(b64_text.encode('ascii'))).decode('ascii')
+    except ValueError:
+        return b64_text
+    
 class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
+    maxDiff = None
 
     @staticmethod
     def normalize_output(output):
@@ -43,6 +54,9 @@ class TestExecute(PreprocessorTestsBase):
         if 'text/plain' in output.get('data', {}):
             output['data']['text/plain'] = \
                 re.sub(addr_pat, '<HEXADDR>', output['data']['text/plain'])
+        for key, value in output.get('data', {}).items():
+            if isinstance(value, string_types):
+                output['data'][key] = _normalize_base64(value)
         if 'traceback' in output:
             tb = [
                 re.sub(ipython_input_pat, '<IPY-INPUT>', strip_ansi(line))
