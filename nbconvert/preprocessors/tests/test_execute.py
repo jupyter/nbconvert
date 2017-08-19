@@ -7,7 +7,7 @@ Module with tests for the execute preprocessor.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from binascii import b2a_base64, a2b_base64
+from base64 import b64encode, b64decode
 import copy
 import glob
 import io
@@ -33,8 +33,8 @@ def _normalize_base64(b64_text):
     # if it's base64, pass it through b64 decode/encode to avoid
     # equivalent values from being considered unequal
     try:
-        return b2a_base64(a2b_base64(b64_text.encode('ascii'))).decode('ascii')
-    except ValueError:
+        return b64encode(b64decode(b64_text.encode('ascii'))).decode('ascii')
+    except (ValueError, TypeError):
         return b64_text
     
 class TestExecute(PreprocessorTestsBase):
