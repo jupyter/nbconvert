@@ -190,11 +190,11 @@ install_requires = setuptools_args['install_requires'] = [
     'pygments',
     'traitlets>=4.2',
     'jupyter_core',
-    'nbformat',
+    'nbformat>=4.4',
     'entrypoints>=0.2.2',
     'bleach',
     'pandocfilters>=1.4.1',
-    'testpath', 
+    'testpath',
 ]
 
 extra_requirements = {
