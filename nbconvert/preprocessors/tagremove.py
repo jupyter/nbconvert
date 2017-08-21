@@ -35,6 +35,10 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
             help=("Tags indicating which individual outputs are to be removed,"
                   "matches output *i* tags in `cell.outputs[i].metadata.tags`.")
             ).tag(config=True)
+    remove_input_tags = Set(Unicode, default_value=[],
+            help=("Tags indicating cells for which input is to be removed,"
+                  "matches tags in `cell.metadata.tags`.")).tag(config=True)
+
 
     def check_cell_conditions(self, cell, resources, index):
         """
@@ -55,7 +59,9 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         # Skip preprocessing if the list of patterns is empty
         if not any([self.remove_cell_tags,
                     self.remove_all_outputs_tags,
-                    self.remove_single_output_tags]):
+                    self.remove_single_output_tags,
+                    self.remove_input_tags
+                    ]):
             return nb, resources
 
         # Filter out cells that meet the conditions
@@ -69,16 +75,24 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         """
         Apply a transformation on each cell. See base.py for details.
         """
-
+        
         if (self.remove_all_outputs_tags.intersection(
-                cell.get('metadata', {}).get('tags', []))
+            cell.get('metadata', {}).get('tags', []))
             and cell.cell_type == 'code'):
+
             cell.outputs = []
             cell.execution_count = None
             # Remove metadata associated with output
             if 'metadata' in cell:
                 for field in self.remove_metadata_fields:
                     cell.metadata.pop(field, None)
+        
+        if (self.remove_input_tags.intersection(
+                cell.get('metadata', {}).get('tags', []))):
+            cell.transient = {
+                'remove_source': True
+                }
+
         if cell.get('outputs', []):
             cell.outputs = [output
                             for output_index, output in enumerate(cell.outputs)
