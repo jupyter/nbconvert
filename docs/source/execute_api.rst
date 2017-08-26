@@ -132,9 +132,12 @@ Handling errors
 ~~~~~~~~~~~~~~~
 A useful pattern to execute notebooks while handling errors is the following::
 
+    from nbconvert.preprocessors import CellExecutionError
+
     try:
         out = ep.preprocess(nb, {'metadata': {'path': run_path}})
     except CellExecutionError:
+        out = None
         msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
         msg += 'See notebook "%s" for the traceback.' % notebook_filename_out
         print(msg)
