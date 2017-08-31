@@ -4,6 +4,72 @@
 Changes in nbconvert
 ====================
 
+5.3
+---
+`5.3 on Github <https://github.com/jupyter/nbconvert/milestones/5.3>`__
+
+Major features
+~~~~~~~~~~~~~~
+
+Tag Based Element Filtering
++++++++++++++++++++++++++++
+
+For removing individual elements we need a way to signal that, with this release we introduce the use of tags for that purpose.
+
+Tags are user-defined strings attached to cells or outputs. They are stored in
+cell or output metadata. For more on tags see the `nbformat docs on cell
+metadata <http://nbformat.readthedocs.io/en/latest/format_description.html#cell-metadata>`__.
+
+**Usage**: 
+
+1. Apply tags to the elements that you want to remove. 
+   
+For removing an entire cell, the cell input, or all cell outputs apply the tag
+to the cell. 
+
+For removing individual outputs, put the tag in the output metadata
+using a call like ``display(your_output_element, metadata={tags=[<your_tags_here>]})``. 
+
+*NB*: Use different tags depending on whether you want to remove the entire cell, the input, all outputs, or individual outputs.
+
+2. Add the tags for removing the different kinds of elements to the following
+   traitlets. Which kind of element you want to remove determines which
+   traitlet you add the tags to.
+
+The following traitlets remove elements of different kinds: 
+- ``remove_cell_tags``: removes cells 
+- ``remove_input_tags``: removes inputs
+- ``remove_all_outputs_tag``: removes all outputs  
+- ``remove_single_output_tag``: removes individual outputs
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+- new: configurable ``browser`` in ServePostProcessor #618
+- new: ``--clear-output`` command line flag to clear output in-place #619
+- new: remove elements based on tags with ``TagRemovePreprocessor``. #640, #643
+- new: CellExecutionError can now be imported from ``nbconvert.preprocessors`` #656
+- new: slides now can enable scrolling and custom transitions #600
+
+- docs: Release instructions for nbviewer-deploy
+- docs: improved instructions for handling errors using the ``ExecutePreprocessor`` #656
+
+- tests: better height/width metadata testing for images in rst & html #601 #602
+- tests: normalise base64 output data to avoid false positives #650
+- tests: normalise ipython traceback messages to handle old and new style #631
+
+- bug: mathjax obeys ``\\(\\)`` & ``\\[\\]`` (both nbconvert & pandoc) #609 #617
+- bug: specify default templates using extensions #639
+- bug: fix pandoc version number #638
+- bug: require recent mistune version #630
+- bug: catch errors from IPython ``execute_reply`` and ``error`` messages #642
+
+- nose completely removed & dependency dropped #595 #660
+- mathjax processing in mistune now only uses inline grammar #611
+- removeRegex now enabled by default on all TemplateExporters, does not remove cells with outputs #616
+- validate notebook after applying each preprocessor (allowing additional attributes) #645
+- changed COPYING.md to LICENSE for more standard licensing that GitHub knows how to read #654
+
 5.2.1
 -----
 
@@ -47,6 +113,8 @@ that is being exported. While designed for use with the IRkernel in particular
 (with a script exporter focused on exporting R scripts) other non-python kernels
 that wish to have a language specific exporter can now surface that directly.
 
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
 
 - new: configurable ExecutePreprocessor.startup_timeout configurable #583
 - new: RemoveCell preprocessor based on cell content (defaults to empty cell) #575
