@@ -7,8 +7,6 @@
 import io as stdlib_io
 import sys
 
-import nose.tools as nt
-
 from ipython_genutils.testing.decorators import skipif
 from ..io import unicode_std_stream
 from ipython_genutils.py3compat import PY3
