@@ -1,6 +1,6 @@
-version_info = (5, 3, 0)
+version_info = (5, 3, 1)
 pre_info = ''
-dev_info = ''
+dev_info = 'dev'
 
 def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
     '''
