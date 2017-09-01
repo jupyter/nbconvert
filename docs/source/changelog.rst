@@ -37,6 +37,7 @@ using a call like ``display(your_output_element, metadata={tags=[<your_tags_here
    traitlet you add the tags to.
 
 The following traitlets remove elements of different kinds: 
+
 - ``remove_cell_tags``: removes cells 
 - ``remove_input_tags``: removes inputs
 - ``remove_all_outputs_tag``: removes all outputs  
