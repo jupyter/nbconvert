@@ -14,7 +14,9 @@ Major features
 Tag Based Element Filtering
 +++++++++++++++++++++++++++
 
-For removing individual elements we need a way to signal that, with this release we introduce the use of tags for that purpose.
+For removing individual elements from notebooks, we need a way to signal to
+nbconvert that the elements should be removed. With this release, we introduce
+the use of tags for that purpose.
 
 Tags are user-defined strings attached to cells or outputs. They are stored in
 cell or output metadata. For more on tags see the `nbformat docs on cell
