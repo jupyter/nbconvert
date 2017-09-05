@@ -8,6 +8,7 @@ exclude docs/\#*
 
 # Examples
 graft examples
+graft scripts
 
 # docs subdirs we want to skip
 prune docs/build
