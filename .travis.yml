@@ -32,8 +32,10 @@ install:
     - pip install --upgrade setuptools pip
     - pip install -f travis-wheels/wheelhouse . codecov coverage
     - pip install nbconvert[execute,serve,test]
+    - pip install check-manifest
     - python -m ipykernel.kernelspec --user
 script:
+    - check-manifest
     # cd so we test the install, not the repo
     - cd `mktemp -d`
     - py.test --cov nbconvert -v --pyargs nbconvert
