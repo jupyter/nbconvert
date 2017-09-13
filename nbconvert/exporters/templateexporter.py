@@ -16,7 +16,8 @@ from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
-    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader
+    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
+    DictLoader
 )
 
 from nbconvert import filters
@@ -158,6 +159,26 @@ class TemplateExporter(Exporter):
     @default('template_file')
     def _template_file_default(self):
         return self.default_template
+
+    self._raw_template = ''
+
+    @property
+    def raw_template(self):
+        return self._raw_template
+
+
+    @raw_template.setter
+    def raw_template(self, value):
+        if value:
+            _template_name = "<memory>"
+            raw_loader = DictLoader({
+                _template_name: value
+            })
+            self.extra_loaders.append(raw_loader)
+            self.template_file = _template_name
+        else:
+            self._raw_template = ''
+
 
     default_template = Unicode(u'').tag(affects_template=True)
 
