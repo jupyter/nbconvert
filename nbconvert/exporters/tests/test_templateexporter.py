@@ -133,6 +133,19 @@ class TestExporter(ExportersTestsBase):
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
 
+    def test_in_memory_template_simple(self):
+        # New simpler API for providing an in-memory template
+        tpl = ("{%- extends 'markdown.tpl' -%}\n"
+               "{% block markdowncell scoped %}\n"
+               "In-memory template\n"
+               "{% endblock markdowncell %}\n")
+        exporter = TemplateExporter()
+        exporter.use_string_template(tpl)
+
+        nb = v4.new_notebook()
+        nb.cells = [v4.new_markdown_cell("boo")]
+        out, resources = exporter.from_notebook_node(nb)
+        assert "In-memory template" in out
 
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
