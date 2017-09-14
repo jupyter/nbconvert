@@ -153,17 +153,22 @@ class TestExporter(ExportersTestsBase):
         output_attr, _ = exporter_attr.from_notebook_node(nb)
         assert "blah" in output_attr
 
-        class AttrRemovedExporter(TemplateExporter):
-            raw_template = raw_template
+        class AttrDynamicExporter(TemplateExporter):
+            @default('raw_template')
+            def _raw_template_default(self):
+                return raw_template
 
             @default('template_file')
-            def _raw_template_default(self):
+            def _template_file_default(self):
                 return "rst.tpl"
 
-        exporter_attr_removed = AttrRemovedExporter()
-        exporter_attr_removed.raw_template = ''
-        output_attr_removed, _ = exporter_attr_removed.from_notebook_node(nb)
-        assert "blah" not in output_attr_removed
+        exporter_attr_dynamic = AttrDynamicExporter()
+        output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
+        assert exporter_attr_dynamic.template_file != "rst.tpl"
+        exporter_attr_dynamic.raw_template = ''
+        assert exporter_attr_dynamic.template_file == "rst.tpl"
+        output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
+        assert "blah" not in output_attr_dynamic
 
         output_constructor, _ = TemplateExporter(
             raw_template=raw_template).from_notebook_node(nb)
