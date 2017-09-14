@@ -154,11 +154,16 @@ class TemplateExporter(Exporter):
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
 
-    raw_template = Unicode('', help="raw template string"
+    raw_template = Unicode('',
+        help="raw template string"
     ).tag(affects_environment=True)
 
-    _raw_template_key = "<memory>"
     _last_template_file = Unicode("", help="holder for last template_file")
+    raw_template_key = Unicode("<memory>",
+        help=("pseudo filename for in-memory template assignment. "
+              "It is suggested that you do not change this unless you run into "
+              "conflicts with the default value.")
+    ).tag(config=True)
 
     @observe('template_file')
     def _template_file_changed(self, change):
@@ -180,7 +185,7 @@ class TemplateExporter(Exporter):
         return self.default_template
 
     def _load_raw_template(self, name):
-        if name == self._raw_template_key:
+        if name == self.raw_template_key:
             return self.raw_template, None, False
         else:
             return None
@@ -291,7 +296,7 @@ class TemplateExporter(Exporter):
         with self.hold_trait_notifications():
             if self.raw_template:
                 self._last_template_file = self.template_file
-                self.template_file = self._raw_template_key
+                self.template_file = self.raw_template_key
 
         if not self.template_file:
             raise ValueError("No template_file specified!")
@@ -418,7 +423,7 @@ class TemplateExporter(Exporter):
         loaders = self.extra_loaders + [
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
             ExplicitFunctionLoader(self._load_raw_template,
-                                  template_list=[self._raw_template_key])
+                                  template_list=[self.raw_template_key])
         ]
         environment = Environment(
             loader=ChoiceLoader(loaders),
