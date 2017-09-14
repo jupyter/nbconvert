@@ -192,10 +192,10 @@ class TemplateExporter(Exporter):
         os.path.join("..", "templates", "skeleton"),
         help="Path where the template skeleton files are located.",
     ).tag(affects_environment=True)
-    
+
     #Extension that the template files use.
     template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
-    
+
     exclude_input = Bool(False,
         help = "This allows you to exclude code cell inputs from all templates if set to True."
         ).tag(config=True)
@@ -227,7 +227,7 @@ class TemplateExporter(Exporter):
     exclude_unknown = Bool(False,
         help = "This allows you to exclude unknown cells from all templates if set to True."
         ).tag(config=True)
-    
+
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
              "before the default FileSystem ones.",
@@ -249,7 +249,7 @@ class TemplateExporter(Exporter):
     def __init__(self, config=None, **kw):
         """
         Public constructor
-    
+
         Parameters
         ----------
         config : config
@@ -270,7 +270,7 @@ class TemplateExporter(Exporter):
 
     def _load_template(self):
         """Load the Jinja template object from the template file
-        
+
         This is triggered by various trait changes that would change the template.
         """
 

@@ -7,6 +7,7 @@ Module with tests for templateexporter.py
 
 import os
 
+from traitlets import default
 from traitlets.config import Config
 from jinja2 import DictLoader, TemplateNotFound
 from nbformat import v4
@@ -19,6 +20,12 @@ from ..markdown import MarkdownExporter
 from testpath import tempdir
 
 import pytest
+
+raw_template = """{%- extends 'rst.tpl' -%}
+{%- block in_prompt -%}
+blah
+{%- endblock in_prompt -%}
+"""
 
 class TestExporter(ExportersTestsBase):
     """Contains test functions for exporter.py"""
@@ -119,33 +126,63 @@ class TestExporter(ExportersTestsBase):
             exporter = self._make_exporter(config=config)
             assert os.path.abspath(exporter.template.filename) == template
             assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_path]
-    
+
     def test_in_memory_template(self):
         # Loads in an in memory template using jinja2.DictLoader
         # creates a class that uses this template with the template_file argument
         # converts an empty notebook using this mechanism
         my_loader = DictLoader({'my_template': "{%- extends 'rst.tpl' -%}"})
-        
+
         class MyExporter(TemplateExporter):
             template_file = 'my_template'
-        
+
         exporter = MyExporter(extra_loaders=[my_loader])
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
 
 
+    def test_raw_template(self):
+
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+
+        class AttrExporter(TemplateExporter):
+            raw_template = raw_template
+
+        exporter_attr = AttrExporter()
+        output_attr, _ = exporter_attr.from_notebook_node(nb)
+        assert "blah" in output_attr
+
+        output_constructor, _ = TemplateExporter(
+            raw_template=raw_template).from_notebook_node(nb)
+        assert "blah" in output_constructor
+
+        exporter_assign = TemplateExporter()
+        exporter_assign.raw_template = raw_template
+        output_assign, _ = exporter_assign.from_notebook_node(nb)
+        assert "blah" in output_assign
+
+        class DefaultExporter(TemplateExporter):
+            @default('raw_template')
+            def _raw_template_default(self):
+                return raw_template
+
+        exporter_default = DefaultExporter()
+        output_default, _ = exporter_default.from_notebook_node(nb)
+        assert "blah" in output_default
+
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
         # exist in the environment, try to convert empty notebook. Failure is
         # expected due to nonexistant template file.
-        
+
         template = 'does_not_exist.tpl'
         exporter = TemplateExporter(template_file=template)
         assert template not in exporter.environment.list_templates(extensions=['tpl'])
         nb = v4.new_notebook()
         with pytest.raises(TemplateNotFound):
             out, resources = exporter.from_notebook_node(nb)
-        
+
     def test_exclude_code_cell(self):
         no_io = {
             "TemplateExporter":{
@@ -161,10 +198,10 @@ class TestExporter(ExportersTestsBase):
         exporter_no_io = TemplateExporter(config=c_no_io)
         exporter_no_io.template_file = 'markdown'
         nb_no_io, resources_no_io = exporter_no_io.from_filename(self._get_notebook())
-        
+
         assert not resources_no_io['global_content_filter']['include_input']
         assert not resources_no_io['global_content_filter']['include_output']
-        
+
         no_code = {
             "TemplateExporter":{
                 "exclude_output": False,
@@ -183,7 +220,7 @@ class TestExporter(ExportersTestsBase):
         assert not resources_no_code['global_content_filter']['include_code']
         assert nb_no_io == nb_no_code
 
-        
+
     def test_exclude_input_prompt(self):
         no_input_prompt = {
             "TemplateExporter":{
@@ -198,10 +235,10 @@ class TestExporter(ExportersTestsBase):
         c_no_input_prompt = Config(no_input_prompt)
         exporter_no_input_prompt = MarkdownExporter(config=c_no_input_prompt)
         nb_no_input_prompt, resources_no_input_prompt = exporter_no_input_prompt.from_filename(self._get_notebook())
-        
+
         assert not resources_no_input_prompt['global_content_filter']['include_input_prompt']
         assert "# In[" not in nb_no_input_prompt
-        
+
     def test_exclude_markdown(self):
 
         no_md= {
@@ -219,10 +256,10 @@ class TestExporter(ExportersTestsBase):
         exporter_no_md = TemplateExporter(config=c_no_md)
         exporter_no_md.template_file = 'python'
         nb_no_md, resources_no_md = exporter_no_md.from_filename(self._get_notebook())
-        
+
         assert not resources_no_md['global_content_filter']['include_markdown']
         assert "First import NumPy and Matplotlib" not in nb_no_md
-    
+
     def test_exclude_output_prompt(self):
         no_output_prompt = {
             "TemplateExporter":{
