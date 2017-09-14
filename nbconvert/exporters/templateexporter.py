@@ -17,7 +17,7 @@ from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
     TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
-    DictLoader
+    FunctionLoader
 )
 
 from nbconvert import filters
@@ -58,6 +58,19 @@ default_filters = {
         'json_dumps': json.dumps,
 }
 
+class ExplicitFunctionLoader(FunctionLoader):
+    def __init__(self, load_func, template_list=None):
+        super(ExplicitFunctionLoader, self).__init__(load_func)
+        if isinstance(template_list, list):
+            self.template_list = template_list
+        else:
+            self.template_list = None
+
+    def list_templates(self):
+        if self.template_list:
+            return sorted(self.template_list)
+        else:
+            super(ExplicitFunctionLoader, self).list_templates()
 
 class ExtensionTolerantLoader(BaseLoader):
     """A template loader which optionally adds a given extension when searching.
@@ -145,6 +158,7 @@ class TemplateExporter(Exporter):
     ).tag(affects_environment=True)
 
     _raw_template_key = "<memory>"
+    _raw_template_content = ""
 
     @observe('template_file')
     def _template_file_changed(self, change):
@@ -165,12 +179,15 @@ class TemplateExporter(Exporter):
     def _template_file_default(self):
         return self.default_template
 
+    def _load_raw_template(self, name):
+        if name == self._raw_template_key:
+            return self._raw_template_content, None, False
+        else:
+            return None
+
     def _register_raw_template(self, value):
         if value:
-            raw_loader = DictLoader({
-                self._raw_template_key: value
-            })
-            self.extra_loaders.append(raw_loader)
+            self._raw_template_content = value
             if self.template_file != self.default_template:
                 self._default_template = self.template_file
             self.template_file = self._raw_template_key
@@ -404,7 +421,9 @@ class TemplateExporter(Exporter):
              os.path.join(here, self.template_skeleton_path)]
 
         loaders = self.extra_loaders + [
-            ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension)
+            ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
+            ExplicitFunctionLoader(self._load_raw_template,
+                                  template_list=[self._raw_template_key])
         ]
         environment = Environment(
             loader=ChoiceLoader(loaders),
