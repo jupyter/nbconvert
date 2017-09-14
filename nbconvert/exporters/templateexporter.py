@@ -158,7 +158,7 @@ class TemplateExporter(Exporter):
     ).tag(affects_environment=True)
 
     _raw_template_key = "<memory>"
-    _raw_template_content = ""
+    _last_template_file = Unicode("", help="holder for last template_file")
 
     @observe('template_file')
     def _template_file_changed(self, change):
@@ -181,22 +181,15 @@ class TemplateExporter(Exporter):
 
     def _load_raw_template(self, name):
         if name == self._raw_template_key:
-            return self._raw_template_content, None, False
+            return self.raw_template, None, False
         else:
             return None
 
-    def _register_raw_template(self, value):
-        if value:
-            self._raw_template_content = value
-            if self.template_file != self.default_template:
-                self._default_template = self.template_file
-            self.template_file = self._raw_template_key
-        else:
-            self.template_file = self.default_template or self._default_template
 
     @observe('raw_template')
     def _raw_template_changed(self, change):
-        self._register_raw_template(change['new'])
+        if not change['new']:
+            self.template_file = self.default_template or self._last_template_file
 
 
     default_template = Unicode(u'').tag(affects_template=True)
@@ -295,8 +288,10 @@ class TemplateExporter(Exporter):
         """
 
         # this gives precedence to a raw_template if present
-        if self.raw_template:
-            self._register_raw_template(self.raw_template)
+        with self.hold_trait_notifications():
+            if self.raw_template:
+                self._last_template_file = self.template_file
+                self.template_file = self._raw_template_key
 
         if not self.template_file:
             raise ValueError("No template_file specified!")
