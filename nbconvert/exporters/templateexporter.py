@@ -141,6 +141,9 @@ class TemplateExporter(Exporter):
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
 
+    raw_template = Unicode('', help="raw template string"
+    ).tag(affects_template=True, affects_environment=True)
+
     @observe('template_file')
     def _template_file_changed(self, change):
         new = change['new']
@@ -160,24 +163,20 @@ class TemplateExporter(Exporter):
     def _template_file_default(self):
         return self.default_template
 
-    self._raw_template = ''
+    def _register_raw_template(self, value):
+        _template_name = "<memory>"
+        raw_loader = DictLoader({
+            _template_name: value
+        })
+        self.extra_loaders.append(raw_loader)
+        self.template_file = _template_name
 
-    @property
-    def raw_template(self):
-        return self._raw_template
-
-
-    @raw_template.setter
-    def raw_template(self, value):
-        if value:
-            _template_name = "<memory>"
-            raw_loader = DictLoader({
-                _template_name: value
-            })
-            self.extra_loaders.append(raw_loader)
-            self.template_file = _template_name
+    @observe('raw_template')
+    def _raw_template_changed(self, change):
+        if change['new']:
+            self._register_raw_template(change['new'])
         else:
-            self._raw_template = ''
+            self.raw_template = ''
 
 
     default_template = Unicode(u'').tag(affects_template=True)
