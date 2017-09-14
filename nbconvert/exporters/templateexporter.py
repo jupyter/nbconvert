@@ -144,6 +144,8 @@ class TemplateExporter(Exporter):
     raw_template = Unicode('', help="raw template string"
     ).tag(affects_environment=True)
 
+    _raw_template_key = "<memory>"
+
     @observe('template_file')
     def _template_file_changed(self, change):
         new = change['new']
@@ -165,14 +167,13 @@ class TemplateExporter(Exporter):
 
     def _register_raw_template(self, value):
         if value:
-            _template_name = "<memory>"
             raw_loader = DictLoader({
-                _template_name: value
+                self._raw_template_key: value
             })
             self.extra_loaders.append(raw_loader)
             if self.template_file != self.default_template:
                 self._default_template = self.template_file
-            self.template_file = _template_name
+            self.template_file = self._raw_template_key
         else:
             self.template_file = self.default_template or self._default_template
 
@@ -276,6 +277,7 @@ class TemplateExporter(Exporter):
         This is triggered by various trait changes that would change the template.
         """
 
+        # this gives precedence to a raw_template if present
         if self.raw_template:
             self._register_raw_template(self.raw_template)
 
