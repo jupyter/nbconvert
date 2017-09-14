@@ -141,7 +141,7 @@ class TestExporter(ExportersTestsBase):
         out, resources = exporter.from_notebook_node(nb)
 
 
-    def test_raw_template(self):
+    def test_raw_template_attr_overwrite(self):
 
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
@@ -153,7 +153,35 @@ class TestExporter(ExportersTestsBase):
         output_attr, _ = exporter_attr.from_notebook_node(nb)
         assert "blah" in output_attr
 
+    def test_raw_template_dynamic_attr(self):
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+
         class AttrDynamicExporter(TemplateExporter):
+            @default('template_file')
+            def _template_file_default(self):
+                return "rst.tpl"
+
+            @default('raw_template')
+            def _raw_template_default(self):
+                return raw_template
+
+
+        exporter_attr_dynamic = AttrDynamicExporter()
+        # import pdb; pdb.set_trace()
+        output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
+        # assert exporter_attr_dynamic.template_file != "rst.tpl"
+        assert "blah" in output_attr_dynamic
+        exporter_attr_dynamic.raw_template = ''
+        assert exporter_attr_dynamic.template_file == "rst.tpl"
+        output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
+        assert "blah" not in output_attr_dynamic
+
+    def test_raw_template_dynamic_attr_2(self):
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+
+        class AttrDynamicExporter_2(TemplateExporter):
             @default('raw_template')
             def _raw_template_default(self):
                 return raw_template
@@ -162,31 +190,32 @@ class TestExporter(ExportersTestsBase):
             def _template_file_default(self):
                 return "rst.tpl"
 
-        exporter_attr_dynamic = AttrDynamicExporter()
+
+
+        exporter_attr_dynamic = AttrDynamicExporter_2()
+        # import pdb; pdb.set_trace()
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
-        assert exporter_attr_dynamic.template_file != "rst.tpl"
+        # assert exporter_attr_dynamic.template_file != "rst.tpl"
+        assert "blah" in output_attr_dynamic
         exporter_attr_dynamic.raw_template = ''
         assert exporter_attr_dynamic.template_file == "rst.tpl"
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" not in output_attr_dynamic
+    def test_raw_template_constructor(self):
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
 
         output_constructor, _ = TemplateExporter(
             raw_template=raw_template).from_notebook_node(nb)
         assert "blah" in output_constructor
 
+    def test_raw_template_assignment(self):
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
         exporter_assign = TemplateExporter()
         exporter_assign.raw_template = raw_template
         output_assign, _ = exporter_assign.from_notebook_node(nb)
         assert "blah" in output_assign
-
-        class DefaultExporter(TemplateExporter):
-            @default('raw_template')
-            def _raw_template_default(self):
-                return raw_template
-
-        exporter_default = DefaultExporter()
-        output_default, _ = exporter_default.from_notebook_node(nb)
-        assert "blah" in output_default
 
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
