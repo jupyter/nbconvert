@@ -127,19 +127,6 @@ class TestExporter(ExportersTestsBase):
             assert os.path.abspath(exporter.template.filename) == template
             assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_path]
 
-    def test_in_memory_template(self):
-        # Loads in an in memory template using jinja2.DictLoader
-        # creates a class that uses this template with the template_file argument
-        # converts an empty notebook using this mechanism
-        my_loader = DictLoader({'my_template': "{%- extends 'rst.tpl' -%}"})
-
-        class MyExporter(TemplateExporter):
-            template_file = 'my_template'
-
-        exporter = MyExporter(extra_loaders=[my_loader])
-        nb = v4.new_notebook()
-        out, resources = exporter.from_notebook_node(nb)
-
 
     def test_raw_template_attr_overwrite(self):
 
@@ -166,22 +153,19 @@ class TestExporter(ExportersTestsBase):
             def _raw_template_default(self):
                 return raw_template
 
-
         exporter_attr_dynamic = AttrDynamicExporter()
-        # import pdb; pdb.set_trace()
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
-        # assert exporter_attr_dynamic.template_file != "rst.tpl"
         assert "blah" in output_attr_dynamic
         exporter_attr_dynamic.raw_template = ''
         assert exporter_attr_dynamic.template_file == "rst.tpl"
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" not in output_attr_dynamic
 
-    def test_raw_template_dynamic_attr_2(self):
+    def test_raw_template_dynamic_attr_reversed(self):
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
 
-        class AttrDynamicExporter_2(TemplateExporter):
+        class AttrDynamicExporter(TemplateExporter):
             @default('raw_template')
             def _raw_template_default(self):
                 return raw_template
@@ -190,17 +174,15 @@ class TestExporter(ExportersTestsBase):
             def _template_file_default(self):
                 return "rst.tpl"
 
-
-
-        exporter_attr_dynamic = AttrDynamicExporter_2()
-        # import pdb; pdb.set_trace()
+        exporter_attr_dynamic = AttrDynamicExporter()
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
-        # assert exporter_attr_dynamic.template_file != "rst.tpl"
         assert "blah" in output_attr_dynamic
         exporter_attr_dynamic.raw_template = ''
         assert exporter_attr_dynamic.template_file == "rst.tpl"
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" not in output_attr_dynamic
+
+
     def test_raw_template_constructor(self):
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
