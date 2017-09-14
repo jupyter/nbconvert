@@ -128,8 +128,11 @@ class TestExporter(ExportersTestsBase):
             assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_path]
 
 
-    def test_raw_template_attr_overwrite(self):
-
+    def test_raw_template_attr(self):
+        """
+        Verify that you can assign a in memory template string by overwriting
+        `raw_template` as simple(non-traitlet) attribute
+        """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
 
@@ -141,6 +144,12 @@ class TestExporter(ExportersTestsBase):
         assert "blah" in output_attr
 
     def test_raw_template_dynamic_attr(self):
+        """
+        Test that template_file and raw_template traitlets play nicely together.
+        - source assigns template_file default first, then raw_template
+        - checks that the raw_template overrules template_file if set
+        - checks that once raw_template is set to '', template_file returns
+        """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
 
@@ -162,6 +171,12 @@ class TestExporter(ExportersTestsBase):
         assert "blah" not in output_attr_dynamic
 
     def test_raw_template_dynamic_attr_reversed(self):
+        """
+        Test that template_file and raw_template traitlets play nicely together.
+        - source assigns raw_template default first, then template_file
+        - checks that the raw_template overrules template_file if set
+        - checks that once raw_template is set to '', template_file returns
+        """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
 
@@ -184,6 +199,9 @@ class TestExporter(ExportersTestsBase):
 
 
     def test_raw_template_constructor(self):
+        """
+        Test `raw_template` as a keyword argument in the exporter constructor.
+        """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
 
@@ -192,6 +210,9 @@ class TestExporter(ExportersTestsBase):
         assert "blah" in output_constructor
 
     def test_raw_template_assignment(self):
+        """
+        Test `raw_template` assigned after the fact on non-custom Exporter.
+        """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
         exporter_assign = TemplateExporter()
