@@ -274,6 +274,9 @@ class TemplateExporter(Exporter):
         This is triggered by various trait changes that would change the template.
         """
 
+        if self.raw_template:
+            self._register_raw_template(self.raw_template)
+
         if not self.template_file:
             raise ValueError("No template_file specified!")
 
