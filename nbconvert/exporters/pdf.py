@@ -35,10 +35,7 @@ def prepend_to_env_search_path(varname, value, envdict):
     if not value:
         return  # Nothing to add
 
-    if varname not in envdict:
-        envdict[varname] = cast_bytes_py2(value)
-    else:
-        envdict[varname] = cast_bytes_py2(value) + os.pathsep + envdict[varname]
+    envdict[varname] = cast_bytes_py2(value) + os.pathsep + envdict.get(varname, '')
 
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files.
