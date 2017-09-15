@@ -118,6 +118,8 @@ class PDFExporter(LatexExporter):
             command = subprocess.list2cmdline(command)
         env = os.environ.copy()
         prepend_to_env_search_path('TEXINPUTS', self.texinputs, env)
+        prepend_to_env_search_path('BIBINPUTS', self.texinputs, env)
+        prepend_to_env_search_path('BSTINPUTS', self.texinputs, env)
 
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
