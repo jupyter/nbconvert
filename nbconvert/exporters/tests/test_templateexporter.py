@@ -15,6 +15,7 @@ from nbformat import v4
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
 from ..templateexporter import TemplateExporter
+from ..rst import RSTExporter
 from ..html import HTMLExporter
 from ..markdown import MarkdownExporter
 from testpath import tempdir
@@ -143,6 +144,29 @@ class TestExporter(ExportersTestsBase):
         output_attr, _ = exporter_attr.from_notebook_node(nb)
         assert "blah" in output_attr
 
+    def test_raw_template_init(self):
+        """
+        Test that template_file and raw_template traitlets play nicely together.
+        - source assigns template_file default first, then raw_template
+        - checks that the raw_template overrules template_file if set
+        - checks that once raw_template is set to '', template_file returns
+        """
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+
+        class AttrExporter(RSTExporter):
+
+            def __init__(self, *args, **kwargs):
+                self.raw_template = raw_template
+
+        exporter_init = AttrExporter()
+        output_init, _ = exporter_init.from_notebook_node(nb)
+        assert "blah" in output_init
+        exporter_init.raw_template = ''
+        assert exporter_init.template_file == "rst.tpl"
+        output_init, _ = exporter_init.from_notebook_node(nb)
+        assert "blah" not in output_init
+
     def test_raw_template_dynamic_attr(self):
         """
         Test that template_file and raw_template traitlets play nicely together.
@@ -219,6 +243,20 @@ class TestExporter(ExportersTestsBase):
         exporter_assign.raw_template = raw_template
         output_assign, _ = exporter_assign.from_notebook_node(nb)
         assert "blah" in output_assign
+
+    def test_raw_template_reassignment(self):
+        """
+        Test `raw_template` assigned after the fact on non-custom Exporter.
+        """
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+        exporter_reassign = TemplateExporter()
+        exporter_reassign.raw_template = raw_template
+        output_reassign, _ = exporter_reassign.from_notebook_node(nb)
+        assert "blah" in output_reassign
+        exporter_reassign.raw_template = raw_template.replace("blah", "baz")
+        output_reassign, _ = exporter_reassign.from_notebook_node(nb)
+        assert "baz" in output_reassign
 
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
