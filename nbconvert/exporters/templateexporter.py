@@ -16,8 +16,8 @@ from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
-    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader
-)
+    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
+    DictLoader)
 
 from nbconvert import filters
 from .exporter import Exporter
@@ -247,6 +247,15 @@ class TemplateExporter(Exporter):
         self.observe(self._invalidate_template_cache,
                      list(self.traits(affects_template=True)))
 
+        self._str_template_container = {}
+
+    def use_string_template(self, tpl):
+        """Use a template from a string instead of loading from a file.
+
+        Pass the template string into this method.
+        """
+        self._str_template_container['<memory>'] = tpl
+        self.template_file = '<memory>'
 
     def _load_template(self):
         """Load the Jinja template object from the template file
@@ -377,6 +386,7 @@ class TemplateExporter(Exporter):
              os.path.join(here, self.template_skeleton_path)]
 
         loaders = self.extra_loaders + [
+            DictLoader(self._str_template_container),
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension)
         ]
         environment = Environment(
