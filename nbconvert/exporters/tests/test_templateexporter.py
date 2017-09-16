@@ -246,7 +246,7 @@ class TestExporter(ExportersTestsBase):
 
     def test_raw_template_reassignment(self):
         """
-        Test `raw_template` assigned after the fact on non-custom Exporter.
+        Test `raw_template` reassigned after the fact on non-custom Exporter.
         """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
@@ -257,6 +257,22 @@ class TestExporter(ExportersTestsBase):
         exporter_reassign.raw_template = raw_template.replace("blah", "baz")
         output_reassign, _ = exporter_reassign.from_notebook_node(nb)
         assert "baz" in output_reassign
+
+    def test_raw_template_deassignment(self):
+        """
+        Test `raw_template` does not overwrite template_file if deassigned after
+        being assigned to a non-custom Exporter.
+        """
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+        exporter_deassign = RSTExporter()
+        exporter_deassign.raw_template = raw_template
+        output_deassign, _ = exporter_deassign.from_notebook_node(nb)
+        assert "blah" in output_deassign
+        exporter_deassign.raw_template = ''
+        assert exporter_deassign.template_file == 'rst.tpl'
+        output_deassign, _ = exporter_deassign.from_notebook_node(nb)
+        assert "blah" not in output_deassign
 
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
