@@ -27,6 +27,15 @@ class LatexFailed(IOError):
         u = self.__unicode__()
         return cast_bytes_py2(u)
 
+def prepend_to_env_search_path(varname, value, envdict):
+    """Add value to the environment variable varname in envdict
+
+    e.g. prepend_to_env_search_path('BIBINPUTS', '/home/sally/foo', os.environ)
+    """
+    if not value:
+        return  # Nothing to add
+
+    envdict[varname] = cast_bytes_py2(value) + os.pathsep + envdict.get(varname, '')
 
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files.
@@ -105,10 +114,10 @@ class PDFExporter(LatexExporter):
         if shell:
             command = subprocess.list2cmdline(command)
         env = os.environ.copy()
-        env['TEXINPUTS'] = os.pathsep.join([
-            cast_bytes_py2(self.texinputs),
-            env.get('TEXINPUTS', ''),
-        ])
+        prepend_to_env_search_path('TEXINPUTS', self.texinputs, env)
+        prepend_to_env_search_path('BIBINPUTS', self.texinputs, env)
+        prepend_to_env_search_path('BSTINPUTS', self.texinputs, env)
+
         with open(os.devnull, 'rb') as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for index in range(count):
