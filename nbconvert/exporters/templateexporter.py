@@ -17,7 +17,7 @@ from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
     TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
-    FunctionLoader
+    DictLoader
 )
 
 from nbconvert import filters
@@ -57,20 +57,6 @@ default_filters = {
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
 }
-
-class ExplicitFunctionLoader(FunctionLoader):
-    def __init__(self, load_func, template_list=None):
-        super(ExplicitFunctionLoader, self).__init__(load_func)
-        if isinstance(template_list, list):
-            self.template_list = template_list
-        else:
-            self.template_list = None
-
-    def list_templates(self):
-        if self.template_list:
-            return sorted(self.template_list)
-        else:
-            super(ExplicitFunctionLoader, self).list_templates()
 
 class ExtensionTolerantLoader(BaseLoader):
     """A template loader which optionally adds a given extension when searching.
@@ -154,7 +140,7 @@ class TemplateExporter(Exporter):
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
 
-    raw_template = Unicode('', help="raw template string")
+    raw_template = Unicode('', help="raw template string").tag(affects_environment=True)
 
     _last_template_file = ""
     raw_template_key = Unicode("<memory>",
@@ -419,8 +405,7 @@ class TemplateExporter(Exporter):
 
         loaders = self.extra_loaders + [
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
-            ExplicitFunctionLoader(self._load_raw_template,
-                                  template_list=[self.raw_template_key])
+            DictLoader({self.raw_template_key: self.raw_template})
         ]
         environment = Environment(
             loader=ChoiceLoader(loaders),
