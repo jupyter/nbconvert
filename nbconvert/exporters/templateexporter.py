@@ -154,11 +154,9 @@ class TemplateExporter(Exporter):
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
 
-    raw_template = Unicode('',
-        help="raw template string"
-    ).tag(affects_environment=True)
+    raw_template = Unicode('', help="raw template string")
 
-    _last_template_file = Unicode("", help="holder for last template_file")
+    _last_template_file = ""
     raw_template_key = Unicode("<memory>",
         help=("pseudo filename for in-memory template assignment. "
               "It is suggested that you do not change this unless you run into "
@@ -190,12 +188,11 @@ class TemplateExporter(Exporter):
         else:
             return None
 
-
     @observe('raw_template')
     def _raw_template_changed(self, change):
         if not change['new']:
             self.template_file = self.default_template or self._last_template_file
-
+        self._invalidate_template_cache()
 
     default_template = Unicode(u'').tag(affects_template=True)
 
