@@ -273,8 +273,9 @@ class TemplateExporter(Exporter):
 
         # this gives precedence to a raw_template if present
         with self.hold_trait_notifications():
-            if self.raw_template:
+            if self.template_file != self._raw_template_key:
                 self._last_template_file = self.template_file
+            if self.raw_template:
                 self.template_file = self._raw_template_key
 
         if not self.template_file:

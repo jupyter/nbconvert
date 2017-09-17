@@ -274,6 +274,25 @@ class TestExporter(ExportersTestsBase):
         output_deassign, _ = exporter_deassign.from_notebook_node(nb)
         assert "blah" not in output_deassign
 
+    def test_raw_template_dereassignment(self):
+        """
+        Test `raw_template` does not overwrite template_file if deassigned after
+        being assigned to a non-custom Exporter.
+        """
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+        exporter_dereassign = RSTExporter()
+        exporter_dereassign.raw_template = raw_template
+        output_dereassign, _ = exporter_dereassign.from_notebook_node(nb)
+        assert "blah" in output_dereassign
+        exporter_dereassign.raw_template = raw_template.replace("blah", "baz")
+        output_dereassign, _ = exporter_dereassign.from_notebook_node(nb)
+        assert "baz" in output_dereassign
+        exporter_dereassign.raw_template = ''
+        assert exporter_dereassign.template_file == 'rst.tpl'
+        output_dereassign, _ = exporter_dereassign.from_notebook_node(nb)
+        assert "blah" not in output_dereassign
+
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
         # exist in the environment, try to convert empty notebook. Failure is
