@@ -164,12 +164,6 @@ class TemplateExporter(Exporter):
     def _template_file_default(self):
         return self.default_template
 
-    def _load_raw_template(self, name):
-        if name == self._raw_template_key:
-            return self.raw_template, None, False
-        else:
-            return None
-
     @observe('raw_template')
     def _raw_template_changed(self, change):
         if not change['new']:
