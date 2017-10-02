@@ -130,6 +130,17 @@ class ExecutePreprocessor(Preprocessor):
         )
     ).tag(config=True)
 
+    force_raise_errors = Bool(False,
+        help=dedent(
+            """
+            If `False` (default), it does nothing.
+            If `True` this overrides `allow_errors` and cells tagged with
+            `raises-exception`, as a consequence execution is stopped and a
+            `CellExecutionError` is raised.
+            """
+        )
+    ).tag(config=True)
+
     extra_arguments = List(Unicode())
 
     kernel_name = Unicode('',
@@ -226,7 +237,7 @@ class ExecutePreprocessor(Preprocessor):
         path = resources.get('metadata', {}).get('path', '')
         if path == '':
             path = None
-        
+
         # clear display_id map
         self._display_id_map = {}
 
@@ -283,6 +294,7 @@ class ExecutePreprocessor(Preprocessor):
         cell_allows_errors = (self.allow_errors or "raises-exception"
                               in cell.metadata.get("tags", []))
 
+        if self.force_raise_errors or not cell_allows_errors:
             for out in outputs:
                 if out.output_type == 'error':
                     raise CellExecutionError.from_cell_and_msg(cell, out)
