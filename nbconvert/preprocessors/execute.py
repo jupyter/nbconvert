@@ -280,7 +280,9 @@ class ExecutePreprocessor(Preprocessor):
         reply, outputs = self.run_cell(cell, cell_index)
         cell.outputs = outputs
 
-        if not self.allow_errors:
+        cell_allows_errors = (self.allow_errors or "raises-exception"
+                              in cell.metadata.get("tags", []))
+
             for out in outputs:
                 if out.output_type == 'error':
                     raise CellExecutionError.from_cell_and_msg(cell, out)
@@ -302,7 +304,7 @@ class ExecutePreprocessor(Preprocessor):
         except ValueError:
             self.log.error("unhandled iopub msg: " + msg['msg_type'])
             return
-        
+
         for cell_idx, output_indices in self._display_id_map[display_id].items():
             cell = self.nb['cells'][cell_idx]
             outputs = cell['outputs']
@@ -391,7 +393,7 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 continue
-            
+
             display_id = None
             if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
                 display_id = msg['content'].get('transient', {}).get('display_id', None)
@@ -420,10 +422,10 @@ class ExecutePreprocessor(Preprocessor):
 
 def executenb(nb, cwd=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
-    
+
     This is a convenient wrapper around ExecutePreprocessor. It returns the
     modified notebook object.
-    
+
     Parameters
     ----------
     nb : NotebookNode
