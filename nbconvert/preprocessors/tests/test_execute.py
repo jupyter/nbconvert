@@ -195,6 +195,7 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_allow_errors(self):
         """
+        Check that conversion halts if ``allow_errors`` is False.
         """
         current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
@@ -202,11 +203,11 @@ class TestExecute(PreprocessorTestsBase):
         res['metadata']['path'] = os.path.dirname(filename)
         with pytest.raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
-        self.assertIsInstance(str(exc.value), str)
-        if sys.version_info >= (3, 0):
-            assert u"# üñîçø∂é" in str(exc.value)
-        else:
-            assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
+            self.assertIsInstance(str(exc.value), str)
+            if sys.version_info >= (3, 0):
+                assert u"# üñîçø∂é" in str(exc.value)
+            else:
+                assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
 
     def test_raises_exception_cell_tag(self):
         """
