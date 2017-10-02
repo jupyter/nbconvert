@@ -36,7 +36,7 @@ def _normalize_base64(b64_text):
         return b64encode(b64decode(b64_text.encode('ascii'))).decode('ascii')
     except (ValueError, TypeError):
         return b64_text
-    
+
 class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
     maxDiff = None
@@ -195,7 +195,6 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_allow_errors(self):
         """
-        Check that conversion continues if ``allow_errors`` is False.
         """
         current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
@@ -208,6 +207,23 @@ class TestExecute(PreprocessorTestsBase):
             assert u"# üñîçø∂é" in str(exc.value)
         else:
             assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
+
+    def test_raises_exception_cell_tag(self):
+        """
+        Check that conversion continues if ``cell_tags`` is False.
+        """
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files',
+                                'Skip Exceptions with Cell Tags.ipynb')
+        res = self.build_resources()
+        res['metadata']['path'] = os.path.dirname(filename)
+        with pytest.raises(CellExecutionError) as exc:
+            self.run_notebook(filename, dict(force_raise_errors=True), res)
+            self.assertIsInstance(str(exc.value), str)
+            if sys.version_info >= (3, 0):
+                assert u"# üñîçø∂é" in str(exc.value)
+            else:
+                assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
 
     def test_custom_kernel_manager(self):
         from .fake_kernelmanager import FakeCustomKernelManager
