@@ -86,8 +86,10 @@ class ExtractOutputPreprocessor(Preprocessor):
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:
                         ext = '.' + mime_type.rsplit('/')[-1]
-                    
-                    filename = self.output_filename_template.format(
+                    if out.metadata.get('filename', ''):
+                        filename = out.metadata['filename']
+                    else:
+                        filename = self.output_filename_template.format(
                                     unique_key=unique_key,
                                     cell_index=cell_index,
                                     index=index,
