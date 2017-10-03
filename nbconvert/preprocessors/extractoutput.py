@@ -88,6 +88,8 @@ class ExtractOutputPreprocessor(Preprocessor):
                         ext = '.' + mime_type.rsplit('/')[-1]
                     if out.metadata.get('filename', ''):
                         filename = out.metadata['filename']
+                        if not filename.endswith(ext):
+                            filename+=ext
                     else:
                         filename = self.output_filename_template.format(
                                     unique_key=unique_key,
