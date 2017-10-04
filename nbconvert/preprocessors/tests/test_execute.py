@@ -122,6 +122,9 @@ class TestExecute(PreprocessorTestsBase):
     def test_run_notebooks(self):
         """Runs a series of test notebooks and compares them to their actual output"""
         input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
+        if sys.version_info >= (3, 0):
+            raise RuntimeError
+        shared_opts = dict(kernel_name="python")
         for filename in input_files:
             if os.path.basename(filename) == "Disable Stdin.ipynb":
                 continue
@@ -133,6 +136,7 @@ class TestExecute(PreprocessorTestsBase):
                 opts = dict()
             res = self.build_resources()
             res['metadata']['path'] = os.path.dirname(filename)
+            opts.update(shared_opts)
             input_nb, output_nb = self.run_notebook(filename, opts, res)
             self.assert_notebooks_equal(input_nb, output_nb)
 
