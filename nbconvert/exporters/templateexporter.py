@@ -16,7 +16,8 @@ from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
 from jinja2 import (
-    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader
+    TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
+    DictLoader
 )
 
 from nbconvert import filters
@@ -56,7 +57,6 @@ default_filters = {
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
 }
-
 
 class ExtensionTolerantLoader(BaseLoader):
     """A template loader which optionally adds a given extension when searching.
@@ -140,6 +140,11 @@ class TemplateExporter(Exporter):
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
 
+    raw_template = Unicode('', help="raw template string").tag(affects_environment=True)
+
+    _last_template_file = ""
+    _raw_template_key = "<memory>"
+
     @observe('template_file')
     def _template_file_changed(self, change):
         new = change['new']
@@ -159,6 +164,12 @@ class TemplateExporter(Exporter):
     def _template_file_default(self):
         return self.default_template
 
+    @observe('raw_template')
+    def _raw_template_changed(self, change):
+        if not change['new']:
+            self.template_file = self.default_template or self._last_template_file
+        self._invalidate_template_cache()
+
     default_template = Unicode(u'').tag(affects_template=True)
 
     template_path = List(['.']).tag(config=True, affects_environment=True)
@@ -172,10 +183,10 @@ class TemplateExporter(Exporter):
         os.path.join("..", "templates", "skeleton"),
         help="Path where the template skeleton files are located.",
     ).tag(affects_environment=True)
-    
+
     #Extension that the template files use.
     template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
-    
+
     exclude_input = Bool(False,
         help = "This allows you to exclude code cell inputs from all templates if set to True."
         ).tag(config=True)
@@ -207,7 +218,7 @@ class TemplateExporter(Exporter):
     exclude_unknown = Bool(False,
         help = "This allows you to exclude unknown cells from all templates if set to True."
         ).tag(config=True)
-    
+
     extra_loaders = List(
         help="Jinja loaders to find templates. Will be tried in order "
              "before the default FileSystem ones.",
@@ -229,7 +240,7 @@ class TemplateExporter(Exporter):
     def __init__(self, config=None, **kw):
         """
         Public constructor
-    
+
         Parameters
         ----------
         config : config
@@ -250,9 +261,16 @@ class TemplateExporter(Exporter):
 
     def _load_template(self):
         """Load the Jinja template object from the template file
-        
+
         This is triggered by various trait changes that would change the template.
         """
+
+        # this gives precedence to a raw_template if present
+        with self.hold_trait_notifications():
+            if self.template_file != self._raw_template_key:
+                self._last_template_file = self.template_file
+            if self.raw_template:
+                self.template_file = self._raw_template_key
 
         if not self.template_file:
             raise ValueError("No template_file specified!")
@@ -377,7 +395,8 @@ class TemplateExporter(Exporter):
              os.path.join(here, self.template_skeleton_path)]
 
         loaders = self.extra_loaders + [
-            ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension)
+            ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
+            DictLoader({self._raw_template_key: self.raw_template})
         ]
         environment = Environment(
             loader=ChoiceLoader(loaders),
