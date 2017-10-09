@@ -14,13 +14,11 @@
 # serve to show the default.
 
 import os
-import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-# sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath(os.path.join('..', 'sphinxext')))
+#sys.path.insert(0, os.path.abspath('.'))
 
 if os.environ.get('READTHEDOCS', ''):
     # RTD doesn't use the repo's Makefile to build docs. We run
@@ -47,7 +45,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'nbsphinx',
     'IPython.sphinxext.ipython_console_highlighting',
-    'github',
+    'sphinxcontrib_github_alt',
 ]
 
 
