@@ -24,7 +24,7 @@ if os.environ.get('READTHEDOCS', ''):
     # RTD doesn't use the repo's Makefile to build docs. We run
     # autogen_config.py to create the config docs (i.e. Configuration Options
     # page).
-    import sys, subprocess
+    import subprocess
     
     #  subprocess.run([sys.executable,'-m','pip','install','-e','../../.'])
     
@@ -45,7 +45,9 @@ extensions = [
     'sphinx.ext.napoleon',
     'nbsphinx',
     'IPython.sphinxext.ipython_console_highlighting',
+    'sphinxcontrib_github_alt',
 ]
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -67,6 +69,9 @@ from datetime import date
 year = date.today().year
 copyright = '2015-%s, Jupyter Development Team' % year
 author = 'Jupyter Development Team'
+
+# ghissue config
+github_project_url = "https://github.com/jupyter/nbconvert"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

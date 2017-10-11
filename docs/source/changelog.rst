@@ -20,7 +20,9 @@ Major features
 Tag Based Element Filtering
 +++++++++++++++++++++++++++
 
-For removing individual elements we need a way to signal that, with this release we introduce the use of tags for that purpose.
+For removing individual elements from notebooks, we need a way to signal to
+nbconvert that the elements should be removed. With this release, we introduce
+the use of tags for that purpose.
 
 Tags are user-defined strings attached to cells or outputs. They are stored in
 cell or output metadata. For more on tags see the `nbformat docs on cell
@@ -52,30 +54,30 @@ The following traitlets remove elements of different kinds:
 Comprehensive notes
 ~~~~~~~~~~~~~~~~~~~
 
-- new: configurable ``browser`` in ServePostProcessor #618
-- new: ``--clear-output`` command line flag to clear output in-place #619
-- new: remove elements based on tags with ``TagRemovePreprocessor``. #640, #643
-- new: CellExecutionError can now be imported from ``nbconvert.preprocessors`` #656
-- new: slides now can enable scrolling and custom transitions #600
+- new: configurable ``browser`` in ServePostProcessor :ghpull:`618`
+- new: ``--clear-output`` command line flag to clear output in-place :ghpull:`619`
+- new: remove elements based on tags with ``TagRemovePreprocessor``. :ghpull:`640`, :ghpull:`643`
+- new: CellExecutionError can now be imported from ``nbconvert.preprocessors`` :ghpull:`656`
+- new: slides now can enable scrolling and custom transitions :ghpull:`600`
 
 - docs: Release instructions for nbviewer-deploy
-- docs: improved instructions for handling errors using the ``ExecutePreprocessor`` #656
+- docs: improved instructions for handling errors using the ``ExecutePreprocessor`` :ghpull:`656`
 
-- tests: better height/width metadata testing for images in rst & html #601 #602
-- tests: normalise base64 output data to avoid false positives #650
-- tests: normalise ipython traceback messages to handle old and new style #631
+- tests: better height/width metadata testing for images in rst & html :ghpull:`601` :ghpull:`602`
+- tests: normalise base64 output data to avoid false positives :ghpull:`650`
+- tests: normalise ipython traceback messages to handle old and new style :ghpull:`631`
 
-- bug: mathjax obeys ``\\(\\)`` & ``\\[\\]`` (both nbconvert & pandoc) #609 #617
-- bug: specify default templates using extensions #639
-- bug: fix pandoc version number #638
-- bug: require recent mistune version #630
-- bug: catch errors from IPython ``execute_reply`` and ``error`` messages #642
+- bug: mathjax obeys ``\\(\\)`` & ``\\[\\]`` (both nbconvert & pandoc) :ghpull:`609` :ghpull:`617`
+- bug: specify default templates using extensions :ghpull:`639`
+- bug: fix pandoc version number :ghpull:`638`
+- bug: require recent mistune version :ghpull:`630`
+- bug: catch errors from IPython ``execute_reply`` and ``error`` messages :ghpull:`642`
 
-- nose completely removed & dependency dropped #595 #660
-- mathjax processing in mistune now only uses inline grammar #611
-- removeRegex now enabled by default on all TemplateExporters, does not remove cells with outputs #616
-- validate notebook after applying each preprocessor (allowing additional attributes) #645
-- changed COPYING.md to LICENSE for more standard licensing that GitHub knows how to read #654
+- nose completely removed & dependency dropped :ghpull:`595` :ghpull:`660`
+- mathjax processing in mistune now only uses inline grammar :ghpull:`611`
+- removeRegex now enabled by default on all TemplateExporters, does not remove cells with outputs :ghpull:`616`
+- validate notebook after applying each preprocessor (allowing additional attributes) :ghpull:`645`
+- changed COPYING.md to LICENSE for more standard licensing that GitHub knows how to read :ghpull:`654`
 
 5.2.1
 -----
@@ -123,32 +125,32 @@ that wish to have a language specific exporter can now surface that directly.
 Comprehensive notes
 ~~~~~~~~~~~~~~~~~~~
 
-- new: configurable ExecutePreprocessor.startup_timeout configurable #583
-- new: RemoveCell preprocessor based on cell content (defaults to empty cell) #575
-- new: function for executing notebooks: `executenb` #573
-- new: global filtering to remove inputs, outputs, markdown cells (&c.), this works on all templates #554
-- new: script exporter entrypoint #531
-- new: configurable anchor link text (previously ¶) `HTMLExporter.anchor_link_text` #522
+- new: configurable ExecutePreprocessor.startup_timeout configurable :ghpull:`583`
+- new: RemoveCell preprocessor based on cell content (defaults to empty cell) :ghpull:`575`
+- new: function for executing notebooks: `executenb` :ghpull:`573`
+- new: global filtering to remove inputs, outputs, markdown cells (&c.), this works on all templates :ghpull:`554`
+- new: script exporter entrypoint :ghpull:`531`
+- new: configurable anchor link text (previously ¶) `HTMLExporter.anchor_link_text` :ghpull:`522`
 
-- new: configurable values for slides exporter #542 #558
+- new: configurable values for slides exporter :ghpull:`542` :ghpull:`558`
 
-- improved releases (how-to documentation, version-number generation and checking) #593
-- doc improvements  #593 #580 #565 #554
-- language information from cell magics (for highlighting) is now included in more formats #586
-- mathjax upgrades and cdn fixes #584 #567
-- better CI #571 #540
-- better traceback behaviour when execution errs #521
-- deprecated nose test features removed #519
+- improved releases (how-to documentation, version-number generation and checking) :ghpull:`593`
+- doc improvements  :ghpull:`593` :ghpull:`580` :ghpull:`565` :ghpull:`554`
+- language information from cell magics (for highlighting) is now included in more formats :ghpull:`586`
+- mathjax upgrades and cdn fixes :ghpull:`584` :ghpull:`567`
+- better CI :ghpull:`571` :ghpull:`540`
+- better traceback behaviour when execution errs :ghpull:`521`
+- deprecated nose test features removed :ghpull:`519`
 
-- bug fixed: we now respect width and height metadata on jpeg and png mimetype outputs #588
-- bug fixed: now we respect the `resolve_references` filter in `report.tplx` #577
-- bug fixed: output metadata now is removed by ClearOutputPreprocessor #569
-- bug fixed: display id respected in execute preproessor #563
-- bug fixed: dynamic defaults for optional jupyter_client import #559
-- bug fixed: don't self-close non-void HTML tags #548
-- buf fixed: upgrade jupyter_client dependency to 4.2 #539
-- bug fixed: LaTeX output through md→LaTeX conversion shouldn't be touched #535
-- bug fixed: now we escape `<` inside math formulas when converting to html #514
+- bug fixed: we now respect width and height metadata on jpeg and png mimetype outputs :ghpull:`588`
+- bug fixed: now we respect the `resolve_references` filter in `report.tplx` :ghpull:`577`
+- bug fixed: output metadata now is removed by ClearOutputPreprocessor :ghpull:`569`
+- bug fixed: display id respected in execute preproessor :ghpull:`563`
+- bug fixed: dynamic defaults for optional jupyter_client import :ghpull:`559`
+- bug fixed: don't self-close non-void HTML tags :ghpull:`548`
+- buf fixed: upgrade jupyter_client dependency to 4.2 :ghpull:`539`
+- bug fixed: LaTeX output through md→LaTeX conversion shouldn't be touched :ghpull:`535`
+- bug fixed: now we escape `<` inside math formulas when converting to html :ghpull:`514`
 
 Credits
 ~~~~~~~
@@ -206,13 +208,13 @@ alphabetical order):
 
 `5.1 on GitHub <https://github.com/jupyter/nbconvert/milestones/5.1>`__
 
-- improved CSS (specifically tables, in line with notebook) #498
-- improve in-memory templates handling #491
-- test improvements #516 #509 #505
-- new configuration option: IOPub timeout #513
-- doc improvements #489 #500 #493 #506
-- newly customizable: output prompt #500
-- more python2/3 compatibile unicode handling #502
+- improved CSS (specifically tables, in line with notebook) :ghpull:`498`
+- improve in-memory templates handling :ghpull:`491`
+- test improvements :ghpull:`516` :ghpull:`509` :ghpull:`505`
+- new configuration option: IOPub timeout :ghpull:`513`
+- doc improvements :ghpull:`489` :ghpull:`500` :ghpull:`493` :ghpull:`506`
+- newly customizable: output prompt :ghpull:`500`
+- more python2/3 compatibile unicode handling :ghpull:`502`
 
 5.0
 ---
