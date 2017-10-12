@@ -106,6 +106,13 @@ class ExtractOutputPreprocessor(Preprocessor):
                     out.metadata.setdefault('filenames', {})
                     out.metadata['filenames'][mime_type] = filename
 
+                    if filename in resources['outputs']:
+                        raise ValueError(
+                            "Your filename: {} appears more than once. "
+                            "Filenames must be unique across the notebook. The "
+                            "second time this filename appeared was in cell "
+                            "{}.".format(filename, cell_index)
+                            )
                     #In the resources, make the figure available via
                     #   resources['outputs']['filename'] = data
                     resources['outputs'][filename] = data
