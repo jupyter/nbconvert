@@ -213,7 +213,8 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_raises_exception_cell_tag(self):
         """
-        Check that conversion continues if ``cell_tags`` is False.
+        Check that conversion continues if ``raises-exception`` is present in
+        the cell in which an exception is raised.
         """
         current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files',

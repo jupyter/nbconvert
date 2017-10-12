@@ -133,10 +133,15 @@ class ExecutePreprocessor(Preprocessor):
     force_raise_errors = Bool(False,
         help=dedent(
             """
-            If `False` (default), it does nothing.
-            If `True` this overrides `allow_errors` and cells tagged with
-            `raises-exception`, as a consequence execution is stopped and a
-            `CellExecutionError` is raised.
+            If False (default), errors from executing the notebook can be
+            allowed with a `raises-exception` tag on a single cell, or the
+            `allow_errors` configurable option for all cells. An allowed error
+            will be recorded in notebook output, and execution will continue.
+            If an error occurs when it is not explicitly allowed, a
+            `CellExecutionError` will be raised.
+            If True, `CellExecutionError` will be raised for any error that occurs
+            while executing the notebook. This overrides both the
+            `allow_errors` option and the `raises-exception` cell tag.
             """
         )
     ).tag(config=True)
