@@ -211,10 +211,10 @@ class TestExecute(PreprocessorTestsBase):
             else:
                 assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
 
-    def test_raises_exception_cell_tag(self):
+    def test_force_raise_errors(self):
         """
-        Check that conversion continues if ``raises-exception`` is present in
-        the cell in which an exception is raised.
+        Check that conversion halts if the ``force_raise_errors`` traitlet on
+        ExecutePreprocessor is set to True.
         """
         current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files',
