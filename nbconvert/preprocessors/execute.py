@@ -4,7 +4,12 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from textwrap import dedent, indent
+from textwrap import dedent
+try:
+    from textwrap import indent
+except ImportError:
+    def indent(text, prefix):
+        return "".join([prefix + line for line in text.splitlines(True)])
 
 try:
     from queue import Empty  # Py 3
