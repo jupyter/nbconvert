@@ -130,6 +130,22 @@ class ExecutePreprocessor(Preprocessor):
         )
     ).tag(config=True)
 
+    force_raise_errors = Bool(False,
+        help=dedent(
+            """
+            If False (default), errors from executing the notebook can be
+            allowed with a `raises-exception` tag on a single cell, or the
+            `allow_errors` configurable option for all cells. An allowed error
+            will be recorded in notebook output, and execution will continue.
+            If an error occurs when it is not explicitly allowed, a
+            `CellExecutionError` will be raised.
+            If True, `CellExecutionError` will be raised for any error that occurs
+            while executing the notebook. This overrides both the
+            `allow_errors` option and the `raises-exception` cell tag.
+            """
+        )
+    ).tag(config=True)
+
     extra_arguments = List(Unicode())
 
     kernel_name = Unicode('',
@@ -226,7 +242,7 @@ class ExecutePreprocessor(Preprocessor):
         path = resources.get('metadata', {}).get('path', '')
         if path == '':
             path = None
-        
+
         # clear display_id map
         self._display_id_map = {}
 
@@ -280,7 +296,10 @@ class ExecutePreprocessor(Preprocessor):
         reply, outputs = self.run_cell(cell, cell_index)
         cell.outputs = outputs
 
-        if not self.allow_errors:
+        cell_allows_errors = (self.allow_errors or "raises-exception"
+                              in cell.metadata.get("tags", []))
+
+        if self.force_raise_errors or not cell_allows_errors:
             for out in outputs:
                 if out.output_type == 'error':
                     raise CellExecutionError.from_cell_and_msg(cell, out)
@@ -302,7 +321,7 @@ class ExecutePreprocessor(Preprocessor):
         except ValueError:
             self.log.error("unhandled iopub msg: " + msg['msg_type'])
             return
-        
+
         for cell_idx, output_indices in self._display_id_map[display_id].items():
             cell = self.nb['cells'][cell_idx]
             outputs = cell['outputs']
@@ -391,7 +410,7 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 continue
-            
+
             display_id = None
             if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
                 display_id = msg['content'].get('transient', {}).get('display_id', None)
@@ -420,10 +439,10 @@ class ExecutePreprocessor(Preprocessor):
 
 def executenb(nb, cwd=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
-    
+
     This is a convenient wrapper around ExecutePreprocessor. It returns the
     modified notebook object.
-    
+
     Parameters
     ----------
     nb : NotebookNode

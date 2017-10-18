@@ -36,7 +36,7 @@ def _normalize_base64(b64_text):
         return b64encode(b64decode(b64_text.encode('ascii'))).decode('ascii')
     except (ValueError, TypeError):
         return b64_text
-    
+
 class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
     maxDiff = None
@@ -122,6 +122,7 @@ class TestExecute(PreprocessorTestsBase):
     def test_run_notebooks(self):
         """Runs a series of test notebooks and compares them to their actual output"""
         input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
+        shared_opts = dict(kernel_name="python")
         for filename in input_files:
             if os.path.basename(filename) == "Disable Stdin.ipynb":
                 continue
@@ -133,6 +134,7 @@ class TestExecute(PreprocessorTestsBase):
                 opts = dict()
             res = self.build_resources()
             res['metadata']['path'] = os.path.dirname(filename)
+            opts.update(shared_opts)
             input_nb, output_nb = self.run_notebook(filename, opts, res)
             self.assert_notebooks_equal(input_nb, output_nb)
 
@@ -195,7 +197,7 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_allow_errors(self):
         """
-        Check that conversion continues if ``allow_errors`` is False.
+        Check that conversion halts if ``allow_errors`` is False.
         """
         current_dir = os.path.dirname(__file__)
         filename = os.path.join(current_dir, 'files', 'Skip Exceptions.ipynb')
@@ -203,11 +205,29 @@ class TestExecute(PreprocessorTestsBase):
         res['metadata']['path'] = os.path.dirname(filename)
         with pytest.raises(CellExecutionError) as exc:
             self.run_notebook(filename, dict(allow_errors=False), res)
-        self.assertIsInstance(str(exc.value), str)
-        if sys.version_info >= (3, 0):
-            assert u"# üñîçø∂é" in str(exc.value)
-        else:
-            assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
+            self.assertIsInstance(str(exc.value), str)
+            if sys.version_info >= (3, 0):
+                assert u"# üñîçø∂é" in str(exc.value)
+            else:
+                assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
+
+    def test_force_raise_errors(self):
+        """
+        Check that conversion halts if the ``force_raise_errors`` traitlet on
+        ExecutePreprocessor is set to True.
+        """
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files',
+                                'Skip Exceptions with Cell Tags.ipynb')
+        res = self.build_resources()
+        res['metadata']['path'] = os.path.dirname(filename)
+        with pytest.raises(CellExecutionError) as exc:
+            self.run_notebook(filename, dict(force_raise_errors=True), res)
+            self.assertIsInstance(str(exc.value), str)
+            if sys.version_info >= (3, 0):
+                assert u"# üñîçø∂é" in str(exc.value)
+            else:
+                assert u"# üñîçø∂é".encode('utf8', 'replace') in str(exc.value)
 
     def test_custom_kernel_manager(self):
         from .fake_kernelmanager import FakeCustomKernelManager
