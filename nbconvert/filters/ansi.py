@@ -74,12 +74,12 @@ def ansi2latex(text):
     return _ansi2anything(text, _latexconverter)
 
 
-def _htmlconverter(fg, bg, bold):
+def _htmlconverter(fg, bg, bold, underline):
     """
-    Return start and end tags for given foreground/background/bold.
+    Return start and end tags for given foreground/background/bold/underline.
 
     """
-    if (fg, bg, bold) == (None, None, False):
+    if (fg, bg, bold, underline) == (None, None, False, False):
         return '', ''
 
     classes = []
@@ -98,6 +98,9 @@ def _htmlconverter(fg, bg, bold):
     if bold:
         classes.append('ansi-bold')
 
+    if underline:
+        classes.append('ansi-underline')
+
     starttag = '<span'
     if classes:
         starttag += ' class="' + ' '.join(classes) + '"'
@@ -107,12 +110,12 @@ def _htmlconverter(fg, bg, bold):
     return starttag, '</span>'
 
 
-def _latexconverter(fg, bg, bold):
+def _latexconverter(fg, bg, bold, underline):
     """
-    Return start and end markup given foreground/background/bold.
+    Return start and end markup given foreground/background/bold/underline.
 
     """
-    if (fg, bg, bold) == (None, None, False):
+    if (fg, bg, bold, underline) == (None, None, False, False):
         return '', ''
 
     starttag, endtag = '', ''
@@ -140,6 +143,11 @@ def _latexconverter(fg, bg, bold):
     if bold:
         starttag += r'\textbf{'
         endtag = '}' + endtag
+
+    if underline:
+        starttag += r'\underline{'
+        endtag = '}' + endtag
+
     return starttag, endtag
 
 
@@ -152,11 +160,13 @@ def _ansi2anything(text, converter):
     Accepts codes like '\x1b[32m' (red) and '\x1b[1;32m' (bold, red).
     The codes 1 (bold) and 5 (blinking) are selecting a bold font, code
     0 and an empty code ('\x1b[m') reset colors and bold-ness.
-    Unlike in most terminals, "bold" doesn't change the color.
     The codes 21 and 22 deselect "bold", the codes 39 and 49 deselect
     the foreground and background color, respectively.
     The codes 38 and 48 select the "extended" set of foreground and
     background colors, respectively.
+    The code 4 underlines the following text and the code 7 inverts
+    foreground and background.  The codes 24 and 27 switch the underline
+    and inversion off, respectively.
 
     Non-color escape sequences (not ending with 'm') are filtered out.
 
@@ -166,6 +176,8 @@ def _ansi2anything(text, converter):
     """
     fg, bg = None, None
     bold = False
+    underline = False
+    inverse = False
     numbers = []
     out = []
 
@@ -185,9 +197,16 @@ def _ansi2anything(text, converter):
             chunk, text = text, ''
 
         if chunk:
-            if bold and fg in range(8):
-                fg += 8
-            starttag, endtag = converter(fg, bg, bold)
+            chunk_fg, chunk_bg = fg, bg
+            if bold and chunk_fg in range(8):
+                chunk_fg += 8
+            if inverse:
+                if chunk_fg is None:
+                    chunk_fg = 0, 0, 0
+                if chunk_bg is None:
+                    chunk_bg = 255, 255, 255
+                chunk_fg, chunk_bg = chunk_bg, chunk_fg
+            starttag, endtag = converter(chunk_fg, chunk_bg, bold, underline)
             out.append(starttag)
             out.append(chunk)
             out.append(endtag)
@@ -196,11 +215,19 @@ def _ansi2anything(text, converter):
             n = numbers.pop(0)
             if n == 0:
                 fg = bg = None
-                bold = False
+                bold = underline = inverse = False
             elif n in (1, 5):
                 bold = True
+            elif n == 4:
+                underline = True
+            elif n == 7:
+                inverse = True
             elif n in (21, 22):
                 bold = False
+            elif n == 24:
+                underline = False
+            elif n == 27:
+                inverse = False
             elif 30 <= n <= 37:
                 fg = n - 30
             elif n == 38:
