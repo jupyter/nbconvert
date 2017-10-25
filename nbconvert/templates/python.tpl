@@ -1,7 +1,7 @@
 {%- extends 'null.tpl' -%}
 
 {%- block header -%}
-#!/usr/bin/env python
+#!/usr/bin/env ipython
 # coding: utf-8
 {% endblock header %}
 
