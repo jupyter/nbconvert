@@ -74,26 +74,33 @@ def ansi2latex(text):
     return _ansi2anything(text, _latexconverter)
 
 
-def _htmlconverter(fg, bg, bold, underline):
+def _htmlconverter(fg, bg, bold, underline, inverse):
     """
     Return start and end tags for given foreground/background/bold/underline.
 
     """
-    if (fg, bg, bold, underline) == (None, None, False, False):
+    if (fg, bg, bold, underline, inverse) == (None, None, False, False, False):
         return '', ''
 
     classes = []
     styles = []
 
+    if inverse:
+        fg, bg = bg, fg
+
     if isinstance(fg, int):
         classes.append(_ANSI_COLORS[fg] + '-fg')
     elif fg:
         styles.append('color: rgb({},{},{})'.format(*fg))
+    elif inverse:
+        classes.append('ansi-default-inverse-fg')
 
     if isinstance(bg, int):
         classes.append(_ANSI_COLORS[bg] + '-bg')
     elif bg:
         styles.append('background-color: rgb({},{},{})'.format(*bg))
+    elif inverse:
+        classes.append('ansi-default-inverse-bg')
 
     if bold:
         classes.append('ansi-bold')
@@ -110,15 +117,18 @@ def _htmlconverter(fg, bg, bold, underline):
     return starttag, '</span>'
 
 
-def _latexconverter(fg, bg, bold, underline):
+def _latexconverter(fg, bg, bold, underline, inverse):
     """
     Return start and end markup given foreground/background/bold/underline.
 
     """
-    if (fg, bg, bold, underline) == (None, None, False, False):
+    if (fg, bg, bold, underline, inverse) == (None, None, False, False, False):
         return '', ''
 
     starttag, endtag = '', ''
+
+    if inverse:
+        fg, bg = bg, fg
 
     if isinstance(fg, int):
         starttag += r'\textcolor{' + _ANSI_COLORS[fg] + '}{'
@@ -128,16 +138,23 @@ def _latexconverter(fg, bg, bold, underline):
         starttag += r'\def\tcRGB{\textcolor[RGB]}\expandafter'
         starttag += r'\tcRGB\expandafter{\detokenize{%s,%s,%s}}{' % fg
         endtag = '}' + endtag
+    elif inverse:
+        starttag += r'\textcolor{ansi-default-inverse-fg}{'
+        endtag = '}' + endtag
 
     if isinstance(bg, int):
-        starttag += r'\setlength{\fboxsep}{0pt}\colorbox{'
-        starttag += _ANSI_COLORS[bg] + '}{'
+        starttag += r'\setlength{\fboxsep}{0pt}'
+        starttag += r'\colorbox{' + _ANSI_COLORS[bg] + '}{'
         endtag = r'\strut}' + endtag
     elif bg:
         starttag += r'\setlength{\fboxsep}{0pt}'
         # See http://tex.stackexchange.com/a/291102/13684
         starttag += r'\def\cbRGB{\colorbox[RGB]}\expandafter'
         starttag += r'\cbRGB\expandafter{\detokenize{%s,%s,%s}}{' % bg
+        endtag = r'\strut}' + endtag
+    elif inverse:
+        starttag += r'\setlength{\fboxsep}{0pt}'
+        starttag += r'\colorbox{ansi-default-inverse-bg}{'
         endtag = r'\strut}' + endtag
 
     if bold:
@@ -197,16 +214,9 @@ def _ansi2anything(text, converter):
             chunk, text = text, ''
 
         if chunk:
-            chunk_fg, chunk_bg = fg, bg
-            if bold and chunk_fg in range(8):
-                chunk_fg += 8
-            if inverse:
-                if chunk_fg is None:
-                    chunk_fg = 0, 0, 0
-                if chunk_bg is None:
-                    chunk_bg = 255, 255, 255
-                chunk_fg, chunk_bg = chunk_bg, chunk_fg
-            starttag, endtag = converter(chunk_fg, chunk_bg, bold, underline)
+            starttag, endtag = converter(
+                fg + 8 if bold and fg in range(8) else fg,
+                bg, bold, underline, inverse)
             out.append(starttag)
             out.append(chunk)
             out.append(endtag)
