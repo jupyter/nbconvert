@@ -114,6 +114,14 @@ nbconvert_flags.update({
         },
         "Exclude input and output prompts from converted document."
         ),
+    'silent':(
+        {'NbConvertApp':{
+            'log_level':0
+            }
+        },
+        "Suppress all log messages."
+        ),
+
 })
 
 
