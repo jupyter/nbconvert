@@ -8,7 +8,7 @@
 <head>
 {%- block html_head -%}
 <meta charset="utf-8" />
-<title>{{resources['metadata']['name']}}</title>
+<title>{{resources['metadata']['title']}}</title>
 
 {%- if "widgets" in nb.metadata -%}
 <script src="https://unpkg.com/jupyter-js-widgets@2.0.*/dist/embed.js"></script>
