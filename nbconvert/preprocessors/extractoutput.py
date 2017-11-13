@@ -86,8 +86,12 @@ class ExtractOutputPreprocessor(Preprocessor):
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:
                         ext = '.' + mime_type.rsplit('/')[-1]
-                    
-                    filename = self.output_filename_template.format(
+                    if out.metadata.get('filename', ''):
+                        filename = out.metadata['filename']
+                        if not filename.endswith(ext):
+                            filename+=ext
+                    else:
+                        filename = self.output_filename_template.format(
                                     unique_key=unique_key,
                                     cell_index=cell_index,
                                     index=index,
@@ -102,6 +106,17 @@ class ExtractOutputPreprocessor(Preprocessor):
                     out.metadata.setdefault('filenames', {})
                     out.metadata['filenames'][mime_type] = filename
 
+                    if filename in resources['outputs']:
+                        raise ValueError(
+                            "Your outputs have filename metadata associated "
+                            "with them. Nbconvert saves these outputs to "
+                            "external files using this filename metadata. "
+                            "Filenames need to be unique across the notebook, "
+                            "or images will be overwritten. The filename {} is "
+                            "associated with more than one output. The second "
+                            "output associated with this filename is in cell "
+                            "{}.".format(filename, cell_index)
+                            )
                     #In the resources, make the figure available via
                     #   resources['outputs']['filename'] = data
                     resources['outputs'][filename] = data
