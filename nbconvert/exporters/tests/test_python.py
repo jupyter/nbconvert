@@ -21,3 +21,4 @@ class TestPythonExporter(ExportersTestsBase):
         """Can a PythonExporter export something?"""
         (output, resources) = self.exporter_class().from_filename(self._get_notebook())
         self.assertIn("coding: utf-8", output)
+        self.assertIn("#!/usr/bin/env python", output)
