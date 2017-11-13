@@ -138,6 +138,10 @@ This template does not define a docclass, the inheriting class must define this.
     % Math Jax compatability definitions
     \def\gt{>}
     \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
     % Document parameters
     % Document title
     ((* block title -*))
