@@ -108,9 +108,13 @@ class ExtractOutputPreprocessor(Preprocessor):
 
                     if filename in resources['outputs']:
                         raise ValueError(
-                            "Your filename: {} appears more than once. "
-                            "Filenames must be unique across the notebook. The "
-                            "second time this filename appeared was in cell "
+                            "Your outputs have filename metadata associated "
+                            "with them. Nbconvert saves these outputs to "
+                            "external files using this filename metadata. "
+                            "Filenames need to be unique across the notebook, "
+                            "or images will be overwritten. The filename {} is "
+                            "associated with more than one output. The second "
+                            "output associated with this filename is in cell "
                             "{}.".format(filename, cell_index)
                             )
                     #In the resources, make the figure available via
