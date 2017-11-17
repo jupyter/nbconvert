@@ -195,6 +195,7 @@ install_requires = setuptools_args['install_requires'] = [
     'bleach',
     'pandocfilters>=1.4.1',
     'testpath',
+    'defusedxml',
 ]
 
 extra_requirements = {
