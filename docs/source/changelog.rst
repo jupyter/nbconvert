@@ -8,7 +8,7 @@ Changes in nbconvert
 -----
 `5.3.1 on Github <https://github.com/jupyter/nbconvert/milestones/5.3.1>`__
 
-- MANIFEST.in updated to include ``LICENSE`` and ``scripts/`` when creating sdist. #666
+- MANIFEST.in updated to include ``LICENSE`` and ``scripts/`` when creating sdist. :ghpull:`666`
 
 5.3
 ---
