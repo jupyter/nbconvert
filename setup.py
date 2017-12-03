@@ -185,7 +185,7 @@ setup_args = dict(
 
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
-    'mistune>=0.7.4',
+    'mistune>=0.8.1',
     'jinja2',
     'pygments',
     'traitlets>=4.2',
@@ -195,6 +195,7 @@ install_requires = setuptools_args['install_requires'] = [
     'bleach',
     'pandocfilters>=1.4.1',
     'testpath',
+    'defusedxml',
 ]
 
 extra_requirements = {

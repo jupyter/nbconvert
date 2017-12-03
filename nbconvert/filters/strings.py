@@ -17,7 +17,10 @@ try:
     from urllib.parse import quote  # Py 3
 except ImportError:
     from urllib2 import quote  # Py 2
-from xml.etree import ElementTree
+
+# defusedxml does safe(r) parsing of untrusted XML data
+from defusedxml import cElementTree as ElementTree
+from xml.etree.cElementTree import Element
 
 from ipython_genutils import py3compat
 
@@ -98,7 +101,7 @@ def add_anchor(html, anchor_link_text=u'¶'):
         return html
     link = _convert_header_id(html2text(h))
     h.set('id', link)
-    a = ElementTree.Element("a", {"class" : "anchor-link", "href" : "#" + link})
+    a = Element("a", {"class" : "anchor-link", "href" : "#" + link})
     a.text = anchor_link_text
     h.append(a)
 
