@@ -44,7 +44,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+{%- if 'title' in resources['metadata'] -%}
+<title>{{resources['metadata']['title']}} slides</title>
+{%- else -%}
 <title>{{resources['metadata']['name']}} slides</title>
+{%- endif -%}
 
 <script src="{{resources.reveal.require_js_url}}"></script>
 <script src="{{resources.reveal.jquery_url}}"></script>
