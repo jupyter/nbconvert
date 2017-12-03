@@ -164,7 +164,7 @@ class Exporter(LoggingConfigurable):
             resources['metadata'] = ResourcesDict()
         path, basename = os.path.split(filename)
         notebook_name = basename[:basename.rfind('.')]
-        resources['metadata']['title'] = notebook_name
+        resources['metadata']['name'] = notebook_name
         resources['metadata']['path'] = path
 
         modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
@@ -277,8 +277,8 @@ class Exporter(LoggingConfigurable):
                 resources['metadata'] = new_metadata
         else:
             resources['metadata'] = ResourcesDict()
-            if not resources['metadata']['title']:
-                resources['metadata']['title'] = 'Notebook'
+            if not resources['metadata']['name']:
+                resources['metadata']['name'] = 'Notebook'
 
         #Set the output extension
         resources['output_extension'] = self.file_extension
