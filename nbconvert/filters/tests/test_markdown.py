@@ -137,6 +137,18 @@ class TestMarkdown(TestsBase):
             "$$a<b&b<lt$$",
             "$$a<b&lt;b>a;a-b<0$$",
             "$$<k'>$$",
+            """$$x
+=
+2$$""",
+            r"""$$
+ b_{l_1,l_2,l_3}^{\phi\phi\omega} = -8\, l_1\times l_2 \,l_1\cdot l_2 \int_0^{\chi_*} d\chi \frac{W(\chi,\chi_*)^2}{\chi^2} \int_0^{\chi}d\chi' \frac{W(\chi',\chi)W(\chi',\chi_*)}{{\chi'}^2} \left[
+ P_\psi\left(\frac{l_1}{\chi},z(\chi)\right) P_\Psi\left(\frac{l_2}{\chi'},z(\chi')\right)
+- (l_1\leftrightarrow l_2)
+\right]
+$$""",
+            r"""\begin{equation*}
+x = 2 *55* 7
+\end{equation*}""",
             """$
 \\begin{tabular}{ l c r }
   1 & 2 & 3 \\
