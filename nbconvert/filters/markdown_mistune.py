@@ -60,7 +60,7 @@ class MathBlockLexer(mistune.BlockLexer):
         """Add token to pass through mutiline math."""
         self.tokens.append({
             "type": "multiline_math",
-            "text": m.group(1) or m.group(2) or m.group(3)
+            "text": m.group(0)
         })
 
 
