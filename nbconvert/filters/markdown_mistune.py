@@ -22,9 +22,10 @@ from nbconvert.filters.strings import add_anchor
 
 
 class MathBlockGrammar(mistune.BlockGrammar):
-    block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
-    latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
-                                   re.DOTALL)
+    multi_math_str = "|".join([r"(^\$\$.*?\$\$)",
+                               r"(^\\\\\[.*?\\\\\])",
+                               r"(^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\4\})"])
+    multiline_math = re.compile(multi_math_str, re.DOTALL)
 
 
 class MathInlineGrammar(mistune.InlineGrammar):
@@ -36,7 +37,7 @@ class MathInlineGrammar(mistune.InlineGrammar):
 
 
 class MathBlockLexer(mistune.BlockLexer):
-    default_rules = (['block_math', 'latex_environment']
+    default_rules = (['multiline_math']
                      + mistune.BlockLexer.default_rules)
 
     def __init__(self, rules=None, **kwargs):
@@ -44,19 +45,11 @@ class MathBlockLexer(mistune.BlockLexer):
             rules = MathBlockGrammar()
         super(MathBlockLexer, self).__init__(rules, **kwargs)
 
-    def parse_block_math(self, m):
-        """Add token for a $$math$$ block"""
+    def parse_multiline_math(self, m):
+        """Add token to pass through mutiline math."""
         self.tokens.append({
-            'type': 'block_math',
-            'text': m.group(1) or m.group(2)
-        })
-
-    def parse_latex_environment(self, m):
-        """Add token for a \begin{.} ...LaTeX stuff... \end{.} block"""
-        self.tokens.append({
-            'type': 'latex_environment',
-            'name': m.group(1),
-            'text': m.group(2)
+            "type": "multiline_math",
+            "text": m.group(1) or m.group(2) or m.group(3)
         })
 
 
@@ -88,12 +81,9 @@ class MarkdownWithMath(mistune.Markdown):
             kwargs['block'] = MathBlockLexer
         super(MarkdownWithMath, self).__init__(renderer, **kwargs)
 
-    def output_block_math(self):
-        return self.renderer.block_math(self.token["text"])
-
-    def output_latex_environment(self):
-        return self.renderer.latex_environment(self.token["name"],
-                                               self.token["text"])
+    
+    def output_multiline_math(self):
+        return self.inline(self.token["text"])
 
 
 class IPythonRenderer(mistune.Renderer):
