@@ -22,6 +22,10 @@ from nbconvert.filters.strings import add_anchor
 
 
 class MathBlockGrammar(mistune.BlockGrammar):
+    """This defines a single regex comprised of the different patterns that 
+    identify math content spanning multiple lines. These are used by the 
+    MathBlockLexer.
+    """
     multi_math_str = "|".join([r"(^\$\$.*?\$\$)",
                                r"(^\\\\\[.*?\\\\\])",
                                r"(^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\4\})"])
@@ -29,6 +33,9 @@ class MathBlockGrammar(mistune.BlockGrammar):
 
 
 class MathInlineGrammar(mistune.InlineGrammar):
+    """This defines different ways of declaring math objects that should be 
+    passed through to mathjax unaffected. These are used by the MathInlineLexer.
+    """
     inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
     block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
     latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
@@ -37,6 +44,10 @@ class MathInlineGrammar(mistune.InlineGrammar):
 
 
 class MathBlockLexer(mistune.BlockLexer):
+    """ This acts as a pass-through to the MathInlineLexer. It is needed in 
+    order to avoid other block level rules splitting math sections apart. 
+    """
+    
     default_rules = (['multiline_math']
                      + mistune.BlockLexer.default_rules)
 
@@ -54,6 +65,14 @@ class MathBlockLexer(mistune.BlockLexer):
 
 
 class MathInlineLexer(mistune.InlineLexer):
+    """This interprets the content of LaTeX style math objects using the rules 
+    defined by the MathInlineGrammar. 
+    
+    In particular this grabs ``$$...$$``, ``\\[...\\]``, ``\\(...\\)``, ``$...$``, 
+    and ``\begin{foo}...\end{foo}`` styles for declaring mathematics. It strips 
+    delimiters from all these varieties, and extracts the type of environment 
+    in the last case (``foo`` in this example).
+    """
     default_rules = (['block_math', 'inline_math', 'latex_environment']
                      + mistune.InlineLexer.default_rules)
 
