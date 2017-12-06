@@ -44,8 +44,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-{%- if 'title' in resources['metadata'] -%}
-<title>{{resources['metadata']['title']}} slides</title>
+{%- if nb.metadata.get('title','') -%}
+<title>{{nb.metadata.get('title', '')}} slides</title>
 {%- else -%}
 <title>{{resources['metadata']['name']}} slides</title>
 {%- endif -%}

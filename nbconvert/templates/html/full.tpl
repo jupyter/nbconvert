@@ -8,8 +8,8 @@
 <head>
 {%- block html_head -%}
 <meta charset="utf-8" />
-{%- if 'title' in resources['metadata'] -%}
-<title>{{resources['metadata']['title']}}</title>
+{%- if nb.metadata.get('title','') -%}
+<title>{{nb.metadata.get('title', '')}}</title>
 {%- else -%}
 <title>{{resources['metadata']['name']}}</title>
 {%- endif -%}
