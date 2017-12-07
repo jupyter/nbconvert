@@ -26,21 +26,10 @@ class MathBlockGrammar(mistune.BlockGrammar):
     identify math content spanning multiple lines. These are used by the 
     MathBlockLexer.
     """
-    multi_math_str = "|".join([r"(^\$\$.*?\$\$)",
-                               r"(^\\\\\[.*?\\\\\])",
-                               r"(^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\4\})"])
+    multi_math_str = "|".join([r"^\$\$.*?\$\$",
+                               r"^\\\\\[.*?\\\\\]",
+                               r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}"])
     multiline_math = re.compile(multi_math_str, re.DOTALL)
-
-
-class MathInlineGrammar(mistune.InlineGrammar):
-    """This defines different ways of declaring math objects that should be 
-    passed through to mathjax unaffected. These are used by the MathInlineLexer.
-    """
-    inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
-    block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
-    latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
-                                   re.DOTALL)
-    text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
 
 
 class MathBlockLexer(mistune.BlockLexer):
@@ -60,8 +49,19 @@ class MathBlockLexer(mistune.BlockLexer):
         """Add token to pass through mutiline math."""
         self.tokens.append({
             "type": "multiline_math",
-            "text": m.group(0)
+            "text": m.string
         })
+
+
+class MathInlineGrammar(mistune.InlineGrammar):
+    """This defines different ways of declaring math objects that should be 
+    passed through to mathjax unaffected. These are used by the MathInlineLexer.
+    """
+    inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
+    block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
+    latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
+                                   re.DOTALL)
+    text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)')
 
 
 class MathInlineLexer(mistune.InlineLexer):
