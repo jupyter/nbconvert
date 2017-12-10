@@ -273,12 +273,24 @@ class ExecutePreprocessor(Preprocessor):
             cwd=path)
         self.kc.allow_stdin = False
         self.nb = nb
+        self.widget_state = {}
 
         try:
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
+            if self.widget_state:
+                self.nb.metadata.widgets = {
+                    'application/vnd.jupyter.widget-state+json': {
+                        'state': {
+                            model_id: _serialize_widget_state(state)
+                            for model_id, state in self.widget_state.items()
+                        },
+                        'version_major': 2,
+                        'version_minor': 0,
+                    }
+                }
 
         delattr(self, 'nb')
 
@@ -409,6 +421,7 @@ class ExecutePreprocessor(Preprocessor):
                         cell_map[cell_index] = []
                 continue
             elif msg_type.startswith('comm'):
+                self.widget_state[content['comm_id']] = content['data']['state']
                 continue
 
             display_id = None
@@ -457,3 +470,16 @@ def executenb(nb, cwd=None, **kwargs):
         resources['metadata'] = {'path': cwd}
     ep = ExecutePreprocessor(**kwargs)
     return ep.preprocess(nb, resources)[0]
+
+
+def _serialize_widget_state(state):
+    """Serialize a widget state, following format in @jupyter-widgets/schema.
+
+    TODO: Does not currently split binary buffers or remove default values.
+    """
+    return {
+        'model_name': state['_model_name'],
+        'model_module': state['_model_module'],
+        'model_module_version': state.get('_model_module_version'),
+        'state': state,
+    }
