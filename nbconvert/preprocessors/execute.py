@@ -480,6 +480,7 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 self.handle_comm_msg(outs, msg, cell_index)
+                self.widget_state[content['comm_id']] = content['data']['state']
                 continue
 
             display_id = None
@@ -556,3 +557,16 @@ def executenb(nb, cwd=None, km=None, **kwargs):
         resources['metadata'] = {'path': cwd}
     ep = ExecutePreprocessor(**kwargs)
     return ep.preprocess(nb, resources, km=km)[0]
+
+
+def _serialize_widget_state(state):
+    """Serialize a widget state, following format in @jupyter-widgets/schema.
+
+    TODO: Does not currently split binary buffers or remove default values.
+    """
+    return {
+        'model_name': state['_model_name'],
+        'model_module': state['_model_module'],
+        'model_module_version': state.get('_model_module_version'),
+        'state': state,
+    }
