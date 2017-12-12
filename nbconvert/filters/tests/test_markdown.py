@@ -137,6 +137,18 @@ class TestMarkdown(TestsBase):
             "$$a<b&b<lt$$",
             "$$a<b&lt;b>a;a-b<0$$",
             "$$<k'>$$",
+            ("$$x\n"
+             "=\n"
+             "2$$"),
+            ("$$\n"
+             "b =  \\left[\n"
+             "P\\left(\\right)\n"
+             "- (l_1\\leftrightarrow l_2\n)"
+             "\\right]\n"
+             "$$"),
+            ("\\begin{equation*}\n"
+             "x = 2 *55* 7\n"
+             "\\end{equation*}"),
             """$
 \\begin{tabular}{ l c r }
   1 & 2 & 3 \\
