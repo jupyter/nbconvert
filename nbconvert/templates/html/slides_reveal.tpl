@@ -1,5 +1,6 @@
 {%- extends 'basic.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
+{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 
 {%- block any_cell scoped -%}
 {%- if cell.metadata.get('slide_start', False) -%}
@@ -44,11 +45,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-{%- if nb.metadata.get('title','') -%}
-<title>{{nb.metadata.get('title', '')}} slides</title>
-{%- else -%}
-<title>{{resources['metadata']['name']}} slides</title>
-{%- endif -%}
+<title>{{nb_title}} slides</title>
 
 <script src="{{resources.reveal.require_js_url}}"></script>
 <script src="{{resources.reveal.jquery_url}}"></script>
