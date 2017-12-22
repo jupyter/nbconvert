@@ -21,7 +21,42 @@ from pygments.util import ClassNotFound
 from nbconvert.filters.strings import add_anchor
 
 
+class MathBlockGrammar(mistune.BlockGrammar):
+    """This defines a single regex comprised of the different patterns that 
+    identify math content spanning multiple lines. These are used by the 
+    MathBlockLexer.
+    """
+    multi_math_str = "|".join([r"^\$\$.*?\$\$",
+                               r"^\\\\\[.*?\\\\\]",
+                               r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}"])
+    multiline_math = re.compile(multi_math_str, re.DOTALL)
+
+
+class MathBlockLexer(mistune.BlockLexer):
+    """ This acts as a pass-through to the MathInlineLexer. It is needed in 
+    order to avoid other block level rules splitting math sections apart. 
+    """
+    
+    default_rules = (['multiline_math']
+                     + mistune.BlockLexer.default_rules)
+
+    def __init__(self, rules=None, **kwargs):
+        if rules is None:
+            rules = MathBlockGrammar()
+        super(MathBlockLexer, self).__init__(rules, **kwargs)
+
+    def parse_multiline_math(self, m):
+        """Add token to pass through mutiline math."""
+        self.tokens.append({
+            "type": "multiline_math",
+            "text": m.group(0)
+        })
+
+
 class MathInlineGrammar(mistune.InlineGrammar):
+    """This defines different ways of declaring math objects that should be 
+    passed through to mathjax unaffected. These are used by the MathInlineLexer.
+    """
     inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
     block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
     latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}",
@@ -30,6 +65,14 @@ class MathInlineGrammar(mistune.InlineGrammar):
 
 
 class MathInlineLexer(mistune.InlineLexer):
+    """This interprets the content of LaTeX style math objects using the rules 
+    defined by the MathInlineGrammar. 
+    
+    In particular this grabs ``$$...$$``, ``\\[...\\]``, ``\\(...\\)``, ``$...$``, 
+    and ``\begin{foo}...\end{foo}`` styles for declaring mathematics. It strips 
+    delimiters from all these varieties, and extracts the type of environment 
+    in the last case (``foo`` in this example).
+    """
     default_rules = (['block_math', 'inline_math', 'latex_environment']
                      + mistune.InlineLexer.default_rules)
 
@@ -53,7 +96,13 @@ class MarkdownWithMath(mistune.Markdown):
     def __init__(self, renderer, **kwargs):
         if 'inline' not in kwargs:
             kwargs['inline'] = MathInlineLexer
+        if 'block' not in kwargs:
+            kwargs['block'] = MathBlockLexer
         super(MarkdownWithMath, self).__init__(renderer, **kwargs)
+
+    
+    def output_multiline_math(self):
+        return self.inline(self.token["text"])
 
 
 class IPythonRenderer(mistune.Renderer):
