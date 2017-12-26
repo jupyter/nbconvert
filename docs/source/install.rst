@@ -57,6 +57,7 @@ Fortunately, there are packages that make this much easier. These
 packages are specific to different operating systems: 
 
 * Linux: `TeX Live <http://tug.org/texlive/>`_
+   * For Installing Xelatex on Ubuntu: https://tex.stackexchange.com/questions/179778/xelatex-under-ubuntu
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
 * Windows: `MikTex <http://www.miktex.org/>`_
 
