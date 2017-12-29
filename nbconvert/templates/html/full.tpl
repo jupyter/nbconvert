@@ -1,6 +1,5 @@
 {%- extends 'basic.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
-{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 
 
 {%- block header -%}
@@ -9,6 +8,7 @@
 <head>
 {%- block html_head -%}
 <meta charset="utf-8" />
+{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 <title>{{nb_title}}</title>
 
 {%- if "widgets" in nb.metadata -%}

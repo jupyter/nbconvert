@@ -4,7 +4,6 @@ functions.  Figures, data_text,
 This template does not define a docclass, the inheriting class must define this.=))
 
 ((*- extends 'document_contents.tplx' -*))
-((*- set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] -*))
 
 %===============================================================================
 % Abstract overrides
@@ -146,6 +145,7 @@ This template does not define a docclass, the inheriting class must define this.
     % Document parameters
     % Document title
     ((* block title -*))
+    ((*- set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] -*))
     \title{((( nb_title | ascii_only | escape_latex )))}
     ((*- endblock title *))
     ((* block date *))((* endblock date *))
