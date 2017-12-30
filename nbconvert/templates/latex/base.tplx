@@ -145,11 +145,8 @@ This template does not define a docclass, the inheriting class must define this.
     % Document parameters
     % Document title
     ((* block title -*))
-    ((*- if "title" in nb.metadata *))
-    \title{((( nb.metadata.get("title", "") | ascii_only | escape_latex )))}
-    ((*- else *))
-    \title{((( resources.metadata.name | ascii_only | escape_latex )))}
-    ((*- endif -*))
+    ((*- set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] -*))
+    \title{((( nb_title | ascii_only | escape_latex )))}
     ((*- endblock title *))
     ((* block date *))((* endblock date *))
     ((* block author *))((* endblock author *))

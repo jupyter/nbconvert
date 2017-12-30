@@ -44,7 +44,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-<title>{{resources['metadata']['name']}} slides</title>
+{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
+<title>{{nb_title}} slides</title>
 
 <script src="{{resources.reveal.require_js_url}}"></script>
 <script src="{{resources.reveal.jquery_url}}"></script>
