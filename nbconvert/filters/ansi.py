@@ -175,15 +175,6 @@ def _ansi2anything(text, converter):
     See https://en.wikipedia.org/wiki/ANSI_escape_code
 
     Accepts codes like '\x1b[32m' (red) and '\x1b[1;32m' (bold, red).
-    The codes 1 (bold) and 5 (blinking) are selecting a bold font, code
-    0 and an empty code ('\x1b[m') reset colors and bold-ness.
-    The codes 21 and 22 deselect "bold", the codes 39 and 49 deselect
-    the foreground and background color, respectively.
-    The codes 38 and 48 select the "extended" set of foreground and
-    background colors, respectively.
-    The code 4 underlines the following text and the code 7 inverts
-    foreground and background.  The codes 24 and 27 switch the underline
-    and inversion off, respectively.
 
     Non-color escape sequences (not ending with 'm') are filtered out.
 
@@ -203,6 +194,7 @@ def _ansi2anything(text, converter):
         if m:
             if m.group(2) == 'm':
                 try:
+                    # Empty code is same as code 0
                     numbers = [int(n) if n else 0
                                for n in m.group(1).split(';')]
                 except ValueError:
@@ -224,12 +216,16 @@ def _ansi2anything(text, converter):
         while numbers:
             n = numbers.pop(0)
             if n == 0:
+                # Code 0 (same as empty code): reset everything
                 fg = bg = None
                 bold = underline = inverse = False
-            elif n in (1, 5):
+            elif n == 1:
                 bold = True
             elif n == 4:
                 underline = True
+            elif n == 5:
+                # Code 5: blinking
+                bold = True
             elif n == 7:
                 inverse = True
             elif n in (21, 22):
