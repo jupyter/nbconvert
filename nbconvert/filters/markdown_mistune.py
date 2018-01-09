@@ -85,7 +85,7 @@ class MathInlineLexer(mistune.InlineLexer):
         return self.renderer.inline_math(m.group(1) or m.group(2))
 
     def output_block_math(self, m):
-        return self.renderer.block_math(m.group(1) or m.group(2))
+        return self.renderer.block_math(m.group(1) or m.group(2) or "")
 
     def output_latex_environment(self, m):
         return self.renderer.latex_environment(m.group(1),
