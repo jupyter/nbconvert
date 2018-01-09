@@ -13,7 +13,7 @@ from ipython_genutils.testing import decorators as dec
 
 from ...tests.base import TestsBase
 from ..pandoc import convert_pandoc
-from ..markdown import markdown2html
+from ..markdown import markdown2html, markdown2html_mistune
 
 from jinja2 import Environment
 
@@ -102,6 +102,10 @@ class TestMarkdown(TestsBase):
 
         self.assertEqual(latex.strip(), 'latex %s' % long_line)
         self.assertEqual(rst.strip(), 'rst %s' % long_line.replace(' ', '\n'))
+
+    def test_markdown2html_mistune_empty_math_block(self):
+        rendered = markdown2html_mistune("$$$$")
+        assert "$$$$" not in rendered
 
     def test_markdown2html(self):
         """markdown2html test"""
