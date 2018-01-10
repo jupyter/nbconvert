@@ -13,7 +13,7 @@ from ipython_genutils.testing import decorators as dec
 
 from ...tests.base import TestsBase
 from ..pandoc import convert_pandoc
-from ..markdown import markdown2html, markdown2html_mistune
+from ..markdown import markdown2html
 
 from jinja2 import Environment
 
