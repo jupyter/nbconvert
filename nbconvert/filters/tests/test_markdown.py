@@ -32,6 +32,8 @@ class TestMarkdown(TestsBase):
         '##test',
         'test\n----',
         'test [link](https://google.com/)',
+        '$$$$',
+        '\\\\[\\\\]',
     ]
 
     tokens = [
@@ -46,6 +48,8 @@ class TestMarkdown(TestsBase):
         'test',
         'test',
         ('test', 'https://google.com/'),
+        '$$$$',
+        '$$$$',
     ]
 
     @dec.onlyif_cmds_exist('pandoc')
@@ -102,10 +106,6 @@ class TestMarkdown(TestsBase):
 
         self.assertEqual(latex.strip(), 'latex %s' % long_line)
         self.assertEqual(rst.strip(), 'rst %s' % long_line.replace(' ', '\n'))
-
-    def test_markdown2html_mistune_empty_math_block(self):
-        rendered = markdown2html_mistune("$$$$")
-        assert "$$$$" not in rendered
 
     def test_markdown2html(self):
         """markdown2html test"""

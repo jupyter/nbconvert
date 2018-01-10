@@ -134,7 +134,7 @@ class IPythonRenderer(mistune.Renderer):
         return cgi.escape(text)
 
     def block_math(self, text):
-        return '$$%s$$' % self.escape_html(text) if text else ''
+        return '$$%s$$' % self.escape_html(text)
 
     def latex_environment(self, name, text):
         name = self.escape_html(name)
