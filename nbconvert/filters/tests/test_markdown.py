@@ -185,7 +185,10 @@ $$
 C_{ik} = \sum_{j=1}^n A_{ij} B_{jk},
 $$
 but you can _implement_ this computation in many ways.
-$\approx 2mnp$ flops are needed for \\\\[ C_{ik} = \sum_{j=1}^n A_{ij} B_{jk} \\\\]."""
+$\approx 2mnp$ flops are needed for \\\\[ C_{ik} = \sum_{j=1}^n A_{ij} B_{jk} \\\\].
+Also check empty math blocks work correctly:
+$$$$
+\\\\[\\\\]"""
         output_check = (case.replace("_implement_", "<em>implement</em>")
                             .replace("\\\\(", "$").replace("\\\\)", "$")
                             .replace("\\\\[", "$$").replace("\\\\]", "$$"))
