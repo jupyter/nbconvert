@@ -3,10 +3,13 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import re
+
 from .base import ExportersTestsBase
 from ..html import HTMLExporter
+
+from traitlets.config import Config
 from nbformat import v4
-import re
 
 
 class TestHTMLExporter(ExportersTestsBase):
@@ -59,6 +62,29 @@ class TestHTMLExporter(ExportersTestsBase):
 
         assert re.findall(in_regex, output) == ins
         assert re.findall(out_regex, output) == outs
+        
+    def test_prompt_number(self):
+        """
+        Does HTMLExporter properly format input and output prompts?
+        """
+        no_prompt_conf = Config(
+            {"TemplateExporter":{
+                "exclude_input_prompt": True,
+                "exclude_output_prompt": True,
+                }
+            }
+        )
+        exporter = HTMLExporter(config=no_prompt_conf, template_file='full')    
+        (output, resources) = exporter.from_filename(
+            self._get_notebook(nb_name="prompt_numbers.ipynb"))
+        in_regex = r"In&nbsp;\[(.*)\]:"
+        out_regex = r"Out\[(.*)\]:"
+
+        ins = ["2", "10", "&nbsp;", "&nbsp;", "0"]
+        outs = ["10"]
+
+        assert not re.findall(in_regex, output)
+        assert not re.findall(out_regex, output)
 
     def test_png_metadata(self):
         """
