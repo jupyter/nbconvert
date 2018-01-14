@@ -123,12 +123,8 @@ class TestLatexExporter(ExportersTestsBase):
     def test_no_prompt_yes_input(self):
         no_prompt = {
             "TemplateExporter":{
-                "exclude_output": False,
-                "exclude_input": False,
                 "exclude_input_prompt": True,
                 "exclude_output_prompt": True,
-                "exclude_markdown": False,
-                "exclude_code_cell": False,
             }
         }
         c_no_prompt = Config(no_prompt)

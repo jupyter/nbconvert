@@ -80,9 +80,6 @@ class TestHTMLExporter(ExportersTestsBase):
         in_regex = r"In&nbsp;\[(.*)\]:"
         out_regex = r"Out\[(.*)\]:"
 
-        ins = ["2", "10", "&nbsp;", "&nbsp;", "0"]
-        outs = ["10"]
-
         assert not re.findall(in_regex, output)
         assert not re.findall(out_regex, output)
 

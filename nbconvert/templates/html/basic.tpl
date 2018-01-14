@@ -23,21 +23,17 @@
 
 {% block in_prompt -%}
 <div class="prompt input_prompt">
-{%- if resources.global_content_filter.include_input_prompt-%}
     {%- if cell.execution_count is defined -%}
         In&nbsp;[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
     {%- else -%}
         In&nbsp;[&nbsp;]:
     {%- endif -%}
-{%- endif -%}
 </div>
 {%- endblock in_prompt %}
 
 {% block empty_in_prompt -%}
-{%- if resources.global_content_filter.include_input_prompt-%}
 <div class="prompt input_prompt">
 </div>
-{% endif %}
 {%- endblock empty_in_prompt %}
 
 {# 
@@ -55,22 +51,24 @@
 </div>
 {%- endblock input %}
 
+{% block output_area_prompt %}
+{%- if output.output_type == 'execute_result' -%}
+    <div class="prompt output_prompt">
+    {%- if cell.execution_count is defined -%}
+        Out[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
+    {%- else -%}
+        Out[&nbsp;]:
+    {%- endif -%}
+{%- else -%}
+    <div class="prompt">
+{%- endif -%}
+    </div>
+{% endblock output_area_prompt %}
+
 {% block output %}
 <div class="output_area">
 {% if resources.global_content_filter.include_output_prompt %}
-    {% block output_area_prompt %}
-    {%- if output.output_type == 'execute_result' -%}
-        <div class="prompt output_prompt">
-        {%- if cell.execution_count is defined -%}
-            Out[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
-        {%- else -%}
-            Out[&nbsp;]:
-        {%- endif -%}
-    {%- else -%}
-        <div class="prompt">
-    {%- endif -%}
-        </div>
-    {% endblock output_area_prompt %}
+    {{ self.output_area_prompt() }}
 {% endif %}
 {{ super() }}
 </div>
