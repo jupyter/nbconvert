@@ -77,7 +77,7 @@ class SlidesExporter(HTMLExporter):
 
     reveal_url_prefix = Unicode(
         help="""The URL prefix for reveal.js.
-        This can be a a relative URL for a local copy of reveal.js,
+        This can be a a relative URL for a local copy of reveal.js (version 3.x),
         or point to a CDN.
 
         For speaker notes to work, a local reveal.js prefix must be used.

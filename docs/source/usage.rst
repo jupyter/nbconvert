@@ -96,7 +96,7 @@ Reveal.js HTML slideshow
   ``--post serve`` on the command-line. The ``serve`` post-processor proxies
   Reveal.js requests to a CDN if no local Reveal.js library is present.
   To make slides that don't require an internet connection, just place the
-  Reveal.js library in the same directory where your_talk.slides.html is
+  Reveal.js library (version 3.x) in the same directory where ``your_talk.slides.html`` is
   located, or point to another directory using the ``--reveal-prefix`` alias.
 
   .. note:: 
