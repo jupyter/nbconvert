@@ -204,7 +204,7 @@ And the template file, that inherits from the html `full` template and prepend/a
 
 
     ## this is a markdown cell
-    {super()}
+    {{ super() }}
     ## THIS IS THE END
 
 
