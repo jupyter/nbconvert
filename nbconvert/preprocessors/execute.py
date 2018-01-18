@@ -290,7 +290,7 @@ class ExecutePreprocessor(Preprocessor):
 
         To execute all cells see :meth:`preprocess`.
         """
-        if cell.cell_type != 'code':
+        if cell.cell_type != 'code' or not cell.source.strip():
             return cell, resources
 
         reply, outputs = self.run_cell(cell, cell_index)
