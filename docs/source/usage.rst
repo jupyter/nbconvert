@@ -99,6 +99,15 @@ Reveal.js HTML slideshow
   Reveal.js library (version 3.x) in the same directory where ``your_talk.slides.html`` is
   located, or point to another directory using the ``--reveal-prefix`` alias.
 
+  To get a compatible version of revealjs in the current folder:
+
+  .. code-block:: shell
+
+    git clone https://github.com/hakimel/reveal.js.git
+    cd reveal.js
+    git checkout 3.6.0
+    cd ..
+
   .. note:: 
 
     In order to designate a mapping from notebook cells to Reveal.js slides, 
