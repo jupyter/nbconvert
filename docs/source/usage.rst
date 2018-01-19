@@ -105,7 +105,7 @@ Reveal.js HTML slideshow
 
     git clone https://github.com/hakimel/reveal.js.git
     cd reveal.js
-    git checkout 3.6.0
+    git checkout 3.5.0
     cd ..
 
   .. note:: 
