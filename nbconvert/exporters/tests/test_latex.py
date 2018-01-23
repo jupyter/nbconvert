@@ -9,6 +9,8 @@ import re
 
 from .base import ExportersTestsBase
 from ..latex import LatexExporter
+
+from traitlets.config import Config
 from nbformat import write
 from nbformat import v4
 from ipython_genutils.testing.decorators import onlyif_cmds_exist
@@ -117,6 +119,22 @@ class TestLatexExporter(ExportersTestsBase):
         assert re.findall(in_regex, output) == ins
         assert re.findall(out_regex, output) == outs
 
+    @onlyif_cmds_exist('pandoc')
+    def test_no_prompt_yes_input(self):
+        no_prompt = {
+            "TemplateExporter":{
+                "exclude_input_prompt": True,
+                "exclude_output_prompt": True,
+            }
+        }
+        c_no_prompt = Config(no_prompt)
+
+        exporter = LatexExporter(config=c_no_prompt)
+        (output, resources) = exporter.from_filename(
+            self._get_notebook(nb_name="prompt_numbers.ipynb"))
+        assert "shape" in output
+        assert "evs" in output
+        
     def test_in_memory_template_tplx(self):
         # Loads in an in memory latex template (.tplx) using jinja2.DictLoader
         # creates a class that uses this template with the template_file argument
