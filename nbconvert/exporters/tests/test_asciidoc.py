@@ -23,6 +23,8 @@ from ..asciidoc import ASCIIDocExporter
 #-----------------------------------------------------------------------------
 # Class
 #-----------------------------------------------------------------------------
+in_regex = r"In\[(.*)\]:"
+out_regex = r"Out\[(.*)\]:"
 
 class TestASCIIDocExporter(ExportersTestsBase):
     """Tests for ASCIIDocExporter"""
@@ -44,10 +46,13 @@ class TestASCIIDocExporter(ExportersTestsBase):
         (output, resources) = ASCIIDocExporter().from_filename(self._get_notebook())
         assert len(output) > 0
         
+        assert re.findall(in_regex, output)
+        assert re.findall(out_regex, output)
+        
     @dec.onlyif_cmds_exist('pandoc')
-    def test_export(self):
+    def test_export_no_prompt(self):
         """
-        Can a ASCIIDocExporter export something?
+        Can a ASCIIDocExporter export something without prompts?
         """
         no_prompt = {
             "TemplateExporter":{
@@ -60,8 +65,5 @@ class TestASCIIDocExporter(ExportersTestsBase):
         (output, resources) = exporter.from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb"))
             
-        in_regex = r"In&nbsp;\[(.*)\]:"
-        out_regex = r"Out\[(.*)\]:"
-
         assert not re.findall(in_regex, output)
         assert not re.findall(out_regex, output)
