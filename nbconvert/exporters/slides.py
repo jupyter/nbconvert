@@ -101,7 +101,8 @@ class SlidesExporter(HTMLExporter):
         help="""
         Name of the reveal.js theme to use.
 
-        We look for a file with this name under `reveal_url_prefix`/css/theme/`reveal_theme`.css.
+        We look for a file with this name under
+        ``reveal_url_prefix``/css/theme/``reveal_theme``.css.
 
         https://github.com/hakimel/reveal.js/tree/master/css/theme has
         list of themes that ship by default with reveal.js.
