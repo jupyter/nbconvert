@@ -76,11 +76,16 @@ class SlidesExporter(HTMLExporter):
     """Exports HTML slides with reveal.js"""
 
     reveal_url_prefix = Unicode(
-        help="""The URL prefix for reveal.js.
-        This can be a a relative URL for a local copy of reveal.js (version 3.x),
-        or point to a CDN.
-
-        For speaker notes to work, a local reveal.js prefix must be used.
+        help="""The URL prefix for reveal.js (version 3.x).
+        This defaults to the reveal CDN, but can be any url pointing to a copy 
+        of reveal.js. 
+        
+        For speaker notes to work, this must be a relative path to a local 
+        copy of reveal.js: e.g., "reveal.js".
+        
+        See the usage documentation
+        (https://nbconvert.readthedocs.io/en/latest/usage.html#reveal-js-html-slideshow)
+        for more details.
         """
     ).tag(config=True)
 
