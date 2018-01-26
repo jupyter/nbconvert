@@ -148,7 +148,7 @@ This will create file ``your_talk.slides.html``, which you should be able to
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
 ``s`` after the slides load and they should open in a new window. Keep in mind
 that if you want a functional timer inside the speaker notes, you need to serve
-the slides (see next paragraph forß details).
+the slides (see next paragraph for details).
 
 If this does not work, you can also try start a server as part of your nbconvert
 command. To do this we use the ``ServePostProcessor``, which we activate by
