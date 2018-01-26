@@ -92,22 +92,66 @@ Reveal.js HTML slideshow
 * ``--to slides``
 
   This generates a Reveal.js HTML slideshow.
-  It must be served by an HTTP server. The easiest way to do this is adding
-  ``--post serve`` on the command-line. The ``serve`` post-processor proxies
-  Reveal.js requests to a CDN if no local Reveal.js library is present.
-  To make slides that don't require an internet connection, just place the
-  Reveal.js library in the same directory where your_talk.slides.html is
-  located, or point to another directory using the ``--reveal-prefix`` alias.
+  
+Running this slideshow requires a copy of reveal.js (version 3.x).
+  
+By default, this will include a script tag in the html that will directly load 
+reveal.js from a CDN.
 
-  .. note:: 
+However, some features (specifically, speaker notes) are only available if you
+use a local copy of reveal.js. This requires that first you have a local copy 
+of reveal.js and then that you redirect the script away from your CDN to your 
+local copy.
 
-    In order to designate a mapping from notebook cells to Reveal.js slides, 
-    from within the Jupyter notebook, select menu item 
-    View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu 
-    on the upper-right of each cell.  From it, one may choose from 
-    "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion, 
-    cells designated as "skip" will not be included, "notes" will be included 
-    only in presenter notes, etc.
+To make this clearer, let's look at an example. 
+
+.. note:: 
+
+  In order to designate a mapping from notebook cells to Reveal.js slides, 
+  from within the Jupyter notebook, select menu item 
+  View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu 
+  on the upper-right of each cell.  From it, one may choose from 
+  "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion, 
+  cells designated as "skip" will not be included, "notes" will be included 
+  only in presenter notes, etc.
+
+Example: creating slides w/ speaker notes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Let's suppose you have a notebook ``your_talk.ipynb`` that you want to convert
+to slides. For this example, we'll assume that you are working in the same
+directory as the notebook you want to convert (i.e., when you run ``ls .``,
+``your_talk.ipynb`` shows up amongst the list of files). 
+
+First, we need a compatible version of reveal.js in the current folder run the
+following commands inside the directory:
+
+.. code-block:: shell
+
+  git clone https://github.com/hakimel/reveal.js.git
+  cd reveal.js
+  git checkout 3.5.0
+  cd ..
+
+Then we need to tell nbconvert to point to this local copy. To do that we use 
+the ``--reveal-prefix`` command line flag to point to the local copy.
+
+.. code-block:: shell 
+
+  jupyter nbconvert your_talk.ipynb --to slides --reveal-prefix reveal.js
+
+This will create file ``your_talk.slides.html``, which you should be able to 
+access with ``open your_talk.slides.html``. To access the speaker notes, press 
+``s`` after the slides load and they should open in a new window.
+
+This should also allow you to use your slides without an internet connection.
+
+If this does not work, you can also try start a server as part of your nbconvert
+command. To do this we use the ``ServePostProcessor``, which we activate by
+appending the command line flag ``--post serve`` to the above command. This
+will not allow you to use speaker notes if you do not have a local copy of
+reveal.js. 
+
 
 .. _convert_markdown:
 
