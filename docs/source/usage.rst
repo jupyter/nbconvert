@@ -133,6 +133,10 @@ following commands inside the directory:
   git checkout 3.5.0
   cd ..
 
+Alternative, you can download a zip (or tar.gz) file containing reveal.js from
+https://github.com/hakimel/reveal.js/releases/tag/3.5.0, but be sure to unzip
+(or untar) the file to a directory named reveal.js.
+
 Then we need to tell nbconvert to point to this local copy. To do that we use 
 the ``--reveal-prefix`` command line flag to point to the local copy.
 
@@ -142,9 +146,9 @@ the ``--reveal-prefix`` command line flag to point to the local copy.
 
 This will create file ``your_talk.slides.html``, which you should be able to 
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
-``s`` after the slides load and they should open in a new window.
-
-This should also allow you to use your slides without an internet connection.
+``s`` after the slides load and they should open in a new window. Keep in mind
+that if you want a functional timer inside the speaker notes, you need to serve
+the slides (see next paragraph forß details).
 
 If this does not work, you can also try start a server as part of your nbconvert
 command. To do this we use the ``ServePostProcessor``, which we activate by
