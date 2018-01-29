@@ -96,14 +96,20 @@ Reveal.js HTML slideshow
 Running this slideshow requires a copy of reveal.js (version 3.x).
   
 By default, this will include a script tag in the html that will directly load 
-reveal.js from a CDN.
+reveal.js from a public CDN.
 
-However, some features (specifically, speaker notes) are only available if you
-use a local copy of reveal.js. This requires that first you have a local copy 
-of reveal.js and then that you redirect the script away from your CDN to your 
-local copy.
+This means that if you include your slides on a webpage, they should work as
+expected. However, some features (specifically, speaker notes & timers) will not
+work on website because they require access to a local copy of reveal.js.
 
-To make this clearer, let's look at an example. 
+Speaker notes require a local copy of reveal.js. Then, you need to tell
+``nbconvert`` how to find that local copy.
+
+Timers only work if you already have speaker notes, but also require a local
+https server. You can read more about this in ServePostProcessorExample_. 
+
+To make this clearer, let's look at an example of how to get speaker notes
+working with a local copy of reveal.js: SlidesWithNotesExample_. 
 
 .. note:: 
 
@@ -115,6 +121,8 @@ To make this clearer, let's look at an example.
   cells designated as "skip" will not be included, "notes" will be included 
   only in presenter notes, etc.
 
+.. _SlidesWithNotesExample:
+
 Example: creating slides w/ speaker notes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -123,8 +131,8 @@ to slides. For this example, we'll assume that you are working in the same
 directory as the notebook you want to convert (i.e., when you run ``ls .``,
 ``your_talk.ipynb`` shows up amongst the list of files). 
 
-First, we need a compatible version of reveal.js in the current folder run the
-following commands inside the directory:
+First, we need a copy of reveal.js in the same directory as your slides. One
+way to do this is to use the following commands in your terminal:
 
 .. code-block:: shell
 
@@ -133,11 +141,7 @@ following commands inside the directory:
   git checkout 3.5.0
   cd ..
 
-Alternative, you can download a zip (or tar.gz) file containing reveal.js from
-https://github.com/hakimel/reveal.js/releases/tag/3.5.0, but be sure to unzip
-(or untar) the file to a directory named reveal.js.
-
-Then we need to tell nbconvert to point to this local copy. To do that we use 
+Then we need to tell nbconvert to point to this local copy. To do that we use
 the ``--reveal-prefix`` command line flag to point to the local copy.
 
 .. code-block:: shell 
@@ -146,8 +150,10 @@ the ``--reveal-prefix`` command line flag to point to the local copy.
 
 This will create file ``your_talk.slides.html``, which you should be able to 
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
-``s`` after the slides load and they should open in a new window. 
+``s`` after the slides load and they should open in a new window.
 
+
+.. _ServePostProcessorExample:
 
 Serving slides with an https server: ``--post serve``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
