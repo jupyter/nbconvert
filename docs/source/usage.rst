@@ -146,16 +146,27 @@ the ``--reveal-prefix`` command line flag to point to the local copy.
 
 This will create file ``your_talk.slides.html``, which you should be able to 
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
-``s`` after the slides load and they should open in a new window. Keep in mind
-that if you want a functional timer inside the speaker notes, you need to serve
-the slides (see next paragraph for details).
+``s`` after the slides load and they should open in a new window. 
 
-If this does not work, you can also try start a server as part of your nbconvert
-command. To do this we use the ``ServePostProcessor``, which we activate by
-appending the command line flag ``--post serve`` to the above command. This
-will not allow you to use speaker notes if you do not have a local copy of
-reveal.js. 
 
+Serving slides with an https server: ``--post serve``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Once you have speaker notes working you may notice that your timers don't work.
+Timers require a bit more infrastructure; you need to serve your local copy of
+reveal.js from a local https server.
+
+Fortunately, ``nbconvert`` makes this fairly straightforward through the use of
+the ``ServePostProcessor``. To activate this server, we append the command line
+flag ``--post serve`` to our call to nbconvert. 
+
+.. code-block:: shell 
+
+  jupyter nbconvert your_talk.ipynb --to slides --reveal-prefix reveal.js --post serve
+
+This will run the server, which will occupy the terminal that you ran the
+command in until you stop it. You can stop the server by pressing ``ctrl C``
+twice.
 
 .. _convert_markdown:
 
