@@ -152,6 +152,9 @@ This will create file ``your_talk.slides.html``, which you should be able to
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
 ``s`` after the slides load and they should open in a new window.
 
+Note: a local copy of reveal.js does allow slides that will run completely
+offline, because the slides rely on other resources (e.g., mathjax and jquery)
+that still require access to public CDNs (by default).
 
 .. _ServePostProcessorExample:
 
