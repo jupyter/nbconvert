@@ -152,9 +152,10 @@ This will create file ``your_talk.slides.html``, which you should be able to
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
 ``s`` after the slides load and they should open in a new window.
 
-Note: a local copy of reveal.js does allow slides that will run completely
-offline, because the slides rely on other resources (e.g., mathjax and jquery)
-that still require access to public CDNs (by default).
+Note: This does not enable slides that run completely offline. While you have a
+local copy of reveal.js, by default, the slides need to access mathjax, require,
+and jquery via a public CDN. Addressing this use case is an open issue and `PRs
+<https://github.com/jupyter/nbconvert/pulls>`_ are always encouraged.
 
 .. _ServePostProcessorExample:
 
