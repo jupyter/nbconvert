@@ -96,14 +96,20 @@ Reveal.js HTML slideshow
 Running this slideshow requires a copy of reveal.js (version 3.x).
   
 By default, this will include a script tag in the html that will directly load 
-reveal.js from a CDN.
+reveal.js from a public CDN.
 
-However, some features (specifically, speaker notes) are only available if you
-use a local copy of reveal.js. This requires that first you have a local copy 
-of reveal.js and then that you redirect the script away from your CDN to your 
-local copy.
+This means that if you include your slides on a webpage, they should work as
+expected. However, some features (specifically, speaker notes & timers) will not
+work on website because they require access to a local copy of reveal.js.
 
-To make this clearer, let's look at an example. 
+Speaker notes require a local copy of reveal.js. Then, you need to tell
+``nbconvert`` how to find that local copy.
+
+Timers only work if you already have speaker notes, but also require a local
+https server. You can read more about this in ServePostProcessorExample_. 
+
+To make this clearer, let's look at an example of how to get speaker notes
+working with a local copy of reveal.js: SlidesWithNotesExample_. 
 
 .. note:: 
 
@@ -115,6 +121,8 @@ To make this clearer, let's look at an example.
   cells designated as "skip" will not be included, "notes" will be included 
   only in presenter notes, etc.
 
+.. _SlidesWithNotesExample:
+
 Example: creating slides w/ speaker notes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -123,8 +131,8 @@ to slides. For this example, we'll assume that you are working in the same
 directory as the notebook you want to convert (i.e., when you run ``ls .``,
 ``your_talk.ipynb`` shows up amongst the list of files). 
 
-First, we need a compatible version of reveal.js in the current folder run the
-following commands inside the directory:
+First, we need a copy of reveal.js in the same directory as your slides. One
+way to do this is to use the following commands in your terminal:
 
 .. code-block:: shell
 
@@ -133,7 +141,7 @@ following commands inside the directory:
   git checkout 3.5.0
   cd ..
 
-Then we need to tell nbconvert to point to this local copy. To do that we use 
+Then we need to tell nbconvert to point to this local copy. To do that we use
 the ``--reveal-prefix`` command line flag to point to the local copy.
 
 .. code-block:: shell 
@@ -144,14 +152,31 @@ This will create file ``your_talk.slides.html``, which you should be able to
 access with ``open your_talk.slides.html``. To access the speaker notes, press 
 ``s`` after the slides load and they should open in a new window.
 
-This should also allow you to use your slides without an internet connection.
+Note: This does not enable slides that run completely offline. While you have a
+local copy of reveal.js, by default, the slides need to access mathjax, require,
+and jquery via a public CDN. Addressing this use case is an open issue and `PRs
+<https://github.com/jupyter/nbconvert/pulls>`_ are always encouraged.
 
-If this does not work, you can also try start a server as part of your nbconvert
-command. To do this we use the ``ServePostProcessor``, which we activate by
-appending the command line flag ``--post serve`` to the above command. This
-will not allow you to use speaker notes if you do not have a local copy of
-reveal.js. 
+.. _ServePostProcessorExample:
 
+Serving slides with an https server: ``--post serve``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Once you have speaker notes working you may notice that your timers don't work.
+Timers require a bit more infrastructure; you need to serve your local copy of
+reveal.js from a local https server.
+
+Fortunately, ``nbconvert`` makes this fairly straightforward through the use of
+the ``ServePostProcessor``. To activate this server, we append the command line
+flag ``--post serve`` to our call to nbconvert. 
+
+.. code-block:: shell 
+
+  jupyter nbconvert your_talk.ipynb --to slides --reveal-prefix reveal.js --post serve
+
+This will run the server, which will occupy the terminal that you ran the
+command in until you stop it. You can stop the server by pressing ``ctrl C``
+twice.
 
 .. _convert_markdown:
 
