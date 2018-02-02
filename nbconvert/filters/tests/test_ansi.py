@@ -41,6 +41,9 @@ class TestAnsi(TestsBase):
             'hel\x1b[0;32mlo': 'hel<span class="ansi-green-fg">lo</span>',
             'hellø': 'hellø',
             '\x1b[1mhello\x1b[33mworld\x1b[0m': '<span class="ansi-bold">hello</span><span class="ansi-yellow-intense-fg ansi-bold">world</span>',
+            'he\x1b[4mll\x1b[24mo': 'he<span class="ansi-underline">ll</span>o',
+            '\x1b[35mhe\x1b[7mll\x1b[27mo': '<span class="ansi-magenta-fg">he</span><span class="ansi-default-inverse-fg ansi-magenta-bg">ll</span><span class="ansi-magenta-fg">o</span>',
+            '\x1b[44mhe\x1b[7mll\x1b[27mo': '<span class="ansi-blue-bg">he</span><span class="ansi-blue-fg ansi-default-inverse-bg">ll</span><span class="ansi-blue-bg">o</span>',
         }
 
         for inval, outval in correct_outputs.items():
@@ -61,6 +64,9 @@ class TestAnsi(TestsBase):
             'hello\x1b[01;34mthere': r'hello\textcolor{ansi-blue-intense}{\textbf{there}}',
             'hello\x1b[001;34mthere': r'hello\textcolor{ansi-blue-intense}{\textbf{there}}',
             '\x1b[1mhello\x1b[33mworld\x1b[0m': r'\textbf{hello}\textcolor{ansi-yellow-intense}{\textbf{world}}',
+            'he\x1b[4mll\x1b[24mo': 'he\\underline{ll}o',
+            '\x1b[35mhe\x1b[7mll\x1b[27mo': r'\textcolor{ansi-magenta}{he}\textcolor{ansi-default-inverse-fg}{\setlength{\fboxsep}{0pt}\colorbox{ansi-magenta}{ll\strut}}\textcolor{ansi-magenta}{o}',
+            '\x1b[44mhe\x1b[7mll\x1b[27mo': r'\setlength{\fboxsep}{0pt}\colorbox{ansi-blue}{he\strut}\textcolor{ansi-blue}{\setlength{\fboxsep}{0pt}\colorbox{ansi-default-inverse-bg}{ll\strut}}\setlength{\fboxsep}{0pt}\colorbox{ansi-blue}{o\strut}',
         }
 
         for inval, outval in correct_outputs.items():

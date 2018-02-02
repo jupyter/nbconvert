@@ -74,29 +74,39 @@ def ansi2latex(text):
     return _ansi2anything(text, _latexconverter)
 
 
-def _htmlconverter(fg, bg, bold):
+def _htmlconverter(fg, bg, bold, underline, inverse):
     """
-    Return start and end tags for given foreground/background/bold.
+    Return start and end tags for given foreground/background/bold/underline.
 
     """
-    if (fg, bg, bold) == (None, None, False):
+    if (fg, bg, bold, underline, inverse) == (None, None, False, False, False):
         return '', ''
 
     classes = []
     styles = []
 
+    if inverse:
+        fg, bg = bg, fg
+
     if isinstance(fg, int):
         classes.append(_ANSI_COLORS[fg] + '-fg')
     elif fg:
         styles.append('color: rgb({},{},{})'.format(*fg))
+    elif inverse:
+        classes.append('ansi-default-inverse-fg')
 
     if isinstance(bg, int):
         classes.append(_ANSI_COLORS[bg] + '-bg')
     elif bg:
         styles.append('background-color: rgb({},{},{})'.format(*bg))
+    elif inverse:
+        classes.append('ansi-default-inverse-bg')
 
     if bold:
         classes.append('ansi-bold')
+
+    if underline:
+        classes.append('ansi-underline')
 
     starttag = '<span'
     if classes:
@@ -107,15 +117,18 @@ def _htmlconverter(fg, bg, bold):
     return starttag, '</span>'
 
 
-def _latexconverter(fg, bg, bold):
+def _latexconverter(fg, bg, bold, underline, inverse):
     """
-    Return start and end markup given foreground/background/bold.
+    Return start and end markup given foreground/background/bold/underline.
 
     """
-    if (fg, bg, bold) == (None, None, False):
+    if (fg, bg, bold, underline, inverse) == (None, None, False, False, False):
         return '', ''
 
     starttag, endtag = '', ''
+
+    if inverse:
+        fg, bg = bg, fg
 
     if isinstance(fg, int):
         starttag += r'\textcolor{' + _ANSI_COLORS[fg] + '}{'
@@ -125,10 +138,13 @@ def _latexconverter(fg, bg, bold):
         starttag += r'\def\tcRGB{\textcolor[RGB]}\expandafter'
         starttag += r'\tcRGB\expandafter{\detokenize{%s,%s,%s}}{' % fg
         endtag = '}' + endtag
+    elif inverse:
+        starttag += r'\textcolor{ansi-default-inverse-fg}{'
+        endtag = '}' + endtag
 
     if isinstance(bg, int):
-        starttag += r'\setlength{\fboxsep}{0pt}\colorbox{'
-        starttag += _ANSI_COLORS[bg] + '}{'
+        starttag += r'\setlength{\fboxsep}{0pt}'
+        starttag += r'\colorbox{' + _ANSI_COLORS[bg] + '}{'
         endtag = r'\strut}' + endtag
     elif bg:
         starttag += r'\setlength{\fboxsep}{0pt}'
@@ -136,10 +152,19 @@ def _latexconverter(fg, bg, bold):
         starttag += r'\def\cbRGB{\colorbox[RGB]}\expandafter'
         starttag += r'\cbRGB\expandafter{\detokenize{%s,%s,%s}}{' % bg
         endtag = r'\strut}' + endtag
+    elif inverse:
+        starttag += r'\setlength{\fboxsep}{0pt}'
+        starttag += r'\colorbox{ansi-default-inverse-bg}{'
+        endtag = r'\strut}' + endtag
 
     if bold:
         starttag += r'\textbf{'
         endtag = '}' + endtag
+
+    if underline:
+        starttag += r'\underline{'
+        endtag = '}' + endtag
+
     return starttag, endtag
 
 
@@ -150,13 +175,6 @@ def _ansi2anything(text, converter):
     See https://en.wikipedia.org/wiki/ANSI_escape_code
 
     Accepts codes like '\x1b[32m' (red) and '\x1b[1;32m' (bold, red).
-    The codes 1 (bold) and 5 (blinking) are selecting a bold font, code
-    0 and an empty code ('\x1b[m') reset colors and bold-ness.
-    Unlike in most terminals, "bold" doesn't change the color.
-    The codes 21 and 22 deselect "bold", the codes 39 and 49 deselect
-    the foreground and background color, respectively.
-    The codes 38 and 48 select the "extended" set of foreground and
-    background colors, respectively.
 
     Non-color escape sequences (not ending with 'm') are filtered out.
 
@@ -166,6 +184,8 @@ def _ansi2anything(text, converter):
     """
     fg, bg = None, None
     bold = False
+    underline = False
+    inverse = False
     numbers = []
     out = []
 
@@ -174,6 +194,7 @@ def _ansi2anything(text, converter):
         if m:
             if m.group(2) == 'm':
                 try:
+                    # Empty code is same as code 0
                     numbers = [int(n) if n else 0
                                for n in m.group(1).split(';')]
                 except ValueError:
@@ -185,9 +206,9 @@ def _ansi2anything(text, converter):
             chunk, text = text, ''
 
         if chunk:
-            if bold and fg in range(8):
-                fg += 8
-            starttag, endtag = converter(fg, bg, bold)
+            starttag, endtag = converter(
+                fg + 8 if bold and fg in range(8) else fg,
+                bg, bold, underline, inverse)
             out.append(starttag)
             out.append(chunk)
             out.append(endtag)
@@ -195,12 +216,24 @@ def _ansi2anything(text, converter):
         while numbers:
             n = numbers.pop(0)
             if n == 0:
+                # Code 0 (same as empty code): reset everything
                 fg = bg = None
-                bold = False
-            elif n in (1, 5):
+                bold = underline = inverse = False
+            elif n == 1:
                 bold = True
+            elif n == 4:
+                underline = True
+            elif n == 5:
+                # Code 5: blinking
+                bold = True
+            elif n == 7:
+                inverse = True
             elif n in (21, 22):
                 bold = False
+            elif n == 24:
+                underline = False
+            elif n == 27:
+                inverse = False
             elif 30 <= n <= 37:
                 fg = n - 30
             elif n == 38:
