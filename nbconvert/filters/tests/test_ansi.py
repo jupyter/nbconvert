@@ -65,6 +65,8 @@ class TestAnsi(TestsBase):
             'hello\x1b[001;34mthere': r'hello\textcolor{ansi-blue-intense}{\textbf{there}}',
             '\x1b[1mhello\x1b[33mworld\x1b[0m': r'\textbf{hello}\textcolor{ansi-yellow-intense}{\textbf{world}}',
             'he\x1b[4mll\x1b[24mo': 'he\\underline{ll}o',
+            '\x1b[35mhe\x1b[7mll\x1b[27mo': r'\textcolor{ansi-magenta}{he}\textcolor{ansi-default-inverse-fg}{\setlength{\fboxsep}{0pt}\colorbox{ansi-magenta}{ll\strut}}\textcolor{ansi-magenta}{o}',
+            '\x1b[44mhe\x1b[7mll\x1b[27mo': r'\setlength{\fboxsep}{0pt}\colorbox{ansi-blue}{he\strut}\textcolor{ansi-blue}{\setlength{\fboxsep}{0pt}\colorbox{ansi-default-inverse-bg}{ll\strut}}\setlength{\fboxsep}{0pt}\colorbox{ansi-blue}{o\strut}',
         }
 
         for inval, outval in correct_outputs.items():
