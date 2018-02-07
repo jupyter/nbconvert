@@ -10,7 +10,6 @@ import hashlib
 import nbconvert.resources
 
 from traitlets import Unicode
-from ipython_genutils.py3compat import str_to_bytes
 from .base import Preprocessor
 
 
@@ -132,6 +131,6 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     def _hash(self, filename):
         """Compute the hash of a file."""
         md5 = hashlib.md5()
-        with open(filename) as f:
-            md5.update(str_to_bytes(f.read()))
+        with open(filename, 'rb') as f:
+            md5.update(f.read())
         return md5.digest()

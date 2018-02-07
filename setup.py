@@ -199,7 +199,7 @@ install_requires = setuptools_args['install_requires'] = [
 ]
 
 extra_requirements = {
-    'test': ['pytest', 'pytest-cov', 'ipykernel', 'jupyter_client>=4.2'],
+    'test': ['pytest', 'pytest-cov', 'ipykernel', 'jupyter_client>=4.2', 'nose'],
     'serve': ['tornado>=4.0'],
     'execute': ['jupyter_client>=4.2'],
 }
