@@ -7,7 +7,8 @@
 import io as stdlib_io
 import sys
 
-from ipython_genutils.testing.decorators import skipif
+import pytest
+
 from ..io import unicode_std_stream
 from ipython_genutils.py3compat import PY3
 
@@ -36,7 +37,8 @@ def test_UnicodeStdStream():
     finally:
         sys.stdout = orig_stdout
 
-@skipif(not PY3, "Not applicable on Python 2")
+@pytest.mark.skipif(not PY3, 
+                    reason = "Not applicable on Python 2")
 def test_UnicodeStdStream_nowrap():
     # If we replace stdout with a StringIO, it shouldn't get wrapped.
     orig_stdout = sys.stdout
