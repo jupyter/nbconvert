@@ -9,11 +9,12 @@ import io
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
+from ..utils.io import onlyif_cmds_exist
 from nbconvert import nbconvertapp
 from nbconvert.exporters import Exporter
 
+
 from traitlets.tests.utils import check_help_all_output
-from ipython_genutils.testing import decorators as dec
 from testpath import tempdir
 import pytest
 
@@ -117,8 +118,8 @@ class TestNbConvertApp(TestsBase):
                 text = f.read()
             assert text == test_output
 
-    @dec.onlyif_cmds_exist('xelatex')
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('xelatex')
+    @onlyif_cmds_exist('pandoc')
     def test_filename_spaces(self):
         """
         Generate PDFs with graphics if notebooks have spaces in the name?
@@ -133,8 +134,8 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook with spaces.pdf')
 
 
-    @dec.onlyif_cmds_exist('xelatex')
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('xelatex')
+    @onlyif_cmds_exist('pandoc')
     def test_pdf(self):
         """
         Check to see if pdfs compile, even if strikethroughs are included. 
@@ -154,7 +155,7 @@ class TestNbConvertApp(TestsBase):
                       '--post nbconvert.tests.test_nbconvertapp.DummyPost')
             self.assertIn('Dummy:notebook1.py', out)
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_spurious_cr(self):
         """Check for extra CR characters"""
         with self.create_temp_cwd(['notebook2.ipynb']):
@@ -169,7 +170,7 @@ class TestNbConvertApp(TestsBase):
         self.assertEqual(tex.count('\r'), tex.count('\r\n'))
         self.assertEqual(html.count('\r'), html.count('\r\n'))
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_png_base64_html_ok(self):
         """Is embedded png data well formed in HTML?"""
         with self.create_temp_cwd(['notebook2.ipynb']):
@@ -179,7 +180,7 @@ class TestNbConvertApp(TestsBase):
             with open('notebook2.html') as f:
                 assert "data:image/png;base64,b'" not in f.read()
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_template(self):
         """
         Do export templates work?
@@ -254,7 +255,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to Python nb1_*')
             assert os.path.isfile(u'nb1_análisis.py')
 
-    @dec.onlyif_cmds_exist('xelatex', 'pandoc')
+    @onlyif_cmds_exist('xelatex', 'pandoc')
     def test_filename_accent_pdf(self):
         """
         Generate PDFs if notebooks have an accent in their name?
@@ -408,8 +409,8 @@ class TestNbConvertApp(TestsBase):
                 assert '```python' not in output1 # shouldn't have language
                 assert "```" in output1 # but should have fenced blocks
 
-    @dec.onlyif_cmds_exist('xelatex')
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('xelatex')
+    @onlyif_cmds_exist('pandoc')
     def test_linked_images(self):
         """
         Generate PDFs with an image linked in a markdown cell
@@ -418,7 +419,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--to pdf latex-linked-image.ipynb')
             assert os.path.isfile('latex-linked-image.pdf')
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_embedded_jpeg(self):
         """
         Verify that latex conversion succeeds
@@ -429,7 +430,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--to latex notebook4_jpeg.ipynb')
             assert os.path.isfile('notebook4_jpeg.tex')
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_markdown_display_priority(self):
         """
         Check to see if markdown conversion embedds PNGs,
@@ -444,7 +445,7 @@ class TestNbConvertApp(TestsBase):
                 assert ("markdown_display_priority_files/"
                         "markdown_display_priority_0_1.png") in markdown_output
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_write_figures_to_custom_path(self):
         """
         Check if figure files are copied to configured path.
