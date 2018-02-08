@@ -118,8 +118,7 @@ class TestNbConvertApp(TestsBase):
                 text = f.read()
             assert text == test_output
 
-    @onlyif_cmds_exist('xelatex')
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc', 'xelatex')
     def test_filename_spaces(self):
         """
         Generate PDFs with graphics if notebooks have spaces in the name?
@@ -134,8 +133,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook with spaces.pdf')
 
 
-    @onlyif_cmds_exist('xelatex')
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc', 'xelatex')
     def test_pdf(self):
         """
         Check to see if pdfs compile, even if strikethroughs are included. 
@@ -409,8 +407,7 @@ class TestNbConvertApp(TestsBase):
                 assert '```python' not in output1 # shouldn't have language
                 assert "```" in output1 # but should have fenced blocks
 
-    @onlyif_cmds_exist('xelatex')
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc', 'xelatex')
     def test_linked_images(self):
         """
         Generate PDFs with an image linked in a markdown cell

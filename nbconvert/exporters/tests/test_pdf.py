@@ -28,8 +28,7 @@ class TestPDF(ExportersTestsBase):
         self.exporter_class()
 
 
-    @onlyif_cmds_exist('xelatex')
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('xelatex', 'pandoc')
     def test_export(self):
         """Smoke test PDFExporter"""
         with tempdir.TemporaryDirectory() as td:
