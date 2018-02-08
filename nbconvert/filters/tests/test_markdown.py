@@ -8,7 +8,6 @@ import re
 from copy import copy
 from functools import partial
 
-
 from ipython_genutils.py3compat import string_types
 
 from ...utils.io import onlyif_cmds_exist

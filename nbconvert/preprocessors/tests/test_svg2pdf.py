@@ -3,7 +3,6 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from ipython_genutils.py3compat import which, PY3
 from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
