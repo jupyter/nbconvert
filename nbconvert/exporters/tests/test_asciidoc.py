@@ -15,10 +15,10 @@
 import re
 
 from traitlets.config import Config
-from ipython_genutils.testing import decorators as dec
 
 from .base import ExportersTestsBase
 from ..asciidoc import ASCIIDocExporter
+from ...utils.io import onlyif_cmds_exist
 
 #-----------------------------------------------------------------------------
 # Class
@@ -38,7 +38,7 @@ class TestASCIIDocExporter(ExportersTestsBase):
         ASCIIDocExporter()
 
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_export(self):
         """
         Can a ASCIIDocExporter export something?
@@ -49,7 +49,7 @@ class TestASCIIDocExporter(ExportersTestsBase):
         assert re.findall(in_regex, output)
         assert re.findall(out_regex, output)
         
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_export_no_prompt(self):
         """
         Can a ASCIIDocExporter export something without prompts?

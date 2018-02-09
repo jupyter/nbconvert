@@ -6,8 +6,10 @@
 
 import codecs
 import sys
-from ipython_genutils.py3compat import PY3
 
+import pytest
+
+from ipython_genutils.py3compat import PY3, which
 
 def unicode_std_stream(stream='stdout'):
     u"""Get a wrapper to write unicode to stdout/stderr as UTF-8.
@@ -51,3 +53,13 @@ def unicode_stdin_stream():
         stream_b = stream
 
     return codecs.getreader('utf-8')(stream_b)
+
+def onlyif_cmds_exist(*commands):
+    """
+    Decorator to skip test when at least one of `commands` is not found.
+    """
+    for cmd in commands:
+        if not which(cmd):
+            return pytest.mark.skip("This test runs only if command '{0}' "
+                        "is installed".format(cmd))
+    return lambda f: f

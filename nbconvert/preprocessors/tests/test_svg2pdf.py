@@ -3,11 +3,11 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from ipython_genutils.testing import decorators as dec
 from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
 from ..svg2pdf import SVG2PDFPreprocessor
+from ...utils.io import onlyif_cmds_exist
 
 
 class Testsvg2pdf(PreprocessorTestsBase):
@@ -63,7 +63,7 @@ class Testsvg2pdf(PreprocessorTestsBase):
         self.build_preprocessor()
 
 
-    @dec.onlyif_cmds_exist('inkscape')
+    @onlyif_cmds_exist('inkscape')
     def test_output(self):
         """Test the output of the SVG2PDFPreprocessor"""
         nb = self.build_notebook()
@@ -71,3 +71,4 @@ class Testsvg2pdf(PreprocessorTestsBase):
         preprocessor = self.build_preprocessor()
         nb, res = preprocessor(nb, res)
         self.assertIn('application/pdf', nb.cells[0].outputs[0].data)
+        

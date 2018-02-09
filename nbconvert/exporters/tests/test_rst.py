@@ -11,7 +11,7 @@ from nbformat import v4
 
 from .base import ExportersTestsBase
 from ..rst import RSTExporter
-from ipython_genutils.testing.decorators import onlyif_cmds_exist
+from ...utils.io import onlyif_cmds_exist
 
 
 class TestRSTExporter(ExportersTestsBase):

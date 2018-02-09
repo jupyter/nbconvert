@@ -9,11 +9,11 @@ import re
 
 from .base import ExportersTestsBase
 from ..latex import LatexExporter
+from ...utils.io import onlyif_cmds_exist
 
 from traitlets.config import Config
 from nbformat import write
 from nbformat import v4
-from ipython_genutils.testing.decorators import onlyif_cmds_exist
 from testpath.tempdir import TemporaryDirectory
 
 from jinja2 import DictLoader

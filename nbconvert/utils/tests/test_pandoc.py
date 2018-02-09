@@ -12,7 +12,7 @@
 import os
 import warnings
 
-from ipython_genutils.testing import decorators as dec
+from ..io import onlyif_cmds_exist
 
 from nbconvert.tests.base import TestsBase
 from .. import pandoc
@@ -27,7 +27,7 @@ class TestPandoc(TestsBase):
         super(TestPandoc, self).__init__(*args, **kwargs)
         self.original_env = os.environ.copy()
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_pandoc_available(self):
         """ Test behaviour that pandoc functions raise PandocMissing as documented """
         pandoc.clean_cache()
@@ -48,7 +48,7 @@ class TestPandoc(TestsBase):
             pandoc.pandoc("", "markdown", "html")
         self.assertEqual(w, [])
         
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_minimal_version(self):
         original_minversion = pandoc._minimal_version
         

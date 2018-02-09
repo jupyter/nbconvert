@@ -9,8 +9,8 @@ from copy import copy
 from functools import partial
 
 from ipython_genutils.py3compat import string_types
-from ipython_genutils.testing import decorators as dec
 
+from ...utils.io import onlyif_cmds_exist
 from ...tests.base import TestsBase
 from ..pandoc import convert_pandoc
 from ..markdown import markdown2html
@@ -48,7 +48,7 @@ class TestMarkdown(TestsBase):
         ('test', 'https://google.com/'),
     ]
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_markdown2latex(self):
         """markdown2latex test"""
         for index, test in enumerate(self.tests):
@@ -57,7 +57,7 @@ class TestMarkdown(TestsBase):
                     convert_pandoc, from_format='markdown', to_format='latex'),
                 test, self.tokens[index])
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_markup(self):
         """markdown2latex with markup kwarg test"""
         # This string should be passed through unaltered with pandoc's
@@ -79,7 +79,7 @@ class TestMarkdown(TestsBase):
             convert_pandoc(s, 'markdown_strict+tex_math_dollars', 'latex'),
             expected)
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_pandoc_extra_args(self):
         # pass --no-wrap
         s = '\n'.join([
@@ -227,7 +227,7 @@ i.e. the $i^{th}$"""
             s = markdown2html(case)
             self.assertIn(case, self._unescape(s))
 
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc')
     def test_markdown2rst(self):
         """markdown2rst test"""
 

@@ -7,11 +7,11 @@ import logging
 import os
 import shutil
 
-from ipython_genutils.testing import decorators as dec
 from testpath import tempdir
 
 from .base import ExportersTestsBase
 from ..pdf import PDFExporter
+from ...utils.io import onlyif_cmds_exist
 
 
 #-----------------------------------------------------------------------------
@@ -28,8 +28,7 @@ class TestPDF(ExportersTestsBase):
         self.exporter_class()
 
 
-    @dec.onlyif_cmds_exist('xelatex')
-    @dec.onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('xelatex', 'pandoc')
     def test_export(self):
         """Smoke test PDFExporter"""
         with tempdir.TemporaryDirectory() as td:
