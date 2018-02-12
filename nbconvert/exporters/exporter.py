@@ -61,6 +61,10 @@ class Exporter(LoggingConfigurable):
     # the class, not just on instances.
     output_mimetype = ''
 
+    # Should this converter be accessible from the notebook front-end?
+    # If so, should be a friendly name to display (and possibly translated).
+    export_from_notebook = None
+
     #Configurability, allows the user to easily add filters and preprocessors.
     preprocessors = List(
         help="""List of preprocessors, by name or namespace, to enable."""
