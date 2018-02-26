@@ -37,4 +37,6 @@ class TestPDF(ExportersTestsBase):
             (output, resources) = self.exporter_class(latex_count=1).from_filename(newpath)
             self.assertIsInstance(output, bytes)
             assert len(output) > 0
+            # tex file should be cleaned up
+            assert 'notebook.tex' not in os.listdir(td)
 
