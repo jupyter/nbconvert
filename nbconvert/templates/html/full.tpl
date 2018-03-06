@@ -12,7 +12,29 @@
 <title>{{nb_title}}</title>
 
 {%- if "widgets" in nb.metadata -%}
-<script src="https://unpkg.com/jupyter-js-widgets@2.0.*/dist/embed.js"></script>
+<script>
+  (function() {
+    function addWidgetsRenderer() {
+      var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+      var scriptElement = document.createElement('script');
+      var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+      var widgetState;
+
+      try {
+        widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+        if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+          widgetRendererSrc = 'https://unpkg.com/jupyter-js-widgets@*/dist/embed.js';
+        }
+      } catch(e) {}
+
+      scriptElement.src = widgetRendererSrc;
+      document.body.appendChild(scriptElement);
+    }
+
+    document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+  }());
+</script>
 {%- endif-%}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
