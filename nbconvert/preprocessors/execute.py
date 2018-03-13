@@ -480,7 +480,7 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 self.handle_comm_msg(outs, msg, cell_index)
-                self.widget_state[content['comm_id']] = content['data']['state']
+                self.widget_state.setdefault(content['comm_id'], {}).update(content['data']['state'])
                 continue
 
             display_id = None
