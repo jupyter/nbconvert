@@ -3,7 +3,7 @@ and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+import base64
 from textwrap import dedent
 from contextlib import contextmanager
 
@@ -328,6 +328,7 @@ class ExecutePreprocessor(Preprocessor):
         Preprocess notebook executing each code cell.
 
         The input argument `nb` is modified in-place.
+        self.widget_buffers = {}
 
         Parameters
         ----------
@@ -480,7 +481,10 @@ class ExecutePreprocessor(Preprocessor):
                 continue
             elif msg_type.startswith('comm'):
                 self.handle_comm_msg(outs, msg, cell_index)
-                self.widget_state.setdefault(content['comm_id'], {}).update(content['data']['state'])
+                data = content['data']
+                self.widget_state.setdefault(content['comm_id'], {}).update(data['state'])
+                if 'buffer_paths' in data and data['buffer_paths']:
+                    self.widget_buffers[content['comm_id']] = _get_buffer_data(msg)
                 continue
 
             display_id = None
@@ -570,3 +574,15 @@ def _serialize_widget_state(state):
         'model_module_version': state.get('_model_module_version'),
         'state': state,
     }
+
+
+def _get_buffer_data(msg):
+    buffers = []
+    path = msg['content']['data']['buffer_paths']
+    for buffer in msg['buffers']:
+        buffers.append({
+            'data': base64.b64encode(buffer.obj).decode('utf-8'),
+            'encoding': 'base64',
+            'path': path
+        })
+    return buffers
