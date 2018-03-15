@@ -286,7 +286,7 @@ class ExecutePreprocessor(Preprocessor):
                     'application/vnd.jupyter.widget-state+json': {
                         'state': {
                             model_id: _serialize_widget_state(state)
-                            for model_id, state in self.widget_state.items()
+                            for model_id, state in self.widget_state.items() if '_model_name' in state
                         },
                         'version_major': 2,
                         'version_minor': 0,
@@ -486,8 +486,8 @@ def _serialize_widget_state(state):
     TODO: Does not currently split binary buffers or remove default values.
     """
     return {
-        'model_name': state['_model_name'],
-        'model_module': state['_model_module'],
+        'model_name': state.get('_model_name'),
+        'model_module': state.get('_model_module'),
         'model_module_version': state.get('_model_module_version'),
         'state': state,
     }
