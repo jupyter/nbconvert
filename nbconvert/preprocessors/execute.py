@@ -552,8 +552,8 @@ def _serialize_widget_state(state):
     TODO: Does not currently split binary buffers or remove default values.
     """
     return {
-        'model_name': state['_model_name'],
-        'model_module': state['_model_module'],
+        'model_name': state.get('_model_name'),
+        'model_module': state.get('_model_module'),
         'model_module_version': state.get('_model_module_version'),
         'state': state,
     }
