@@ -3,7 +3,7 @@ and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+import base64
 from textwrap import dedent
 
 try:
@@ -274,6 +274,7 @@ class ExecutePreprocessor(Preprocessor):
         self.kc.allow_stdin = False
         self.nb = nb
         self.widget_state = {}
+        self.widget_buffers = {}
 
         try:
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
@@ -291,6 +292,10 @@ class ExecutePreprocessor(Preprocessor):
                         'version_minor': 0,
                     }
                 }
+                for key, widget in self.nb.metadata.widgets['application/vnd.jupyter.widget-state+json']['state'].items():
+                    buffers = self.widget_buffers.get(key)
+                    if buffers:
+                        widget['buffers'] = buffers
 
         delattr(self, 'nb')
 
@@ -421,7 +426,10 @@ class ExecutePreprocessor(Preprocessor):
                         cell_map[cell_index] = []
                 continue
             elif msg_type.startswith('comm'):
-                self.widget_state.setdefault(content['comm_id'], {}).update(content['data']['state'])
+                data = content['data']
+                self.widget_state.setdefault(content['comm_id'], {}).update(data['state'])
+                if 'buffer_paths' in data and data['buffer_paths']:
+                    self.widget_buffers[content['comm_id']] = _get_buffer_data(msg)
                 continue
 
             display_id = None
@@ -483,3 +491,15 @@ def _serialize_widget_state(state):
         'model_module_version': state.get('_model_module_version'),
         'state': state,
     }
+
+
+def _get_buffer_data(msg):
+    buffers = []
+    path = msg['content']['data']['buffer_paths']
+    for buffer in msg['buffers']:
+        buffers.append({
+            'data': base64.b64encode(buffer.obj).decode('utf-8'),
+            'encoding': 'base64',
+            'path': path
+        })
+    return buffers
