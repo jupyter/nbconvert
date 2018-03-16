@@ -37,9 +37,9 @@ class HTMLExporter(TemplateExporter):
     @default('template_file')
     def _template_file_default(self):
         return 'full.tpl'
-    
+
     output_mimetype = 'text/html'
-    
+
     @property
     def default_config(self):
         c = Config({
@@ -77,9 +77,21 @@ class HTMLExporter(TemplateExporter):
             yield pair
         yield ('markdown2html', self.markdown2html)
 
+    def process_attachments(self, nb, output):
+        for cell in nb.cells:
+            if 'attachments' in cell:
+                for key, attachment in cell['attachments'].items():
+                    for att_type, att in attachment.items():
+                        output = output.replace(
+                            'attachment:{}'.format(key),
+                            'data:' + att_type + ';base64, ' + attachment[att_type])
+        return output
+
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         self.register_filter('highlight_code',
                              Highlight2HTML(pygments_lexer=lexer, parent=self))
-        return super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
+        output, resources = super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
+        att_output = self.process_attachments(nb, output)
+        return att_output, resources
