@@ -281,25 +281,28 @@ class ExecutePreprocessor(Preprocessor):
         finally:
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
-            if self.widget_state:
-                self.nb.metadata.widgets = {
-                    'application/vnd.jupyter.widget-state+json': {
-                        'state': {
-                            model_id: _serialize_widget_state(state)
-                            for model_id, state in self.widget_state.items() if '_model_name' in state
-                        },
-                        'version_major': 2,
-                        'version_minor': 0,
-                    }
-                }
-                for key, widget in self.nb.metadata.widgets['application/vnd.jupyter.widget-state+json']['state'].items():
-                    buffers = self.widget_buffers.get(key)
-                    if buffers:
-                        widget['buffers'] = buffers
+            self.set_widgets_metadata()
 
         delattr(self, 'nb')
 
         return nb, resources
+
+    def set_widgets_metadata(self):
+        if self.widget_state:
+            self.nb.metadata.widgets = {
+                'application/vnd.jupyter.widget-state+json': {
+                    'state': {
+                        model_id: _serialize_widget_state(state)
+                        for model_id, state in self.widget_state.items() if '_model_name' in state
+                    },
+                    'version_major': 2,
+                    'version_minor': 0,
+                }
+            }
+            for key, widget in self.nb.metadata.widgets['application/vnd.jupyter.widget-state+json']['state'].items():
+                buffers = self.widget_buffers.get(key)
+                if buffers:
+                    widget['buffers'] = buffers
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
