@@ -358,6 +358,23 @@ class ExecutePreprocessor(Preprocessor):
 
         return nb, resources
 
+    def set_widgets_metadata(self):
+        if self.widget_state:
+            self.nb.metadata.widgets = {
+                'application/vnd.jupyter.widget-state+json': {
+                    'state': {
+                        model_id: _serialize_widget_state(state)
+                        for model_id, state in self.widget_state.items() if '_model_name' in state
+                    },
+                    'version_major': 2,
+                    'version_minor': 0,
+                }
+            }
+            for key, widget in self.nb.metadata.widgets['application/vnd.jupyter.widget-state+json']['state'].items():
+                buffers = self.widget_buffers.get(key)
+                if buffers:
+                    widget['buffers'] = buffers
+
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Executes a single code cell. See base.py for details.
