@@ -62,6 +62,8 @@ class TestExecute(PreprocessorTestsBase):
                 ['model_id'] = '<MODEL_ID>'
         for key, value in output.get('data', {}).items():
             if isinstance(value, string_types):
+                if sys.version_info.major == 2:
+                    value = value.replace('u\'', '\'')
                 output['data'][key] = _normalize_base64(value)
         if 'traceback' in output:
             tb = [
