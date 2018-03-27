@@ -13,7 +13,7 @@
 
 % Display python error text as-is
 ((* block error *))
-    \begin{Verbatim}[commandchars=\\\{\}]
+    \begin{Verbatim}[commandchars=\\\{\},frame=leftline,framerule=1pt,rulecolor=\color{red}]
 ((( super() )))
     \end{Verbatim}
 ((* endblock error *))
@@ -23,7 +23,7 @@
 
 % Display stream ouput with coloring
 ((* block stream *))
-    \begin{Verbatim}[commandchars=\\\{\}]
+    \begin{Verbatim}[commandchars=\\\{\},frame=leftline,framerule=1pt,rulecolor=\color{gray}]
 ((( output.text | escape_latex | ansi2latex )))
     \end{Verbatim}
 ((* endblock stream *))

@@ -64,7 +64,7 @@
     ((*- set execution_count = " " -*))
     ((*- endif -*))
     ((*- set indention =  " " * (execution_count | length + 7) -*))
-\begin{Verbatim}[commandchars=\\\{\}]
+\begin{Verbatim}[commandchars=\\\{\},frame=leftline,framerule=1pt,rulecolor=\color{((( prompt_color )))}]
 ((( text | add_prompts(first='{\color{' ~ prompt_color ~ '}' ~ prompt ~ '[{\\color{' ~ prompt_color ~ '}' ~ execution_count ~ '}]:} ', cont=indention) )))
 \end{Verbatim}
 ((*- endmacro *))
