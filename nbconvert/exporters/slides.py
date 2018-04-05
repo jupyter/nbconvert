@@ -143,7 +143,7 @@ class SlidesExporter(HTMLExporter):
     ).tag(config=True)
 
     font_awesome_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css",
         help="""
         URL to load font awesome from.
 
