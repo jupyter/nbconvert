@@ -377,7 +377,7 @@ class ExecutePreprocessor(Preprocessor):
                 # finishes, we won't actually have to wait this long, anyway.
                 msg = self.kc.iopub_channel.get_msg(timeout=self.iopub_timeout)
             except Empty:
-                self.log.warn("Timeout waiting for IOPub output")
+                self.log.warning("Timeout waiting for IOPub output")
                 if self.raise_on_iopub_timeout:
                     raise RuntimeError("Timeout waiting for IOPub output")
                 else:
