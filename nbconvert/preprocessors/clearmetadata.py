@@ -11,10 +11,6 @@ class ClearMetadataPreprocessor(Preprocessor):
     Removes the output from all code cells in a notebook.
     """
 
-    remove_metadata_fields = Set(
-        {'collapsed', 'scrolled'}
-    ).tag(config=True)
-
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell. See base.py for details.
