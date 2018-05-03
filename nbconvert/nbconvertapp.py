@@ -299,7 +299,7 @@ class NbConvertApp(JupyterApp):
             globbed_files = glob.glob(pattern)
             globbed_files.extend(glob.glob(pattern + '.ipynb'))
             if not globbed_files:
-                self.log.warn("pattern %r matched no files", pattern)
+                self.log.warning("pattern %r matched no files", pattern)
 
             for filename in globbed_files:
                 if not filename in filenames:

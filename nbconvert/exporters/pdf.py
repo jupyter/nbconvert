@@ -146,7 +146,7 @@ class PDFExporter(LatexExporter):
         filename = os.path.splitext(filename)[0]
 
         def log_error(command, out):
-            self.log.warn('%s had problems, most likely because there were no citations',
+            self.log.warning('%s had problems, most likely because there were no citations',
                 command[0])
             self.log.debug(u"%s output: %s\n%s", command[0], command, out)
 
