@@ -217,6 +217,31 @@ class ExecutePreprocessor(Preprocessor):
     # }
     _display_id_map = Dict()
 
+    def base_preprocess(self, nb, resources):
+        """
+        Applies base preprocessing of notebooks. Separated from preprocess for
+        easy access for overriding and inheritance capabilities.
+
+        The input argument `nb` is modified in-place.
+
+        Parameters
+        ----------
+        nb : NotebookNode
+            Notebook being executed.
+        resources : dictionary
+            Additional resources used in the conversion process. For example,
+            passing ``{'metadata': {'path': run_path}}`` sets the
+            execution path to ``run_path``.
+
+        Returns
+        -------
+        nb : NotebookNode
+            The executed notebook.
+        resources : dictionary
+            Additional resources used in the conversion process.
+        """
+        return super(ExecutePreprocessor, self).preprocess(nb, resources)
+
     def preprocess(self, nb, resources):
         """
         Preprocess notebook executing each code cell.
@@ -275,7 +300,7 @@ class ExecutePreprocessor(Preprocessor):
         self.nb = nb
 
         try:
-            nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
+            nb, resources = self.base_preprocess(nb, resources)
         finally:
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
