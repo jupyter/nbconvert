@@ -15,6 +15,7 @@ from ipython_genutils.py3compat import cast_bytes, which
 from .exceptions import ConversionException
 
 _minimal_version = "1.12.1"
+_maximal_version = "2.0.0"
 
 def pandoc(source, fmt, to, extra_args=None, encoding='utf-8'):
     """Convert an input string using pandoc.
@@ -100,11 +101,12 @@ def check_pandoc_version():
                       "output of pandoc --version.\nContinuing...",
                       RuntimeWarning, stacklevel=2)
         return False
-    ok = check_version(v , _minimal_version )
+    ok = check_version(v, _minimal_version, _maximal_version)
     if not ok:
-        warnings.warn( "You are using an old version of pandoc (%s)\n" % v + 
-                       "Recommended version is %s.\nTry updating." % _minimal_version + 
-                       "http://pandoc.org/installing.html.\nContinuing with doubts...",
+        warnings.warn( "You are using an unsupported version of pandoc (%s).\n" % v +
+                       "Your version must be at least (%s) " % _minimal_version +
+                       "but less than (%s).\n" % _maximal_version +
+                       "Refer to http://pandoc.org/installing.html.\nContinuing with doubts...",
                        RuntimeWarning, stacklevel=2)
     return ok
 
