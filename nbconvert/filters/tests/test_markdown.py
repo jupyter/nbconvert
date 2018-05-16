@@ -1,3 +1,6 @@
+# trivial line added to run travis on this file
+# because, locally, 2 of the 9 tests fail
+
 # coding: utf-8
 """Tests for conversions from markdown to other formats"""
 
