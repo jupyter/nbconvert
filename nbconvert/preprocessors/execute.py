@@ -249,7 +249,8 @@ class ExecutePreprocessor(Preprocessor):
         # from jupyter_client.manager import start_new_kernel
 
         def start_new_kernel(startup_timeout=60, kernel_name='python', **kwargs):
-            km = self.kernel_manager_class(kernel_name=kernel_name)
+            km = self.kernel_manager_class(kernel_name=kernel_name,
+                                           config=self.config)
             km.start_kernel(**kwargs)
             kc = km.client()
             kc.start_channels()
