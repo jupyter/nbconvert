@@ -8,12 +8,12 @@ from .base import Preprocessor
 
 class ClearMetadataPreprocessor(Preprocessor):
     """
-    Removes the output from all code cells in a notebook.
+    Removes all the metadata from all code cells in a notebook.
     """
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
-        Apply a transformation on each cell. See base.py for details.
+        All the code cells are returned with an empty metadata field.
         """
         if cell.cell_type == 'code':
             # Remove metadata
