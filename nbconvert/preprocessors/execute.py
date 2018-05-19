@@ -5,6 +5,7 @@ and updates outputs"""
 # Distributed under the terms of the Modified BSD License.
 
 from textwrap import dedent
+from contextlib import contextmanager
 
 try:
     from queue import Empty  # Py 3
@@ -156,6 +157,17 @@ class ExecutePreprocessor(Preprocessor):
             """
         )
     ).tag(config=True)
+    
+    @default('kernel_name')
+    def _kernel_name_default(self):
+        try:
+            return self.nb.metadata.get('kernelspec', {}).get('name', 'python')
+        except AttributeError:
+            raise AttributeError('You did not specify a kernel_name for '
+                                 'the ExecutePreprocessor and you have not set '
+                                 'self.nb to be able to use that to infer the '
+                                 'kernel_name.')
+            
 
     raise_on_iopub_timeout = Bool(False,
         help=dedent(
@@ -199,7 +211,7 @@ class ExecutePreprocessor(Preprocessor):
         help='The kernel manager class to use.'
     )
     @default('kernel_manager_class')
-    def _km_default(self):
+    def _kernel_manager_class_default(self):
         """Use a dynamic default to avoid importing jupyter_client at startup"""
         try:
             from jupyter_client import KernelManager
@@ -217,6 +229,78 @@ class ExecutePreprocessor(Preprocessor):
     # }
     _display_id_map = Dict()
 
+    def start_new_kernel(self, **kwargs):
+        """Creates a new kernel manager and kernel client.
+
+        Parameters
+        ----------
+        kwargs :
+            Any options for `self.kernel_manager_class.start_kernel()`. Because
+            that defaults to KernelManager, this will likely include options
+            accepted by `KernelManager.start_kernel()``, which includes `cwd`.
+
+        Returns
+        -------
+        km : KernelManager
+            A kernel manager as created by self.kernel_manager_class.
+        kc : KernelClient
+            Kernel client as created by the kernel manager `km`.
+        """
+        km = self.kernel_manager_class(kernel_name=self.kernel_name,
+                                       config=self.config)
+        km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
+                             
+        kc = km.client()
+        kc.start_channels()
+        try:
+            kc.wait_for_ready(timeout=self.startup_timeout)
+        except RuntimeError:
+            kc.stop_channels()
+            km.shutdown_kernel()
+            raise
+        kc.allow_stdin = False
+        return km, kc
+    
+    @contextmanager
+    def setup_preprocessor(self, nb, resources):
+        """
+        Context manager for setting up the class to execute a notebook.
+
+        This creates The input argument `nb` is modified in-place.
+
+        Parameters
+        ----------
+        nb : NotebookNode
+            Notebook being executed.
+        resources : dictionary
+            Additional resources used in the conversion process. For example,
+            passing ``{'metadata': {'path': run_path}}`` sets the
+            execution path to ``run_path``.
+
+        Returns
+        -------
+        nb : NotebookNode
+            The executed notebook.
+        resources : dictionary
+            Additional resources used in the conversion process.
+        """
+        path = resources.get('metadata', {}).get('path', '')
+        if path == '':
+            path = None
+        self.nb = nb
+        # clear display_id map
+        self._display_id_map = {}
+
+        self.km, self.kc = self.start_new_kernel(cwd=path)
+        try:
+            yield
+        finally:
+            self.kc.stop_channels()
+            self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
+            
+        for attr in ['nb', 'km', 'kc']:
+            delattr(self, attr)
+            
     def preprocess(self, nb, resources):
         """
         Preprocess notebook executing each code cell.
@@ -239,49 +323,10 @@ class ExecutePreprocessor(Preprocessor):
         resources : dictionary
             Additional resources used in the conversion process.
         """
-        path = resources.get('metadata', {}).get('path', '')
-        if path == '':
-            path = None
 
-        # clear display_id map
-        self._display_id_map = {}
-
-        # from jupyter_client.manager import start_new_kernel
-
-        def start_new_kernel(startup_timeout=60, kernel_name='python', **kwargs):
-            km = self.kernel_manager_class(kernel_name=kernel_name,
-                                           config=self.config)
-            km.start_kernel(**kwargs)
-            kc = km.client()
-            kc.start_channels()
-            try:
-                kc.wait_for_ready(timeout=startup_timeout)
-            except RuntimeError:
-                kc.stop_channels()
-                km.shutdown_kernel()
-                raise
-
-            return km, kc
-
-        kernel_name = nb.metadata.get('kernelspec', {}).get('name', 'python')
-        if self.kernel_name:
-            kernel_name = self.kernel_name
-        self.log.info("Executing notebook with kernel: %s" % kernel_name)
-        self.km, self.kc = start_new_kernel(
-            startup_timeout=self.startup_timeout,
-            kernel_name=kernel_name,
-            extra_arguments=self.extra_arguments,
-            cwd=path)
-        self.kc.allow_stdin = False
-        self.nb = nb
-
-        try:
+        with self.setup_preprocessor(nb, resources):
+            self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
-        finally:
-            self.kc.stop_channels()
-            self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
-
-        delattr(self, 'nb')
 
         return nb, resources
 
