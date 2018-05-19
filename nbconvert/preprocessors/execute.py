@@ -12,12 +12,12 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, default
+from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, Integer, default
 
 from nbformat.v4 import output_from_msg
+
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
-from traitlets import Integer
 
 
 class CellExecutionError(ConversionException):
@@ -219,15 +219,18 @@ class ExecutePreprocessor(Preprocessor):
             raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
         return KernelManager
 
-    # mapping of locations of outputs with a given display_id
-    # tracks cell index and output index within cell.outputs for
-    # each appearance of the display_id
-    # {
-    #   'display_id': {
-    #     cell_idx: [output_idx,]
-    #   }
-    # }
-    _display_id_map = Dict()
+    _display_id_map = Dict(
+        help=dedent(
+              """
+              mapping of locations of outputs with a given display_id
+              tracks cell index and output index within cell.outputs for
+              each appearance of the display_id
+              {
+                   'display_id': {
+                  cell_idx: [output_idx,]
+                   }
+              }
+              """))
 
     def start_new_kernel(self, **kwargs):
         """Creates a new kernel manager and kernel client.
