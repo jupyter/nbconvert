@@ -308,7 +308,7 @@ class TestNbConvertApp(TestsBase):
     
     def test_no_prompt(self):
         """
-        Verify that the notebook is converted in place
+        Verify that the html has no prompts when given --no-prompt.
         """
         with self.create_temp_cwd(["notebook1.ipynb"]):
             self.nbconvert('notebook1.ipynb --log-level 0 --no-prompt --to html')
@@ -321,9 +321,46 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook1.html')
             with open("notebook1.html",'r') as f:
                 text2 = f.read()
-                print(text2)
                 assert "In&nbsp;[" in text2
                 assert "Out[" in text2
+                
+    def test_no_input(self):
+        """
+        Verify that the html has no input when given --no-input.
+        """
+        with self.create_temp_cwd(["notebook1.ipynb"]):
+            self.nbconvert('notebook1.ipynb --log-level 0 --no-input --to html')
+            assert os.path.isfile('notebook1.html')
+            with open("notebook1.html",'r') as f:
+                text = f.read()
+                assert "In&nbsp;[" not in text
+                assert "Out[" not in text
+                assert ('<span class="n">x</span>'
+                        '<span class="p">,</span>'
+                        '<span class="n">y</span>'
+                        '<span class="p">,</span>'
+                        '<span class="n">z</span> '
+                        '<span class="o">=</span> '
+                        '<span class="n">symbols</span>'
+                        '<span class="p">(</span>'
+                        '<span class="s1">&#39;x y z&#39;</span>'
+                        '<span class="p">)</span>') not in text
+            self.nbconvert('notebook1.ipynb --log-level 0 --to html')
+            assert os.path.isfile('notebook1.html')
+            with open("notebook1.html",'r') as f:
+                text2 = f.read()
+                assert "In&nbsp;[" in text2
+                assert "Out[" in text2
+                assert ('<span class="n">x</span>'
+                        '<span class="p">,</span>'
+                        '<span class="n">y</span>'
+                        '<span class="p">,</span>'
+                        '<span class="n">z</span> '
+                        '<span class="o">=</span> '
+                        '<span class="n">symbols</span>'
+                        '<span class="p">(</span>'
+                        '<span class="s1">&#39;x y z&#39;</span>'
+                        '<span class="p">)</span>') in text2
 
     def test_allow_errors(self):
         """
@@ -477,4 +514,3 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert(
                 '--log-level 0 notebook4_jpeg.ipynb --to rst')
             assert fig_exists('notebook4_jpeg_files')
-
