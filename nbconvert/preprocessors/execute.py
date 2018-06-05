@@ -300,7 +300,8 @@ class ExecutePreprocessor(Preprocessor):
 
         self.km, self.kc = self.start_new_kernel(cwd=path)
         try:
-            yield
+            # Yielding unbound args for more easier understanding and downstream consumption 
+            yield nb, self.km, self.kc
         finally:
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
