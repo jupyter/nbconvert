@@ -269,7 +269,13 @@ class ExecutePreprocessor(Preprocessor):
         """
         Context manager for setting up the class to execute a notebook.
 
-        This creates The input argument `nb` is modified in-place.
+        The assigns `nb` to `self.nb` where it will be modified in-place. It also creates 
+        and assigns the Kernel Manager (`self.km`) and Kernel Client(`self.kc`).
+        
+        It is intended to yield to a block that will execute codeself.
+        
+        When control returns from the yield it stops the client's zmq channels, shuts 
+        down the kernel, and removes the now unused attributes.
 
         Parameters
         ----------
@@ -287,9 +293,7 @@ class ExecutePreprocessor(Preprocessor):
         resources : dictionary
             Additional resources used in the conversion process.
         """
-        path = resources.get('metadata', {}).get('path', '')
-        if path == '':
-            path = None
+        path = resources.get('metadata', {}).get('path', '') or None
         self.nb = nb
         # clear display_id map
         self._display_id_map = {}
@@ -301,8 +305,8 @@ class ExecutePreprocessor(Preprocessor):
             self.kc.stop_channels()
             self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
             
-        for attr in ['nb', 'km', 'kc']:
-            delattr(self, attr)
+            for attr in ['nb', 'km', 'kc']:
+                delattr(self, attr)
             
     def preprocess(self, nb, resources):
         """
