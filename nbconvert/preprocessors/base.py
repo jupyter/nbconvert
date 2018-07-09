@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from ..utils.base import NbConvertBase
-from traitlets import Bool
+from traitlets import Bool, Unicode
 
 
 class Preprocessor(NbConvertBase):
@@ -25,6 +25,10 @@ class Preprocessor(NbConvertBase):
     """
     
     enabled = Bool(False).tag(config=True)
+    style = Unicode(
+            'default',
+            help='Name of the pygments style to use'
+    ).tag(config=True)
 
     def __init__(self, **kw):
         """

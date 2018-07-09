@@ -70,7 +70,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
             header.append(f.read())
 
         # Add pygments CSS
-        formatter = HtmlFormatter()
+        formatter = HtmlFormatter(style=self.style)
         pygments_css = formatter.get_style_defs(self.highlight_class)
         header.append(pygments_css)
 
