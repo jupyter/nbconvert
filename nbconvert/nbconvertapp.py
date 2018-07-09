@@ -56,6 +56,7 @@ nbconvert_aliases.update({
     'output-dir': 'FilesWriter.build_directory',
     'reveal-prefix': 'SlidesExporter.reveal_url_prefix',
     'nbformat': 'NotebookExporter.nbformat_version',
+    'style': 'Preprocessor.style',
 })
 
 nbconvert_flags = {}
