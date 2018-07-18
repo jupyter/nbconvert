@@ -16,8 +16,8 @@ name = 'nbconvert'
 import sys
 
 v = sys.version_info
-if v[:2] < (2,7) or (v[0] >= 3 and v[:2] < (3,3)):
-    error = "ERROR: %s requires Python version 2.7 or 3.3 or above." % name
+if v[:2] < (2,7) or (v[0] >= 3 and v[:2] < (3,4)):
+    error = "ERROR: %s requires Python version 2.7 or 3.4 or above." % name
     print(error, file=sys.stderr)
     sys.exit(1)
 
@@ -179,7 +179,9 @@ setup_args = dict(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 )
 
