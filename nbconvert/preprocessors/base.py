@@ -25,10 +25,6 @@ class Preprocessor(NbConvertBase):
     """
     
     enabled = Bool(False).tag(config=True)
-    style = Unicode(
-            'default',
-            help='Name of the pygments style to use'
-    ).tag(config=True)
 
     def __init__(self, **kw):
         """
