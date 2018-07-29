@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from ..utils.base import NbConvertBase
-from traitlets import Bool, Unicode
+from traitlets import Bool
 
 
 class Preprocessor(NbConvertBase):
