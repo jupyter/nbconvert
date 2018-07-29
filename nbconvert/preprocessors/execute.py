@@ -5,6 +5,11 @@ and updates outputs"""
 # Distributed under the terms of the Modified BSD License.
 
 from textwrap import dedent
+try:
+    from textwrap import indent
+except ImportError:
+    def indent(text, prefix):
+        return "".join([prefix + line for line in text.splitlines(True)])
 
 try:
     from queue import Empty  # Py 3
@@ -194,6 +199,15 @@ class ExecutePreprocessor(Preprocessor):
             )
     ).tag(config=True)
 
+    log_execution = Bool(False,
+        help=dedent(
+            """
+            If `False` (default), the output of executed cells is discarded.
+            If `True`, the output of executed cells is logged.
+            """
+        )
+    ).tag(config=True)
+
     kernel_manager_class = Type(
         config=True,
         help='The kernel manager class to use.'
@@ -299,12 +313,33 @@ class ExecutePreprocessor(Preprocessor):
         cell_allows_errors = (self.allow_errors or "raises-exception"
                               in cell.metadata.get("tags", []))
 
-        if self.force_raise_errors or not cell_allows_errors:
-            for out in outputs:
-                if out.output_type == 'error':
+        if self.log_execution:
+            prefix = "In [%d]: " % cell['execution_count']
+            source = indent(cell['source'], ' ' * len(prefix)).strip()
+            self.log.info(prefix + source)
+
+        for out in outputs:
+            if out['output_type'] == 'error':
+                if self.force_raise_errors or not cell_allows_errors:
                     raise CellExecutionError.from_cell_and_msg(cell, out)
-            if (reply is not None) and reply['content']['status'] == 'error':
-                raise CellExecutionError.from_cell_and_msg(cell, reply['content'])
+                elif self.log_execution:
+                    self.log.info("\n".join(out['traceback']))
+                    continue
+            if self.log_execution:
+                if out['output_type'] == 'stream':
+                    self.log.info(out['text'])
+                elif out['output_type'] == 'display_data':
+                    self.log.info(out['data']['text/plain'])
+                elif out['output_type'] == 'execute_result':
+                    self.log.info('Out[%d]: %s', out['execution_count'],
+                                  out['data']['text/plain'])
+                else:
+                    self.log.info(out)
+
+        if (self.force_raise_errors or not cell_allows_errors) and \
+                (reply is not None) and reply['content']['status'] == 'error':
+            raise CellExecutionError.from_cell_and_msg(cell, reply['content'])
+
         return cell, resources
 
     def _update_display_id(self, display_id, msg):
