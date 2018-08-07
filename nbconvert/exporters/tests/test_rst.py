@@ -11,7 +11,7 @@ from nbformat import v4
 
 from .base import ExportersTestsBase
 from ..rst import RSTExporter
-from ...utils.io import onlyif_cmds_exist
+from ...tests.utils import onlyif_cmds_exist
 
 
 class TestRSTExporter(ExportersTestsBase):
@@ -34,16 +34,16 @@ class TestRSTExporter(ExportersTestsBase):
         """
         (output, resources) = RSTExporter().from_filename(self._get_notebook())
         assert len(output) > 0
-        
+
     @onlyif_cmds_exist('pandoc')
     def test_empty_code_cell(self):
         """No empty code cells in rst"""
         nbname = self._get_notebook()
         with io.open(nbname, encoding='utf8') as f:
             nb = nbformat.read(f, 4)
-        
+
         exporter = self.exporter_class()
-        
+
         (output, resources) = exporter.from_notebook_node(nb)
         # add an empty code cell
         nb.cells.append(
@@ -52,7 +52,6 @@ class TestRSTExporter(ExportersTestsBase):
         (output2, resources) = exporter.from_notebook_node(nb)
         # adding an empty code cell shouldn't change output
         self.assertEqual(output.strip(), output2.strip())
-        
 
     @onlyif_cmds_exist('pandoc')
     def test_png_metadata(self):
@@ -63,7 +62,7 @@ class TestRSTExporter(ExportersTestsBase):
             self._get_notebook(nb_name="pngmetadata.ipynb"))
         assert len(output) > 0
         check_for_png = re.compile(
-            r'.. image::.*?\n\s+(.*?)\n\s*\n', 
+            r'.. image::.*?\n\s+(.*?)\n\s*\n',
             re.DOTALL)
         result = check_for_png.search(output)
         assert result is not None

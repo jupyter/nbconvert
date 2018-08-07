@@ -7,7 +7,7 @@ from nbformat import v4 as nbformat
 
 from .base import PreprocessorTestsBase
 from ..svg2pdf import SVG2PDFPreprocessor
-from ...utils.io import onlyif_cmds_exist
+from ...tests.utils import onlyif_cmds_exist
 
 
 class Testsvg2pdf(PreprocessorTestsBase):

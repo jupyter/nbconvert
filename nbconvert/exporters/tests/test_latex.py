@@ -9,7 +9,7 @@ import re
 
 from .base import ExportersTestsBase
 from ..latex import LatexExporter
-from ...utils.io import onlyif_cmds_exist
+from ...tests.utils import onlyif_cmds_exist
 
 from traitlets.config import Config
 from nbformat import write

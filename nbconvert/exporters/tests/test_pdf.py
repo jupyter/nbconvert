@@ -11,7 +11,7 @@ from testpath import tempdir
 
 from .base import ExportersTestsBase
 from ..pdf import PDFExporter
-from ...utils.io import onlyif_cmds_exist
+from ...tests.utils import onlyif_cmds_exist
 
 
 #-----------------------------------------------------------------------------

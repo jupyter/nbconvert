@@ -18,13 +18,14 @@ from testpath.tempdir import TemporaryWorkingDirectory
 
 from ipython_genutils.py3compat import string_types, bytes_to_str
 
+
 class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
     functions."""
 
 
-    def fuzzy_compare(self, a, b, newlines_are_spaces=True, tabs_are_spaces=True, 
-                      fuzzy_spacing=True, ignore_spaces=False, 
+    def fuzzy_compare(self, a, b, newlines_are_spaces=True, tabs_are_spaces=True,
+                      fuzzy_spacing=True, ignore_spaces=False,
                       ignore_newlines=False, case_sensitive=False, leave_padding=False):
         """
         Performs a fuzzy comparison of two strings.  A fuzzy comparison is a
@@ -63,7 +64,6 @@ class TestsBase(unittest.TestCase):
 
         self.assertEqual(a, b)
 
-
     def recursive_replace(self, text, search, replacement):
         """
         Performs a recursive replacement operation.  Replaces all instances
@@ -97,7 +97,7 @@ class TestsBase(unittest.TestCase):
 
         #Return directory handler
         return temp_dir
-    
+
     def create_empty_notebook(self, path):
         nb = v4.new_notebook()
         with io.open(path, 'w', encoding='utf-8') as f:
@@ -114,18 +114,16 @@ class TestsBase(unittest.TestCase):
             for match in files:
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
-
     def _get_files_path(self):
 
         #Get the relative path to this module in the IPython directory.
         names = self.__module__.split('.')[1:-1]
         names.append('files')
-        
+
         #Build a path using the nbconvert directory and the relative path we just
         #found.
         path = os.path.dirname(nbconvert.__file__)
         return os.path.join(path, *names)
-
 
     def nbconvert(self, parameters, ignore_return_code=False, stdin=None):
         """
@@ -138,7 +136,7 @@ class TestsBase(unittest.TestCase):
         parameters : str, list(str)
             List of parameters to pass to IPython.
         ignore_return_code : optional bool (default False)
-            Throw an OSError if the return code 
+            Throw an OSError if the return code
         """
         if isinstance(parameters, string_types):
             parameters = shlex.split(parameters)
