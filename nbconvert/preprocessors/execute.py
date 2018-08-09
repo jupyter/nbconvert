@@ -157,7 +157,7 @@ class ExecutePreprocessor(Preprocessor):
             """
         )
     ).tag(config=True)
-    
+
     @default('kernel_name')
     def _kernel_name_default(self):
         try:
@@ -167,7 +167,6 @@ class ExecutePreprocessor(Preprocessor):
                                  'the ExecutePreprocessor and you have not set '
                                  'self.nb to be able to use that to infer the '
                                  'kernel_name.')
-            
 
     raise_on_iopub_timeout = Bool(False,
         help=dedent(
@@ -252,7 +251,7 @@ class ExecutePreprocessor(Preprocessor):
         km = self.kernel_manager_class(kernel_name=self.kernel_name,
                                        config=self.config)
         km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
-                             
+
         kc = km.client()
         kc.start_channels()
         try:
@@ -263,18 +262,18 @@ class ExecutePreprocessor(Preprocessor):
             raise
         kc.allow_stdin = False
         return km, kc
-    
+
     @contextmanager
-    def setup_preprocessor(self, nb, resources):
+    def setup_preprocessor(self, nb, resources, km=None):
         """
         Context manager for setting up the class to execute a notebook.
 
-        The assigns `nb` to `self.nb` where it will be modified in-place. It also creates 
+        The assigns `nb` to `self.nb` where it will be modified in-place. It also creates
         and assigns the Kernel Manager (`self.km`) and Kernel Client(`self.kc`).
-        
+
         It is intended to yield to a block that will execute codeself.
-        
-        When control returns from the yield it stops the client's zmq channels, shuts 
+
+        When control returns from the yield it stops the client's zmq channels, shuts
         down the kernel, and removes the now unused attributes.
 
         Parameters
@@ -285,6 +284,9 @@ class ExecutePreprocessor(Preprocessor):
             Additional resources used in the conversion process. For example,
             passing ``{'metadata': {'path': run_path}}`` sets the
             execution path to ``run_path``.
+        km : KernerlManager (optional)
+            Optional kernel manaher. If none is provided, a kernel manager will
+            be created.
 
         Returns
         -------
@@ -298,18 +300,37 @@ class ExecutePreprocessor(Preprocessor):
         # clear display_id map
         self._display_id_map = {}
 
-        self.km, self.kc = self.start_new_kernel(cwd=path)
-        try:
-            # Yielding unbound args for more easier understanding and downstream consumption 
-            yield nb, self.km, self.kc
-        finally:
-            self.kc.stop_channels()
-            self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
-            
-            for attr in ['nb', 'km', 'kc']:
-                delattr(self, attr)
-            
-    def preprocess(self, nb, resources):
+        if km is None:
+            self.km, self.kc = self.start_new_kernel(cwd=path)
+            try:
+                # Yielding unbound args for more easier understanding and downstream consumption
+                yield nb, self.km, self.kc
+            finally:
+                self.kc.stop_channels()
+                self.km.shutdown_kernel(now=self.shutdown_kernel == 'immediate')
+
+                for attr in ['nb', 'km', 'kc']:
+                    delattr(self, attr)
+        else:
+            self.km = km
+            if not km.has_kernel:
+                km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
+            self.kc = km.client()
+            if not self.kc.channels_running:
+                self.kc.start_channels()
+                try:
+                    self.kc.wait_for_ready(timeout=self.startup_timeout)
+                except RuntimeError:
+                    self.kc.stop_channels()
+                    raise
+            self.kc.allow_stdin = False
+            try:
+                yield nb, self.km, self.kc
+            finally:
+                for attr in ['nb', 'km', 'kc']:
+                    delattr(self, attr)
+
+    def preprocess(self, nb, resources, km=None):
         """
         Preprocess notebook executing each code cell.
 
@@ -323,6 +344,9 @@ class ExecutePreprocessor(Preprocessor):
             Additional resources used in the conversion process. For example,
             passing ``{'metadata': {'path': run_path}}`` sets the
             execution path to ``run_path``.
+        km: KernelManager (optional)
+            Optional kernel manager. If none is provided, a kernel manager will
+            be created.
 
         Returns
         -------
@@ -332,7 +356,7 @@ class ExecutePreprocessor(Preprocessor):
             Additional resources used in the conversion process.
         """
 
-        with self.setup_preprocessor(nb, resources):
+        with self.setup_preprocessor(nb, resources, km=km):
             self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
 
@@ -491,7 +515,7 @@ class ExecutePreprocessor(Preprocessor):
         return exec_reply, outs
 
 
-def executenb(nb, cwd=None, **kwargs):
+def executenb(nb, cwd=None, km=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
 
     This is a convenient wrapper around ExecutePreprocessor. It returns the
@@ -503,6 +527,8 @@ def executenb(nb, cwd=None, **kwargs):
       The notebook object to be executed
     cwd : str, optional
       If supplied, the kernel will run in this directory
+    km : KernelManager, optional
+      If supplied, the specified kernel manager will be used for code execution.
     kwargs :
       Any other options for ExecutePreprocessor, e.g. timeout, kernel_name
     """
@@ -510,4 +536,4 @@ def executenb(nb, cwd=None, **kwargs):
     if cwd is not None:
         resources['metadata'] = {'path': cwd}
     ep = ExecutePreprocessor(**kwargs)
-    return ep.preprocess(nb, resources)[0]
+    return ep.preprocess(nb, resources, km=km)[0]
