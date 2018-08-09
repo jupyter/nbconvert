@@ -18,7 +18,7 @@ from traitlets.config import Config
 
 from .base import ExportersTestsBase
 from ..asciidoc import ASCIIDocExporter
-from ...utils.io import onlyif_cmds_exist
+from ...tests.utils import onlyif_cmds_exist
 
 #-----------------------------------------------------------------------------
 # Class

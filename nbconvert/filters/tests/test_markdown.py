@@ -10,7 +10,7 @@ from functools import partial
 
 from ipython_genutils.py3compat import string_types
 
-from ...utils.io import onlyif_cmds_exist
+from ...tests.utils import onlyif_cmds_exist
 from ...tests.base import TestsBase
 from ..pandoc import convert_pandoc
 from ..markdown import markdown2html

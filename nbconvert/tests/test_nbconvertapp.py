@@ -9,10 +9,9 @@ import io
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
-from ..utils.io import onlyif_cmds_exist
+from ..tests.utils import onlyif_cmds_exist
 from nbconvert import nbconvertapp
 from nbconvert.exporters import Exporter
-
 
 from traitlets.tests.utils import check_help_all_output
 from testpath import tempdir
@@ -25,6 +24,7 @@ import pytest
 class DummyPost(PostProcessorBase):
     def postprocess(self, filename):
         print("Dummy:%s" % filename)
+
 
 class TestNbConvertApp(TestsBase):
     """Collection of NbConvertApp tests"""
@@ -48,7 +48,6 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--to python *.ipynb --log-level 0')
             assert os.path.isfile('notebook1.py')
             assert os.path.isfile('notebook2.py')
-
 
     def test_glob_subdir(self):
         """
@@ -132,11 +131,10 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile('notebook with spaces.pdf')
 
-
     @onlyif_cmds_exist('pandoc', 'xelatex')
     def test_pdf(self):
         """
-        Check to see if pdfs compile, even if strikethroughs are included. 
+        Check to see if pdfs compile, even if strikethroughs are included.
         """
         with self.create_temp_cwd(['notebook2.ipynb']):
             self.nbconvert('--log-level 0 --to pdf'
@@ -211,7 +209,6 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook1.py')
             assert os.path.isfile('notebook2.py')
 
-
     def test_explicit_glob(self):
         """
         Can explicit notebook names be used and then a matching search pattern?
@@ -222,7 +219,6 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook1.py')
             assert os.path.isfile('notebook2.py')
 
-
     def test_default_config(self):
         """
         Does the default config work?
@@ -231,7 +227,6 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0')
             assert os.path.isfile('notebook1.py')
             assert not os.path.isfile('notebook2.py')
-
 
     def test_override_config(self):
         """
@@ -305,7 +300,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('empty.ipynb')
             assert not os.path.isfile('empty.nbconvert.ipynb')
             assert not os.path.isfile('empty.html')
-    
+
     def test_no_prompt(self):
         """
         Verify that the notebook is converted in place
@@ -381,7 +376,7 @@ class TestNbConvertApp(TestsBase):
             output2, _ = self.nbconvert('--to markdown --stdout notebook_jl.ipynb')
             assert '```julia' in output2  # shouldn't have language
             assert "```" in output2  # but should also plain ``` to close cell
-    
+
     def test_convert_from_stdin_to_stdout(self):
         """
         Verify that conversion can be done via stdin to stdout
