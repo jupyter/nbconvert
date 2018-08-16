@@ -13,7 +13,7 @@ class PreprocessorTestsBase(TestsBase):
     """Contains test functions preprocessor tests"""
 
 
-    def build_notebook(self):
+    def build_notebook(self, with_json_outputs=False):
         """Build a notebook in memory for use with preprocessor tests"""
 
         outputs = [
@@ -26,6 +26,22 @@ class PreprocessorTestsBase(TestsBase):
             nbformat.new_output("display_data", data={'image/png': 'Zw=='}), # g
             nbformat.new_output("display_data", data={'application/pdf': 'aA=='}), # h
         ]
+        if with_json_outputs:
+            outputs.extend([
+                nbformat.new_output(
+                    "display_data", data={'application/json': [1, 2, 3]}
+                ), # j
+                nbformat.new_output(
+                    "display_data", data={'application/json': {'a': 1, 'c': {'b': 2}}}
+                ), # k
+                nbformat.new_output(
+                    "display_data", data={'application/json': 'abc'}
+                ), # l
+                nbformat.new_output(
+                    "display_data", data={'application/json': 15.03}
+                ), # m
+            ])
+
         cells=[nbformat.new_code_cell(source="$ e $", execution_count=1, outputs=outputs),
                nbformat.new_markdown_cell(source="$ e $")]
 

@@ -8,10 +8,17 @@ notebook file.  The extracted outputs are returned in the 'resources' dictionary
 from binascii import a2b_base64
 import sys
 import os
+import json
 from mimetypes import guess_extension
 
 from traitlets import Unicode, Set
 from .base import Preprocessor
+
+if sys.version_info < (3,):
+    text_type = basestring
+else:
+    text_type = str
+
 
 def guess_extension_without_jpe(mimetype):
     """
@@ -72,6 +79,17 @@ class ExtractOutputPreprocessor(Preprocessor):
             for mime_type in self.extract_output_types:
                 if mime_type in out.data:
                     data = out.data[mime_type]
+
+                    if (
+                        not isinstance(data, text_type)
+                        or mime_type == 'application/json'
+                    ):
+                        # Data is either JSON-like and was parsed into a Python
+                        # object according to the spec, or data is for sure
+                        # JSON. In the latter case we want to go extra sure that
+                        # we enclose a scalar string value into extra quotes by
+                        # serializing it properly.
+                        data = json.dumps(data)
 
                     #Binary files are base64-encoded, SVG is already XML
                     if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
