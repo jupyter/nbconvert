@@ -83,6 +83,9 @@ class SlidesExporter(HTMLExporter):
         For speaker notes to work, this must be a relative path to a local 
         copy of reveal.js: e.g., "reveal.js".
         
+        If a relative path is given, it must be a subdirectory of the
+        current directory (from which the server is run).
+        
         See the usage documentation
         (https://nbconvert.readthedocs.io/en/latest/usage.html#reveal-js-html-slideshow)
         for more details.
