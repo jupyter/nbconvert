@@ -64,6 +64,7 @@ This template does not define a docclass, the inheriting class must define this.
     \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
     \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
                                 % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
     ((* endblock packages *))
 
     ((* block definitions *))
