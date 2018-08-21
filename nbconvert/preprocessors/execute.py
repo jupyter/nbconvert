@@ -316,13 +316,13 @@ class ExecutePreprocessor(Preprocessor):
             if not km.has_kernel:
                 km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
             self.kc = km.client()
-            if not self.kc.channels_running:
-                self.kc.start_channels()
-                try:
-                    self.kc.wait_for_ready(timeout=self.startup_timeout)
-                except RuntimeError:
-                    self.kc.stop_channels()
-                    raise
+
+            self.kc.start_channels()
+            try:
+                self.kc.wait_for_ready(timeout=self.startup_timeout)
+            except RuntimeError:
+                self.kc.stop_channels()
+                raise
             self.kc.allow_stdin = False
             try:
                 yield nb, self.km, self.kc
