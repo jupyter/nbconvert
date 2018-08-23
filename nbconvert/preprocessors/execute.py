@@ -359,6 +359,8 @@ class ExecutePreprocessor(Preprocessor):
         with self.setup_preprocessor(nb, resources, km=km):
             self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
+            info_msg = self._wait_for_reply(self.kc.kernel_info())
+            nb.metadata['language_info'] = info_msg['content']['language_info']
 
         return nb, resources
 
@@ -407,11 +409,11 @@ class ExecutePreprocessor(Preprocessor):
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
 
-    def _wait_for_reply(self, msg_id, cell):
+    def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
         while True:
             try:
-                if self.timeout_func is not None:
+                if self.timeout_func is not None and cell is not None:
                     timeout = self.timeout_func(cell)
                 else:
                     timeout = self.timeout

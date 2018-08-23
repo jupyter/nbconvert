@@ -138,6 +138,12 @@ class TestExecute(PreprocessorTestsBase):
             input_nb, output_nb = self.run_notebook(filename, opts, res)
             self.assert_notebooks_equal(input_nb, output_nb)
 
+    def test_populate_language_info(self):
+        preprocessor = self.build_preprocessor(opts=dict(kernel_name="python"))
+        nb = nbformat.v4.new_notebook()  # Certainly has no language_info.
+        nb, _ = preprocessor.preprocess(nb, resources={})
+        assert 'language_info' in nb.metadata
+
     def test_empty_path(self):
         """Can the kernel be started when the path is empty?"""
         filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
