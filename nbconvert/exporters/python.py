@@ -21,3 +21,4 @@ class PythonExporter(TemplateExporter):
         return 'python.tpl'
 
     output_mimetype = 'text/x-python'
+    export_from_notebook = "python"

@@ -23,6 +23,7 @@ class ASCIIDocExporter(TemplateExporter):
         return 'asciidoc'
 
     output_mimetype = 'text/asciidoc'
+    export_from_notebook = "asciidoc"
 
     @default('raw_mimetypes')
     def _raw_mimetypes_default(self):
