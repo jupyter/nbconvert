@@ -110,3 +110,12 @@ class TestHTMLExporter(ExportersTestsBase):
         )
         (output, resources) = HTMLExporter(template_file='basic').from_notebook_node(nb)
         self.assertIn('javascript_output', output)
+
+    def test_attachments(self):
+        (output, resources) = HTMLExporter(template_file='basic').from_file(
+            self._get_notebook(nb_name='attachment.ipynb')
+        )
+        check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
+        result = check_for_png.search(output)
+        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64, iVBOR'))
+        self.assertTrue(result.group(1).strip().startswith('alt="python.png"'))
