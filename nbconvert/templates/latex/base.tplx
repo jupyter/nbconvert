@@ -152,7 +152,11 @@ This template does not define a docclass, the inheriting class must define this.
     \title{((( nb_title | ascii_only | escape_latex )))}
     ((*- endblock title *))
     ((* block date *))((* endblock date *))
-    ((* block author *))((* endblock author *))
+    ((* block author *))
+    ((* if 'authors' in nb.metadata *))
+    \author{((( nb.metadata.authors | join(', ', attribute='name') )))}
+    ((* endif *))
+    ((* endblock author *))
     ((* endblock definitions *))
 
     ((* block commands *))
