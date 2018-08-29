@@ -21,6 +21,7 @@ class LatexExporter(TemplateExporter):
     'template_file' config option.  Place your template in the special "/latex" 
     subfolder of the "../templates" folder.
     """
+    export_from_notebook = "latex"
 
     @default('file_extension')
     def _file_extension_default(self):

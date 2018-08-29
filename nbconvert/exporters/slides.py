@@ -75,6 +75,8 @@ def prepare(nb):
 class SlidesExporter(HTMLExporter):
     """Exports HTML slides with reveal.js"""
 
+    export_from_notebook = "slides"
+
     reveal_url_prefix = Unicode(
         help="""The URL prefix for reveal.js (version 3.x).
         This defaults to the reveal CDN, but can be any url pointing to a copy 

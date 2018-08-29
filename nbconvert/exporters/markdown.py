@@ -13,6 +13,7 @@ class MarkdownExporter(TemplateExporter):
     """
     Exports to a markdown document (.md)
     """
+    export_from_notebook = "markdown"
 
     @default('file_extension')
     def _file_extension_default(self):

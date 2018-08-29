@@ -44,6 +44,7 @@ class PDFExporter(LatexExporter):
     a temporary directory using the template machinery, and then runs LaTeX
     to create a pdf.
     """
+    export_from_notebook="pdf"
 
     latex_count = Integer(3,
         help="How many times latex will be called."
