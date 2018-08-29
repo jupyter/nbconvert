@@ -20,16 +20,14 @@ class RegexRemovePreprocessor(Preprocessor):
     of unicode strings. If the contents match any of the patterns, the cell
     is removed from the notebook.
 
-    By default, `patterns = [r'\Z']` which matches the empty string such that
-    strictly empty cells are removed. To modify the list of matched patterns,
+    To modify the list of matched patterns,
     modify the patterns traitlet. For example, execute the following command
-    to convert a notebook to html and remove cells containing only whitespace:
+    to convert a notebook to html and remove cells containing only whitespace::
 
-    > jupyter nbconvert --RegexRemovePreprocessor.enabled=True \
-      --RegexRemovePreprocessor.patterns="['\\s*\\Z']" mynotebook.ipynb
+      jupyter nbconvert --RegexRemovePreprocessor.patterns="['\\s*\\Z']" mynotebook.ipynb
 
-    The first command line argument enables the preprocessor and the second
-    sets the list of patterns to '\\s*\\Z' which matches an arbitrary number
+    The command line argument
+    sets the list of patterns to ``'\\s*\\Z'`` which matches an arbitrary number
     of whitespace characters followed by the end of the string.
 
     See https://regex101.com/ for an interactive guide to regular expressions
@@ -38,7 +36,7 @@ class RegexRemovePreprocessor(Preprocessor):
     documentation in python.
     """
 
-    patterns = List(Unicode(), default_value=[r'\Z']).tag(config=True)
+    patterns = List(Unicode(), default_value=[]).tag(config=True)
 
     def check_conditions(self, cell):
         """

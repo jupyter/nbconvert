@@ -44,9 +44,9 @@ class TestRegexRemove(PreprocessorTestsBase):
             'disallow_tab_newline': [r'\t\Z', r'\n\Z']
         }
         expected_cell_count = {
-            'default': 5,  # only strictly empty cells
+            'default': 6,  # nothing is removed
             'disallow_whitespace': 2,  # all "empty" cells are removed
-            'disallow_tab_newline': 3,  # all "empty" cells but the single space
+            'disallow_tab_newline': 4,  # cells with tab and newline are removed
             'none': 6,
         }
         for method in ['default', 'disallow_whitespace', 'disallow_tab_newline', 'none']:
