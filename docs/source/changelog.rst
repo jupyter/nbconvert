@@ -4,6 +4,60 @@
 Changes in nbconvert
 ====================
 
+5.4
+---
+`5.4 on Github <https://github.com/jupyter/nbconvert/milestones/5.4>`__
+
+- Document ``--inplace`` command line flag. :ghpull:`839`
+- Don't remove empty cells by default :ghpull:`784`
+- Handle embedded images in html converter :ghpull:`780`
+- If set, use ``nb.metadata.authors`` for LaTeX author line :ghpull:`867`
+- Add ``export_from_notebook`` :ghpull:`864`
+- Fix minor typo in ``usage.rst`` :ghpull:`863`
+- Populate language_info metadata when executing :ghpull:`860`
+- No need to check for the channels already running :ghpull:`862`
+- Update ``font-awesome`` version for slides :ghpull:`793`
+- Support for ``\mathscr`` :ghpull:`830`
+- Add note about local ``reveal_url_prefix`` :ghpull:`844`
+- Properly treat JSON data :ghpull:`847`
+- Move ``onlyif_cmds_exist`` decorator to test-specific utils :ghpull:`854`
+- Allow the execute preprocessor to make use of an existing kernel :ghpull:`852`
+- Update widgets CDN for ipywidgets 7 w/fallback :ghpull:`792`
+- Pass config to kernel from ExecutePreprocessor for configurable kernels :ghpull:`816`
+- Drop support for python 3.3 :ghpull:`843`
+- Include LICENSE file in wheels :ghpull:`827`
+- Check for too recent of pandoc version :ghpull:`814`
+- Ppdate log.warn (deprecated) to log.warning :ghpull:`804`
+- Cleanup notebook.tex during PDF generation :ghpull:`768`
+- Add support for adding custom exporters to the "Download as" menu. :ghpull:`759`
+- Removing more nose remnants via dependencies. :ghpull:`758`
+- Windows unicode error fixed, nosetest added to setup.py :ghpull:`757`
+- Added Ubuntu Linux Instructions :ghpull:`724`
+- Enable ANSI underline and inverse :ghpull:`696`
+- Remove offline statement and add some clarifications in slides docs :ghpull:`743`
+- Update notebook css to 5.4.0 :ghpull:`748`
+- Change default for slides to direct to the reveal cdn rather than locally :ghpull:`732`
+- Better content hiding; template & testing improvements :ghpull:`734`
+- Skip executing empty code cells :ghpull:`739`
+- Fix Jinja syntax in custom template example. :ghpull:`738`
+- Fix for an issue with empty math block :ghpull:`729`
+- Use "title" instead of "name" for metadata to match the notebook format :ghpull:`703`
+- Linkify PR number :ghpull:`710`
+- Img filename metadata :ghpull:`685`
+- Added shebang for python :ghpull:`694`
+- Upgrade mistune dependency :ghpull:`705`
+- Added MathJax compatibility definitions :ghpull:`687`
+- Fixes for traitlets 4.1 deprecation warnings :ghpull:`695`
+- Per cell exception :ghpull:`684`
+- add feature to improve docs by having links to prs :ghpull:`662`
+- Raw template as settable attribute :ghpull:`675`
+- Update notebook CSS from version 4.3.0 to 5.1.0 :ghpull:`682`
+- Update notebook CSS from 4.3.0 to 5.1.0 :ghpull:`1`
+- Set BIBINPUTS and BSTINPUTS environment variables when making PDF :ghpull:`676`
+- If ``nb.metadata.title`` is set, default to that for notebook :ghpull:`672`
+- Explicitly exclude or include all files in Manifest. :ghpull:`670`
+
+
 5.3.1
 -----
 `5.3.1 on Github <https://github.com/jupyter/nbconvert/milestones/5.3.1>`__
@@ -28,15 +82,15 @@ Tags are user-defined strings attached to cells or outputs. They are stored in
 cell or output metadata. For more on tags see the `nbformat docs on cell
 metadata <http://nbformat.readthedocs.io/en/latest/format_description.html#cell-metadata>`__.
 
-**Usage**: 
+**Usage**:
 
-1. Apply tags to the elements that you want to remove. 
-   
+1. Apply tags to the elements that you want to remove.
+
 For removing an entire cell, the cell input, or all cell outputs apply the tag
-to the cell. 
+to the cell.
 
 For removing individual outputs, put the tag in the output metadata
-using a call like ``display(your_output_element, metadata={tags=[<your_tags_here>]})``. 
+using a call like ``display(your_output_element, metadata={tags=[<your_tags_here>]})``.
 
 *NB*: Use different tags depending on whether you want to remove the entire cell, the input, all outputs, or individual outputs.
 
@@ -44,11 +98,11 @@ using a call like ``display(your_output_element, metadata={tags=[<your_tags_here
    traitlets. Which kind of element you want to remove determines which
    traitlet you add the tags to.
 
-The following traitlets remove elements of different kinds: 
+The following traitlets remove elements of different kinds:
 
-- ``remove_cell_tags``: removes cells 
+- ``remove_cell_tags``: removes cells
 - ``remove_input_tags``: removes inputs
-- ``remove_all_outputs_tag``: removes all outputs  
+- ``remove_all_outputs_tag``: removes all outputs
 - ``remove_single_output_tag``: removes individual outputs
 
 Comprehensive notes
@@ -234,8 +288,8 @@ alphabetical order):
 - General documentation improvements. For example, testing, installation, custom exporters.
 - Improved link handling for LaTeX output
 - Refactored the automatic id generation.
-- New kernel_manager_class configuration option for allowing systems to be set up to resolve kernels in different ways. 
-- Kernel errors now will be logged for debugging purposes when executing notebooks. 
+- New kernel_manager_class configuration option for allowing systems to be set up to resolve kernels in different ways.
+- Kernel errors now will be logged for debugging purposes when executing notebooks.
 
 4.3
 ---
