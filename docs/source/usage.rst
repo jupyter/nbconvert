@@ -231,11 +231,12 @@ Notebook and preprocessors
       jupyter nbconvert --to notebook --execute mynotebook.ipynb
 
 This will open the notebook, execute it, capture new output, and save the
-result in :file:`mynotebook.nbconvert.ipynb`. By default, ``nbconvert`` will
-abort conversion if any exceptions occur during execution of a cell. If you
-specify ``--allow-errors`` (in addition to the ``--execute`` flag) then
-conversion will continue and the output from any exception will be included
-in the cell output.
+result in :file:`mynotebook.nbconvert.ipynb`. Specifying ``--inplace`` will
+overwrite the input file instead of writing a new file. By default,
+``nbconvert`` will abort conversion if any exceptions occur during
+execution of a cell. If you specify ``--allow-errors`` (in addition to the
+`--execute`` flag) then conversion will continue and the output from any
+exception will be included in the cell output.
 
 The following command::
 
