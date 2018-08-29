@@ -244,7 +244,7 @@ The following command::
 will create a copy of :file:`mynotebook.ipynb` in :file:`mynotebook.v3.ipynb`
 in version 3 of the notebook format.
 
-If you want to convert a notebook in-place, you can specify the ouptut file
+If you want to convert a notebook in-place, you can specify the output file
 to be the same as the input file::
 
       jupyter nbconvert --to notebook mynb --output mynb
