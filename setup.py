@@ -165,6 +165,7 @@ setup_args = dict(
     packages        = packages,
     package_data    = package_data,
     cmdclass        = cmdclass,
+    python_requires = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'http://jupyter.org',
