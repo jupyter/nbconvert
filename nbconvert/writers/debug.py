@@ -22,7 +22,7 @@ from pprint import pprint
 #-----------------------------------------------------------------------------
 
 class DebugWriter(WriterBase):
-    """Consumes output from nbconvert export...() methods and writes usefull
+    """Consumes output from nbconvert export...() methods and writes useful
     debugging information to the stdout.  The information includes a list of
     resources that were extracted from the notebook(s) during export."""
 
