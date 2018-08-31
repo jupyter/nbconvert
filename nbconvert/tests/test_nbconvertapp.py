@@ -230,7 +230,7 @@ class TestNbConvertApp(TestsBase):
 
     def test_override_config(self):
         """
-        Can the default config be overriden?
+        Can the default config be overridden?
         """
         with self.create_temp_cwd(['notebook*.ipynb',
                                    'jupyter_nbconvert_config.py',
@@ -425,7 +425,7 @@ class TestNbConvertApp(TestsBase):
     @onlyif_cmds_exist('pandoc')
     def test_markdown_display_priority(self):
         """
-        Check to see if markdown conversion embedds PNGs,
+        Check to see if markdown conversion embeds PNGs,
         even if an (unsupported) PDF is present.
         """
         with self.create_temp_cwd(['markdown_display_priority.ipynb']):
