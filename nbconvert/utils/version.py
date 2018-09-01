@@ -11,7 +11,7 @@ It is a bit ridiculous that we need these.
 from distutils.version import LooseVersion
 
 
-def check_version(v, min_v, max_v):
+def check_version(v, min_v, max_v=None):
     """check version string v >= min_v and v < max_v
 
     Parameters
@@ -28,9 +28,9 @@ def check_version(v, min_v, max_v):
     is satisfied. Users on dev branches are responsible for keeping their own
     packages up to date.
     """
-
+    
     try:
-        return LooseVersion(v) >= LooseVersion(min_v) and LooseVersion(v) < LooseVersion(max_v)
+        below_max = LooseVersion(v) < LooseVersion(max_v) if max_v is not None else True
+        return LooseVersion(v) >= LooseVersion(min_v) and below_max
     except TypeError:
         return True
-

@@ -101,7 +101,7 @@ def check_pandoc_version():
                       "output of pandoc --version.\nContinuing...",
                       RuntimeWarning, stacklevel=2)
         return False
-    ok = check_version(v, _minimal_version, _maximal_version)
+    ok = check_version(v, _minimal_version, max_v=_maximal_version)
     if not ok:
         warnings.warn( "You are using an unsupported version of pandoc (%s).\n" % v +
                        "Your version must be at least (%s) " % _minimal_version +
