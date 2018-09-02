@@ -90,6 +90,9 @@ def get_exporter(name):
     
     Raises ValueError if exporter is not found
     """
+    
+    if name == 'ipynb':
+        name = 'notebook'
 
     try:
         return entrypoints.get_single('nbconvert.exporters', name).load()
