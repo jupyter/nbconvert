@@ -114,6 +114,15 @@ nbconvert_flags.update({
         },
         "Exclude input and output prompts from converted document."
         ),
+    'no-input' : (
+        {'TemplateExporter' : {
+            'exclude_output_prompt' : True,
+            'exclude_input': True,
+            }
+        },
+        """Exclude input cells and output prompts from converted document. 
+        This mode is ideal for generating code-free reports."""
+        ),
 })
 
 
