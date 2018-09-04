@@ -9,16 +9,40 @@ Changes in nbconvert
 `5.4 on Github <https://github.com/jupyter/nbconvert/milestones/5.4>`__
 
 Significant Changes
-+++++++++++++++++++
-# NOTE describe metadata changes (867, 703, 685)
+~~~~~~~~~~~~~~~~~~~
+
+Deprecations
+++++++++++++
+
+Changes in how we handle metadata
++++++++++++++++++++++++++++++++++
+
+# NOTE describe metadata changes (867, 703, 685, 672)
 ## 685 allows you to set image filename on export
 ## 684 force_raise_errors
+
+Configurable kernel managers when executing notebooks
++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Pass configurable kernel manager to execute nbfunc + preprocessor (852)
+
+Surfacing exporters in front-ends
++++++++++++++++++++++++++++++++++
+ 
 # Export from notebook + custom exporters allows classic notebook to expose download as (759, 864)
+
+Raw Templates
++++++++++++++
+
 # Raw template (675)
 
+New command line flags
+++++++++++++++++++++++
+- No input flag (``--no-input``) :ghpull:`825`
+- Add alias ``--to ipynb`` for notebook exporter :ghpull:`873`
+
+
 New Features
-++++++++++++
+~~~~~~~~~~~~
 - No input flag (``--no-input``) :ghpull:`825`
 - Add alias ``--to ipynb`` for notebook exporter :ghpull:`873`
 - Add ``export_from_notebook`` :ghpull:`864`
@@ -39,14 +63,13 @@ New Features
 - Simple API for in-memory templates :ghpull:`674` :ghpull:`675`
 - Set BIBINPUTS and BSTINPUTS environment variables when making PDF :ghpull:`676`
 - If ``nb.metadata.title`` is set, default to that for notebook :ghpull:`672`
-- Explicitly exclude or include all files in Manifest. :ghpull:`670`
 
 Deprecations
-++++++++++++
+~~~~~~~~~~~~
 - Drop support for python 3.3 :ghpull:`843`
 
 Fixing Problems
-+++++++++++++++
+~~~~~~~~~~~~~~~
 - Fix api break :ghpull:`872`
 - Don't remove empty cells by default :ghpull:`784`
 - Handle attached images in html converter :ghpull:`780`
@@ -65,7 +88,7 @@ Fixing Problems
 - Fixes for traitlets 4.1 deprecation warnings :ghpull:`695`
 
 Testing, Docs, and Builds
-+++++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~~~~
 - A couple of typos :ghpull:`870`
 - Add python_requires metadata. :ghpull:`871`
 - Document ``--inplace`` command line flag. :ghpull:`839`
@@ -82,6 +105,7 @@ Testing, Docs, and Builds
 - Upgrade mistune dependency :ghpull:`705`
 - add feature to improve docs by having links to prs :ghpull:`662`
 - Update notebook CSS from version 4.3.0 to 5.1.0 :ghpull:`682`
+- Explicitly exclude or include all files in Manifest. :ghpull:`670`
 
 5.3.1
 -----
