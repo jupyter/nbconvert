@@ -29,6 +29,7 @@ PY3 = (sys.version_info[0] >= 3)
 
 import os
 import setuptools
+import io
 
 from setuptools.command.bdist_egg import bdist_egg
 
@@ -156,7 +157,7 @@ version_ns = {}
 with open(pjoin(here, name, '_version.py')) as f:
     exec(f.read(), {}, version_ns)
 
-with open(pjoin(here, 'README.md'), encoding='utf-8') as f:
+with io.open(pjoin(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup_args = dict(
