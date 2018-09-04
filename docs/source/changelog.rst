@@ -8,55 +8,80 @@ Changes in nbconvert
 ---
 `5.4 on Github <https://github.com/jupyter/nbconvert/milestones/5.4>`__
 
-- Document ``--inplace`` command line flag. :ghpull:`839`
-- Don't remove empty cells by default :ghpull:`784`
-- Handle embedded images in html converter :ghpull:`780`
-- If set, use ``nb.metadata.authors`` for LaTeX author line :ghpull:`867`
+Significant Changes
++++++++++++++++++++
+# NOTE describe metadata changes (867, 703, 685)
+## 685 allows you to set image filename on export
+## 684 force_raise_errors
+# Pass configurable kernel manager to execute nbfunc + preprocessor (852)
+# Export from notebook + custom exporters allows classic notebook to expose download as (759, 864)
+# Raw template (675)
+
+New Features
+++++++++++++
+- No input flag (``--no-input``) :ghpull:`825`
+- Add alias ``--to ipynb`` for notebook exporter :ghpull:`873`
 - Add ``export_from_notebook`` :ghpull:`864`
-- Fix minor typo in ``usage.rst`` :ghpull:`863`
+- If set, use ``nb.metadata.authors`` for LaTeX author line :ghpull:`867`
 - Populate language_info metadata when executing :ghpull:`860`
-- No need to check for the channels already running :ghpull:`862`
-- Update ``font-awesome`` version for slides :ghpull:`793`
 - Support for ``\mathscr`` :ghpull:`830`
-- Add note about local ``reveal_url_prefix`` :ghpull:`844`
-- Properly treat JSON data :ghpull:`847`
-- Move ``onlyif_cmds_exist`` decorator to test-specific utils :ghpull:`854`
 - Allow the execute preprocessor to make use of an existing kernel :ghpull:`852`
+- Refactor ExecutePreprocessor :ghpull:`816`
 - Update widgets CDN for ipywidgets 7 w/fallback :ghpull:`792`
-- Pass config to kernel from ExecutePreprocessor for configurable kernels :ghpull:`816`
-- Drop support for python 3.3 :ghpull:`843`
-- Include LICENSE file in wheels :ghpull:`827`
-- Check for too recent of pandoc version :ghpull:`814`
-- Ppdate log.warn (deprecated) to log.warning :ghpull:`804`
-- Cleanup notebook.tex during PDF generation :ghpull:`768`
 - Add support for adding custom exporters to the "Download as" menu. :ghpull:`759`
-- Removing more nose remnants via dependencies. :ghpull:`758`
-- Windows unicode error fixed, nosetest added to setup.py :ghpull:`757`
-- Added Ubuntu Linux Instructions :ghpull:`724`
 - Enable ANSI underline and inverse :ghpull:`696`
-- Remove offline statement and add some clarifications in slides docs :ghpull:`743`
 - Update notebook css to 5.4.0 :ghpull:`748`
 - Change default for slides to direct to the reveal cdn rather than locally :ghpull:`732`
-- Better content hiding; template & testing improvements :ghpull:`734`
-- Skip executing empty code cells :ghpull:`739`
-- Fix Jinja syntax in custom template example. :ghpull:`738`
-- Fix for an issue with empty math block :ghpull:`729`
 - Use "title" instead of "name" for metadata to match the notebook format :ghpull:`703`
-- Linkify PR number :ghpull:`710`
 - Img filename metadata :ghpull:`685`
-- Added shebang for python :ghpull:`694`
-- Upgrade mistune dependency :ghpull:`705`
 - Added MathJax compatibility definitions :ghpull:`687`
-- Fixes for traitlets 4.1 deprecation warnings :ghpull:`695`
 - Per cell exception :ghpull:`684`
-- add feature to improve docs by having links to prs :ghpull:`662`
-- Raw template as settable attribute :ghpull:`675`
-- Update notebook CSS from version 4.3.0 to 5.1.0 :ghpull:`682`
-- Update notebook CSS from 4.3.0 to 5.1.0 :ghpull:`1`
+- Simple API for in-memory templates :ghpull:`674` :ghpull:`675`
 - Set BIBINPUTS and BSTINPUTS environment variables when making PDF :ghpull:`676`
 - If ``nb.metadata.title`` is set, default to that for notebook :ghpull:`672`
 - Explicitly exclude or include all files in Manifest. :ghpull:`670`
 
+Deprecations
+++++++++++++
+- Drop support for python 3.3 :ghpull:`843`
+
+Fixing Problems
++++++++++++++++
+- Fix api break :ghpull:`872`
+- Don't remove empty cells by default :ghpull:`784`
+- Handle attached images in html converter :ghpull:`780`
+- No need to check for the channels already running :ghpull:`862`
+- Update ``font-awesome`` version for slides :ghpull:`793`
+- Properly treat JSON data :ghpull:`847`
+- Skip executing empty code cells :ghpull:`739`
+- Ppdate log.warn (deprecated) to log.warning :ghpull:`804`
+- Cleanup notebook.tex during PDF generation :ghpull:`768`
+- Windows unicode error fixed, nosetest added to setup.py :ghpull:`757`
+- Better content hiding; template & testing improvements :ghpull:`734`
+- Fix Jinja syntax in custom template example. :ghpull:`738`
+- Fix for an issue with empty math block :ghpull:`729`
+- Add parser for Multiline math for LaTeX blocks :ghpull:`716` :ghpull:`717`
+- Use defusedxml to parse potentially untrusted XML :ghpull:`708`
+- Fixes for traitlets 4.1 deprecation warnings :ghpull:`695`
+
+Testing, Docs, and Builds
++++++++++++++++++++++++++
+- A couple of typos :ghpull:`870`
+- Add python_requires metadata. :ghpull:`871`
+- Document ``--inplace`` command line flag. :ghpull:`839`
+- Fix minor typo in ``usage.rst`` :ghpull:`863`
+- Add note about local ``reveal_url_prefix`` :ghpull:`844`
+- Move ``onlyif_cmds_exist`` decorator to test-specific utils :ghpull:`854`
+- Include LICENSE file in wheels :ghpull:`827`
+- Added Ubuntu Linux Instructions :ghpull:`724`
+- Check for too recent of pandoc version :ghpull:`814` :ghpull:`872`
+- Removing more nose remnants via dependencies. :ghpull:`758`
+- Remove offline statement and add some clarifications in slides docs :ghpull:`743`
+- Linkify PR number :ghpull:`710`
+- Added shebang for python :ghpull:`694`
+- Upgrade mistune dependency :ghpull:`705`
+- add feature to improve docs by having links to prs :ghpull:`662`
+- Update notebook CSS from version 4.3.0 to 5.1.0 :ghpull:`682`
 
 5.3.1
 -----
