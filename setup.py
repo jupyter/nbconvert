@@ -70,6 +70,7 @@ package_data = {
 notebook_css_version = '5.4.0'
 css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
+
 class FetchCSS(Command):
     description = "Fetch Notebook CSS from Jupyter CDN"
     user_options = []
@@ -127,6 +128,7 @@ class FetchCSS(Command):
 
 cmdclass = {'css': FetchCSS}
 
+
 class bdist_egg_disabled(bdist_egg):
     """Disabled version of bdist_egg
 
@@ -135,7 +137,6 @@ class bdist_egg_disabled(bdist_egg):
     """
     def run(self):
         sys.exit("Aborting implicit building of eggs. Use `pip install .` to install from source.")
-
 
 def css_first(command):
     class CSSFirst(command):
@@ -151,7 +152,6 @@ cmdclass['bdist_egg'] = bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disa
 for d, _, _ in os.walk(pjoin(pkg_root, 'templates')):
     g = pjoin(d[len(pkg_root)+1:], '*.*')
     package_data['nbconvert'].append(g)
-
 
 version_ns = {}
 with open(pjoin(here, name, '_version.py')) as f:
@@ -176,13 +176,11 @@ Using nbconvert enables:
 setup_args = dict(
     name            = name,
     description     = "Converting Jupyter Notebooks",
-    long_description    = long_description,
     long_description_content_type   = 'text/markdown',
     version         = version_ns['__version__'],
     scripts         = glob(pjoin('scripts', '*')),
     packages        = packages,
     long_description= long_description,
-    python_requires = '>=2.6,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
     package_data    = package_data,
     cmdclass        = cmdclass,
     python_requires = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
@@ -209,6 +207,7 @@ setup_args = dict(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
 
