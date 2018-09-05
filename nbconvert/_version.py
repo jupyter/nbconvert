@@ -1,11 +1,11 @@
-version_info = (5, 3, 2)
+version_info = (5, 4, 0)
 pre_info = ''
-dev_info = 'dev'
+dev_info = ''
 
 def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
     '''
-    Creates a pep440 valid version of version number given a tuple integers 
-    and optional epoch, prerelease and developmental info. 
+    Creates a pep440 valid version of version number given a tuple integers
+    and optional epoch, prerelease and developmental info.
 
     Parameters
     ----------
@@ -16,8 +16,8 @@ def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
     '''
 
     pep440_err = "The version number is not a pep 440 compliant version number"
-    
-    
+
+
     if epoch is not None:
         epoch_seg = str(epoch) + '!'
     else:
@@ -30,7 +30,7 @@ def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
         raise ValueError(pep440_err + "\n please fix your prerelease segment.")
     else:
         pre_seg = pre_input
-    
+
     if dev_input=='':
         dev_seg = dev_input
     elif not dev_input.startswith('.') and dev_input.startswith('dev'):
@@ -39,7 +39,7 @@ def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
         dev_seg = dev_input
     elif dev_input!='':
         raise ValueError(pep440_err + "\n please fix your development segment.")
-    
+
     if dev_input!='' and not any([dev_seg.endswith(str(n)) for n in range(10)]):
         dev_seg = ''.join([dev_seg,'0'])
 
@@ -50,14 +50,14 @@ def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
     def is_canonical(version):
         return re.match(r'^([1-9]\d*!)?(0|[1-9]\d*)'
                         r'(\.(0|[1-9]\d*))*((a|b|rc)(0|[1-9]\d*))?'
-                        r'(\.post(0|[1-9]\d*))?(\.dev(0|[1-9]\d*))?$', 
+                        r'(\.post(0|[1-9]\d*))?(\.dev(0|[1-9]\d*))?$',
                         version
                         ) is not None
-    
+
     if is_canonical(out_version):
         return out_version
     else:
         raise ValueError(pep440_err)
 
 
-__version__ = create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info) 
+__version__ = create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info)

@@ -160,6 +160,19 @@ with open(pjoin(here, name, '_version.py')) as f:
 with io.open(pjoin(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+long_description="""
+
+Nbconvert is a Command Line tool and Python library and API to process and
+convert Jupyter notebook into a variety of other formats.
+
+Using nbconvert enables:
+
+  - presentation of information in familiar formats, such as PDF.
+  - publishing of research using LaTeX and opens the door for embedding notebooks in papers.
+  - collaboration with others who may not use the notebook in their work.
+  - sharing contents with many people via the web using HTML.
+"""
+
 setup_args = dict(
     name            = name,
     description     = "Converting Jupyter Notebooks",
@@ -168,12 +181,20 @@ setup_args = dict(
     version         = version_ns['__version__'],
     scripts         = glob(pjoin('scripts', '*')),
     packages        = packages,
+    long_description= long_description,
+    python_requires = '>=2.6,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
     package_data    = package_data,
     cmdclass        = cmdclass,
     python_requires = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
-    url             = 'http://jupyter.org',
+    url             = 'https://jupyter.org',
+    project_urls={
+        'Documentation': 'https://nbconvert.readthedocs.io/en/latest/',
+        'Funding'      : 'https://numfocus.org/',
+        'Source'       : 'https://github.com/jupyter/nbconvert',
+        'Tracker'      : 'https://github.com/jupyter/nbconvert/issues',
+    },
     license         = 'BSD',
     platforms       = "Linux, Mac OS X, Windows",
     keywords        = ['Interactive', 'Interpreter', 'Shell', 'Web'],
