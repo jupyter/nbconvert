@@ -14,31 +14,72 @@ Significant Changes
 Deprecations
 ++++++++++++
 
+Python 3.3 support was dropped. The version of python is no longer common and new versions have many fixes and interface improvements that warrant the change in support.
+
+See :ghpull:`843` for implementation details.
+
 Changes in how we handle metadata
 +++++++++++++++++++++++++++++++++
 
-# NOTE describe metadata changes (867, 703, 685, 672)
-## 685 allows you to set image filename on export
-## 684 force_raise_errors
+There were a few new metadata fields which are now respected in nbconvert.
+
+``nb.metadata.authors`` metadata attribute will be respected in latex exports. Multiple authers will be added with ``,`` separation against their names.
+
+``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
+
+``nb.metadata.filename`` will override the default output_filename_template when extracting notebook resources in the ``ExtractOutputPreprocessor``. Helpful for when you want to consistently fix to a particular output filename, espcially when you need to set image filenames for your exports.
+
+The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``), or ``nb.metadata.allow_errors`` for all ells, now allows for cell exceptions to not halt execution as respected in nbval and other notebook interfaces. This feature is toggleable with the ``force_raise_errors`` configuration option.
+Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
+If an error occurs when it is not explicitly allowed, a ``CellExecutionError`` will be raised.
+If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the `raises-exception` cell tag.
+
+See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684` for implementation changes.
 
 Configurable kernel managers when executing notebooks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Pass configurable kernel manager to execute nbfunc + preprocessor (852)
+
+The kernel manager can now be optinally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the kwarg ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
+
+This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the spark cluster location ahead of time without building a new kernel.
+
+See :ghpull:`852` for implementation changes.
 
 Surfacing exporters in front-ends
 +++++++++++++++++++++++++++++++++
- 
-# Export from notebook + custom exporters allows classic notebook to expose download as (759, 864)
+
+Custom exporters are now exposed for front-ends, including classic notebook, to consume. As an example, this means that latex exporter will be made available for latex 'text/latex' mimetype for the Download As interface.
+
+See :ghpull:`759` and :ghpull:`864` for implementation changes.
 
 Raw Templates
 +++++++++++++
 
-# Raw template (675)
+Template exporters can now be assigned raw templates as string attributes by setting the raw_template variable.
+
+.. code-block::
+
+  class AttrExporter(TemplateExporter):
+      # If the class has a special template and you want it defined within the class
+      raw_template = """{%- extends 'rst.tpl' -%}
+  {%- block in_prompt -%}
+  raw template
+  {%- endblock in_prompt -%}
+      """
+  exporter_attr = AttrExporter()
+  output_attr, _ = exporter_attr.from_notebook_node(nb)
+  assert "raw template" in output_attr
+
+See :ghpull:`675` for implementation changes.
 
 New command line flags
 ++++++++++++++++++++++
-- No input flag (``--no-input``) :ghpull:`825`
-- Add alias ``--to ipynb`` for notebook exporter :ghpull:`873`
+
+The ``--no-input`` flag will apply metadata changes to input cells to mark them as hidden. This is great for notebooks which generate "reports" where you want the code that was executed to not appear by default.
+
+An alias for ``notebook`` was added to exporter commands. Now ``--to ipynb`` will behave as ``--to notebook`` does.
+
+See :ghpull:`825` and :ghpull:`873` for implementation changes.
 
 Comprehensive notes
 ~~~~~~~~~~~~~~~~~~~
