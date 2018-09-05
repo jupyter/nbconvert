@@ -23,23 +23,23 @@ Changes in how we handle metadata
 
 There were a few new metadata fields which are now respected in nbconvert.
 
-``nb.metadata.authors`` metadata attribute will be respected in latex exports. Multiple authers will be added with ``,`` separation against their names.
+``nb.metadata.authors`` metadata attribute will be respected in latex exports. Multiple authors will be added with ``,`` separation against their names.
 
 ``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
 
-``nb.metadata.filename`` will override the default output_filename_template when extracting notebook resources in the ``ExtractOutputPreprocessor``. Helpful for when you want to consistently fix to a particular output filename, espcially when you need to set image filenames for your exports.
+``nb.metadata.filename`` will override the default output_filename_template when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
 
-The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``), or ``nb.metadata.allow_errors`` for all ells, now allows for cell exceptions to not halt execution as respected in nbval and other notebook interfaces. This feature is toggleable with the ``force_raise_errors`` configuration option.
+The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by nbval and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
 Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
 If an error occurs when it is not explicitly allowed, a ``CellExecutionError`` will be raised.
-If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the `raises-exception` cell tag.
+If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the `raises-exception` cell tags.
 
 See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684` for implementation changes.
 
 Configurable kernel managers when executing notebooks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The kernel manager can now be optinally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the kwarg ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
+The kernel manager can now be optionally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the kwarg ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
 
 This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the spark cluster location ahead of time without building a new kernel.
 
