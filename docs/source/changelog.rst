@@ -40,9 +40,11 @@ New command line flags
 - No input flag (``--no-input``) :ghpull:`825`
 - Add alias ``--to ipynb`` for notebook exporter :ghpull:`873`
 
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
 
 New Features
-~~~~~~~~~~~~
+++++++++++++
 - No input flag (``--no-input``) :ghpull:`825`
 - Add alias ``--to ipynb`` for notebook exporter :ghpull:`873`
 - Add ``export_from_notebook`` :ghpull:`864`
@@ -65,11 +67,11 @@ New Features
 - If ``nb.metadata.title`` is set, default to that for notebook :ghpull:`672`
 
 Deprecations
-~~~~~~~~~~~~
+++++++++++++
 - Drop support for python 3.3 :ghpull:`843`
 
 Fixing Problems
-~~~~~~~~~~~~~~~
++++++++++++++++
 - Fix api break :ghpull:`872`
 - Don't remove empty cells by default :ghpull:`784`
 - Handle attached images in html converter :ghpull:`780`
@@ -88,7 +90,7 @@ Fixing Problems
 - Fixes for traitlets 4.1 deprecation warnings :ghpull:`695`
 
 Testing, Docs, and Builds
-~~~~~~~~~~~~~~~~~~~~~~~~~
++++++++++++++++++++++++++
 - A couple of typos :ghpull:`870`
 - Add python_requires metadata. :ghpull:`871`
 - Document ``--inplace`` command line flag. :ghpull:`839`
