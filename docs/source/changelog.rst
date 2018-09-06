@@ -48,7 +48,7 @@ See :ghpull:`852` for implementation changes.
 Surfacing exporters in front-ends
 +++++++++++++++++++++++++++++++++
 
-Custom exporters are now exposed for front-ends, including classic notebook, to consume. As an example, this means that latex exporter will be made available for latex 'text/latex' mimetype for the Download As interface.
+Exporters are now exposed for front-ends to consume, including classic notebook. As an example, this means that latex exporter will be made available for latex 'text/latex' media type from the Download As interface.
 
 See :ghpull:`759` and :ghpull:`864` for implementation changes.
 
@@ -75,7 +75,7 @@ See :ghpull:`675` for implementation changes.
 New command line flags
 ++++++++++++++++++++++
 
-The ``--no-input`` flag will apply metadata changes to input cells to mark them as hidden. This is great for notebooks which generate "reports" where you want the code that was executed to not appear by default.
+The ``--no-input`` will hide input cells on export. This is great for notebooks which generate "reports" where you want the code that was executed to not appear by default in the extracts.
 
 An alias for ``notebook`` was added to exporter commands. Now ``--to ipynb`` will behave as ``--to notebook`` does.
 
