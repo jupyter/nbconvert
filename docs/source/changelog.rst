@@ -27,21 +27,21 @@ There were a few new metadata fields which are now respected in nbconvert.
 
 ``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
 
-``nb.metadata.filename`` will override the default output_filename_template when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
+``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
 
-The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by nbval and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
+The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by `nbval <https://github.com/computationalmodelling/nbval>`_ and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
 Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
 If an error occurs when it is not explicitly allowed, a ``CellExecutionError`` will be raised.
-If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the `raises-exception` cell tags.
+If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the ``raises-exception`` cell tags.
 
 See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684` for implementation changes.
 
 Configurable kernel managers when executing notebooks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The kernel manager can now be optionally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the kwarg ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
+The kernel manager can now be optionally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the keyword argument ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
 
-This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the spark cluster location ahead of time without building a new kernel.
+This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the Spark cluster location ahead of time without building a new kernel.
 
 See :ghpull:`852` for implementation changes.
 
@@ -55,7 +55,7 @@ See :ghpull:`759` and :ghpull:`864` for implementation changes.
 Raw Templates
 +++++++++++++
 
-Template exporters can now be assigned raw templates as string attributes by setting the raw_template variable.
+Template exporters can now be assigned raw templates as string attributes by setting the ``raw_template`` variable.
 
 .. code-block::
 
