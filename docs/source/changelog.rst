@@ -43,6 +43,8 @@ The kernel manager can now be optionally passed into the ``ExecutePreprocessor.p
 
 This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the Spark cluster location ahead of time without building a new kernel.
 
+Overall the ExecutePreprocessor has been reworked to make it easier to use. Future releases will continue this trend to make this section of the code more inheritable and reusable by others. We encourage you read the source code for this version if you're interested in the detailed improvements.
+
 See :ghpull:`852` for implementation changes.
 
 Surfacing exporters in front-ends
