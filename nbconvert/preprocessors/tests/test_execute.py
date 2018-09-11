@@ -19,7 +19,7 @@ import sys
 import pytest
 
 from .base import PreprocessorTestsBase
-from ..execute import ExecutePreprocessor, CellExecutionError, executenb
+from ..execute import ExecutePreprocessor, CellExecutionError, executenb, find_kernel_name
 
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
@@ -265,6 +265,15 @@ class TestExecute(PreprocessorTestsBase):
         for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
 
+    def test_find_kernel_name(self):
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'UnicodePy3.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+        
+        assert find_kernel_name(input_nb) == "python3"
+        
     def test_execute_function(self):
         # Test the executenb() convenience API
         current_dir = os.path.dirname(__file__)
