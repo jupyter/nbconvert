@@ -21,6 +21,8 @@ import pytest
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb, find_kernel_name
 
+from jupyter_client.kernelspec import KernelSpecManager
+
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
 from ipython_genutils.py3compat import string_types
@@ -150,6 +152,19 @@ class TestExecute(PreprocessorTestsBase):
         res = self.build_resources()
         res['metadata']['path'] = ''
         input_nb, output_nb = self.run_notebook(filename, {}, res)
+        self.assert_notebooks_equal(input_nb, output_nb)
+    
+    @pytest.mark.xfail("python3" not in KernelSpecManager().find_kernel_specs(),
+                        reason="requires a python3 kernelspec")
+    def test_empty_kernel_name(self):
+        """Can kernel in nb metadata be found when an empty string is passed?
+        
+        Note: this pattern should be discouraged in practice.
+        Passing in no kernel_name to ExecutePreprocessor is preferable.
+        """
+        filename = os.path.join(current_dir, 'files', 'UnicodePy3.ipynb')
+        res = self.build_resources()
+        input_nb, output_nb = self.run_notebook(filename, {"kernel_name": ""}, res)
         self.assert_notebooks_equal(input_nb, output_nb)
 
     def test_disable_stdin(self):
