@@ -4,6 +4,8 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import warnings
+
 from textwrap import dedent
 from contextlib import contextmanager
 
@@ -161,7 +163,7 @@ class ExecutePreprocessor(Preprocessor):
     @default('kernel_name')
     def _kernel_name_default(self):
         try:
-            return self.nb.metadata.get('kernelspec', {}).get('name', 'python')
+            return find_kernel_name(self.nb)
         except AttributeError:
             raise AttributeError('You did not specify a kernel_name for '
                                  'the ExecutePreprocessor and you have not set '
@@ -248,6 +250,16 @@ class ExecutePreprocessor(Preprocessor):
         kc : KernelClient
             Kernel client as created by the kernel manager `km`.
         """
+        
+        # Because of an old API, an empty kernel string should be interpreted as indicating
+        # that you want to use the notebook's metadata specified kernel.
+        # We use find_kernel_name to do this.
+        if self.kernel_name == u"":
+            self.kernel_name = find_kernel_name(self.nb)
+            warnings.warn("Setting kernel_name to '' as a way to use the kernel in a notebook metadata's is deprecated as of 5.4. \n"
+                          "Instead, do not set kernel_name, this is now default behaviour.", DeprecationWarning, stacklevel=2)
+            
+            
         km = self.kernel_manager_class(kernel_name=self.kernel_name,
                                        config=self.config)
         km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
@@ -516,6 +528,20 @@ class ExecutePreprocessor(Preprocessor):
 
         return exec_reply, outs
 
+def find_kernel_name(nb):
+    """This is a utility that finds kernel names from notebook metadata.
+    
+    Parameters
+    ----------
+    nb : NotebookNode
+        The notebook that has a kernelspec defined in its metadata.
+
+    Returns
+    -------
+    kernel_name: str
+        The string representing the kernel name found in the metadata.
+    """
+    return nb.metadata.get('kernelspec', {}).get('name', 'python')
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
