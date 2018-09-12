@@ -21,11 +21,12 @@ import pytest
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb, find_kernel_name
 
+from testpath import modified_env
+from traitlets import TraitError
 from jupyter_client.kernelspec import KernelSpecManager
+from ipython_genutils.py3compat import string_types
 
 from nbconvert.filters import strip_ansi
-from testpath import modified_env
-from ipython_genutils.py3compat import string_types
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
@@ -160,12 +161,14 @@ class TestExecute(PreprocessorTestsBase):
         """Can kernel in nb metadata be found when an empty string is passed?
         
         Note: this pattern should be discouraged in practice.
-        Passing in no kernel_name to ExecutePreprocessor is preferable.
+        Passing in no kernel_name to ExecutePreprocessor is recommended instead.
         """
         filename = os.path.join(current_dir, 'files', 'UnicodePy3.ipynb')
         res = self.build_resources()
         input_nb, output_nb = self.run_notebook(filename, {"kernel_name": ""}, res)
         self.assert_notebooks_equal(input_nb, output_nb)
+        with pytest.raises(TraitError):
+            input_nb, output_nb = self.run_notebook(filename, {"kernel_name": None}, res)
 
     def test_disable_stdin(self):
         """Test disabling standard input"""

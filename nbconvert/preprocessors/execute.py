@@ -254,13 +254,15 @@ class ExecutePreprocessor(Preprocessor):
         # Because of an old API, an empty kernel string should be interpreted as indicating
         # that you want to use the notebook's metadata specified kernel.
         # We use find_kernel_name to do this.
-        if self.kernel_name == u"":
-            self.kernel_name = find_kernel_name(self.nb)
+        if not self.kernel_name:
+            kernel_name = find_kernel_name(self.nb)
             warnings.warn("Setting kernel_name to '' as a way to use the kernel in a notebook metadata's is deprecated as of 5.4. \n"
                           "Instead, do not set kernel_name, this is now default behaviour.", DeprecationWarning, stacklevel=2)
+        else:
+            kernel_name = self.kernel_name
             
             
-        km = self.kernel_manager_class(kernel_name=self.kernel_name,
+        km = self.kernel_manager_class(kernel_name=kernel_name,
                                        config=self.config)
         km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
 
