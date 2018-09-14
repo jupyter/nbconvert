@@ -59,7 +59,7 @@ Raw Templates
 
 Template exporters can now be assigned raw templates as string attributes by setting the ``raw_template`` variable.
 
-.. code-block::
+.. code-block:: python
 
   class AttrExporter(TemplateExporter):
       # If the class has a special template and you want it defined within the class
