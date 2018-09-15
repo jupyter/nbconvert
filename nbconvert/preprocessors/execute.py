@@ -556,20 +556,6 @@ class ExecutePreprocessor(Preprocessor):
 
         return exec_reply, outs
 
-def find_kernel_name(nb):
-    """This is a utility that finds kernel names from notebook metadata.
-    
-    Parameters
-    ----------
-    nb : NotebookNode
-        The notebook that has a kernelspec defined in its metadata.
-
-    Returns
-    -------
-    kernel_name: str
-        The string representing the kernel name found in the metadata.
-    """
-    return nb.metadata.get('kernelspec', {}).get('name', 'python')
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
