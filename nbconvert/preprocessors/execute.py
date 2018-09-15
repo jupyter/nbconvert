@@ -14,7 +14,7 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
-from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, Integer, default
+from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, Integer, default, validate
 
 from nbformat.v4 import output_from_msg
 
@@ -163,13 +163,33 @@ class ExecutePreprocessor(Preprocessor):
     @default('kernel_name')
     def _kernel_name_default(self):
         try:
-            return find_kernel_name(self.nb)
+            return self.nb.metadata.get('kernelspec', {}).get('name', 'python')
         except AttributeError:
             raise AttributeError('You did not specify a kernel_name for '
                                  'the ExecutePreprocessor and you have not set '
                                  'self.nb to be able to use that to infer the '
                                  'kernel_name.')
+        
 
+    @validate('kernel_name')
+    def _valid_kernel_name(self, proposal):
+        # import pdb;pdb.set_trace()
+        if proposal.value ==u"" and hasattr(self, 'nb'):
+            response = self.nb.metadata.get('kernelspec', {}).get('name', 'python') 
+            if response not in list('python', *self.kernelspec_manager_class(parent=self).find_kernel_specs()):
+                raise AttributeError("""
+                    You specified an empty kernel_name `''`. We inferred the kernel name `{}` 
+                    from your notebook metadata. The {} was unable to find 
+                    a kernel by that name.""".format(response, self.kernelspec_manager_class))
+        elif proposal.value==u"":
+            response = 'python'
+        else:
+            response = proposal.value
+            if response not in list('python', *self.kernelspec_manager_class(parent=self).find_kernel_specs()):
+                raise AttributeError('You specified the kernel_name `{}`. The {} was unable '
+                                     'to find a kernel by that name'.format(response, self.kernelspec_manager_class))
+        return response 
+        
     raise_on_iopub_timeout = Bool(False,
         help=dedent(
             """
@@ -219,6 +239,19 @@ class ExecutePreprocessor(Preprocessor):
         except ImportError:
             raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
         return KernelManager
+        
+    kernelspec_manager_class = Type(
+        config=True,
+        help='The kernelspec manager class to use.'
+    )
+    @default('kernelspec_manager_class')
+    def kernelspec_manager_class_default(self):
+        """Use a dynamic default to avoid importing jupyter_client at startup"""
+        try:
+            from jupyter_client.kernelspec import KernelSpecManager
+        except ImportError:
+            raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
+        return KernelSpecManager
 
     _display_id_map = Dict(
         help=dedent(
@@ -254,16 +287,9 @@ class ExecutePreprocessor(Preprocessor):
         # Because of an old API, an empty kernel string should be interpreted as indicating
         # that you want to use the notebook's metadata specified kernel.
         # We use find_kernel_name to do this.
-        if not self.kernel_name:
-            kernel_name = find_kernel_name(self.nb)
-            warnings.warn("Setting kernel_name to '' as a way to use the kernel in a notebook metadata's is deprecated as of 5.4. \n"
-                          "Instead, do not set kernel_name, this is now default behaviour.", DeprecationWarning, stacklevel=2)
-        else:
-            kernel_name = self.kernel_name
             
-            
-        km = self.kernel_manager_class(kernel_name=kernel_name,
-                                       config=self.config)
+        km = self.kernel_manager_class(kernel_name=self.kernel_name,
+                                       parent=self)
         km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
 
         kc = km.client()
