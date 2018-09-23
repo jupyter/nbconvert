@@ -27,6 +27,10 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     highlight_class = Unicode('.highlight',
                               help="CSS highlight class identifier"
     ).tag(config=True)
+    
+    style = Unicode('default',
+            help='Name of the pygments style to use'
+    ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
         Preprocessor.__init__(self, *pargs, **kwargs)
@@ -70,7 +74,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
             header.append(f.read())
 
         # Add pygments CSS
-        formatter = HtmlFormatter()
+        formatter = HtmlFormatter(style=self.style)
         pygments_css = formatter.get_style_defs(self.highlight_class)
         header.append(pygments_css)
 
