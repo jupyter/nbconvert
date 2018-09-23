@@ -34,3 +34,21 @@ class TestLatex(PreprocessorTestsBase):
 
         # Verify that the markdown cell wasn't processed.
         self.assertEqual(nb.cells[1].source, '$ e $')
+    
+    def test_highlight(self):
+        """Check that highlighting style can be changed"""
+        nb = self.build_notebook()
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor()
+
+        # Set the style to a known builtin that's not the default
+        preprocessor.style='colorful'
+        nb, res = preprocessor(nb, res)
+        style_defs = res['latex']['pygments_definitions']
+
+        # Get the default
+        from pygments.formatters import LatexFormatter
+        default_defs = LatexFormatter(style='default').get_style_defs()
+
+        # Verify that the style was in fact changed
+        assert style_defs != default_defs
