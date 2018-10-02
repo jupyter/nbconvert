@@ -38,7 +38,7 @@
             ((*- if type in ['text/plain'] *))
 ((( add_prompt(output.data['text/plain'] | escape_latex, cell, 'Out', 'outcolor') )))
             ((* else -*))
-\texttt{\color{outcolor}Out[{\color{outcolor}((( cell.execution_count )))}]:}((( super() )))
+\texttt{\color{outcolor}Out[((( cell.execution_count )))]:}((( super() )))
             ((*- endif -*))
         ((*- else -*))
             ((*- if type in ['text/plain'] *))
@@ -65,6 +65,6 @@
     ((*- endif -*))
     ((*- set indention =  " " * (execution_count | length + 7) -*))
 \begin{Verbatim}[commandchars=\\\{\}]
-((( text | add_prompts(first='{\color{' ~ prompt_color ~ '}' ~ prompt ~ '[{\\color{' ~ prompt_color ~ '}' ~ execution_count ~ '}]:} ', cont=indention) )))
+((( text | add_prompts(first='{\color{' ~ prompt_color ~ '}' ~ prompt ~ '[' ~ execution_count ~ ']:} ', cont=indention) )))
 \end{Verbatim}
 ((*- endmacro *))
