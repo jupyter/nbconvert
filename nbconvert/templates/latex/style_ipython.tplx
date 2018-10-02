@@ -49,6 +49,7 @@
 \begin{minipage}[t]{\outputareawidth}\vspace{0pt}
 ((( super() )))
 \end{minipage}
+\vspace{0pt}
             ((* endif -*))
         ((*- else -*))
             ((*- if type in ['text/plain'] *))
