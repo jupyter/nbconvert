@@ -38,8 +38,18 @@
             ((*- if type in ['text/plain'] *))
 ((( add_prompt(output.data['text/plain'] | escape_latex, cell, 'Out', 'outcolor') )))
             ((* else -*))
-\texttt{\color{outcolor}Out[((( cell.execution_count )))]:}((( super() )))
-            ((*- endif -*))
+\newbox\promptbox
+\savebox{\promptbox}{\texttt{\color{outcolor}Out[((( cell.execution_count )))]:} }
+\newskip\outputareawidth
+\outputareawidth=\textwidth
+\advance\outputareawidth by -\wd\promptbox
+\vspace{-1.5ex}\begin{minipage}[t]{\wd\promptbox}\vspace{0pt}
+\usebox{\promptbox}
+\end{minipage}%%
+\begin{minipage}[t]{\outputareawidth}\vspace{0pt}
+((( super() )))
+\end{minipage}
+            ((* endif -*))
         ((*- else -*))
             ((*- if type in ['text/plain'] *))
 ((( output.data['text/plain'] | escape_latex )))

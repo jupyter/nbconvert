@@ -58,7 +58,7 @@
 % Redirect execute_result to display data priority.
 ((* block execute_result scoped *))
     ((* block data_priority scoped *))
-    ((( super() )))
+    \noindent ((( super() )))
     ((* endblock *))
 ((* endblock execute_result *))
 
