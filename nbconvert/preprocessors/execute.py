@@ -292,6 +292,8 @@ class ExecutePreprocessor(Preprocessor):
         self.nb = nb
         # clear display_id map
         self._display_id_map = {}
+        self.widget_state = {}
+        self.widget_buffers = {}
 
         if km is None:
             self.km, self.kc = self.start_new_kernel(cwd=path)
@@ -328,7 +330,6 @@ class ExecutePreprocessor(Preprocessor):
         Preprocess notebook executing each code cell.
 
         The input argument `nb` is modified in-place.
-        self.widget_buffers = {}
 
         Parameters
         ----------
@@ -355,6 +356,7 @@ class ExecutePreprocessor(Preprocessor):
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
             info_msg = self._wait_for_reply(self.kc.kernel_info())
             nb.metadata['language_info'] = info_msg['content']['language_info']
+            self.set_widgets_metadata()
 
         return nb, resources
 
