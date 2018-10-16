@@ -113,12 +113,11 @@ class SnapshotPreProcessor(Preprocessor):
         # self.nb = nbformat.read(input.replace('.html', '.ipynb'), as_version=4)
         self.nb = nb
         for cell_index, cell in enumerate(self.nb.cells):
-            for output_index, output in enumerate(cell.outputs):
-                if 'data' in output:
-                    if MIME_TYPE_JUPYTER_WIDGET_VIEW in output['data'] or MIME_TYPE_HTML in output['data']:
-                        self.snapshot_dict[(cell_index, output_index)] = output
-        import pdb
-        pdb.set_trace()
+            if 'outputs' in cell:
+                for output_index, output in enumerate(cell.outputs):
+                    if 'data' in output:
+                        if MIME_TYPE_JUPYTER_WIDGET_VIEW in output['data'] or MIME_TYPE_HTML in output['data']:
+                            self.snapshot_dict[(cell_index, output_index)] = output
         if self.snapshot_dict.keys():
             with tempfile.TemporaryDirectory() as dirname:
                 html_exporter = HTMLExporter(template_file='snapshot', default_preprocessors=[
