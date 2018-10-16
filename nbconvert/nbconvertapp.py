@@ -66,7 +66,7 @@ nbconvert_flags.update({
         "Execute the notebook prior to export."
         ),
     'snapshot' : (
-        {'SnapshotPreprocessor' : {'enabled' : True}},
+        {'SnapshotPreProcessor' : {'enabled' : True}},
         "Create snapshots using a real browser"
         ),
     'allow-errors' : (

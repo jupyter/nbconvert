@@ -77,7 +77,6 @@ class SnapshotPreProcessor(Preprocessor):
     Proxies reveal.js requests to a CDN if no local reveal.js is present
     """
 
-    enabled = Bool(True).tag(config=True)
     open_in_browser = Bool(True,
         help="""Should the browser be opened automatically?"""
     ).tag(config=True)
