@@ -3,6 +3,8 @@
 # needs these two lines:
 sudo: required
 dist: trusty
+addons:
+  chrome: stable
 
 language: python
 python:
