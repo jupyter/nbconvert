@@ -579,12 +579,13 @@ def _serialize_widget_state(state):
 
 
 def _get_buffer_data(msg):
-    buffers = []
-    path = msg['content']['data']['buffer_paths']
-    for buffer in msg['buffers']:
-        buffers.append({
+    encoded_buffers = []
+    paths = msg['content']['data']['buffer_paths']
+    buffers = msg['buffers']
+    for path, buffer in zip(paths, buffers):
+        encoded_buffers.append({
             'data': base64.b64encode(buffer.obj).decode('utf-8'),
             'encoding': 'base64',
             'path': path
         })
-    return buffers
+    return encoded_buffers
