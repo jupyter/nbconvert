@@ -22,26 +22,6 @@ from ..exporters.html import HTMLExporter
 from ..writers import FilesWriter
 
 
-class ProxyHandler(web.RequestHandler):
-    """handler the proxies requests from a local prefix to a CDN"""
-    @web.asynchronous
-    def get(self, prefix, url):
-        """proxy a request to a CDN"""
-        proxy_url = "/".join([self.settings['cdn'], url])
-        client = self.settings['client']
-        client.fetch(proxy_url, callback=self.finish_get)
-    
-    def finish_get(self, response):
-        """finish the request"""
-        # rethrow errors
-        response.rethrow()
-        
-        for header in ["Content-Type", "Cache-Control", "Date", "Last-Modified", "Expires"]:
-            if header in response.headers:
-                self.set_header(header, response.headers[header])
-        self.finish(response.body)
-
-
 class SnapshotHandler(web.RequestHandler):
     def initialize(self, snapshot_dict, callback):
         self.snapshot_dict = snapshot_dict
@@ -61,10 +41,7 @@ class SnapshotHandler(web.RequestHandler):
         assert image_data.startswith(header), 'not a png image?'
         self.snapshot_dict[key]['data'][MIME_TYPE_PNG] = image_data[len(header):]
         self.callback()
-        # print(data)
-        # print(view_id, image_data)
-        # print(self.configuration)
-        # f
+
 
 MIME_TYPE_JUPYTER_WIDGET_VIEW = 'application/vnd.jupyter.widget-view+json'
 MIME_TYPE_PNG = 'image/png'
@@ -104,13 +81,12 @@ class SnapshotPreProcessor(Preprocessor):
         for key, value in self.snapshot_dict.items():
             if value['data'][MIME_TYPE_PNG] is None:
                 done = False
-        if done:
+        if done and not self.keep_running:
             self.main_ioloop.stop()
 
     def preprocess(self, nb, resources):
         """Serve the build directory with a webserver."""
         self.snapshot_dict = {}
-        # self.nb = nbformat.read(input.replace('.html', '.ipynb'), as_version=4)
         self.nb = nb
         for cell_index, cell in enumerate(self.nb.cells):
             if 'outputs' in cell:
@@ -121,17 +97,10 @@ class SnapshotPreProcessor(Preprocessor):
         if self.snapshot_dict.keys():
             with tempfile.TemporaryDirectory() as dirname:
                 html_exporter = HTMLExporter(template_file='snapshot', default_preprocessors=[
-                                      # 'nbconvert.preprocessors.TagRemovePreprocessor',
-                                      # 'nbconvert.preprocessors.RegexRemovePreprocessor',
-                                      # 'nbconvert.preprocessors.ClearOutputPreprocessor',
-                                      # 'nbconvert.preprocessors.ExecutePreprocessor',
                                       'nbconvert.preprocessors.coalesce_streams',
                                       'nbconvert.preprocessors.SVG2PDFPreprocessor',
                                       'nbconvert.preprocessors.CSSHTMLHeaderPreprocessor',
-                                      # 'nbconvert.preprocessors.LatexPreprocessor',
                                       'nbconvert.preprocessors.HighlightMagicsPreprocessor',
-                                      # 'nbconvert.preprocessors.ExtractOutputPreprocessor',
-                                      #'nbconvert.preprocessors.SnapshotPreProcessor'
                                   ])
                 nbc =  copy.deepcopy(nb)
                 resc = copy.deepcopy(resources)
@@ -144,20 +113,10 @@ class SnapshotPreProcessor(Preprocessor):
                 # dirname, filename = os.path.split(input)
                 handlers = [
                     (r"/send_snapshot", SnapshotHandler, dict(snapshot_dict=self.snapshot_dict, callback=self.callback)),
-                    (r"/dist/(.+)", web.StaticFileHandler, {'path' : DIRNAME_STATIC}),
+                    (r"/static/(.+)", web.StaticFileHandler, {'path' : DIRNAME_STATIC}),
                     (r"/(.+)", web.StaticFileHandler, {'path' : dirname}),
                     (r"/", web.RedirectHandler, {"url": "/%s" % filename})
                 ]
-                
-                if ('://' in self.reveal_prefix or self.reveal_prefix.startswith("//")):
-                    # reveal specifically from CDN, nothing to do
-                    pass
-                elif os.path.isdir(os.path.join(dirname, self.reveal_prefix)):
-                    # reveal prefix exists
-                    self.log.info("Serving local %s", self.reveal_prefix)
-                else:
-                    self.log.info("Redirecting %s requests to %s", self.reveal_prefix, self.reveal_cdn)
-                    handlers.insert(0, (r"/(%s)/(.*)" % self.reveal_prefix, ProxyHandler))
                 
                 app = web.Application(handlers,
                                       cdn=self.reveal_cdn,
