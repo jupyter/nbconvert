@@ -3,11 +3,11 @@
 {% block ipywidgets %}
 <script>
 requirejs.config({
-    baseUrl: '',
+    baseUrl: 'static',
     paths: {}
 })
 
-  require(['dist/index'], function(lib) {
+  require(['snapshot'], function(lib) {
     if (document.readyState === "complete") {
         lib.renderWidgets();
     } else {

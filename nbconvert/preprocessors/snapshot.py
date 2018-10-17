@@ -46,7 +46,7 @@ class SnapshotHandler(web.RequestHandler):
 MIME_TYPE_JUPYTER_WIDGET_VIEW = 'application/vnd.jupyter.widget-view+json'
 MIME_TYPE_PNG = 'image/png'
 MIME_TYPE_HTML = 'text/html'
-DIRNAME_STATIC = os.path.join(os.path.dirname(__file__), '../../dist')
+DIRNAME_STATIC = os.path.join(os.path.dirname(__file__), '../static')
 
 class SnapshotPreProcessor(Preprocessor):
     """Pre processor designed to serve files

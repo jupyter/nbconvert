@@ -1,18 +1,18 @@
 {
-  "name": "jupyterlab-supersave",
+  "name": "nbconvert-snapshot",
   "version": "0.1.0",
-  "description": "Pro save options",
+  "description": "Create snapshots for nbconvert",
   "keywords": [
     "jupyter",
-    "jupyterlab",
+    "nbconvert",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/maartenbreddels/jupyterlab-supersave",
+  "homepage": "https://github.com/jupyter/nbconvert",
   "bugs": {
-    "url": "https://github.com/maartenbreddels/jupyterlab-supersave/issues"
+    "url": "https://github.com/jupyter/nbconvert/issues"
   },
   "license": "BSD-3-Clause",
-  "author": "Maarten Breddels, Olivier Borderies, Nicholas Bollweg",
+  "author": "Maarten Breddels",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
@@ -21,7 +21,7 @@
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maartenbreddels/jupyterlab-supersave.git"
+    "url": "https://github.com/jupyter/nbconvert.git"
   },
   "scripts": {
     "build": "tsc",
@@ -33,7 +33,8 @@
   },
   "dependencies": {
     "dom-to-image": "^2.6.0",
-    "html2canvas": "^1.0.0-alpha.12"
+    "html2canvas": "^1.0.0-alpha.12",
+    "font-awesome": "^4.7.0"
   },
   "peerDependencies": {
     "@jupyterlab/application": "^0.18.0",
@@ -49,6 +50,8 @@
     "@jupyterlab/notebook": "^0.18.0",
     "@types/requirejs": "^2.1.28",
     "css-loader": "^1.0.0",
+    "file-loader": "^1.1.5",
+    "url-loader": "^0.6.2",
     "postcss": "^6.0.11",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^10.0.0",

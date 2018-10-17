@@ -26,7 +26,12 @@ var rules = [
                 ]
             }
         }
-    ]}
+    ]},
+    { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff' },
+    { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff' },
+    { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/octet-stream' },
+    { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: 'file-loader' },
+    { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=image/svg+xml' }
 
     // { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
     // { test: /\.(ts|js)?$/, use: [
@@ -51,8 +56,8 @@ module.exports = [
     {   entry: './lib/index.js',
         devtool: 'inline-source-map',
         output: {
-            filename: 'index.js',
-            path: path.resolve(__dirname, `dist`),
+            filename: 'snapshot.js',
+            path: path.resolve(__dirname, `nbconvert/static`),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',

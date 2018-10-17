@@ -2,9 +2,12 @@
 // Distributed under the terms of the Modified BSD License.
 
 // import * as libembed from './libembed';
+declare var  __webpack_public_path__:string;
+// needed to make fontawesome work
+__webpack_public_path__ = 'static/'
 
 import {Manager} from './manager';
-// import 'font-awesome/css/font-awesome.css';
+import 'font-awesome/css/font-awesome.css';
 import '@phosphor/widgets/style/index.css';
 import '@jupyter-widgets/controls/css/widgets.built.css';
 /**
