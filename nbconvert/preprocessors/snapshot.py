@@ -13,9 +13,12 @@ import threading
 import tornado.escape
 import nbformat
 
+from traitlets.config.configurable import LoggingConfigurable
 from tornado import web, ioloop, httpserver, log
 from tornado.httpclient import AsyncHTTPClient
-from traitlets import Bool, Unicode, Int
+from traitlets import Bool, Unicode, Int, DottedObjectName, Type, observe, Instance
+from traitlets.utils.importstring import import_item
+
 
 from .base import Preprocessor
 from ..exporters.html import HTMLExporter
@@ -47,18 +50,18 @@ MIME_TYPE_JUPYTER_WIDGET_VIEW = 'application/vnd.jupyter.widget-view+json'
 MIME_TYPE_PNG = 'image/png'
 MIME_TYPE_HTML = 'text/html'
 DIRNAME_STATIC = os.path.join(os.path.dirname(__file__), '../static')
+def next_port():
+    i = 8009
+    while 1:
+        yield i
+        i += 1
 
-class SnapshotPreProcessor(Preprocessor):
-    """Pre processor designed to serve files
-    
-    Proxies reveal.js requests to a CDN if no local reveal.js is present
-    """
+next_port = next_port()
 
-    open_in_browser = Bool(True,
-        help="""Should the browser be opened automatically?"""
-    ).tag(config=True)
-    keep_running = Bool(False, help="Keep server running when done").tag(config=True)
+class PageOpener(LoggingConfigurable):
+    pass
 
+class PageOpenerDefault(PageOpener):
     browser = Unicode(u'', 
                       help="""Specify what browser should be used to open slides. See
                       https://docs.python.org/3/library/webbrowser.html#webbrowser.register
@@ -69,10 +72,69 @@ class SnapshotPreProcessor(Preprocessor):
                       environment variable to override it.
                       """).tag(config=True)
 
-    reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0",
-                         help="""URL for reveal.js CDN.""").tag(config=True)
-    reveal_prefix = Unicode("reveal.js",
-                            help="URL prefix for reveal.js").tag(config=True)
+    def open(self, url):
+        browser = webbrowser.get(self.browser or None)
+        b = lambda: browser.open(url, new=2)
+        threading.Thread(target=b).start()
+
+chrome_binary = 'echo "not found"'
+import platform
+if platform.system().lower() == 'darwin':
+    chrome_binary = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+elif platform.system().lower() == 'linux':
+    chrome_binary = 'google-chrome'
+
+
+
+
+class PageOpenerChromeHeadless(PageOpener):
+    start_command = Unicode('%s --remote-debugging-port=9222 --headless &' % chrome_binary).tag(config=True)
+    def open(self, url):
+        import PyChromeDevTools
+        import requests.exceptions
+        import time
+        try:
+            chrome = PyChromeDevTools.ChromeInterface()
+        except requests.exceptions.ConnectionError:
+            print('could not connect, try starting with', self.start_command)
+            ret = os.system(self.start_command)
+            if ret != 0:
+                raise ValueError('could not start chrome headless with command: ' + self.start_command)
+            for i in range(4):
+                time.sleep(1)
+                print('try connecting to chrome')
+                try:
+                    chrome = PyChromeDevTools.ChromeInterface()
+                except requests.exceptions.ConnectionError:
+                    if i == 3:
+                        raise
+        chrome.Network.enable()
+        chrome.Page.enable()
+        chrome.Page.navigate(url=url)
+
+
+class SnapshotPreProcessor(Preprocessor):
+    """Pre processor that will make snapshots of widgets and html
+    """
+
+    open_in_browser = Bool(True,
+        help="""Should the browser be opened automatically?"""
+    ).tag(config=True)
+    keep_running = Bool(False, help="Keep server running when done").tag(config=True)
+    page_opener = Instance(PageOpener).tag(config=True)
+    page_opener_class = DottedObjectName('nbconvert.preprocessors.snapshot.PageOpenerChromeHeadless',
+                                    help="""How to open a page for rendering""").tag(config=True)
+    page_opener_aliases = {'headless': 'nbconvert.preprocessors.snapshot.PageOpenerChromeHeadless',
+                           'default': 'nbconvert.preprocessors.snapshot.PageOpenerDefault'}
+    page_opener_factory = Type(allow_none=True)
+
+    @observe('page_opener_class')
+    def _page_opener_class_changed(self, change):
+        new = change['new']
+        if new.lower() in self.page_opener_aliases:
+            new = self.page_opener_aliases[new.lower()]
+        self.page_opener_factory = import_item(new)
+
     ip = Unicode("127.0.0.1",
                  help="The IP address to listen on.").tag(config=True)
     port = Int(8000, help="port for the server to listen on.").tag(config=True)
@@ -118,9 +180,7 @@ class SnapshotPreProcessor(Preprocessor):
                     (r"/(.+)", web.StaticFileHandler, {'path' : dirname}),
                     (r"/", web.RedirectHandler, {"url": "/%s" % filename})
                 ]
-                
                 app = web.Application(handlers,
-                                      cdn=self.reveal_cdn,
                                       client=AsyncHTTPClient(),
                                       )
                 
@@ -128,26 +188,21 @@ class SnapshotPreProcessor(Preprocessor):
                 log.app_log = self.log
 
                 http_server = httpserver.HTTPServer(app)
+                self.port = next(next_port)
                 http_server.listen(self.port, address=self.ip)
                 url = "http://%s:%i/%s" % (self.ip, self.port, filename)
                 print("Serving your slides at %s" % url)
                 print("Use Control-C to stop this server")
                 self.main_ioloop = ioloop.IOLoop.instance()
                 if self.open_in_browser:
-                    try:
-                        # b = lambda: browser.open(url, new=2)
-                        # threading.Thread(target=b).start()
-                        browser = webbrowser.get(self.browser or None)
-                        b = lambda: browser.open(url, new=2)
-                        threading.Thread(target=b).start()
-                    except webbrowser.Error as e:
-                        self.log.warning('No web browser found: %s.' % e)
-                        browser = None
-
+                    self._page_opener_class_changed({ 'new': self.page_opener_class })
+                    self.page_opener = self.page_opener_factory()
+                    self.page_opener.open(url)
                 try:
                     self.main_ioloop.start()
                 except KeyboardInterrupt:
                     print("\nInterrupted")
+                http_server.stop()
                 # nbformat.write(self.nb, input.replace('.html', '.ipynb'))
             # import IPython
             # IPython.embed()
