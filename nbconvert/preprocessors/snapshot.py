@@ -57,6 +57,7 @@ class SnapshotPreProcessor(Preprocessor):
     open_in_browser = Bool(True,
         help="""Should the browser be opened automatically?"""
     ).tag(config=True)
+    keep_running = Bool(False, help="Keep server running when done").tag(config=True)
 
     browser = Unicode(u'', 
                       help="""Specify what browser should be used to open slides. See
