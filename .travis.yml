@@ -34,6 +34,8 @@ install:
     - pip install -f travis-wheels/wheelhouse . codecov coverage
     - pip install nbconvert[execute,serve,test]
     - pip install check-manifest
+    - npm install
+    - npm run build
     - python -m ipykernel.kernelspec --user
 script:
     - check-manifest
