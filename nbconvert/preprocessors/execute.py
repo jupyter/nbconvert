@@ -308,8 +308,8 @@ class ExecutePreprocessor(Preprocessor):
         with self.setup_preprocessor(nb, resources, km=km):
             self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
-            info_msg = self._wait_for_reply(self.kc.kernel_info())
-            nb.metadata['language_info'] = info_msg['content']['language_info']
+            info_msg = self.kc.kernel_info()
+            nb.metadata['language_info'] = info_msg.content['language_info']
 
         return nb, resources
 
@@ -357,38 +357,6 @@ class ExecutePreprocessor(Preprocessor):
             for output_idx in output_indices:
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
-
-    def _wait_for_reply(self, msg_id, cell=None):
-        # wait for finish, with timeout
-        while True:
-            try:
-                if self.timeout_func is not None and cell is not None:
-                    timeout = self.timeout_func(cell)
-                else:
-                    timeout = self.timeout
-
-                if not timeout or timeout < 0:
-                    timeout = None
-                msg = self.kc.shell_channel.get_msg(timeout=timeout)
-            except Empty:
-                self.log.error(
-                    "Timeout waiting for execute reply (%is)." % self.timeout)
-                if self.interrupt_on_timeout:
-                    self.log.error("Interrupting kernel")
-                    self.km.interrupt_kernel()
-                    break
-                else:
-                    try:
-                        exception = TimeoutError
-                    except NameError:
-                        exception = RuntimeError
-                    raise exception("Cell execution timed out")
-
-            if msg['parent_header'].get('msg_id') == msg_id:
-                return msg
-            else:
-                # not our reply
-                continue
 
     def _get_timeout(self, cell):
         if self.timeout_func is not None:
