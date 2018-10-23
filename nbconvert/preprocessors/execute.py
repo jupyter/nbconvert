@@ -207,19 +207,6 @@ class ExecutePreprocessor(Preprocessor):
             )
     ).tag(config=True)
 
-    kernel_manager_class = Type(
-        config=True,
-        help='The kernel manager class to use.'
-    )
-    @default('kernel_manager_class')
-    def _kernel_manager_class_default(self):
-        """Use a dynamic default to avoid importing jupyter_client at startup"""
-        try:
-            from jupyter_client import KernelManager
-        except ImportError:
-            raise ImportError("`nbconvert --execute` requires the jupyter_client package: `pip install jupyter_client`")
-        return KernelManager
-
     _display_id_map = Dict(
         help=dedent(
               """
@@ -232,38 +219,6 @@ class ExecutePreprocessor(Preprocessor):
                    }
               }
               """))
-
-    def start_new_kernel(self, **kwargs):
-        """Creates a new kernel manager and kernel client.
-
-        Parameters
-        ----------
-        kwargs :
-            Any options for `self.kernel_manager_class.start_kernel()`. Because
-            that defaults to KernelManager, this will likely include options
-            accepted by `KernelManager.start_kernel()``, which includes `cwd`.
-
-        Returns
-        -------
-        km : KernelManager
-            A kernel manager as created by self.kernel_manager_class.
-        kc : KernelClient
-            Kernel client as created by the kernel manager `km`.
-        """
-        km = self.kernel_manager_class(kernel_name=self.kernel_name,
-                                       config=self.config)
-        km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
-
-        kc = km.client()
-        kc.start_channels()
-        try:
-            kc.wait_for_ready(timeout=self.startup_timeout)
-        except RuntimeError:
-            kc.stop_channels()
-            km.shutdown_kernel()
-            raise
-        kc.allow_stdin = False
-        return km, kc
 
     @contextmanager
     def setup_preprocessor(self, nb, resources, km=None):
