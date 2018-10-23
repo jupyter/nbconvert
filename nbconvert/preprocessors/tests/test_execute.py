@@ -143,7 +143,7 @@ class TestExecute(PreprocessorTestsBase):
                 raise
 
     def test_populate_language_info(self):
-        preprocessor = self.build_preprocessor(opts=dict(kernel_name="python"))
+        preprocessor = self.build_preprocessor(opts=dict(kernel_name="python3"))
         nb = nbformat.v4.new_notebook()  # Certainly has no language_info.
         nb, _ = preprocessor.preprocess(nb, resources={})
         assert 'language_info' in nb.metadata
