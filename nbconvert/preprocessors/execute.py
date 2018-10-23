@@ -158,16 +158,6 @@ class ExecutePreprocessor(Preprocessor):
         )
     ).tag(config=True)
 
-    @default('kernel_name')
-    def _kernel_name_default(self):
-        try:
-            return self.nb.metadata.get('kernelspec', {}).get('name', 'python')
-        except AttributeError:
-            raise AttributeError('You did not specify a kernel_name for '
-                                 'the ExecutePreprocessor and you have not set '
-                                 'self.nb to be able to use that to infer the '
-                                 'kernel_name.')
-
     raise_on_iopub_timeout = Bool(False,
         help=dedent(
             """
