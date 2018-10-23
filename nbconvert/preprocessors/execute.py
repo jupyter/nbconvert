@@ -14,8 +14,6 @@ except ImportError:
 
 from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, Integer, default
 
-from jupyter_kernel_mgmt.discovery import KernelFinder
-from jupyter_kernel_mgmt.client import BlockingKernelClient
 from nbformat.v4 import output_from_msg
 
 from .base import Preprocessor
@@ -252,6 +250,11 @@ class ExecutePreprocessor(Preprocessor):
         resources : dictionary
             Additional resources used in the conversion process.
         """
+        # Nbconvert can be installed without these, so do the imports only
+        # when the preprocessor is being used.
+        from jupyter_kernel_mgmt.discovery import KernelFinder
+        from jupyter_kernel_mgmt.client import BlockingKernelClient
+
         path = resources.get('metadata', {}).get('path', '') or None
         self.nb = nb
         # clear display_id map
