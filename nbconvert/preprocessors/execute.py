@@ -308,8 +308,8 @@ class ExecutePreprocessor(Preprocessor):
         with self.setup_preprocessor(nb, resources, km=km):
             self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
-            info_msg = self.kc.kernel_info()
-            nb.metadata['language_info'] = info_msg.content['language_info']
+            info_dict = self.kc.loop_client.kernel_info_dict
+            nb.metadata['language_info'] = info_dict['language_info']
 
         return nb, resources
 
@@ -370,7 +370,6 @@ class ExecutePreprocessor(Preprocessor):
 
     def run_cell(self, cell, cell_index=0):
         from tornado import ioloop
-        from jupyter_kernel_mgmt.client import ErrorInKernel
 
         timeout = self._get_timeout(cell)
         interrupt_timeout = None
@@ -392,8 +391,6 @@ class ExecutePreprocessor(Preprocessor):
             )
         except ioloop.TimeoutError:
             raise TimeoutError("Cell execution timed out")
-        except ErrorInKernel as e:
-            reply = e.reply_msg
 
         outs = cell.outputs = []
 

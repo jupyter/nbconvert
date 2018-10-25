@@ -225,7 +225,7 @@ install_requires = setuptools_args['install_requires'] = [
     'testpath',
     'defusedxml',
 ]
-jupyter_km_req = 'jupyter_kernel_mgmt'
+jupyter_km_req = 'jupyter_kernel_mgmt>=0.2'
 
 extra_requirements = {
     'test': ['pytest', 'pytest-cov', 'ipykernel', jupyter_km_req],
