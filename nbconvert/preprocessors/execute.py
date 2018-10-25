@@ -262,7 +262,7 @@ class ExecutePreprocessor(Preprocessor):
             except KeyError:
                 kernel_name = 'pyimport/kernel'
 
-        self.log.info("Executing notebook with kernel: %s" % kernel_name)
+        self.log.info("Launching kernel %s to execute notebook" % kernel_name)
         conn_info, self.km = kf.launch(kernel_name, cwd=path)
         self.kc = BlockingKernelClient(conn_info, manager=self.km)
         self.kc.wait_for_ready()
@@ -306,7 +306,6 @@ class ExecutePreprocessor(Preprocessor):
         """
 
         with self.setup_preprocessor(nb, resources, km=km):
-            self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
             info_dict = self.kc.loop_client.kernel_info_dict
             nb.metadata['language_info'] = info_dict['language_info']
