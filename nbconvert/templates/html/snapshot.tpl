@@ -3,6 +3,7 @@
 {% block ipywidgets %}
 <script>
 requirejs.config({
+    waitSeconds : 30,
     baseUrl: 'static',
     paths: {}
 })
