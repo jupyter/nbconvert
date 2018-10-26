@@ -29,7 +29,7 @@
     "watch": "npm-run-all -p watch:*",
     "watch:lib": "tsc -w --project .",
     "watch:dist": "webpack --watch --mode=development",
-    "prepare": "npm run clean && npm run build"
+    "prepare": "npm run clean && npm run build && webpack --mode=production"
   },
   "dependencies": {
     "dom-to-image": "^2.6.0",
