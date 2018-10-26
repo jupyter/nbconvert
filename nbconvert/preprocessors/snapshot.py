@@ -49,7 +49,7 @@ class SnapshotHandler(web.RequestHandler):
 MIME_TYPE_JUPYTER_WIDGET_VIEW = 'application/vnd.jupyter.widget-view+json'
 MIME_TYPE_PNG = 'image/png'
 MIME_TYPE_HTML = 'text/html'
-DIRNAME_STATIC = os.path.join(os.path.dirname(__file__), '../static')
+DIRNAME_STATIC = os.path.abspath(os.path.join(os.path.dirname(__file__), '../resources'))
 def next_port():
     i = 8009
     while 1:
@@ -176,7 +176,7 @@ class SnapshotPreProcessor(Preprocessor):
                 # dirname, filename = os.path.split(input)
                 handlers = [
                     (r"/send_snapshot", SnapshotHandler, dict(snapshot_dict=self.snapshot_dict, callback=self.callback)),
-                    (r"/static/(.+)", web.StaticFileHandler, {'path' : DIRNAME_STATIC}),
+                    (r"/resources/(.+)", web.StaticFileHandler, {'path' : DIRNAME_STATIC}),
                     (r"/(.+)", web.StaticFileHandler, {'path' : dirname}),
                     (r"/", web.RedirectHandler, {"url": "/%s" % filename})
                 ]

@@ -4,7 +4,7 @@
 // import * as libembed from './libembed';
 declare var  __webpack_public_path__:string;
 // needed to make fontawesome work
-__webpack_public_path__ = 'static/'
+__webpack_public_path__ = 'resources/'
 
 import {Manager} from './manager';
 import 'font-awesome/css/font-awesome.css';

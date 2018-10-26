@@ -57,7 +57,7 @@ module.exports = [
         devtool: 'inline-source-map',
         output: {
             filename: 'snapshot.js',
-            path: path.resolve(__dirname, `nbconvert/static`),
+            path: path.resolve(__dirname, `nbconvert/resources`),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
