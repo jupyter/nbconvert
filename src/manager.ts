@@ -118,15 +118,68 @@ export class Manager extends HTMLManager {
                 }
             })
             console.log('views', all_view_promises);
-            Promise.all(all_view_promises).then(() => {
-                views.forEach((view) => {
+            Promise.all(all_view_promises).then((views) => {
+                views.forEach(async (view) => {
+                    // convert bqplot figures by a static png before we do the html2canvas
+                    if(view.model.name == 'FigureModel') {
+                        console.log(view)
+                        // TODO: change bqplot such that we have a promise to wait for
+                        // instead of polling it
+                        while(!view.mark_views) {
+                            await new Promise((resolve) => setTimeout(resolve, 100));
+                        }
+                        let marks = await Promise.all(view.mark_views.views);
+
+                        // this is code from bqplot, make bqplot such that we can rely on a method
+                        // of figure
+                        var xml = view.get_svg();
+                        // Render a SVG data into a canvas and download as PNG.
+                        var image = new Image();
+                        var that = this;
+                        let image_loaded_promise = new Promise((resolve) => image.onload=resolve);
+                        image.src = "data:image/svg+xml;base64," + btoa(xml);
+                        await image_loaded_promise;
+                        var canvas = document.createElement("canvas");
+                        canvas.classList.add('bqplot');
+                        canvas.width = view.width * window.devicePixelRatio;;
+                        canvas.height = view.height * window.devicePixelRatio;
+                        canvas.style.width = view.width;
+                        canvas.style.height = view.height;
+                        canvas.getContext('2d').scale(window.devicePixelRatio, window.devicePixelRatio);
+                        var context = canvas.getContext("2d");
+                        context.drawImage(image, 0, 0);
+                        view.el.parentElement.replaceChild(canvas, view.el)
+                    }
+                })
+            })
+            Promise.all(all_view_promises).then((views) => {
+                views.forEach(async (view) => {
                     let callbacks = (window as any)._webgl_update_callbacks;
                     console.log('callbacks', callbacks)
                     if(callbacks) {
                         callbacks.forEach((callback) => callback())
                     }
+                    // let dependencies = [];
+                    if(view.model.name == 'LeafletMapModel') {
+                        // TODO: change jupyter-leaflet such that we have a promise to wait for
+                        // instead of polling it
+                        while(!view.obj) {
+                            await new Promise((resolve) => setTimeout(resolve, 100));
+                        }
+                        for(var i=0; i < view.layer_views.views.length; i++) {
+                            let layer = await view.layer_views.views[i];
+                            // wait for max 10 seconds
+                            let timeout = new Promise((resolve) => {setTimeout(() => {console.log('timeout'); resolve()}, 10*1000)});
+                            let loaded = new Promise((resolve) => {console.log('loaded'); layer.obj.on('load', resolve)})
+                            layer.obj.on('load', () => console.log('loaded!!'))
+                            await Promise.race([timeout, loaded]);
+                            console.log('done')
+
+                        }
+                    }
                     setTimeout(() => {
-                        html2canvas(view.el, {useCORS: true, scale: 1.0}).then(canvas => {
+                        console.log('make screenshot')
+                        html2canvas(view.el, {useCORS: true}).then(canvas => {
                         // document.body.appendChild(canvas)
                             view.el.parentElement.appendChild(canvas)
                             let imageData = canvas.toDataURL('image/png');
