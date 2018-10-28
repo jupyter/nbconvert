@@ -488,7 +488,7 @@ class ExecutePreprocessor(Preprocessor):
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_reply = self._wait_for_reply(parent_msg_id, cell)
 
-        outs = cell.outputs = []
+        cell.outputs = []
         self.clear_before_next_output = False
 
         while True:
@@ -509,40 +509,50 @@ class ExecutePreprocessor(Preprocessor):
                 # not an output from our execution
                 continue
 
-            msg_type = msg['msg_type']
-            self.log.debug("output: %s", msg_type)
-            content = msg['content']
+            if not self.process_message(msg, cell, cell_index):
+                break
 
-            # set the prompt number for the input and the output
-            if 'execution_count' in content:
-                cell['execution_count'] = content['execution_count']
+        return exec_reply, cell.outputs
 
-            if msg_type == 'status':
-                if content['execution_state'] == 'idle':
-                    break
-                else:
-                    continue
-            elif msg_type == 'execute_input':
-                continue
-            elif msg_type == 'clear_output':
-                self.clear_output(outs, msg, cell_index)
-                continue
-            elif msg_type.startswith('comm'):
-                self.handle_comm_msg(outs, msg, cell_index)
-                continue
+    def process_message(self, msg, cell, cell_index):
+        '''
+        Returns None if execution should be halted.
+        '''
+        msg_type = msg['msg_type']
+        self.log.debug("msg_type: %s", msg_type)
+        content = msg['content']
+        self.log.debug("content: %s", content)
 
-            display_id = None
-            if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
-                display_id = msg['content'].get('transient', {}).get('display_id', None)
-                if display_id:
-                    self._update_display_id(display_id, msg)
-                if msg_type == 'update_display_data':
-                    # update_display_data doesn't get recorded
-                    continue
+        # Default to our input as the "result" of processing the message
+        result = msg
 
-            self.output(outs, msg, display_id, cell_index)
+        display_id = content.get('transient', {}).get('display_id', None)
+        if display_id and msg_type in {'execute_result', 'display_data', 'update_display_data'}:
+            self._update_display_id(display_id, msg)
 
-        return exec_reply, outs
+        # set the prompt number for the input and the output
+        if 'execution_count' in content:
+            cell['execution_count'] = content['execution_count']
+
+        if msg_type == 'status':
+            if content['execution_state'] == 'idle':
+                # Set result to None to halt execution
+                result = None
+        elif msg_type == 'clear_output':
+            self.clear_output(cell.outputs, msg, cell_index)
+        elif msg_type.startswith('comm'):
+            self.handle_comm_msg(cell.outputs, msg, cell_index)
+        # Check for remaining messages we don't process
+        elif not (msg_type in ['execute_input', 'update_display_data'] or msg_type.startswith('comm')):
+            try:
+                # Assign output as our processed "result"
+                result = output_from_msg(msg)
+            except ValueError:
+                self.log.error("unhandled iopub msg: " + msg_type)
+            else:
+                self.output(cell.outputs, msg, display_id, cell_index)
+
+        return result
 
     def output(self, outs, msg, display_id, cell_index):
         msg_type = msg['msg_type']
