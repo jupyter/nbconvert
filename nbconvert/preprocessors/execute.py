@@ -584,7 +584,7 @@ def _get_buffer_data(msg):
     buffers = msg['buffers']
     for path, buffer in zip(paths, buffers):
         encoded_buffers.append({
-            'data': base64.b64encode(buffer.obj).decode('utf-8'),
+            'data': base64.b64encode(buffer).decode('utf-8'),
             'encoding': 'base64',
             'path': path
         })
