@@ -127,14 +127,14 @@ class TestExecute(PreprocessorTestsBase):
         for filename in input_files:
             if os.path.basename(filename) == "Disable Stdin.ipynb":
                 continue
+            elif os.path.basename(filename) == "Interrupt.ipynb":
+                IPY_MAJOR = IPython.version_info[0]
+                if IPY_MAJOR < 7:
+                    continue
+                opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
             elif os.path.basename(filename) == "Interrupt-IPY6.ipynb":
                 IPY_MAJOR = IPython.version_info[0]
                 if IPY_MAJOR > 7:
-                    continue
-                opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
-            elif os.path.basename(filename) == "Interrupt-IPY7.ipynb":
-                IPY_MAJOR = IPython.version_info[0]
-                if IPY_MAJOR < 7:
                     continue
                 opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
             elif os.path.basename(filename) == "Skip Exceptions.ipynb":
