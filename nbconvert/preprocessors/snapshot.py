@@ -35,10 +35,9 @@ class SnapshotHandler(web.RequestHandler):
         #, view_id=None, image_data=None
         #view_id = self.get_parameter('view_id')
         data = tornado.escape.json_decode(self.request.body)
-        print('hi', data['cell_index'], data['output_index'], data['image_data'])
+        #print('hi', data['cell_index'], data['output_index'])
         i, j = data['cell_index'], data['output_index']
         key = i, j
-        # assert MIME_TYPE_PNG not in self.snapshot_dict[key]['data']
         image_data = data['image_data']
         header = 'data:image/png;base64,'
         assert image_data.startswith(header), 'not a png image?'
@@ -156,6 +155,8 @@ class SnapshotPreProcessor(Preprocessor):
                 for output_index, output in enumerate(cell.outputs):
                     if 'data' in output:
                         if MIME_TYPE_JUPYTER_WIDGET_VIEW in output['data'] or MIME_TYPE_HTML in output['data']:
+                            # clear the existing png data, we may consider skipping these cells
+                            output['data'][MIME_TYPE_PNG] = None
                             self.snapshot_dict[(cell_index, output_index)] = output
         if self.snapshot_dict.keys():
             with tempfile.TemporaryDirectory() as dirname:
