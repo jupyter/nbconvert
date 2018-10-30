@@ -161,7 +161,6 @@ class SnapshotPreProcessor(Preprocessor):
         if self.snapshot_dict.keys():
             with tempfile.TemporaryDirectory() as dirname:
                 html_exporter = HTMLExporter(template_file='snapshot', default_preprocessors=[
-                                      'nbconvert.preprocessors.coalesce_streams',
                                       'nbconvert.preprocessors.SVG2PDFPreprocessor',
                                       'nbconvert.preprocessors.CSSHTMLHeaderPreprocessor',
                                       'nbconvert.preprocessors.HighlightMagicsPreprocessor',
