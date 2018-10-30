@@ -21,6 +21,7 @@ import pytest
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
+import IPython
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
 from ipython_genutils.py3compat import string_types
@@ -126,7 +127,15 @@ class TestExecute(PreprocessorTestsBase):
         for filename in input_files:
             if os.path.basename(filename) == "Disable Stdin.ipynb":
                 continue
-            elif os.path.basename(filename) == "Interrupt.ipynb":
+            elif os.path.basename(filename) == "Interrupt-IPY6.ipynb":
+                IPY_MAJOR = IPython.version_info[0]
+                if IPY_MAJOR > 7:
+                    continue
+                opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
+            elif os.path.basename(filename) == "Interrupt-IPY7.ipynb":
+                IPY_MAJOR = IPython.version_info[0]
+                if IPY_MAJOR < 7:
+                    continue
                 opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
             elif os.path.basename(filename) == "Skip Exceptions.ipynb":
                 opts = dict(allow_errors=True)
