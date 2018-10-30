@@ -119,3 +119,18 @@ class TestHTMLExporter(ExportersTestsBase):
         result = check_for_png.search(output)
         self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64, iVBOR'))
         self.assertTrue(result.group(1).strip().startswith('alt="python.png"'))
+
+    def test_custom_filter_highlight_code(self):
+        # Overwriting filters takes place at: Exporter.from_notebook_node
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+
+        def custom_highlight_code(source, language="python", metadata=None):
+            return source + " ADDED_TEXT"
+
+        filters = {
+            "highlight_code": custom_highlight_code
+        }
+        (output, resources) = HTMLExporter(template_file='basic', filters=filters).from_notebook_node(nb)
+        self.assertTrue("ADDED_TEXT" in output)
+
