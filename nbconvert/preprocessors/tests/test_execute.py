@@ -125,19 +125,22 @@ class TestExecute(PreprocessorTestsBase):
         input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
         shared_opts = dict(kernel_name="python")
         for filename in input_files:
-            if os.path.basename(filename) == "Disable Stdin.ipynb":
-                continue
-            elif os.path.basename(filename) == "Interrupt.ipynb":
-                IPY_MAJOR = IPython.version_info[0]
+            # There is some slight differences between the output in IPython 6 and IPython 7.
+            IPY_MAJOR = IPython.version_info[0]
+            if os.path.basename(filename).endswith("-IPY6.ipynb"):
+                print(filename, IPY_MAJOR)
+                if IPY_MAJOR >= 7:
+                    continue
+            elif os.path.basename(filename) in ("Interrupt.ipynb", "Skip Exceptions with Cell Tags.ipynb", "Skip Exceptions.ipynb"):
                 if IPY_MAJOR < 7:
                     continue
+            
+            # Special arguments for the notebooks
+            if os.path.basename(filename) == "Disable Stdin.ipynb":
+                continue
+            elif os.path.basename(filename) in ("Interrupt.ipynb", "Interrupt-IPY6.ipynb"):
                 opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
-            elif os.path.basename(filename) == "Interrupt-IPY6.ipynb":
-                IPY_MAJOR = IPython.version_info[0]
-                if IPY_MAJOR > 7:
-                    continue
-                opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
-            elif os.path.basename(filename) == "Skip Exceptions.ipynb":
+            elif os.path.basename(filename) in ("Skip Exceptions.ipynb", "Skip Exceptions-IPY6.ipynb"):
                 opts = dict(allow_errors=True)
             else:
                 opts = dict()
