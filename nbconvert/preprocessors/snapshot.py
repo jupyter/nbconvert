@@ -79,7 +79,7 @@ class PageOpenerDefault(PageOpener):
 chrome_binary = 'echo "not found"'
 import platform
 if platform.system().lower() == 'darwin':
-    chrome_binary = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    chrome_binary = r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 elif platform.system().lower() == 'linux':
     chrome_binary = 'google-chrome'
 
