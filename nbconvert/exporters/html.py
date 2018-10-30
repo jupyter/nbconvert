@@ -90,9 +90,7 @@ class HTMLExporter(TemplateExporter):
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
-        highlight_code = Highlight2HTML(pygments_lexer=lexer, parent=self)
-        if "highlight_code" in self.filters:
-            highlight_code = self.filters["highlight_code"]
+        highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
         self.register_filter('highlight_code', highlight_code)
         
         output, resources = super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
