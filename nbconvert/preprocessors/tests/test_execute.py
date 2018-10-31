@@ -21,6 +21,7 @@ import pytest
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
+import IPython
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
 from ipython_genutils.py3compat import string_types
@@ -124,11 +125,22 @@ class TestExecute(PreprocessorTestsBase):
         input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
         shared_opts = dict(kernel_name="python")
         for filename in input_files:
+            # There is some slight differences between the output in IPython 6 and IPython 7.
+            IPY_MAJOR = IPython.version_info[0]
+            if os.path.basename(filename).endswith("-IPY6.ipynb"):
+                print(filename, IPY_MAJOR)
+                if IPY_MAJOR >= 7:
+                    continue
+            elif os.path.basename(filename) in ("Interrupt.ipynb", "Skip Exceptions with Cell Tags.ipynb", "Skip Exceptions.ipynb"):
+                if IPY_MAJOR < 7:
+                    continue
+            
+            # Special arguments for the notebooks
             if os.path.basename(filename) == "Disable Stdin.ipynb":
                 continue
-            elif os.path.basename(filename) == "Interrupt.ipynb":
+            elif os.path.basename(filename) in ("Interrupt.ipynb", "Interrupt-IPY6.ipynb"):
                 opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
-            elif os.path.basename(filename) == "Skip Exceptions.ipynb":
+            elif os.path.basename(filename) in ("Skip Exceptions.ipynb", "Skip Exceptions-IPY6.ipynb"):
                 opts = dict(allow_errors=True)
             else:
                 opts = dict()

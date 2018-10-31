@@ -147,3 +147,17 @@ class TestLatexExporter(ExportersTestsBase):
         exporter = MyExporter(extra_loaders=[my_loader_tplx])
         nb = v4.new_notebook()
         out, resources = exporter.from_notebook_node(nb)
+
+    def test_custom_filter_highlight_code(self):
+        # Overwriting filters takes place at: Exporter.from_notebook_node
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+
+        def custom_highlight_code(source, language="python", metadata=None, strip_verbatim=False):
+            return source + " ADDED_TEXT"
+
+        filters = {
+            "highlight_code": custom_highlight_code
+        }
+        (output, resources) = LatexExporter(filters=filters).from_notebook_node(nb)
+        self.assertTrue("ADDED_TEXT" in output)

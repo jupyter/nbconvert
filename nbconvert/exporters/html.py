@@ -90,8 +90,9 @@ class HTMLExporter(TemplateExporter):
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
-        self.register_filter('highlight_code',
-                             Highlight2HTML(pygments_lexer=lexer, parent=self))
+        highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
+        self.register_filter('highlight_code', highlight_code)
+        
         output, resources = super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
         att_output = self.process_attachments(nb, output)
         return att_output, resources

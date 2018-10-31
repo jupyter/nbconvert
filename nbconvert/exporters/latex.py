@@ -78,8 +78,9 @@ class LatexExporter(TemplateExporter):
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
-        self.register_filter('highlight_code',
-                             Highlight2Latex(pygments_lexer=lexer, parent=self))
+        highlight_code = self.filters.get('highlight_code', Highlight2Latex(pygments_lexer=lexer, parent=self))
+        self.register_filter('highlight_code', highlight_code)
+        
         return super(LatexExporter, self).from_notebook_node(nb, resources, **kw)
 
     def _create_environment(self):
