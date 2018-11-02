@@ -152,8 +152,15 @@ class SnapshotPreProcessor(Preprocessor):
         for key, value in self.snapshot_dict.items():
             if value['data'][MIME_TYPE_PNG] is None:
                 done = False
+
         if done and not self.keep_running:
-            self.main_ioloop.stop()
+            self.stop_server()
+
+    # see https://github.com/tornadoweb/tornado/issues/2523
+    def stop_server(self):
+        self.http_server.stop()
+        self.main_ioloop.add_future(self.http_server.close_all_connections(),
+                                    lambda x: self.main_ioloop.stop())
 
     def preprocess(self, nb, resources):
         """Serve the build directory with a webserver."""
@@ -194,12 +201,11 @@ class SnapshotPreProcessor(Preprocessor):
                                       client=AsyncHTTPClient(),
                                       )
                 
-                # hook up tornado logging to our logger
+                # hook up tornado logger to our logger
                 log.app_log = self.log
 
-                http_server = httpserver.HTTPServer(app)
-                self.port = next(next_port)
-                http_server.listen(self.port, address=self.ip)
+                self.http_server = httpserver.HTTPServer(app)
+                self.http_server.listen(self.port, address=self.ip)
                 url = "http://%s:%i/%s" % (self.ip, self.port, filename)
                 print("Serving your slides at %s" % url)
                 print("Use Control-C to stop this server")
@@ -212,12 +218,10 @@ class SnapshotPreProcessor(Preprocessor):
                     self.main_ioloop.start()
                 except KeyboardInterrupt:
                     print("\nInterrupted")
-                http_server.stop()
+                    self.http_server.stop()
+                    # TODO: maybe we need to wait for this to finish
+                    self.http_server.close_all_connections()
                 # nbformat.write(self.nb, input.replace('.html', '.ipynb'))
-            # import IPython
-            # IPython.embed()
-            # import pdb
-            # pdb.set_trace()
         return nb, resources
 
 def main(path):
