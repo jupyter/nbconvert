@@ -112,12 +112,21 @@ class PageOpenerChromeHeadless(PageOpener):
         chrome.Page.navigate(url=url)
 
 
+# chrome caches the js files, bad for development
+class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
+
 class SnapshotPreProcessor(Preprocessor):
     """Pre processor that will make snapshots of widgets and html
     """
 
     open_in_browser = Bool(True,
         help="""Should the browser be opened automatically?"""
+    ).tag(config=True)
+    devmode = Bool(True,
+        help="""In dev mode, the static files will not be cached by the browser"""
     ).tag(config=True)
     keep_running = Bool(False, help="Keep server running when done").tag(config=True)
     page_opener = Instance(PageOpener).tag(config=True)
@@ -176,7 +185,8 @@ class SnapshotPreProcessor(Preprocessor):
                 # dirname, filename = os.path.split(input)
                 handlers = [
                     (r"/send_snapshot", SnapshotHandler, dict(snapshot_dict=self.snapshot_dict, callback=self.callback)),
-                    (r"/resources/(.+)", web.StaticFileHandler, {'path' : DIRNAME_STATIC}),
+                    (r"/resources/(.+)", StaticFileHandlerNoCache if self.devmode else web.StaticFileHandler,
+                                            {'path' : DIRNAME_STATIC}),
                     (r"/(.+)", web.StaticFileHandler, {'path' : dirname}),
                     (r"/", web.RedirectHandler, {"url": "/%s" % filename})
                 ]
