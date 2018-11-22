@@ -189,6 +189,10 @@ class TemplateExporter(Exporter):
     #Extension that the template files use.
     template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
 
+    exclude_header = Bool(False,
+        help = "This allows you to exclude the header from all templates if set to True."
+        ).tag(config=True)
+
     exclude_input = Bool(False,
         help = "This allows you to exclude code cell inputs from all templates if set to True."
         ).tag(config=True)
@@ -300,6 +304,7 @@ class TemplateExporter(Exporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
         resources['global_content_filter'] = {
+                'include_header': not self.exclude_header,
                 'include_code': not self.exclude_code_cell,
                 'include_markdown': not self.exclude_markdown,
                 'include_raw': not self.exclude_raw,

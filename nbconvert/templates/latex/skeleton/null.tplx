@@ -25,8 +25,10 @@ calling super.
 consider calling super even if it is a leave block, we might insert more blocks later.
 
 =))
+((*- if resources.global_content_filter.include_header -*))
 ((*- block header -*))
 ((*- endblock header -*))
+((*- endif -*))
 ((*- block body -*))
 ((*- for cell in nb.cells -*))
     ((*- block any_cell scoped -*))
