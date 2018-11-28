@@ -69,7 +69,7 @@ in which folder to execute the notebook.
 
 **Save**: Finally, save the resulting notebook with::
 
-    with open('executed_notebook.ipynb', 'wt') as f:
+    with open('executed_notebook.ipynb', 'w', encoding='utf-8') as f:
         nbformat.write(nb, f)
 
 That's all. Your executed notebook will be saved in the current folder
@@ -122,7 +122,7 @@ and raise a ``CellExecutionError``. Conveniently, the source cell causing
 the error and the original error name and message are also printed.
 After an error, we can still save the notebook as before::
 
-    with open('executed_notebook.ipynb', mode='wt') as f:
+    with open('executed_notebook.ipynb', mode='w', encoding='utf-8') as f:
         nbformat.write(nb, f)
 
 The saved notebook contains the output up until the failing cell,
@@ -143,7 +143,7 @@ A useful pattern to execute notebooks while handling errors is the following::
         print(msg)
         raise
     finally:
-        with open(notebook_filename_out, mode='wt') as f:
+        with open(notebook_filename_out, mode='w', encoding='utf-8') as f:
             nbformat.write(nb, f)
 
 This will save the executed notebook regardless of execution errors.
