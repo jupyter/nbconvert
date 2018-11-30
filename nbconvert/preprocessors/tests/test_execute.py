@@ -313,7 +313,7 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_widgets(self):
         """Runs a test notebook with widgets and checks the widget state is saved."""
-        input_file = os.path.join(current_dir, 'files', 'widget-hello-world.ipynb')
+        input_file = os.path.join(current_dir, 'files', 'JupyterWidgets.ipynb')
         opts = dict(kernel_name="python")
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(input_file)

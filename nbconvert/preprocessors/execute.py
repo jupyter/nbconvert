@@ -501,9 +501,10 @@ class ExecutePreprocessor(Preprocessor):
             elif msg_type.startswith('comm'):
                 self.handle_comm_msg(outs, msg, cell_index)
                 data = content['data']
-                self.widget_state.setdefault(content['comm_id'], {}).update(data['state'])
-                if 'buffer_paths' in data and data['buffer_paths']:
-                    self.widget_buffers[content['comm_id']] = _get_buffer_data(msg)
+                if 'state' in data:  # ignore custom msg'es
+                    self.widget_state.setdefault(content['comm_id'], {}).update(data['state'])
+                    if 'buffer_paths' in data and data['buffer_paths']:
+                        self.widget_buffers[content['comm_id']] = _get_buffer_data(msg)
                 continue
 
             display_id = None
