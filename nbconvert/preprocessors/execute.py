@@ -584,10 +584,7 @@ def executenb(nb, cwd=None, km=None, **kwargs):
 
 
 def _serialize_widget_state(state):
-    """Serialize a widget state, following format in @jupyter-widgets/schema.
-
-    TODO: Does not currently split binary buffers or remove default values.
-    """
+    """Serialize a widget state, following format in @jupyter-widgets/schema."""
     return {
         'model_name': state.get('_model_name'),
         'model_module': state.get('_model_module'),
