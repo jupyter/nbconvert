@@ -6,6 +6,8 @@
 [![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=latest)](https://nbconvert.readthedocs.io/en/latest/?badge=latest)
 [![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=stable)](http://nbconvert.readthedocs.io/en/stable/?badge=stable)
 [![codecov.io](https://codecov.io/github/jupyter/nbconvert/coverage.svg?branch=master)](https://codecov.io/github/jupyter/nbconvert?branch=master)
+[![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/jupyter/nbconvert.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jupyter/nbconvert/context:python)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/jupyter/nbconvert.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jupyter/nbconvert/alerts)
 
 
 The **nbconvert** tool, `jupyter nbconvert`, converts notebooks to various other
