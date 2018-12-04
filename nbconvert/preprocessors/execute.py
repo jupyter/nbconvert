@@ -158,16 +158,6 @@ class ExecutePreprocessor(Preprocessor):
         )
     ).tag(config=True)
 
-    @default('kernel_name')
-    def _kernel_name_default(self):
-        try:
-            return self.nb.metadata.get('kernelspec', {}).get('name', 'python')
-        except AttributeError:
-            raise AttributeError('You did not specify a kernel_name for '
-                                 'the ExecutePreprocessor and you have not set '
-                                 'self.nb to be able to use that to infer the '
-                                 'kernel_name.')
-
     raise_on_iopub_timeout = Bool(False,
         help=dedent(
             """
@@ -248,6 +238,9 @@ class ExecutePreprocessor(Preprocessor):
         kc : KernelClient
             Kernel client as created by the kernel manager `km`.
         """
+        if not self.kernel_name:
+            self.kernel_name = self.nb.metadata.get(
+                'kernelspec', {}).get('name', 'python')
         km = self.kernel_manager_class(kernel_name=self.kernel_name,
                                        config=self.config)
         km.start_kernel(extra_arguments=self.extra_arguments, **kwargs)
