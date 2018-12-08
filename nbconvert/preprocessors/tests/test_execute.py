@@ -395,6 +395,30 @@ class TestExecute(ExecuteTestBase):
         for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
 
+    def test_process_message_wrapper(self):
+        outputs = []
+
+        class WrappedPreProc(ExecutePreprocessor):
+            def process_message(self, msg, cell, cell_index):
+                result = super(WrappedPreProc, self).process_message(msg, cell, cell_index)
+                if result and result != msg:
+                    outputs.append(result)
+                return result
+
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+
+        original = copy.deepcopy(input_nb)
+        wpp = WrappedPreProc()
+        executed = wpp.preprocess(input_nb, {})[0]
+        self.assertEqual(outputs, [
+            {'name': 'stdout', 'output_type': 'stream', 'text': 'Hello World\n'}
+        ])
+        self.assert_notebooks_equal(original, executed)
+
     def test_execute_function(self):
         # Test the executenb() convenience API
         filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
