@@ -9,7 +9,7 @@ import os
 import webbrowser
 import threading
 
-from tornado import web, ioloop, httpserver, log
+from tornado import web, ioloop, httpserver, log, gen
 from tornado.httpclient import AsyncHTTPClient
 from traitlets import Bool, Unicode, Int
 
@@ -18,18 +18,13 @@ from .base import PostProcessorBase
 
 class ProxyHandler(web.RequestHandler):
     """handler the proxies requests from a local prefix to a CDN"""
-    @web.asynchronous
+    @gen.coroutine
     def get(self, prefix, url):
         """proxy a request to a CDN"""
         proxy_url = "/".join([self.settings['cdn'], url])
         client = self.settings['client']
-        client.fetch(proxy_url, callback=self.finish_get)
-    
-    def finish_get(self, response):
-        """finish the request"""
-        # rethrow errors
-        response.rethrow()
-        
+        response = yield client.fetch(proxy_url)
+
         for header in ["Content-Type", "Cache-Control", "Date", "Last-Modified", "Expires"]:
             if header in response.headers:
                 self.set_header(header, response.headers[header])
