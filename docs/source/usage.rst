@@ -67,7 +67,7 @@ LaTeX
 
     Latex report, providing a table of contents and chapters.
 
-  - ``--template basic``
+  - ``--template base``
 
     Very basic latex output - mainly meant as a starting point for custom
     templates.
