@@ -49,4 +49,5 @@ class LatexPreprocessor(Preprocessor):
         
         resources.setdefault("latex", {})
         resources["latex"].setdefault("pygments_definitions", LatexFormatter(style=self.style).get_style_defs())
+        resources["latex"].setdefault("pygments_style_name", self.style)
         return nb, resources
