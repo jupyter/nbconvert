@@ -175,7 +175,7 @@ class PDFExporter(LatexExporter):
                 rc = self.run_latex(tex_file)
             
             pdf_file = notebook_name + '.pdf'
-            if not os.path.isfile(pdf_file):
+            if not rc or not os.path.isfile(pdf_file):
                 raise LatexFailed('\n'.join(self._captured_output))
             self.log.info('PDF successfully created')
             with open(pdf_file, 'rb') as f:
