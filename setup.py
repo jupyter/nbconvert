@@ -28,19 +28,18 @@ PY3 = (sys.version_info[0] >= 3)
 #-----------------------------------------------------------------------------
 
 import os
-import setuptools
 import io
 
+from setuptools import setup
 from setuptools.command.bdist_egg import bdist_egg
+from setuptools.command.develop import develop
 
-from glob import glob
 from io import BytesIO
 try:
     from urllib.request import urlopen
 except ImportError:
     from urllib import urlopen
 
-from distutils.core import setup
 from distutils.cmd import Command
 from distutils.command.build import build
 from distutils.command.sdist import sdist
@@ -147,6 +146,7 @@ def css_first(command):
 
 cmdclass['build'] = css_first(build)
 cmdclass['sdist'] = css_first(sdist)
+cmdclass['develop'] = css_first(develop)
 cmdclass['bdist_egg'] = bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled
 
 for d, _, _ in os.walk(pjoin(pkg_root, 'templates')):
@@ -178,7 +178,6 @@ setup_args = dict(
     description     = "Converting Jupyter Notebooks",
     long_description_content_type   = 'text/markdown',
     version         = version_ns['__version__'],
-    scripts         = glob(pjoin('scripts', '*')),
     packages        = packages,
     long_description= long_description,
     package_data    = package_data,
@@ -211,8 +210,7 @@ setup_args = dict(
     ],
 )
 
-setuptools_args = {}
-install_requires = setuptools_args['install_requires'] = [
+setup_args['install_requires'] = [
     'mistune>=0.8.1',
     'jinja2',
     'pygments',
@@ -241,32 +239,25 @@ extra_requirements = {
 }
 
 extra_requirements['all'] = sum(extra_requirements.values(), [])
-setuptools_args['extras_require'] = extra_requirements
+setup_args['extras_require'] = extra_requirements
 
-if 'setuptools' in sys.modules:
-    from setuptools.command.develop import develop
-    cmdclass['develop'] = css_first(develop)
-    # force entrypoints with setuptools (needed for Windows, unconditional because of wheels)
-    setup_args['entry_points'] = {
-        'console_scripts': [
-            'jupyter-nbconvert = nbconvert.nbconvertapp:main',
-        ],
-        "nbconvert.exporters" : [
-            'custom=nbconvert.exporters:TemplateExporter',
-            'html=nbconvert.exporters:HTMLExporter',
-            'slides=nbconvert.exporters:SlidesExporter',
-            'latex=nbconvert.exporters:LatexExporter',
-            'pdf=nbconvert.exporters:PDFExporter',
-            'markdown=nbconvert.exporters:MarkdownExporter',
-            'python=nbconvert.exporters:PythonExporter',
-            'rst=nbconvert.exporters:RSTExporter',
-            'notebook=nbconvert.exporters:NotebookExporter',
-            'asciidoc=nbconvert.exporters:ASCIIDocExporter',
-            'script=nbconvert.exporters:ScriptExporter']
-    }
-    setup_args.pop('scripts', None)
-
-    setup_args.update(setuptools_args)
+setup_args['entry_points'] = {
+    'console_scripts': [
+        'jupyter-nbconvert = nbconvert.nbconvertapp:main',
+    ],
+    "nbconvert.exporters" : [
+        'custom=nbconvert.exporters:TemplateExporter',
+        'html=nbconvert.exporters:HTMLExporter',
+        'slides=nbconvert.exporters:SlidesExporter',
+        'latex=nbconvert.exporters:LatexExporter',
+        'pdf=nbconvert.exporters:PDFExporter',
+        'markdown=nbconvert.exporters:MarkdownExporter',
+        'python=nbconvert.exporters:PythonExporter',
+        'rst=nbconvert.exporters:RSTExporter',
+        'notebook=nbconvert.exporters:NotebookExporter',
+        'asciidoc=nbconvert.exporters:ASCIIDocExporter',
+        'script=nbconvert.exporters:ScriptExporter']
+}
 
 if __name__ == '__main__':
     setup(**setup_args)
