@@ -47,6 +47,7 @@ batch of notebook files to another format.
    config_options
    customizing
    external_exporters
+   highlighting
 
 .. toctree::
    :maxdepth: 2
