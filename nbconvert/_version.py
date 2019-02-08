@@ -1,4 +1,4 @@
-version_info = (5, 4, 0)
+version_info = (5, 4, 1)
 pre_info = ''
 dev_info = '.dev'
 

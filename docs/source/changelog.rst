@@ -4,6 +4,42 @@
 Changes in nbconvert
 ====================
 
+5.4.1
+-----
+`5.4.1 on Github <https://github.com/jupyter/nbconvert/milestones/5.4.1>`__
+
+Thanks to the following 11 authors who contributed 57 commits.
+
+* Benjamin Ragan-Kelley
+* Carol Willing
+* Clayton A Davis
+* Daniel Rodriguez
+* M Pacer
+* Matthew Seal
+* Matthias Geier
+* Matthieu Parizy
+* Rüdiger Busche
+* Thomas Kluyver
+* Tyler Makaro
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+New Features
+++++++++++++
+- Expose pygments styles :ghpull:`889`:
+- Tornado 6.0 support -- Convert proxy handler from callback to coroutine :ghpull:`937`:
+- Add option to overwrite the highlight_code filter :ghpull:`877`:
+
+Fixing Problems
++++++++++++++++
+- Mathjax.tpl fix for rendering Latex in html :ghpull:`932`:
+- Backwards compatbility for empty kernel names :ghpull:`927` :ghpull:`924`
+
+Testing, Docs, and Builds
++++++++++++++++++++++++++
+- DOC: Add missing language specification to code-block :ghpull:`882`:
+
 5.4
 ---
 `5.4 on Github <https://github.com/jupyter/nbconvert/milestones/5.4>`__
