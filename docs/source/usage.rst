@@ -192,7 +192,7 @@ Markdown
 
 Ascii
 ~~~~~~~~
-* ``--to ascii``
+* ``--to asciidoc``
 
   Ascii output. Images are output as .png files in a folder.
 
