@@ -26,6 +26,7 @@ The currently supported output formats are:
     - :ref:`PDF <convert_pdf>`,
     - :ref:`Reveal.js HTML slideshow <convert_revealjs>`,
     - :ref:`Markdown <convert_markdown>`,
+    - :ref:`Ascii <convert_ascii>`,
     - :ref:`reStructuredText <convert_rst>`,
     - :ref:`executable script <convert_script>`,
     - :ref:`notebook <convert_notebook>`.
@@ -57,7 +58,7 @@ LaTeX
 * ``--to latex``
 
   Latex export.  This generates ``NOTEBOOK_NAME.tex`` file,
-  ready for export.
+  ready for export. Images are output as .png files in a folder.
 
   - ``--template article`` (default)
 
@@ -70,7 +71,7 @@ LaTeX
   - ``--template base``
 
     Very basic latex output - mainly meant as a starting point for custom
-    templates.
+    templates. 
 
   .. note::
 
@@ -185,7 +186,15 @@ Markdown
 * ``--to markdown``
 
   Simple markdown output.  Markdown cells are unaffected,
-  and code cells indented 4 spaces.
+  and code cells indented 4 spaces. Images are output as .png files in a folder.
+
+.. _convert_ascii:
+
+Ascii
+~~~~~~~~
+* ``--to ascii``
+
+  Ascii output. Images are output as .png files in a folder.
 
 .. _convert_rst:
 
@@ -194,12 +203,12 @@ reStructuredText
 * ``--to rst``
 
   Basic reStructuredText output. Useful as a starting point for embedding
-  notebooks in Sphinx docs.
+  notebooks in Sphinx docs. Images are output as .png files in a folder.
 
   .. note::
 
     nbconvert uses pandoc_ to convert between various markup languages,
-    so pandoc is a dependency when converting to latex or reStructuredText.
+    so pandoc is a dependency when converting to LaTeX or reStructuredText.
 
 .. _convert_script:
 
