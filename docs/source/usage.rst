@@ -58,7 +58,8 @@ LaTeX
 * ``--to latex``
 
   Latex export.  This generates ``NOTEBOOK_NAME.tex`` file,
-  ready for export. Images are output as .png files in a folder.
+  ready for export. 
+  Images are output as .png files in a folder.
 
   - ``--template article`` (default)
 
@@ -186,7 +187,8 @@ Markdown
 * ``--to markdown``
 
   Simple markdown output.  Markdown cells are unaffected,
-  and code cells indented 4 spaces. Images are output as .png files in a folder.
+  and code cells indented 4 spaces. 
+  Images are output as .png files in a folder.
 
 .. _convert_ascii:
 
@@ -194,7 +196,8 @@ Ascii
 ~~~~~~~~
 * ``--to asciidoc``
 
-  Ascii output. Images are output as .png files in a folder.
+  Ascii output. 
+  Images are output as .png files in a folder.
 
 .. _convert_rst:
 
@@ -203,7 +206,8 @@ reStructuredText
 * ``--to rst``
 
   Basic reStructuredText output. Useful as a starting point for embedding
-  notebooks in Sphinx docs. Images are output as .png files in a folder.
+  notebooks in Sphinx docs. 
+  Images are output as .png files in a folder.
 
   .. note::
 
