@@ -414,6 +414,24 @@ class ExecutePreprocessor(Preprocessor):
                 if not timeout or timeout < 0:
                     timeout = None
                 msg = self.kc.shell_channel.get_msg(timeout=timeout)
+                
+                if timeout is not None:
+                    # timeout specified
+                    msg = self.kc.shell_channel.get_msg(timeout=timeout)
+                else:
+                    #no timeout specified, if kernel dies still handle this correctly
+                    while True:
+                        try:
+                            #check every few seconds if kernel is still alive
+                            msg = self.kc.shell_channel.get_msg(timeout=5)
+                        except Empty:
+                            #received no message, check if kernel is still alive
+                            if not self.kc.is_alive():
+                                raise RuntimeError("Kernel died")
+                            #kernel still alive, wait for a message
+                            continue
+                        #message received
+                        break
             except Empty:
                 self.log.error(
                     "Timeout waiting for execute reply (%is)." % self.timeout)
