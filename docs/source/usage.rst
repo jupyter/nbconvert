@@ -69,11 +69,6 @@ LaTeX
 
     Latex report, providing a table of contents and chapters.
 
-  - ``--template base``
-
-    Very basic latex output - mainly meant as a starting point for custom
-    templates. 
-
   .. note::
 
     nbconvert uses pandoc_ to convert between various markup languages,
