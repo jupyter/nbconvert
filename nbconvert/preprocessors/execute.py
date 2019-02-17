@@ -413,7 +413,6 @@ class ExecutePreprocessor(Preprocessor):
 
                 if not timeout or timeout < 0:
                     timeout = None
-                msg = self.kc.shell_channel.get_msg(timeout=timeout)
                 
                 if timeout is not None:
                     # timeout specified
