@@ -427,6 +427,7 @@ class ExecutePreprocessor(Preprocessor):
                             #received no message, check if kernel is still alive
                             if not self.kc.is_alive():
                                 raise RuntimeError("Kernel died")
+                            
                             #kernel still alive, wait for a message
                             continue
                         #message received
