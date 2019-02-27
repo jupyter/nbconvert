@@ -1,4 +1,5 @@
 {%- extends 'basic.tpl' -%}
+{% from 'urls.tpl' import urls %}
 {% from 'mathjax.tpl' import mathjax %}
 
 
@@ -11,8 +12,8 @@
 {% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 <title>{{nb_title}}</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="{{urls.requirejs_url}}"></script>
+<script src="{{urls.jquery_url}}"></script>
 
 {% block ipywidgets %}
 {%- if "widgets" in nb.metadata -%}
