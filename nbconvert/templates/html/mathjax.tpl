@@ -1,5 +1,4 @@
-{%- macro mathjax() -%}
-{% from 'urls.tpl' import urls %}
+{%- macro mathjax(urls) -%}
     <!-- Load mathjax -->
     <script src="{{urls.mathjax_url}}" {{urls.mathjax_attr}}></script>
     <!-- MathJax configuration -->

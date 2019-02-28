@@ -1,7 +1,12 @@
 {%- extends 'basic.tpl' -%}
-{% from 'urls.tpl' import urls %}
-{% from 'mathjax.tpl' import mathjax %}
+{% from 'urls.tpl' import all_urls %}
+{% if resources['reveal']['use_local_libs'] == true %}
+  {% set urls = all_urls.local_paths %}
+{% else %}
+  {% set urls = all_urls.default_cdn %}
+{% endif %}
 
+{% from 'mathjax.tpl' import mathjax %}
 
 {%- block header -%}
 <!DOCTYPE html>
@@ -88,7 +93,7 @@ div#notebook-container{
 <link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
-{{ mathjax() }}
+{{ mathjax(urls) }}
 {%- endblock html_head -%}
 </head>
 {%- endblock header -%}
