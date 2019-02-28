@@ -12,8 +12,8 @@
 {% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 <title>{{nb_title}}</title>
 
-<script src="{{urls.require_js_url}}"></script>
-<script src="{{urls.jquery_url}}"></script>
+<script src="{{urls.require_js_url}}" {{urls.reveal_js_attr}}></script>
+<script src="{{urls.jquery_url}}" {{urls.jquery_attr}}></script>
 
 {% block ipywidgets %}
 {%- if "widgets" in nb.metadata -%}
