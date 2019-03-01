@@ -30,6 +30,10 @@ class HTMLExporter(TemplateExporter):
         help="If True, use local folder libs/ instead of fetching resources from CDN"
     ).tag(config=True)
 
+    use_sri_attr = Bool(False,
+        help="If True, use SRI hashes for sub-resources, i.e. external javascript and CSS"
+    ).tag(config=True)
+
     @default('file_extension')
     def _file_extension_default(self):
         return '.html'
@@ -96,6 +100,7 @@ class HTMLExporter(TemplateExporter):
         if 'reveal' not in resources:
             resources['reveal'] = {}
         resources['reveal']['use_local_libs'] = self.use_local_libs
+        resources['reveal']['use_sri_attr'] = self.use_sri_attr
 
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))

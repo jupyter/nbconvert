@@ -123,11 +123,6 @@ nbconvert_flags.update({
         """Exclude input cells and output prompts from converted document. 
         This mode is ideal for generating code-free reports."""
         ),
-    # this does not seem to work yet
-    # 'local-libs' : (
-    #     {'HTMLExporter' : { 'use_local_libs' : True}},
-    #     "Use local folder libs/ instead of fetching resources from CDN"
-    #     ),
 })
 
 
