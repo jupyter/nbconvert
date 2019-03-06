@@ -9,7 +9,12 @@ Used from markdown.py
 from __future__ import print_function
 
 import re
-import cgi
+
+try:
+    from html import escape as html_escape
+except ImportError:
+    # Python 2
+    from cgi import escape as html_escape
 
 import mistune
 
@@ -126,12 +131,8 @@ class IPythonRenderer(mistune.Renderer):
         anchor_link_text = self.options.get('anchor_link_text', u'¶')
         return add_anchor(html, anchor_link_text=anchor_link_text)
 
-    # We must be careful here for compatibility
-    # html.escape() is not availale on python 2.7
-    # For more details, see:
-    # https://wiki.python.org/moin/EscapingHtml
     def escape_html(self, text):
-        return cgi.escape(text)
+        return html_escape(text)
 
     def block_math(self, text):
         return '$$%s$$' % self.escape_html(text)
