@@ -231,10 +231,10 @@ i.e. the $i^{th}$"""
     def test_markdown2rst(self):
         """markdown2rst test"""
 
-        #Modify token array for rst, escape asterik
+        #Modify token array for rst, escape asterisk
         tokens = copy(self.tokens)
         tokens[0] = r'\*test'
-        tokens[1] = r'\*\*test'
+        tokens[1] = r'\**test'
 
         for index, test in enumerate(self.tests):
             self._try_markdown(
