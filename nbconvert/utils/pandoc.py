@@ -15,7 +15,7 @@ from ipython_genutils.py3compat import cast_bytes, which
 from .exceptions import ConversionException
 
 _minimal_version = "1.12.1"
-_maximal_version = "2.0.0"
+_maximal_version = "3.0.0"
 
 def pandoc(source, fmt, to, extra_args=None, encoding='utf-8'):
     """Convert an input string using pandoc.
