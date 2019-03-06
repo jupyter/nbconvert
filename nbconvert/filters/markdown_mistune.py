@@ -9,9 +9,11 @@ Used from markdown.py
 from __future__ import print_function
 
 import re
+from functools import partial
 
 try:
-    from html import escape as html_escape
+    from html import escape
+    html_escape = partial(escape, quote=False)
 except ImportError:
     # Python 2
     from cgi import escape as html_escape
