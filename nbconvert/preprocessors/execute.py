@@ -440,6 +440,7 @@ class ExecutePreprocessor(Preprocessor):
         exec_reply = self._wait_for_reply(msg_id, cell)
 
         outs = cell.outputs = []
+        clear_before_next_output = False
 
         while True:
             try:
@@ -475,11 +476,13 @@ class ExecutePreprocessor(Preprocessor):
             elif msg_type == 'execute_input':
                 continue
             elif msg_type == 'clear_output':
-                outs[:] = []
-                # clear display_id mapping for this cell
-                for display_id, cell_map in self._display_id_map.items():
-                    if cell_index in cell_map:
-                        cell_map[cell_index] = []
+                if content.get('wait'):
+                    self.log.debug('Wait to clear output')
+                    clear_before_next_output = True
+                else:
+                    self.log.debug('Immediate clear output')
+                    outs[:] = []
+                    self.clear_display_id_mapping(cell_index)
                 continue
             elif msg_type.startswith('comm'):
                 continue
@@ -492,6 +495,12 @@ class ExecutePreprocessor(Preprocessor):
                 if msg_type == 'update_display_data':
                     # update_display_data doesn't get recorded
                     continue
+
+            if clear_before_next_output:
+                self.log.debug('Executing delayed clear_output')
+                outs[:] = []
+                self.clear_display_id_mapping(cell_index)
+                clear_before_next_output = False
 
             try:
                 out = output_from_msg(msg)
@@ -509,6 +518,10 @@ class ExecutePreprocessor(Preprocessor):
 
         return exec_reply, outs
 
+    def clear_display_id_mapping(self, cell_index):
+        for display_id, cell_map in self._display_id_map.items():
+            if cell_index in cell_map:
+                cell_map[cell_index] = []
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
