@@ -479,7 +479,7 @@ class ExecutePreprocessor(Preprocessor):
                 self.clear_output(outs, msg, cell_index)
                 continue
             elif msg_type.startswith('comm'):
-                self.handle_comm_msg(msg)
+                self.handle_comm_msg(outs, msg, cell_index)
                 continue
 
             display_id = None
@@ -531,7 +531,7 @@ class ExecutePreprocessor(Preprocessor):
             if cell_index in cell_map:
                 cell_map[cell_index] = []
 
-    def handle_comm_msg(self, msg):
+    def handle_comm_msg(self, outs, msg, cell_index):
         pass
 
 def executenb(nb, cwd=None, km=None, **kwargs):
