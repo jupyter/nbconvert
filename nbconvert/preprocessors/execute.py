@@ -440,7 +440,7 @@ class ExecutePreprocessor(Preprocessor):
         exec_reply = self._wait_for_reply(msg_id, cell)
 
         outs = cell.outputs = []
-        clear_before_next_output = False
+        self.clear_before_next_output = False
 
         while True:
             try:
@@ -476,15 +476,10 @@ class ExecutePreprocessor(Preprocessor):
             elif msg_type == 'execute_input':
                 continue
             elif msg_type == 'clear_output':
-                if content.get('wait'):
-                    self.log.debug('Wait to clear output')
-                    clear_before_next_output = True
-                else:
-                    self.log.debug('Immediate clear output')
-                    outs[:] = []
-                    self.clear_display_id_mapping(cell_index)
+                self.clear_output(outs, msg, cell_index)
                 continue
             elif msg_type.startswith('comm'):
+                self.handle_comm_msg(msg)
                 continue
 
             display_id = None
@@ -496,32 +491,48 @@ class ExecutePreprocessor(Preprocessor):
                     # update_display_data doesn't get recorded
                     continue
 
-            if clear_before_next_output:
-                self.log.debug('Executing delayed clear_output')
-                outs[:] = []
-                self.clear_display_id_mapping(cell_index)
-                clear_before_next_output = False
-
-            try:
-                out = output_from_msg(msg)
-            except ValueError:
-                self.log.error("unhandled iopub msg: " + msg_type)
-                continue
-            if display_id:
-                # record output index in:
-                #   _display_id_map[display_id][cell_idx]
-                cell_map = self._display_id_map.setdefault(display_id, {})
-                output_idx_list = cell_map.setdefault(cell_index, [])
-                output_idx_list.append(len(outs))
-
-            outs.append(out)
+            self.output(outs, msg, display_id, cell_index)
 
         return exec_reply, outs
+
+    def output(self, outs, msg, display_id, cell_index):
+        msg_type = msg['msg_type']
+        if self.clear_before_next_output:
+            self.log.debug('Executing delayed clear_output')
+            outs[:] = []
+            self.clear_display_id_mapping(cell_index)
+            self.clear_before_next_output = False
+
+        try:
+            out = output_from_msg(msg)
+        except ValueError:
+            self.log.error("unhandled iopub msg: " + msg_type)
+            return
+        if display_id:
+            # record output index in:
+            #   _display_id_map[display_id][cell_idx]
+            cell_map = self._display_id_map.setdefault(display_id, {})
+            output_idx_list = cell_map.setdefault(cell_index, [])
+            output_idx_list.append(len(outs))
+        outs.append(out)
+
+    def clear_output(self, outs, msg, cell_index):
+        content = msg['content']
+        if content.get('wait'):
+            self.log.debug('Wait to clear output')
+            self.clear_before_next_output = True
+        else:
+            self.log.debug('Immediate clear output')
+            outs[:] = []
+            self.clear_display_id_mapping(cell_index)
 
     def clear_display_id_mapping(self, cell_index):
         for display_id, cell_map in self._display_id_map.items():
             if cell_index in cell_map:
                 cell_map[cell_index] = []
+
+    def handle_comm_msg(self, msg):
+        pass
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
