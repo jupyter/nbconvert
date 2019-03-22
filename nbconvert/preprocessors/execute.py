@@ -172,6 +172,15 @@ class ExecutePreprocessor(Preprocessor):
             )
     ).tag(config=True)
 
+    store_widget_state = Bool(True,
+        help=dedent(
+            """
+            If `True` (default), then the state of the Jupyter widgets created
+            at the kernel will be stored in the metadata of the notebook.
+            """
+            )
+    ).tag(config=True)
+
     iopub_timeout = Integer(4, allow_none=False,
         help=dedent(
             """
@@ -554,7 +563,7 @@ class ExecutePreprocessor(Preprocessor):
     def handle_comm_msg(self, outs, msg, cell_index):
         content = msg['content']
         data = content['data']
-        if 'state' in data:  # ignore custom msg'es
+        if self.store_widget_state and 'state' in data:  # ignore custom msg'es
             self.widget_state.setdefault(content['comm_id'], {}).update(data['state'])
             if 'buffer_paths' in data and data['buffer_paths']:
                 self.widget_buffers[content['comm_id']] = _get_buffer_data(msg)
