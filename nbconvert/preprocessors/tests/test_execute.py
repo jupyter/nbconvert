@@ -22,11 +22,17 @@ from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 import IPython
+from mock import patch
 from traitlets import TraitError
 from jupyter_client.kernelspec import KernelSpecManager
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
 from ipython_genutils.py3compat import string_types
+
+try:
+    TimeoutError  # Py 3
+except NameError:
+    TimeoutError = RuntimeError  # Py 2
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
@@ -210,12 +216,8 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        try:
-            exception = TimeoutError
-        except NameError:
-            exception = RuntimeError
 
-        with pytest.raises(exception):
+        with pytest.raises(TimeoutError):
             self.run_notebook(filename, dict(timeout=1), res)
 
     def test_timeout_func(self):
@@ -224,16 +226,24 @@ class TestExecute(PreprocessorTestsBase):
         filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        try:
-            exception = TimeoutError
-        except NameError:
-            exception = RuntimeError
 
         def timeout_func(source):
             return 10
 
-        with pytest.raises(exception):
+        with pytest.raises(TimeoutError):
             self.run_notebook(filename, dict(timeout_func=timeout_func), res)
+
+    @patch('jupyter_client.KernelManager.is_alive')
+    def test_kernel_death(self, alive_mock):
+        """Check that an error is raised when the kernel is_alive is false"""
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
+        res = self.build_resources()
+        res['metadata']['path'] = os.path.dirname(filename)
+
+        with pytest.raises(RuntimeError):
+            alive_mock.return_value = False
+            self.run_notebook(filename, {}, res)
 
     def test_allow_errors(self):
         """
