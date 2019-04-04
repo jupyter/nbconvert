@@ -5,7 +5,6 @@ sudo: required
 dist: trusty
 language: python
 
-language: python
 matrix:
     include:
         - python: 2.7
