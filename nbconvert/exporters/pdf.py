@@ -64,6 +64,8 @@ class PDFExporter(LatexExporter):
 
     texinputs = Unicode(help="texinputs dir. A notebook's directory is added")
     writer = Instance("nbconvert.writers.FilesWriter", args=(), kw={'build_directory': '.'})
+
+    output_mimetype = "application/pdf"
     
     _captured_output = List()
 

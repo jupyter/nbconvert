@@ -16,6 +16,7 @@ they are converted.
 from __future__ import print_function, absolute_import
 
 from .base import Preprocessor
+from traitlets import Unicode
 
 #-----------------------------------------------------------------------------
 # Classes
@@ -27,6 +28,10 @@ class LatexPreprocessor(Preprocessor):
     Mainly populates the `latex` key in the resources dict,
     adding definitions for pygments highlight styles.
     """
+
+    style = Unicode('default',
+            help='Name of the pygments style to use'
+    ).tag(config=True)
 
     def preprocess(self, nb, resources):
         """Preprocessing to apply on each notebook.
@@ -43,5 +48,6 @@ class LatexPreprocessor(Preprocessor):
         from pygments.formatters import LatexFormatter
         
         resources.setdefault("latex", {})
-        resources["latex"].setdefault("pygments_definitions", LatexFormatter().get_style_defs())
+        resources["latex"].setdefault("pygments_definitions", LatexFormatter(style=self.style).get_style_defs())
+        resources["latex"].setdefault("pygments_style_name", self.style)
         return nb, resources

@@ -28,6 +28,10 @@ class TestPandoc(TestsBase):
         super(TestPandoc, self).__init__(*args, **kwargs)
         self.original_env = os.environ.copy()
 
+    def setUp(self):
+        super(TestPandoc, self).setUp()
+        pandoc.check_pandoc_version._cached = None
+
     @onlyif_cmds_exist('pandoc')
     def test_pandoc_available(self):
         """ Test behaviour that pandoc functions raise PandocMissing as documented """
@@ -55,11 +59,16 @@ class TestPandoc(TestsBase):
 
         pandoc._minimal_version = "120.0"
         with warnings.catch_warnings(record=True) as w:
+            # call it twice to verify the cached value is used
             assert not pandoc.check_pandoc_version()
+            assert not pandoc.check_pandoc_version()
+        # only one warning after two calls, due to cache
         self.assertEqual(len(w), 1)
-
+        # clear cache
+        pandoc.check_pandoc_version._cached = None
         pandoc._minimal_version = pandoc.get_pandoc_version()
         assert pandoc.check_pandoc_version()
+
 
 def pandoc_function_raised_missing(f, *args, **kwargs):
     try:

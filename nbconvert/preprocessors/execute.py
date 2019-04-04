@@ -3,7 +3,7 @@ and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+import base64
 from textwrap import dedent
 from contextlib import contextmanager
 
@@ -172,6 +172,15 @@ class ExecutePreprocessor(Preprocessor):
             )
     ).tag(config=True)
 
+    store_widget_state = Bool(True,
+        help=dedent(
+            """
+            If `True` (default), then the state of the Jupyter widgets created
+            at the kernel will be stored in the metadata of the notebook.
+            """
+            )
+    ).tag(config=True)
+
     iopub_timeout = Integer(4, allow_none=False,
         help=dedent(
             """
@@ -292,6 +301,8 @@ class ExecutePreprocessor(Preprocessor):
         self.nb = nb
         # clear display_id map
         self._display_id_map = {}
+        self.widget_state = {}
+        self.widget_buffers = {}
 
         if km is None:
             self.km, self.kc = self.start_new_kernel(cwd=path)
@@ -354,8 +365,26 @@ class ExecutePreprocessor(Preprocessor):
             nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
             info_msg = self._wait_for_reply(self.kc.kernel_info())
             nb.metadata['language_info'] = info_msg['content']['language_info']
+            self.set_widgets_metadata()
 
         return nb, resources
+
+    def set_widgets_metadata(self):
+        if self.widget_state:
+            self.nb.metadata.widgets = {
+                'application/vnd.jupyter.widget-state+json': {
+                    'state': {
+                        model_id: _serialize_widget_state(state)
+                        for model_id, state in self.widget_state.items() if '_model_name' in state
+                    },
+                    'version_major': 2,
+                    'version_minor': 0,
+                }
+            }
+            for key, widget in self.nb.metadata.widgets['application/vnd.jupyter.widget-state+json']['state'].items():
+                buffers = self.widget_buffers.get(key)
+                if buffers:
+                    widget['buffers'] = buffers
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
@@ -413,7 +442,25 @@ class ExecutePreprocessor(Preprocessor):
 
                 if not timeout or timeout < 0:
                     timeout = None
-                msg = self.kc.shell_channel.get_msg(timeout=timeout)
+                
+                if timeout is not None:
+                    # timeout specified
+                    msg = self.kc.shell_channel.get_msg(timeout=timeout)
+                else:
+                    #no timeout specified, if kernel dies still handle this correctly
+                    while True:
+                        try:
+                            #check every few seconds if kernel is still alive
+                            msg = self.kc.shell_channel.get_msg(timeout=5)
+                        except Empty:
+                            #received no message, check if kernel is still alive
+                            if not self.kc.is_alive():
+                                raise RuntimeError("Kernel died")
+                            
+                            #kernel still alive, wait for a message
+                            continue
+                        #message received
+                        break
             except Empty:
                 self.log.error(
                     "Timeout waiting for execute reply (%is)." % self.timeout)
@@ -440,6 +487,7 @@ class ExecutePreprocessor(Preprocessor):
         exec_reply = self._wait_for_reply(msg_id, cell)
 
         outs = cell.outputs = []
+        self.clear_before_next_output = False
 
         while True:
             try:
@@ -475,13 +523,10 @@ class ExecutePreprocessor(Preprocessor):
             elif msg_type == 'execute_input':
                 continue
             elif msg_type == 'clear_output':
-                outs[:] = []
-                # clear display_id mapping for this cell
-                for display_id, cell_map in self._display_id_map.items():
-                    if cell_index in cell_map:
-                        cell_map[cell_index] = []
+                self.clear_output(outs, msg, cell_index)
                 continue
             elif msg_type.startswith('comm'):
+                self.handle_comm_msg(outs, msg, cell_index)
                 continue
 
             display_id = None
@@ -493,22 +538,53 @@ class ExecutePreprocessor(Preprocessor):
                     # update_display_data doesn't get recorded
                     continue
 
-            try:
-                out = output_from_msg(msg)
-            except ValueError:
-                self.log.error("unhandled iopub msg: " + msg_type)
-                continue
-            if display_id:
-                # record output index in:
-                #   _display_id_map[display_id][cell_idx]
-                cell_map = self._display_id_map.setdefault(display_id, {})
-                output_idx_list = cell_map.setdefault(cell_index, [])
-                output_idx_list.append(len(outs))
-
-            outs.append(out)
+            self.output(outs, msg, display_id, cell_index)
 
         return exec_reply, outs
 
+    def output(self, outs, msg, display_id, cell_index):
+        msg_type = msg['msg_type']
+        if self.clear_before_next_output:
+            self.log.debug('Executing delayed clear_output')
+            outs[:] = []
+            self.clear_display_id_mapping(cell_index)
+            self.clear_before_next_output = False
+
+        try:
+            out = output_from_msg(msg)
+        except ValueError:
+            self.log.error("unhandled iopub msg: " + msg_type)
+            return
+        if display_id:
+            # record output index in:
+            #   _display_id_map[display_id][cell_idx]
+            cell_map = self._display_id_map.setdefault(display_id, {})
+            output_idx_list = cell_map.setdefault(cell_index, [])
+            output_idx_list.append(len(outs))
+        outs.append(out)
+
+    def clear_output(self, outs, msg, cell_index):
+        content = msg['content']
+        if content.get('wait'):
+            self.log.debug('Wait to clear output')
+            self.clear_before_next_output = True
+        else:
+            self.log.debug('Immediate clear output')
+            outs[:] = []
+            self.clear_display_id_mapping(cell_index)
+
+    def clear_display_id_mapping(self, cell_index):
+        for display_id, cell_map in self._display_id_map.items():
+            if cell_index in cell_map:
+                cell_map[cell_index] = []
+
+    def handle_comm_msg(self, outs, msg, cell_index):
+        content = msg['content']
+        data = content['data']
+        if self.store_widget_state and 'state' in data:  # ignore custom msg'es
+            self.widget_state.setdefault(content['comm_id'], {}).update(data['state'])
+            if 'buffer_paths' in data and data['buffer_paths']:
+                self.widget_buffers[content['comm_id']] = _get_buffer_data(msg)
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     """Execute a notebook's code, updating outputs within the notebook object.
@@ -532,3 +608,26 @@ def executenb(nb, cwd=None, km=None, **kwargs):
         resources['metadata'] = {'path': cwd}
     ep = ExecutePreprocessor(**kwargs)
     return ep.preprocess(nb, resources, km=km)[0]
+
+
+def _serialize_widget_state(state):
+    """Serialize a widget state, following format in @jupyter-widgets/schema."""
+    return {
+        'model_name': state.get('_model_name'),
+        'model_module': state.get('_model_module'),
+        'model_module_version': state.get('_model_module_version'),
+        'state': state,
+    }
+
+
+def _get_buffer_data(msg):
+    encoded_buffers = []
+    paths = msg['content']['data']['buffer_paths']
+    buffers = msg['buffers']
+    for path, buffer in zip(paths, buffers):
+        encoded_buffers.append({
+            'data': base64.b64encode(buffer).decode('utf-8'),
+            'encoding': 'base64',
+            'path': path
+        })
+    return encoded_buffers
