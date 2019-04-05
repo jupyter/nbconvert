@@ -15,6 +15,7 @@ from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 
 from .templateexporter import TemplateExporter
 
+
 class HTMLExporter(TemplateExporter):
     """
     Exports a basic HTML document.  This exporter assists with the export of
