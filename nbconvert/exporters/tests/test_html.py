@@ -117,7 +117,7 @@ class TestHTMLExporter(ExportersTestsBase):
         )
         check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
         result = check_for_png.search(output)
-        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64, iVBOR'))
+        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64,iVBOR'))
         self.assertTrue(result.group(1).strip().startswith('alt="image.png"'))
 
         check_for_data = re.compile(r'<img src="(?P<url>[^"]*?)"')
