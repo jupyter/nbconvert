@@ -3,14 +3,18 @@
 # needs these two lines:
 sudo: required
 dist: trusty
-
 language: python
-python:
-    - "nightly"
-    - 3.6
-    - 3.5
-    - 3.4
-    - 2.7
+
+matrix:
+    include:
+        - python: 2.7
+        - python: 3.5
+        - python: 3.6
+        - python: 3.7
+          dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
+        - python: nightly
+    allow_failures:
+        - python: nightly
 env:
   global:
     - PATH=$TRAVIS_BUILD_DIR/bin:$PATH
@@ -38,6 +42,3 @@ script:
     - py.test --cov nbconvert -v --pyargs nbconvert
 after_success:
     - codecov
-matrix:
-    allow_failures:
-        - python: "nightly"
