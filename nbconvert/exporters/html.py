@@ -4,9 +4,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import copy
 import os
-import re
 
 from traitlets import default, Unicode
 from traitlets.config import Config
