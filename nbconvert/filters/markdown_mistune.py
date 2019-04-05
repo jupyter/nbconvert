@@ -154,7 +154,7 @@ class IPythonRenderer(mistune.Renderer):
         :param title: title text of the image.
         :param text: alt text of the image.
         """
-        attachments = self.options['attachments']
+        attachments = self.options.get('attachments', {})
         attachment_prefix = 'attachment:'
         if src.startswith(attachment_prefix):
             name = src[len(attachment_prefix):]
