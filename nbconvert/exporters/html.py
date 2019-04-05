@@ -4,7 +4,9 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import copy
 import os
+import re
 
 from traitlets import default, Unicode
 from traitlets.config import Config
@@ -87,7 +89,29 @@ class HTMLExporter(TemplateExporter):
                             'data:' + att_type + ';base64, ' + attachment[att_type])
         return output
 
+    def _make_attachments_globally_unique(self, nb):
+        nb = copy.deepcopy(nb)
+        for cell_index, cell in enumerate(nb.cells):
+            if 'attachments' in cell:
+                # attachment with names being unique only within the cell not globally
+                local_attachments = cell['attachments'].copy()
+                # we will replace them with a globally unique name
+                cell['attachments'] = {}
+                for key, attachment in local_attachments.items():
+                    unique_key = 'globally_unique_%i_%s' % (cell_index, key)
+                    cell['attachments'][unique_key] = attachment
+                    if 'source' in cell:
+                        # the reference to the attachment should also be renamed
+                        local_ref = r'](attachment:%s)' % key
+                        global_ref = r'](attachment:%s)' % unique_key
+                        cell['source'] = re.sub(local_ref, global_ref, cell['source'])
+                        cell['source'] = cell['source'].replace(local_ref, global_ref)
+        return nb
+
+
+
     def from_notebook_node(self, nb, resources=None, **kw):
+        self.nb = nb = self._make_attachments_globally_unique(nb)
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
