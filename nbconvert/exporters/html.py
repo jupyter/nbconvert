@@ -8,6 +8,7 @@ import os
 
 from traitlets import default, Unicode
 from traitlets.config import Config
+from jinja2 import contextfilter
 
 from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
@@ -66,9 +67,12 @@ class HTMLExporter(TemplateExporter):
         c.merge(super(HTMLExporter,self).default_config)
         return c
 
-    def markdown2html(self, source):
+    @contextfilter
+    def markdown2html(self, context, source):
         """Markdown to HTML filter respecting the anchor_link_text setting"""
-        renderer = IPythonRenderer(escape=False,
+        cell = context['cell']
+        attachments = cell.get('attachments', {})
+        renderer = IPythonRenderer(escape=False, attachments=attachments,
                                    anchor_link_text=self.anchor_link_text)
         return MarkdownWithMath(renderer=renderer).render(source)
 
@@ -77,22 +81,9 @@ class HTMLExporter(TemplateExporter):
             yield pair
         yield ('markdown2html', self.markdown2html)
 
-    def process_attachments(self, nb, output):
-        for cell in nb.cells:
-            if 'attachments' in cell:
-                for key, attachment in cell['attachments'].items():
-                    for att_type, att in attachment.items():
-                        output = output.replace(
-                            'attachment:{}'.format(key),
-                            'data:' + att_type + ';base64, ' + attachment[att_type])
-        return output
-
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
         self.register_filter('highlight_code', highlight_code)
-        
-        output, resources = super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
-        att_output = self.process_attachments(nb, output)
-        return att_output, resources
+        return super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)

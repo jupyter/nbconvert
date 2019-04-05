@@ -198,7 +198,7 @@ setup_args = dict(
 
 setup_args['install_requires'] = [
     'mistune>=0.8.1',
-    'jinja2',
+    'jinja2>=2.4',
     'pygments',
     'traitlets>=4.2',
     'jupyter_core',

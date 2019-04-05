@@ -147,6 +147,31 @@ class IPythonRenderer(mistune.Renderer):
     def inline_math(self, text):
         return '$%s$' % self.escape_html(text)
 
+    def image(self, src, title, text):
+        """Rendering a image with title and text.
+
+        :param src: source link of the image.
+        :param title: title text of the image.
+        :param text: alt text of the image.
+        """
+        attachments = self.options.get('attachments', {})
+        attachment_prefix = 'attachment:'
+        if src.startswith(attachment_prefix):
+            name = src[len(attachment_prefix):]
+            assert name in attachments, "missing attachment: {}".format(name)
+            attachment = attachments[name]
+            # we choose vector over raster, and lossless over lossy
+            preferred_mime_types = ['image/svg+xml', 'image/png', 'image/jpeg']
+            for preferred_mime_type in preferred_mime_types:
+                if preferred_mime_type in attachment:
+                    break
+            else:  # otherwise we choose the first mimetype we can find
+                preferred_mime_types = attachment.keys()[0]
+            mime_type = preferred_mime_type
+            data = attachment[mime_type]
+            src = 'data:' + mime_type + ';base64,' + data
+        return super(IPythonRenderer, self).image(src, title, text)
+
 
 def markdown2html_mistune(source):
     """Convert a markdown string to HTML using mistune"""

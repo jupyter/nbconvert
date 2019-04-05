@@ -117,8 +117,14 @@ class TestHTMLExporter(ExportersTestsBase):
         )
         check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
         result = check_for_png.search(output)
-        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64, iVBOR'))
-        self.assertTrue(result.group(1).strip().startswith('alt="python.png"'))
+        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64,iVBOR'))
+        self.assertTrue(result.group(1).strip().startswith('alt="image.png"'))
+
+        check_for_data = re.compile(r'<img src="(?P<url>[^"]*?)"')
+        results = check_for_data.findall(output)
+        assert results[0] != results[1], 'attachments only need to be unique within a cell'
+        assert 'image/svg' in results[1], 'second image should use svg'
+
 
     def test_custom_filter_highlight_code(self):
         # Overwriting filters takes place at: Exporter.from_notebook_node
