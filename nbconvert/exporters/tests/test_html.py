@@ -123,6 +123,7 @@ class TestHTMLExporter(ExportersTestsBase):
         check_for_data = re.compile(r'<img src="(?P<url>[^"]*?)"')
         results = check_for_data.findall(output)
         assert results[0] != results[1], 'attachments only need to be unique within a cell'
+        assert 'image/svg' in results[1], 'second image should use svg'
 
 
     def test_custom_filter_highlight_code(self):
