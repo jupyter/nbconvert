@@ -169,7 +169,7 @@ class IPythonRenderer(mistune.Renderer):
                 preferred_mime_types = attachment.keys()[0]
             mime_type = preferred_mime_type
             data = attachment[mime_type]
-            src = 'data:' + mime_type + ';base64, ' + data
+            src = 'data:' + mime_type + ';base64,' + data
         return super(IPythonRenderer, self).image(src, title, text)
 
 
