@@ -3,7 +3,7 @@ Executing notebooks
 
 .. module:: nbconvert.preprocessors
 
-Jupyter notebooks are often saved with output cells that have been cleared. 
+Jupyter notebooks are often saved with output cells that have been cleared.
 nbconvert provides a convenient way to execute the input cells of an
 .ipynb notebook file and save the results, both input and output cells,
 as a .ipynb file.
@@ -106,7 +106,7 @@ their metadata (depending on the kernel used the last time the notebook was
 saved). In reality, these notebooks will work on both Python 2 and Python 3,
 and, for testing, it is important to be able to execute them programmatically
 on both versions. Here the traitlet ``kernel_name`` helps simplify and
-maintain consistency: we can just run a notebook twice, specifying first 
+maintain consistency: we can just run a notebook twice, specifying first
 "python2" and then "python3" as the kernel name.
 
 Handling errors and exceptions
@@ -159,4 +159,27 @@ stopping the execution on the first error, we can keep executing the notebook
 using the traitlet ``allow_errors`` (default is False). With
 ``allow_errors=True``, the notebook is executed until the end, regardless of
 any error encountered during the execution. The output notebook, will contain
-the stack-traces and error messages for **all** the cells raising exceptions. 
+the stack-traces and error messages for **all** the cells raising exceptions.
+
+Widget state
+------------
+
+If your notebook contains any
+`Jupyter Widgets <https://github.com/jupyter-widgets/ipywidgets/>`_,
+the state of all the widgets can be stored in the notebook's metadata (starting
+from nbconvert 5.5). This allows rendering of the live widgets on for instance
+nbviewer, or when converting to html.
+
+We can tell nbconvert to not store the state using the `store_widget_state`
+argument::
+
+    jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
+
+This widget rendering is not performed against a browser during execution, so
+only widget default states or states manipulated via user code will be
+calculated during execution. `%%javascript` cells will execute upon notebook
+rendering, enabling complex interactions to function as expected when viewed by
+a UI.
+
+If you can't view widget results after execution, you may need to select
+`Trust Notebook` under the `File` menu.
