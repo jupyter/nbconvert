@@ -18,6 +18,10 @@ from testpath.tempdir import TemporaryDirectory
 
 from jinja2 import DictLoader
 
+
+current_dir = os.path.dirname(__file__)
+
+
 class TestLatexExporter(ExportersTestsBase):
     """Contains test functions for latex.py"""
 
@@ -134,13 +138,22 @@ class TestLatexExporter(ExportersTestsBase):
             self._get_notebook(nb_name="prompt_numbers.ipynb"))
         assert "shape" in output
         assert "evs" in output
-        
+
+    @onlyif_cmds_exist('pandoc')
+    def test_svg(self):
+        """
+        Can a LatexExporter export when it recieves raw binary strings form svg?
+        """
+        filename = os.path.join(current_dir, 'files', 'svg.ipynb')
+        (output, resources) = LatexExporter().from_filename(filename)
+        assert len(output) > 0
+
     def test_in_memory_template_tplx(self):
         # Loads in an in memory latex template (.tplx) using jinja2.DictLoader
         # creates a class that uses this template with the template_file argument
         # converts an empty notebook using this mechanism
         my_loader_tplx = DictLoader({'my_template': "{%- extends 'article.tplx' -%}"})
-        
+
         class MyExporter(LatexExporter):
             template_file = 'my_template'
 

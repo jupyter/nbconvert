@@ -34,7 +34,7 @@ def guess_extension_without_jpe(mimetype):
 
 class ExtractOutputPreprocessor(Preprocessor):
     """
-    Extracts all of the outputs from the notebook file.  The extracted 
+    Extracts all of the outputs from the notebook file.  The extracted
     outputs are returned in the 'resources' dictionary.
     """
 
@@ -49,7 +49,7 @@ class ExtractOutputPreprocessor(Preprocessor):
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
-        
+
         Parameters
         ----------
         cell : NotebookNode cell
@@ -61,16 +61,16 @@ class ExtractOutputPreprocessor(Preprocessor):
             Index of the cell being processed (see base.py)
         """
 
-        #Get the unique key from the resource dict if it exists.  If it does not 
+        #Get the unique key from the resource dict if it exists.  If it does not
         #exist, use 'output' as the default.  Also, get files directory if it
         #has been specified
         unique_key = resources.get('unique_key', 'output')
         output_files_dir = resources.get('output_files_dir', None)
-        
+
         #Make sure outputs key exists
         if not isinstance(resources['outputs'], dict):
             resources['outputs'] = {}
-            
+
         #Loop through all of the outputs in the cell
         for index, out in enumerate(cell.get('outputs', [])):
             if out.output_type not in {'display_data', 'execute_result'}:
@@ -89,6 +89,11 @@ class ExtractOutputPreprocessor(Preprocessor):
                         # JSON. In the latter case we want to go extra sure that
                         # we enclose a scalar string value into extra quotes by
                         # serializing it properly.
+                        if isinstance(data, bytes):
+                            # In python 3 we need to guess the encoding in this
+                            # instance. Some modules that return raw data like
+                            # svg can leave the data in byte form instead of str
+                            data = data.decode('utf-8')
                         data = json.dumps(data)
 
                     #Binary files are base64-encoded, SVG is already XML
@@ -100,7 +105,7 @@ class ExtractOutputPreprocessor(Preprocessor):
                         data = data.replace('\n', '\r\n').encode("UTF-8")
                     else:
                         data = data.encode("UTF-8")
-                    
+
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:
                         ext = '.' + mime_type.rsplit('/')[-1]
