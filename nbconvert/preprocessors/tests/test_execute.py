@@ -23,6 +23,7 @@ from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 import IPython
+from mock import MagicMock
 from traitlets import TraitError
 from nbformat import NotebookNode
 from jupyter_client.kernelspec import KernelSpecManager
@@ -50,7 +51,6 @@ def _normalize_base64(b64_text):
         return b64encode(b64decode(b64_text.encode('ascii'))).decode('ascii')
     except (ValueError, TypeError):
         return b64_text
-
 
 class ExecuteTestBase(PreprocessorTestsBase):
     def build_preprocessor(self, opts):
