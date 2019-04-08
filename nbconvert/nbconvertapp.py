@@ -27,7 +27,7 @@ from .exporters.base import get_export_names, get_exporter
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
-from .utils.io import unicode_stdin_stream
+from .utils.io import unicode_stdin_stream, sensitive_filename_cleanup
 
 #-----------------------------------------------------------------------------
 #Classes and functions
@@ -44,7 +44,7 @@ class DottedOrNone(DottedObjectName):
             return super(DottedOrNone, self).validate(obj, value)
         else:
             return value
-            
+
 nbconvert_aliases = {}
 nbconvert_aliases.update(base_aliases)
 nbconvert_aliases.update({
@@ -91,7 +91,7 @@ nbconvert_flags.update({
             },
             'FilesWriter' : {'build_directory': ''},
         },
-        """Run nbconvert in place, overwriting the existing notebook (only 
+        """Run nbconvert in place, overwriting the existing notebook (only
         relevant when converting to notebook format)"""
         ),
     'clear-output' : (
@@ -103,7 +103,7 @@ nbconvert_flags.update({
             'FilesWriter' : {'build_directory': ''},
             'ClearOutputPreprocessor' : {'enabled' : True},
         },
-        """Clear output of current file and save in place, 
+        """Clear output of current file and save in place,
         overwriting the existing notebook. """
         ),
     'no-prompt' : (
@@ -120,7 +120,7 @@ nbconvert_flags.update({
             'exclude_input': True,
             }
         },
-        """Exclude input cells and output prompts from converted document. 
+        """Exclude input cells and output prompts from converted document.
         This mode is ideal for generating code-free reports."""
         ),
 })
@@ -128,16 +128,16 @@ nbconvert_flags.update({
 
 class NbConvertApp(JupyterApp):
     """Application used to convert from notebook file type (``*.ipynb``)"""
-    
+
     version = __version__
     name = 'jupyter-nbconvert'
     aliases = nbconvert_aliases
     flags = nbconvert_flags
-    
+
     @default('log_level')
     def _log_level_default(self):
         return logging.INFO
-    
+
     classes = List()
     @default('classes')
     def _classes_default(self):
@@ -147,7 +147,7 @@ class NbConvertApp(JupyterApp):
                 cls = getattr(pkg, name)
                 if isinstance(cls, type) and issubclass(cls, Configurable):
                     classes.append(cls)
-        
+
         return classes
 
     description = Unicode(
@@ -161,7 +161,7 @@ class NbConvertApp(JupyterApp):
             ''').tag(config=True)
 
     use_output_suffix = Bool(
-        True, 
+        True,
         help="""Whether to apply a suffix prior to the extension (only relevant
             when converting to notebook format). The suffix is determined by
             the exporter, and is usually '.nbconvert'."""
@@ -175,14 +175,15 @@ class NbConvertApp(JupyterApp):
 
     examples = Unicode(u"""
         The simplest way to use nbconvert is
-        
+
         > jupyter nbconvert mynotebook.ipynb
-        
+
         which will convert mynotebook.ipynb to the default format (probably HTML).
-        
+
         You can specify the export format with `--to`.
+
         Options include {formats}.
-        
+
         > jupyter nbconvert --to latex mynotebook.ipynb
 
         Both HTML and LaTeX support multiple output templates. LaTeX includes
@@ -190,44 +191,44 @@ class NbConvertApp(JupyterApp):
         can specify the flavor of the format used.
 
         > jupyter nbconvert --to html --template basic mynotebook.ipynb
-        
+
         You can also pipe the output to stdout, rather than a file
-        
+
         > jupyter nbconvert mynotebook.ipynb --stdout
 
         PDF is generated via latex
 
         > jupyter nbconvert mynotebook.ipynb --to pdf
-        
+
         You can get (and serve) a Reveal.js-powered slideshow
-        
+
         > jupyter nbconvert myslides.ipynb --to slides --post serve
-        
-        Multiple notebooks can be given at the command line in a couple of 
+
+        Multiple notebooks can be given at the command line in a couple of
         different ways:
-  
+
         > jupyter nbconvert notebook*.ipynb
         > jupyter nbconvert notebook1.ipynb notebook2.ipynb
-        
+
         or you can specify the notebooks list in a config file, containing::
-        
+
             c.NbConvertApp.notebooks = ["my_notebook.ipynb"]
-        
+
         > jupyter nbconvert --config mycfg.py
         """.format(formats=get_export_names()))
 
     # Writer specific variables
     writer = Instance('nbconvert.writers.base.WriterBase',
-                      help="""Instance of the writer class used to write the 
+                      help="""Instance of the writer class used to write the
                       results of the conversion.""", allow_none=True)
     writer_class = DottedObjectName('FilesWriter',
-                                    help="""Writer class used to write the 
+                                    help="""Writer class used to write the
                                     results of the conversion""").tag(config=True)
     writer_aliases = {'fileswriter': 'nbconvert.writers.files.FilesWriter',
                       'debugwriter': 'nbconvert.writers.debug.DebugWriter',
                       'stdoutwriter': 'nbconvert.writers.stdout.StdoutWriter'}
     writer_factory = Type(allow_none=True)
-    
+
     @observe('writer_class')
     def _writer_class_changed(self, change):
         new = change['new']
@@ -246,7 +247,7 @@ class NbConvertApp(JupyterApp):
     ).tag(config=True)
     postprocessor_aliases = {'serve': 'nbconvert.postprocessors.serve.ServePostProcessor'}
     postprocessor_factory = Type(None, allow_none=True)
-    
+
     @observe('postprocessor_class')
     def _postprocessor_class_changed(self, change):
         new = change['new']
@@ -306,8 +307,8 @@ class NbConvertApp(JupyterApp):
         # Use glob to replace all the notebook patterns with filenames.
         filenames = []
         for pattern in patterns:
-            
-            # Use glob to find matching filenames.  Allow the user to convert 
+
+            # Use glob to find matching filenames.  Allow the user to convert
             # notebooks without having to type the extension.
             globbed_files = glob.glob(pattern)
             globbed_files.extend(glob.glob(pattern + '.ipynb'))
@@ -369,8 +370,9 @@ class NbConvertApp(JupyterApp):
         resources['config_dir'] = self.config_dir
         resources['unique_key'] = notebook_name
 
-        output_files_dir = (self.output_files_dir
-                            .format(notebook_name=notebook_name))
+        output_files_dir = (self.output_files_dir.format(
+            # Force alphanumeric naming for file pathing
+            notebook_name=sensitive_filename_cleanup(notebook_name)))
 
         resources['output_files_dir'] = output_files_dir
 
@@ -474,7 +476,7 @@ class NbConvertApp(JupyterApp):
             self.log.info("Converting notebook %s to %s", notebook_filename, self.export_format)
         else:
             self.log.info("Converting notebook into %s", self.export_format)
-        
+
         resources = self.init_single_notebook_resources(notebook_filename)
         output, resources = self.export_single_notebook(notebook_filename, resources, input_buffer=input_buffer)
         write_results = self.write_single_notebook(output, resources)
@@ -492,7 +494,7 @@ class NbConvertApp(JupyterApp):
                 """
             )
             self.exit(1)
-        
+
         # initialize the exporter
         cls = get_exporter(self.export_format)
         self.exporter = cls(config=self.config)
@@ -510,7 +512,7 @@ class NbConvertApp(JupyterApp):
             input_buffer = unicode_stdin_stream()
             # default name when conversion from stdin
             self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
-            
+
 #-----------------------------------------------------------------------------
 # Main entry point
 #-----------------------------------------------------------------------------

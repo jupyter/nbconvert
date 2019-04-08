@@ -313,7 +313,7 @@ class Exporter(LoggingConfigurable):
         #to each preprocessor
         for preprocessor in self._preprocessors:
             nbc, resc = preprocessor(nbc, resc)
-            try: 
+            try:
                 nbformat.validate(nbc, relax_add_props=True)
             except nbformat.ValidationError:
                 self.log.error('Notebook is invalid after preprocessor {}',

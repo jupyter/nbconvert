@@ -6,6 +6,7 @@
 
 import codecs
 import sys
+import re
 
 from ipython_genutils.py3compat import PY3
 
@@ -52,3 +53,5 @@ def unicode_stdin_stream():
 
     return codecs.getreader('utf-8')(stream_b)
 
+def sensitive_filename_cleanup(filename):
+    return re.sub('[^0-9a-zA-Z]+', '_', filename)

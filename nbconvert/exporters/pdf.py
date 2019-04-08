@@ -6,23 +6,25 @@
 import subprocess
 import os
 import sys
+import shutil
 
 from ipython_genutils.py3compat import which, cast_bytes_py2, getcwd
 from traitlets import Integer, List, Bool, Instance, Unicode
 from testpath.tempdir import TemporaryWorkingDirectory
+from contextlib import contextmanager
 from .latex import LatexExporter
 
 class LatexFailed(IOError):
     """Exception for failed latex run
-    
+
     Captured latex output is in error.output.
     """
     def __init__(self, output):
         self.output = output
-    
+
     def __unicode__(self):
         return u"PDF creating failed, captured latex output:\n%s" % self.output
-    
+
     def __str__(self):
         u = self.__unicode__()
         return cast_bytes_py2(u)
@@ -66,12 +68,12 @@ class PDFExporter(LatexExporter):
     writer = Instance("nbconvert.writers.FilesWriter", args=(), kw={'build_directory': '.'})
 
     output_mimetype = "application/pdf"
-    
+
     _captured_output = List()
 
     def run_command(self, command_list, filename, count, log_function):
         """Run command_list count times.
-        
+
         Parameters
         ----------
         command_list : list
@@ -81,7 +83,7 @@ class PDFExporter(LatexExporter):
             The name of the file to convert.
         count : int
             How many times to run the command.
-        
+
         Returns
         -------
         success : bool
@@ -105,10 +107,10 @@ class PDFExporter(LatexExporter):
             raise OSError("{formatter} not found on PATH, if you have not installed "
                           "{formatter} you may need to do so. Find further instructions "
                           "at {link}.".format(formatter=command_list[0], link=link))
-        
+
         times = 'time' if count == 1 else 'times'
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
-        
+
         shell = (sys.platform == 'win32')
         if shell:
             command = subprocess.list2cmdline(command)
@@ -133,6 +135,7 @@ class PDFExporter(LatexExporter):
                     log_function(command, out)
                     self._captured_output.append(out)
                     return False # failure
+
         return True # success
 
     def run_latex(self, filename):
@@ -154,41 +157,78 @@ class PDFExporter(LatexExporter):
             self.log.debug(u"%s output: %s\n%s", command[0], command, out)
 
         return self.run_command(self.bib_command, filename, 1, log_error)
-    
+
+    @contextmanager
+    def _fake_all_output_paths(self, resources):
+        cwd = os.getcwd()
+        with TemporaryWorkingDirectory() as td:
+            # We need to give save output paths for latex and pdf conversion tools
+            # This means temporarily overrriding several internal paths to point
+            # to a temp directory, as the xelatex and bibtex commands can't handle
+            # spaces or unicode characters in paths...
+            true_output_dir = resources.get('output_files_dir', cwd)
+            true_output_path = resources.get('metadata', {}).get('path', cwd)
+            resources['output_files_dir'] = os.path.join(td, 'outputs')
+            resources['metadata'] = resources.get('metadata', {})
+            resources['metadata']['path'] = resources['output_files_dir']
+            # We also need to trick the writer to match the temp output dir
+            self.writer.relpath = resources['output_files_dir']
+            self.writer.build_directory = resources['output_files_dir']
+            # Ensure the directory exists ahead of time
+            print(resources['output_files_dir'])
+            self.writer._makedir(resources['output_files_dir'])
+
+            try:
+                yield
+            finally:
+                # Copy any new files back
+                for f in os.listdir(resources['output_files_dir']):
+                    shutil.move(os.path.join(resources['output_files_dir'], f), true_output_dir)
+                resources['output_files_dir'] = true_output_dir
+                resources['metadata']['path'] = true_output_path
+                # Reset the writer
+                self.writer.relpath = true_output_path
+                self.writer.build_directory = true_output_path
+
     def from_notebook_node(self, nb, resources=None, **kw):
-        latex, resources = super(PDFExporter, self).from_notebook_node(
-            nb, resources=resources, **kw
-        )
-        # set texinputs directory, so that local files will be found
-        if resources and resources.get('metadata', {}).get('path'):
-            self.texinputs = resources['metadata']['path']
-        else:
-            self.texinputs = getcwd()
-        
-        self._captured_outputs = []
-        with TemporaryWorkingDirectory():
+        if not resources:
+            resources = {}
+        with self._fake_all_output_paths(resources):
+            latex, resources = super(PDFExporter, self).from_notebook_node(
+                nb, resources=resources, **kw
+            )
+            # set texinputs directory, so that local files will be found
+            if resources and resources.get('metadata', {}).get('path'):
+                self.texinputs = resources['metadata']['path']
+            else:
+                self.texinputs = getcwd()
+
+            self._captured_outputs = []
             notebook_name = 'notebook'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
             rc = self.run_latex(tex_file)
             if rc:
-                rc = self.run_bib(tex_file)
-            if rc:
+                # This can fail for non-conversion blocking reasons
+                self.run_bib(tex_file)
                 rc = self.run_latex(tex_file)
-            
+            if not rc:
+                raise RuntimeError('Failed to run "{}" commands'.format(
+                    [cmd.format(filename=tex_file) for cmd in self.latex_command]))
+
             pdf_file = notebook_name + '.pdf'
             if not os.path.isfile(pdf_file):
                 raise LatexFailed('\n'.join(self._captured_output))
             self.log.info('PDF successfully created')
             with open(pdf_file, 'rb') as f:
                 pdf_data = f.read()
-        
+
         # convert output extension to pdf
         # the writer above required it to be tex
         resources['output_extension'] = '.pdf'
         # clear figure outputs, extracted by latex export,
         # so we don't claim to be a multi-file export.
         resources.pop('outputs', None)
-        
+
         return pdf_data, resources
-    
+

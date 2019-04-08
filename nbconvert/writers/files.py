@@ -21,7 +21,7 @@ class FilesWriter(WriterBase):
     build_directory = Unicode("",
                               help="""Directory to write output(s) to. Defaults
                               to output to the directory of each notebook. To recover
-                              previous default behaviour (outputting to the current 
+                              previous default behaviour (outputting to the current
                               working directory) use . as the flag value."""
     ).tag(config=True)
 
@@ -43,7 +43,7 @@ class FilesWriter(WriterBase):
     def __init__(self, **kw):
         super(FilesWriter, self).__init__(**kw)
         self._build_directory_changed({'new': self.build_directory})
-    
+
     def _makedir(self, path):
         """Make a directory if it doesn't already exist"""
         if path:
@@ -53,7 +53,7 @@ class FilesWriter(WriterBase):
     def write(self, output, resources, notebook_name=None, **kw):
             """
             Consume and write Jinja output to the file system.  Output directory
-            is set via the 'build_directory' variable of this instance (a 
+            is set via the 'build_directory' variable of this instance (a
             configurable).
 
             See base for more...
@@ -79,7 +79,6 @@ class FilesWriter(WriterBase):
             if items:
                 self.log.info("Support files will be in %s", os.path.join(resources.get('output_files_dir',''), ''))
             for filename, data in items:
-
                 # Determine where to write the file to
                 dest = os.path.join(build_directory, filename)
                 path = os.path.dirname(dest)
@@ -121,6 +120,7 @@ class FilesWriter(WriterBase):
             dest = os.path.join(build_directory, dest)
 
             # Write conversion results.
+            self._makedir(os.path.dirname(dest))
             self.log.info("Writing %i bytes to %s", len(output), dest)
             if isinstance(output, unicode_type):
                 with io.open(dest, 'w', encoding='utf-8') as f:
@@ -128,5 +128,5 @@ class FilesWriter(WriterBase):
             else:
                 with io.open(dest, 'wb') as f:
                     f.write(output)
-                
+
             return dest

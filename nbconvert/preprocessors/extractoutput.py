@@ -13,6 +13,7 @@ from mimetypes import guess_extension
 
 from traitlets import Unicode, Set
 from .base import Preprocessor
+from ..utils.io import sensitive_filename_cleanup
 
 if sys.version_info < (3,):
     text_type = basestring
@@ -117,7 +118,8 @@ class ExtractOutputPreprocessor(Preprocessor):
                             filename+=ext
                     else:
                         filename = self.output_filename_template.format(
-                                    unique_key=unique_key,
+                                    # Force alpha_numeric prefixing
+                                    unique_key=sensitive_filename_cleanup(unique_key),
                                     cell_index=cell_index,
                                     index=index,
                                     extension=ext)
