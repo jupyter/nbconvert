@@ -39,6 +39,26 @@ def prepend_to_env_search_path(varname, value, envdict):
 
     envdict[varname] = cast_bytes_py2(value) + os.pathsep + envdict.get(varname, '')
 
+def first_and_last_rows(msg, first_rows, last_rows, skip_indicator='...'):
+    """Utility for trimming multi-line strings to fit a particular
+    size constraint.
+
+    e.g. first_and_last_rows("foo\nbar\nbaz\nfoobarbaz", 1, 1) =>
+    ["foo", "...", "foobarbaz"]
+    """
+    rows = msg.splitlines()
+    if len(rows) > first_rows + last_rows:
+        for i, row in enumerate(rows):
+            if i < first_rows:
+                yield row
+            elif i == first_rows:
+                yield skip_indicator
+            elif i >= len(rows) - last_rows:
+                yield row
+    else:
+        for row in rows:
+            yield row
+
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files.
 
@@ -71,7 +91,7 @@ class PDFExporter(LatexExporter):
 
     _captured_output = List()
 
-    def run_command(self, command_list, filename, count, log_function):
+    def run_command(self, command_list, filename, count, log_function, raise_on_failure=None):
         """Run command_list count times.
 
         Parameters
@@ -83,6 +103,9 @@ class PDFExporter(LatexExporter):
             The name of the file to convert.
         count : int
             How many times to run the command.
+        raise_on_failure: Exception class (default None)
+            If provided, will raise the given exception for if an instead of
+            returning False on command failure.
 
         Returns
         -------
@@ -134,20 +157,26 @@ class PDFExporter(LatexExporter):
                         out = out.decode('utf-8', 'replace')
                     log_function(command, out)
                     self._captured_output.append(out)
+                    if raise_on_failure:
+                        raise raise_on_failure(
+                            'Failed to run "{command}" command:\n{output}'.format(
+                            command=command,
+                            # We may have 1000's of lines here, limit to < 15
+                            output='\n'.join(first_and_last_rows(out, 4, 8))))
                     return False # failure
 
         return True # success
 
-    def run_latex(self, filename):
+    def run_latex(self, filename, raise_on_failure=LatexFailed):
         """Run xelatex self.latex_count times."""
 
         def log_error(command, out):
             self.log.critical(u"%s failed: %s\n%s", command[0], command, out)
 
         return self.run_command(self.latex_command, filename,
-            self.latex_count, log_error)
+            self.latex_count, log_error, raise_on_failure)
 
-    def run_bib(self, filename):
+    def run_bib(self, filename, raise_on_failure=False):
         """Run bibtex self.latex_count times."""
         filename = os.path.splitext(filename)[0]
 
@@ -156,44 +185,29 @@ class PDFExporter(LatexExporter):
                 command[0])
             self.log.debug(u"%s output: %s\n%s", command[0], command, out)
 
-        return self.run_command(self.bib_command, filename, 1, log_error)
+        return self.run_command(self.bib_command, filename, 1, log_error,
+            raise_on_failure)
 
     @contextmanager
-    def _fake_all_output_paths(self, resources):
-        cwd = os.getcwd()
+    def _fake_output_files_dir(self, resources):
+        cwd = os.path.abspath(os.getcwd())
         with TemporaryWorkingDirectory() as td:
-            # We need to give save output paths for latex and pdf conversion tools
-            # This means temporarily overrriding several internal paths to point
-            # to a temp directory, as the xelatex and bibtex commands can't handle
-            # spaces or unicode characters in paths...
-            true_output_dir = resources.get('output_files_dir', cwd)
-            true_output_path = resources.get('metadata', {}).get('path', cwd)
-            resources['output_files_dir'] = os.path.join(td, 'outputs')
-            resources['metadata'] = resources.get('metadata', {})
-            resources['metadata']['path'] = resources['output_files_dir']
-            # We also need to trick the writer to match the temp output dir
-            self.writer.relpath = resources['output_files_dir']
-            self.writer.build_directory = resources['output_files_dir']
-            # Ensure the directory exists ahead of time
-            print(resources['output_files_dir'])
-            self.writer._makedir(resources['output_files_dir'])
+            # We need to give safe output paths for latex and pdf conversion tools
+            # This means temporarily internal paths to point to a temp directory,
+            # as the xelatex and bibtex commands can't handle spaces or unicode
+            # characters in paths...
+            true_output_files_dir = resources.get('output_files_dir', cwd)
+            resources['output_files_dir'] = os.path.join(td, 'output_files')
 
             try:
                 yield
             finally:
-                # Copy any new files back
-                for f in os.listdir(resources['output_files_dir']):
-                    shutil.move(os.path.join(resources['output_files_dir'], f), true_output_dir)
-                resources['output_files_dir'] = true_output_dir
-                resources['metadata']['path'] = true_output_path
-                # Reset the writer
-                self.writer.relpath = true_output_path
-                self.writer.build_directory = true_output_path
+                resources['output_files_dir'] = true_output_files_dir
 
     def from_notebook_node(self, nb, resources=None, **kw):
         if not resources:
             resources = {}
-        with self._fake_all_output_paths(resources):
+        with self._fake_output_files_dir(resources):
             latex, resources = super(PDFExporter, self).from_notebook_node(
                 nb, resources=resources, **kw
             )
@@ -207,14 +221,10 @@ class PDFExporter(LatexExporter):
             notebook_name = 'notebook'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
-            rc = self.run_latex(tex_file)
-            if rc:
-                # This can fail for non-conversion blocking reasons
-                self.run_bib(tex_file)
-                rc = self.run_latex(tex_file)
-            if not rc:
-                raise RuntimeError('Failed to run "{}" commands'.format(
-                    [cmd.format(filename=tex_file) for cmd in self.latex_command]))
+            self.run_latex(tex_file)
+            # This can fail for non-conversion blocking reasons
+            if self.run_bib(tex_file):
+                self.run_latex(tex_file)
 
             pdf_file = notebook_name + '.pdf'
             if not os.path.isfile(pdf_file):
