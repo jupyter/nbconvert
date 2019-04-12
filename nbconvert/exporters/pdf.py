@@ -50,7 +50,7 @@ class PDFExporter(LatexExporter):
         help="How many times latex will be called."
     ).tag(config=True)
 
-    latex_command = List([u"xelatex", u"{filename}"],
+    latex_command = List([u"xelatex", u"{filename}", "-quiet"],
         help="Shell command used to compile latex."
     ).tag(config=True)
 
