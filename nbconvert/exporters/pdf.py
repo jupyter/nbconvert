@@ -39,26 +39,6 @@ def prepend_to_env_search_path(varname, value, envdict):
 
     envdict[varname] = cast_bytes_py2(value) + os.pathsep + envdict.get(varname, '')
 
-def first_and_last_rows(msg, first_rows, last_rows, skip_indicator='...'):
-    """Utility for trimming multi-line strings to fit a particular
-    size constraint.
-
-    e.g. first_and_last_rows("foo\nbar\nbaz\nfoobarbaz", 1, 1) =>
-    ["foo", "...", "foobarbaz"]
-    """
-    rows = msg.splitlines()
-    if len(rows) > first_rows + last_rows:
-        for i, row in enumerate(rows):
-            if i < first_rows:
-                yield row
-            elif i == first_rows:
-                yield skip_indicator
-            elif i >= len(rows) - last_rows:
-                yield row
-    else:
-        for row in rows:
-            yield row
-
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files.
 
@@ -160,9 +140,7 @@ class PDFExporter(LatexExporter):
                     if raise_on_failure:
                         raise raise_on_failure(
                             'Failed to run "{command}" command:\n{output}'.format(
-                            command=command,
-                            # We may have 1000's of lines here, limit to < 15
-                            output='\n'.join(first_and_last_rows(out, 4, 8))))
+                            command=command, output=out))
                     return False # failure
 
         return True # success
