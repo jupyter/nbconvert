@@ -80,31 +80,27 @@ class ExtractOutputPreprocessor(Preprocessor):
                 if mime_type in out.data:
                     data = out.data[mime_type]
 
-                    if (
-                        not isinstance(data, text_type)
-                        or mime_type == 'application/json'
-                    ):
+                    if mime_type == 'application/json':
                         # Data is either JSON-like and was parsed into a Python
                         # object according to the spec, or data is for sure
                         # JSON. In the latter case we want to go extra sure that
                         # we enclose a scalar string value into extra quotes by
                         # serializing it properly.
-                        if isinstance(data, bytes):
+                        if isinstance(data, bytes) and not isinstance(data, text_type):
                             # In python 3 we need to guess the encoding in this
                             # instance. Some modules that return raw data like
                             # svg can leave the data in byte form instead of str
                             data = data.decode('utf-8')
                         data = json.dumps(data)
-
-                    #Binary files are base64-encoded, SVG is already XML
-                    if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
+                    # Binary files are base64-encoded, SVG is already XML
+                    elif mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
                         # data is b64-encoded as text (str, unicode),
                         # we want the original bytes
                         data = a2b_base64(data)
-                    elif sys.platform == 'win32':
-                        data = data.replace('\n', '\r\n').encode("UTF-8")
-                    else:
-                        data = data.encode("UTF-8")
+                    elif isinstance(data, text_type):
+                        if sys.platform == 'win32':
+                            data = data.replace('\n', '\r\n')
+                        data = data.encode('utf-8')
 
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:

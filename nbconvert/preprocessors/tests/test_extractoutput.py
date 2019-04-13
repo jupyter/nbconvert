@@ -40,7 +40,7 @@ class TestExtractOutput(PreprocessorTestsBase):
         self.assertIn('filenames', output.metadata)
         self.assertIn('image/png', output.metadata.filenames)
         png_filename = output.metadata.filenames['image/png']
-        
+
         # Check that pdf was extracted
         output = nb.cells[0].outputs[7]
         self.assertIn('filenames', output.metadata)
@@ -78,7 +78,7 @@ class TestExtractOutput(PreprocessorTestsBase):
         for out in reference:
             try:
                 data = out['data']['application/json']
-                reference_files.append(json.dumps(data).encode())
+                reference_files.append(json.dumps(data))
             except KeyError:
                 pass
 
