@@ -32,6 +32,13 @@ def guess_extension_without_jpe(mimetype):
         ext=".jpeg"
     return ext
 
+def platform_utf_8_encode(data):
+    if isinstance(data, text_type):
+        if sys.platform == 'win32':
+            data = data.replace('\n', '\r\n')
+        data = data.encode('utf-8')
+    return data
+
 class ExtractOutputPreprocessor(Preprocessor):
     """
     Extracts all of the outputs from the notebook file.  The extracted
@@ -80,7 +87,12 @@ class ExtractOutputPreprocessor(Preprocessor):
                 if mime_type in out.data:
                     data = out.data[mime_type]
 
-                    if mime_type == 'application/json':
+                    # Binary files are base64-encoded, SVG is already XML
+                    if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
+                        # data is b64-encoded as text (str, unicode),
+                        # we want the original bytes
+                        data = a2b_base64(data)
+                    elif mime_type == 'application/json' or not isinstance(data, text_type):
                         # Data is either JSON-like and was parsed into a Python
                         # object according to the spec, or data is for sure
                         # JSON. In the latter case we want to go extra sure that
@@ -91,16 +103,10 @@ class ExtractOutputPreprocessor(Preprocessor):
                             # instance. Some modules that return raw data like
                             # svg can leave the data in byte form instead of str
                             data = data.decode('utf-8')
-                        data = json.dumps(data)
-                    # Binary files are base64-encoded, SVG is already XML
-                    elif mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
-                        # data is b64-encoded as text (str, unicode),
-                        # we want the original bytes
-                        data = a2b_base64(data)
-                    elif isinstance(data, text_type):
-                        if sys.platform == 'win32':
-                            data = data.replace('\n', '\r\n')
-                        data = data.encode('utf-8')
+                        data = platform_utf_8_encode(json.dumps(data))
+                    else:
+                        # All other text_type data will fall into this path
+                        data = platform_utf_8_encode(data)
 
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:

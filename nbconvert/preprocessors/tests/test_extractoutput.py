@@ -78,7 +78,7 @@ class TestExtractOutput(PreprocessorTestsBase):
         for out in reference:
             try:
                 data = out['data']['application/json']
-                reference_files.append(json.dumps(data))
+                reference_files.append(json.dumps(data).encode())
             except KeyError:
                 pass
 
