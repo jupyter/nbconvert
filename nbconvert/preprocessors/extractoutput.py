@@ -32,9 +32,16 @@ def guess_extension_without_jpe(mimetype):
         ext=".jpeg"
     return ext
 
+def platform_utf_8_encode(data):
+    if isinstance(data, text_type):
+        if sys.platform == 'win32':
+            data = data.replace('\n', '\r\n')
+        data = data.encode('utf-8')
+    return data
+
 class ExtractOutputPreprocessor(Preprocessor):
     """
-    Extracts all of the outputs from the notebook file.  The extracted 
+    Extracts all of the outputs from the notebook file.  The extracted
     outputs are returned in the 'resources' dictionary.
     """
 
@@ -49,7 +56,7 @@ class ExtractOutputPreprocessor(Preprocessor):
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
-        
+
         Parameters
         ----------
         cell : NotebookNode cell
@@ -61,16 +68,16 @@ class ExtractOutputPreprocessor(Preprocessor):
             Index of the cell being processed (see base.py)
         """
 
-        #Get the unique key from the resource dict if it exists.  If it does not 
+        #Get the unique key from the resource dict if it exists.  If it does not
         #exist, use 'output' as the default.  Also, get files directory if it
         #has been specified
         unique_key = resources.get('unique_key', 'output')
         output_files_dir = resources.get('output_files_dir', None)
-        
+
         #Make sure outputs key exists
         if not isinstance(resources['outputs'], dict):
             resources['outputs'] = {}
-            
+
         #Loop through all of the outputs in the cell
         for index, out in enumerate(cell.get('outputs', [])):
             if out.output_type not in {'display_data', 'execute_result'}:
@@ -80,27 +87,27 @@ class ExtractOutputPreprocessor(Preprocessor):
                 if mime_type in out.data:
                     data = out.data[mime_type]
 
-                    if (
-                        not isinstance(data, text_type)
-                        or mime_type == 'application/json'
-                    ):
+                    # Binary files are base64-encoded, SVG is already XML
+                    if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
+                        # data is b64-encoded as text (str, unicode),
+                        # we want the original bytes
+                        data = a2b_base64(data)
+                    elif mime_type == 'application/json' or not isinstance(data, text_type):
                         # Data is either JSON-like and was parsed into a Python
                         # object according to the spec, or data is for sure
                         # JSON. In the latter case we want to go extra sure that
                         # we enclose a scalar string value into extra quotes by
                         # serializing it properly.
-                        data = json.dumps(data)
-
-                    #Binary files are base64-encoded, SVG is already XML
-                    if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
-                        # data is b64-encoded as text (str, unicode),
-                        # we want the original bytes
-                        data = a2b_base64(data)
-                    elif sys.platform == 'win32':
-                        data = data.replace('\n', '\r\n').encode("UTF-8")
+                        if isinstance(data, bytes) and not isinstance(data, text_type):
+                            # In python 3 we need to guess the encoding in this
+                            # instance. Some modules that return raw data like
+                            # svg can leave the data in byte form instead of str
+                            data = data.decode('utf-8')
+                        data = platform_utf_8_encode(json.dumps(data))
                     else:
-                        data = data.encode("UTF-8")
-                    
+                        # All other text_type data will fall into this path
+                        data = platform_utf_8_encode(data)
+
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:
                         ext = '.' + mime_type.rsplit('/')[-1]
