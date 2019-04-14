@@ -54,4 +54,4 @@ def unicode_stdin_stream():
     return codecs.getreader('utf-8')(stream_b)
 
 def sensitive_filename_cleanup(filename):
-    return re.sub('[^0-9a-zA-Z]+', '_', filename)
+    return re.sub(r'[^0-9a-zA-Z_\.]+', '_', filename)

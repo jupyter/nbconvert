@@ -22,6 +22,7 @@ except ImportError:
     from urllib.request import pathname2url, url2pathname
 
 from .exceptions import ConversionException
+from .io import sensitive_filename_cleanup
 
 _minimal_version = "1.12.1"
 _maximal_version = "3.0.0"
@@ -169,7 +170,7 @@ def _rename_and_copy_to_build_dir(filename, build_path):
     link_or_copy(filename, build_path)
     new_file_path = os.path.join(build_path, os.path.basename(filename))
     # return new_file_path
-    safe_file_path = os.path.join(build_path, re.sub(r'[^0-9a-zA-Z\._]+', '_', os.path.basename(filename)))
+    safe_file_path = os.path.join(build_path, sensitive_filename_cleanup(os.path.basename(filename)))
     os.rename(new_file_path, safe_file_path)
     return safe_file_path
 
