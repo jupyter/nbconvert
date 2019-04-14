@@ -260,7 +260,7 @@ i.e. the $i^{th}$"""
         #Modify token array for rst, escape asterisk
         tokens = copy(self.tokens)
         tokens[0] = r'\*test'
-        tokens[1] = r'\*\*test'
+        tokens[1] = r'\*test'
 
         for index, test in enumerate(self.tests):
             self._try_markdown(
