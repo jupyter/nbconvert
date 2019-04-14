@@ -257,24 +257,33 @@ i.e. the $i^{th}$"""
     def test_markdown2rst(self):
         """markdown2rst test"""
 
-        #Modify token array for rst, escape asterisk
+        # Modify token array for rst, escape asterisk
         tokens = copy(self.tokens)
+        alt_tokens = [None] * len(tokens)
         tokens[0] = r'\*test'
-        tokens[1] = r'\*test'
+        # Pandoc behaves differently here for different versions :/
+        tokens[1] = r'\*\*test'
+        alt_tokens[1] = r'\**test'
 
         for index, test in enumerate(self.tests):
             self._try_markdown(
                 partial(
                     convert_pandoc, from_format='markdown', to_format='rst'),
-                test, tokens[index])
+                test, tokens[index], alt_tokens[index])
 
-    def _try_markdown(self, method, test, tokens):
-        results = method(test)
-        if isinstance(tokens, string_types):
-            self.assertIn(tokens, results)
-        else:
-            for token in tokens:
-                self.assertIn(token, results)
+    def _try_markdown(self, method, test, tokens, alt_tokens=None):
+        try:
+            results = method(test)
+            if isinstance(tokens, string_types):
+                self.assertIn(tokens, results)
+            else:
+                for token in tokens:
+                    self.assertIn(token, results)
+        except:
+            if alt_tokens:
+                self._try_markdown(method, test, alt_tokens)
+            else:
+                raise
 
     def _unescape(self, s):
         # undo cgi.escape() manually
