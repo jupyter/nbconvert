@@ -69,6 +69,37 @@ class TestMarkdown(TestsBase):
             l)
 
     @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_relative_path_with_caption(self):
+        """markdown2latex replace_relative_path with ignored caption test"""
+        s = 'Some ![Alt text](reference.png "ref")'
+        l = 'Some \\includegraphics{/path/with spaces/reference.png}'
+        self.assertEqual(
+            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
+            l)
+
+    @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_abs_path(self):
+        """markdown2latex replace_relative_path against abs path test"""
+        s = 'Some ![image](/abs/path/to/reference.png)'
+        l = 'Some \\includegraphics{/abs/path/to/reference.png}'
+        # Relative path replacement should be ignored
+        self.assertEqual(
+            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
+            l)
+
+    @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_path_reference(self):
+        """markdown2latex replace_relative_path against referenced path test"""
+        s = 'Some ![image](reference)\n[reference]: ref.png'
+        # This isn't building correct latex today because pandoc doesn't handle multimarkdown
+        # See https://stackoverflow.com/questions/9434536/how-do-i-make-a-reference-to-a-figure-in-markdown-using-pandoc
+        # TODO: capture markdown reference patterns and do the conversion ourselves
+        l = 'Some \\includegraphics{reference} {[}reference{]}: ref.png'
+        self.assertEqual(
+            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
+            l)
+
+    @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_build_path(self):
         """markdown2latex build_path_replacement test"""
         with TemporaryWorkingDirectory() as td:
@@ -82,6 +113,33 @@ class TestMarkdown(TestsBase):
                     l)
                 self.assertTrue(os.path.isfile(f))
 
+    @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_build_path_with_caption(self):
+        """markdown2latex build_path_replacement with ignored caption test"""
+        with TemporaryWorkingDirectory() as td:
+            open('reference@with spaces.png', 'a').close()
+            with TemporaryWorkingDirectory() as bd:
+                s = 'Some ![image](reference@with spaces.png "Nice Reference")'
+                f = '{bd}/reference_with_spaces.png'.format(bd=bd)
+                l = 'Some \\includegraphics{{{filename}}}'.format(filename=f)
+                self.assertEqual(
+                    convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd),
+                    l)
+                self.assertTrue(os.path.isfile(f))
+
+    @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_build_abs_path(self):
+        """markdown2latex build_path_replacement test"""
+        with TemporaryWorkingDirectory() as td:
+            open('{td}/reference@with spaces.png'.format(td=td), 'a').close()
+            with TemporaryWorkingDirectory() as bd:
+                s = 'Some ![image]({td}/reference@with spaces.png)'.format(td=td)
+                f = '{bd}/reference_with_spaces.png'.format(bd=bd)
+                l = 'Some \\includegraphics{{{filename}}}'.format(filename=f)
+                self.assertEqual(
+                    convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd),
+                    l)
+                self.assertTrue(os.path.isfile(f))
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_markup(self):

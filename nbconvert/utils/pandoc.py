@@ -66,35 +66,13 @@ def pandoc(source, fmt, to, extra_args=None, encoding='utf-8',
     if extra_args:
         cmd.extend(extra_args)
 
-    # this will raise an exception that will pop us out of here
+    # This will raise an exception that will pop us out of here
     check_pandoc_version()
 
-    img_open_group = r'(!\[(?:image|)\]\()'
-    img_path_group = r'(.+?[^)\.]*)'
-    img_close_group = r'(\))'
-
-    if relative_path_replacement:
-        # We can't quote the path for xetex downstream if it has spaces in it
-        # See https://tug.org/pipermail/xetex/2009-December/015313.html
-        # However the will still render but will double render some path
-        # characters alongside the image. To avoid this also use build_path_replacement.
-        source = re.sub(img_open_group + img_path_group + img_close_group,
-            lambda m: (
-                m.group(1) +
-                os.path.join(pathname2url(relative_path_replacement), m.group(2)) +
-                m.group(3)),
-            source)
-
-    if build_path_replacement:
-        # If our file path may have non-alphanumeric characters, the only way
-        # for latex targets to correctly parse the files is to rename them in
-        # a alphanumeric path.
-        source = re.sub(img_open_group + img_path_group + img_close_group,
-            lambda m: (
-                m.group(1) +
-                _rename_and_copy_to_build_dir(url2pathname(m.group(2)), build_path_replacement) +
-                m.group(3)),
-            source)
+    # For markdown formats we can manipulate image paths to correct for latex issues
+    if 'markdown' in fmt:
+        source = _replace_markdown_paths(
+            source, relative_path_replacement, build_path_replacement)
 
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     out, _ = p.communicate(cast_bytes(source, encoding))
@@ -165,7 +143,64 @@ check_pandoc_version._cached = None
 #-----------------------------------------------------------------------------
 # Utilities
 #-----------------------------------------------------------------------------
+def _replace_markdown_paths(source, relative_path_replacement, build_path_replacement):
+    """Returns source with relative image references prefixed by relative_path_replacement
+    and with contents linked or copied to build_path_replacement.
+    """
+
+    # Building blocks for matching ![image](my_diagram.png) markdown
+    img_open_group = r'(!\[(?:[iI]mage|[aA]lt [tT]ext|)\]\()'
+    no_scheme_ahead = r'(?![^:\.]+:\/\/)'
+    no_slash_match = r'[^\/]'
+    wrapped_path_match = r'[^)\"]*'
+    no_space_match = r'[^ ]'
+
+    # The various regex groups we're matching for markdown image references
+    img_local_path_group = (r'(' + no_scheme_ahead +
+        wrapped_path_match + r'\.' + wrapped_path_match + no_space_match + r')')
+    img_rel_path_group = (r'(' + no_scheme_ahead + no_slash_match +
+        wrapped_path_match + r'\.' + wrapped_path_match + no_space_match + r')')
+    # Pandoc ignores captions, but we don't want to mangle them when we do path adjustments
+    maybe_caption_groups = r'( )?(\"[^)\"]+\")?'
+    img_close_group = r'(\))'
+
+    if relative_path_replacement:
+        # We can't quote the path for xetex downstream if it has spaces in it
+        # See https://tug.org/pipermail/xetex/2009-December/015313.html
+        # However the will still render but will double render some path
+        # characters alongside the image. To avoid this also use build_path_replacement.
+
+        # => (!\[(?:[iI]mage|[aA]lt [tT]ext|)\]\()((?![^:\.]+:\/\/)[^\/][^)\"]*\.[^)\"]*[^ ])( )?(\"[^)\"]+\")?(\))
+        source = re.sub(img_open_group + img_rel_path_group + maybe_caption_groups + img_close_group,
+            lambda m: (
+                m.group(1) + # ![image](
+                os.path.join(pathname2url(relative_path_replacement), m.group(2)) +
+                (m.group(3) or "") + # Maybe space
+                (m.group(4) or "") + # Maybe caption
+                m.group(5) # )
+            ),
+            source)
+
+    if build_path_replacement:
+        # If our file path may have non-alphanumeric characters, the only way
+        # for latex targets to correctly parse the files is to rename them in
+        # a alphanumeric path.
+
+        # => (!\[(?:[iI]mage|[aA]lt [tT]ext|)\]\()((?![^:\.]+:\/\/)[^)\"]*\.[^)\"]*[^ ])( )?(\"[^)\"]+\")?(\))
+        source = re.sub(img_open_group + img_local_path_group + maybe_caption_groups + img_close_group,
+            lambda m: (
+                m.group(1) + # ![image](
+                _rename_and_copy_to_build_dir(url2pathname(m.group(2)), build_path_replacement) +
+                (m.group(3) or "") + # Maybe space
+                (m.group(4) or "") + # Maybe caption
+                m.group(5) # )
+            ),
+            source)
+
+    return source
+
 def _rename_and_copy_to_build_dir(filename, build_path):
+    """Copies filename to build_path with a latex safe file name"""
     ensure_dir_exists(build_path)
     link_or_copy(filename, build_path)
     new_file_path = os.path.join(build_path, os.path.basename(filename))
