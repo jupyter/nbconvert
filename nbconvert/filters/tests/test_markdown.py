@@ -5,6 +5,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
+import os
 from copy import copy
 from functools import partial
 
@@ -16,6 +17,7 @@ from ..pandoc import convert_pandoc
 from ..markdown import markdown2html
 
 from jinja2 import Environment
+from testpath.tempdir import TemporaryWorkingDirectory
 
 
 class TestMarkdown(TestsBase):
@@ -56,6 +58,30 @@ class TestMarkdown(TestsBase):
                 partial(
                     convert_pandoc, from_format='markdown', to_format='latex'),
                 test, self.tokens[index])
+
+    @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_relative_path(self):
+        """markdown2latex replace_relative_path test"""
+        s = 'Some ![image](reference.png)'
+        l = 'Some \\includegraphics{/path/with spaces/reference.png}'
+        self.assertEqual(
+            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
+            l)
+
+    @onlyif_cmds_exist('pandoc')
+    def test_markdown2latex_build_path(self):
+        """markdown2latex build_path_replacement test"""
+        with TemporaryWorkingDirectory() as td:
+            open('reference@with spaces.png', 'a').close()
+            with TemporaryWorkingDirectory() as bd:
+                s = 'Some ![image](reference@with spaces.png)'
+                f = '{bd}/reference_with_spaces.png'.format(bd=bd)
+                l = 'Some \\includegraphics{{{filename}}}'.format(filename=f)
+                self.assertEqual(
+                    convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd),
+                    l)
+                self.assertTrue(os.path.isfile(f))
+
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_markup(self):

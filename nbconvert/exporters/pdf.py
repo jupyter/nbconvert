@@ -169,6 +169,9 @@ class PDFExporter(LatexExporter):
     @contextmanager
     def _fake_output_files_dir(self, resources):
         cwd = os.path.abspath(os.getcwd())
+        # Map the "working directory" to be the absolute location of the file being processed
+        # This is passed into pandoc conversions so it can convert relative paths to absolute paths
+        resources['working_directory'] = os.path.join(cwd, resources['metadata']['path'] or '')
         with TemporaryWorkingDirectory() as td:
             # We need to give safe output paths for latex and pdf conversion tools
             # This means temporarily internal paths to point to a temp directory,
@@ -181,6 +184,7 @@ class PDFExporter(LatexExporter):
                 yield
             finally:
                 resources['output_files_dir'] = true_output_files_dir
+                del resources['working_directory']
 
     def from_notebook_node(self, nb, resources=None, **kw):
         if not resources:

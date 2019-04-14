@@ -318,7 +318,7 @@ class TestNbConvertApp(TestsBase):
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
                 assert "Out[" in text2
-                
+
     def test_no_input(self):
         """
         Verify that the html has no input when given --no-input.
@@ -444,7 +444,7 @@ class TestNbConvertApp(TestsBase):
         """
         Generate PDFs with an image linked in a markdown cell
         """
-        with self.create_temp_cwd(['latex-linked-image.ipynb', 'testimage.png']):
+        with self.create_temp_cwd(['latex-linked-image.ipynb', 'test image.png']):
             self.nbconvert('--to pdf latex-linked-image.ipynb')
             assert os.path.isfile('latex-linked-image.pdf')
 

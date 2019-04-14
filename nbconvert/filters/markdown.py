@@ -33,7 +33,8 @@ __all__ = [
 ]
 
 
-def markdown2latex(source, markup='markdown', extra_args=None):
+def markdown2latex(source, markup='markdown', extra_args=None,
+                   relative_path_replacement=None, build_path_replacement=None):
     """
     Convert a markdown string to LaTeX via pandoc.
 
@@ -54,7 +55,10 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     out : string
       Output as returned by pandoc.
     """
-    return convert_pandoc(source, markup, 'latex', extra_args=extra_args)
+    return convert_pandoc(source, markup, 'latex',
+        extra_args=extra_args,
+        relative_path_replacement=relative_path_replacement,
+        build_path_replacement=build_path_replacement)
 
 
 def markdown2html_pandoc(source, extra_args=None):

@@ -1,7 +1,8 @@
 from nbconvert.utils.pandoc import pandoc
 
 
-def convert_pandoc(source, from_format, to_format, extra_args=None):
+def convert_pandoc(source, from_format, to_format, extra_args=None,
+                   relative_path_replacement=None, build_path_replacement=None):
     """Convert between any two formats using pandoc.
 
     This function will raise an error if pandoc is not installed.
@@ -18,9 +19,21 @@ def convert_pandoc(source, from_format, to_format, extra_args=None):
     to_format : string
         Pandoc format for output.
 
+    extra_args : list (optional)
+        Extra Pandoc command arguments.
+
+    relative_path_replacement : string (optional)
+        The path to use in replacing relative paths.
+
+    build_path_replacement : string (optional)
+        A path to copy files into and reference in any image paths.
+
     Returns
     -------
     out : string
       Output as returned by pandoc.
     """
-    return pandoc(source, from_format, to_format, extra_args=extra_args)
+    return pandoc(source, from_format, to_format,
+        extra_args=extra_args,
+        relative_path_replacement=relative_path_replacement,
+        build_path_replacement=build_path_replacement)
