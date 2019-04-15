@@ -401,7 +401,7 @@ class TestExecute(ExecuteTestBase):
         class WrappedPreProc(ExecutePreprocessor):
             def process_message(self, msg, cell, cell_index):
                 result = super(WrappedPreProc, self).process_message(msg, cell, cell_index)
-                if result and result != msg:
+                if result:
                     outputs.append(result)
                 return result
 
