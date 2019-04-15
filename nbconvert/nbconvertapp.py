@@ -181,7 +181,7 @@ class NbConvertApp(JupyterApp):
         which will convert mynotebook.ipynb to the default format (probably HTML).
         
         You can specify the export format with `--to`.
-        Options include {0}
+        Options include {formats}.
         
         > jupyter nbconvert --to latex mynotebook.ipynb
 
@@ -214,7 +214,7 @@ class NbConvertApp(JupyterApp):
             c.NbConvertApp.notebooks = ["my_notebook.ipynb"]
         
         > jupyter nbconvert --config mycfg.py
-        """.format(get_export_names()))
+        """.format(formats=get_export_names()))
 
     # Writer specific variables
     writer = Instance('nbconvert.writers.base.WriterBase',
@@ -262,9 +262,10 @@ class NbConvertApp(JupyterApp):
     export_format = Unicode(
         'html',
         allow_none=False,
-        help="""The export format to be used, either one of the built-in formats,
+        help="""The export format to be used, either one of the built-in formats
+        {formats}
         or a dotted object name that represents the import path for an
-        `Exporter` class"""
+        `Exporter` class""".format(formats=get_export_names())
     ).tag(config=True)
 
     notebooks = List([], help="""List of notebooks to convert.
