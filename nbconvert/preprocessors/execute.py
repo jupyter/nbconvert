@@ -12,6 +12,11 @@ try:
 except ImportError:
     from Queue import Empty  # Py 2
 
+try:
+    TimeoutError  # Py 3
+except NameError:
+    TimeoutError = RuntimeError  # Py 2
+
 from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, Integer, default
 
 from nbformat.v4 import output_from_msg
@@ -442,24 +447,26 @@ class ExecutePreprocessor(Preprocessor):
 
                 if not timeout or timeout < 0:
                     timeout = None
-                
+
                 if timeout is not None:
                     # timeout specified
                     msg = self.kc.shell_channel.get_msg(timeout=timeout)
                 else:
-                    #no timeout specified, if kernel dies still handle this correctly
+                    # no timeout specified, if kernel dies still handle this correctly
                     while True:
                         try:
-                            #check every few seconds if kernel is still alive
+                            # check every few seconds if kernel is still alive
                             msg = self.kc.shell_channel.get_msg(timeout=5)
                         except Empty:
-                            #received no message, check if kernel is still alive
+                            # received no message, check if kernel is still alive
                             if not self.kc.is_alive():
+                                self.log.error(
+                                    "Kernel died while waiting for execute reply.")
                                 raise RuntimeError("Kernel died")
-                            
-                            #kernel still alive, wait for a message
+
+                            # kernel still alive, wait for a message
                             continue
-                        #message received
+                        # message received
                         break
             except Empty:
                 self.log.error(
@@ -469,11 +476,7 @@ class ExecutePreprocessor(Preprocessor):
                     self.km.interrupt_kernel()
                     break
                 else:
-                    try:
-                        exception = TimeoutError
-                    except NameError:
-                        exception = RuntimeError
-                    raise exception("Cell execution timed out")
+                    raise TimeoutError("Cell execution timed out")
 
             if msg['parent_header'].get('msg_id') == msg_id:
                 return msg
