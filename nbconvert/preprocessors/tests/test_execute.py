@@ -25,6 +25,7 @@ from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 import IPython
 from mock import patch, MagicMock
 from traitlets import TraitError
+from nbformat import NotebookNode
 from jupyter_client.kernelspec import KernelSpecManager
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
@@ -71,14 +72,18 @@ class ExecuteTestBase(PreprocessorTestsBase):
 
     @staticmethod
     def prepare_cell_mocks(*messages):
+        """
+        TODO: describe how we're mocking overall with usage example
+        """
         messages = list(messages)
         def prepared_wrapper(func):
             @functools.wraps(func)
             def test_mock_wrapper(self):
+                """
+                TODO: describe and slit shell mock from channel mock into separate funcs
+                """
                 parent_id = 'fake_id'
-                cell_mock = MagicMock(source='"foo" = "bar"', outputs=[])
-                # Hack to help catch `.` and `[]` style access to outputs against the same mock object
-                cell_mock.__getitem__.side_effect = lambda n: cell_mock.outputs if n == 'outputs' else None
+                cell_mock = NotebookNode(source='"foo" = "bar"', outputs=[])
                 preprocessor = self.build_preprocessor({})
                 preprocessor.nb = {'cells': [cell_mock]}
                 shell_message_mock = MagicMock(
@@ -92,7 +97,9 @@ class ExecuteTestBase(PreprocessorTestsBase):
                         for msg in messages
                     ]
                 )
+                # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
                 channel_mock = MagicMock(get_msg=message_mock)
+                # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
                 shell_mock = MagicMock(get_msg=shell_message_mock)
                 preprocessor.kc = MagicMock(
                     iopub_channel=channel_mock,
@@ -403,7 +410,7 @@ class TestRunCell(ExecuteTestBase):
         # Just the exit message should be fetched
         message_mock.assert_called_once()
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'stream',
@@ -414,9 +421,9 @@ class TestRunCell(ExecuteTestBase):
     def test_message_for_wrong_parent(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An ignored stream followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Ensure no output was written
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'status',
@@ -426,9 +433,9 @@ class TestRunCell(ExecuteTestBase):
     def test_busy_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # One busy message, followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'execute_input',
@@ -438,9 +445,9 @@ class TestRunCell(ExecuteTestBase):
     def test_execute_input_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # One ignored execute_input, followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'stream',
@@ -454,7 +461,7 @@ class TestRunCell(ExecuteTestBase):
     def test_stream_messages(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An stdout then stderr stream followed by an idle
-        self.assertEqual(message_mock.call_count, 3)
+        assert message_mock.call_count == 3
         # Ensure the output was captured
         self.assertListEqual(cell_mock.outputs, [
             {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'},
@@ -473,9 +480,9 @@ class TestRunCell(ExecuteTestBase):
     def test_clear_output_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A stream, followed by a clear, and then an idle
-        self.assertEqual(message_mock.call_count, 3)
+        assert message_mock.call_count == 3
         # Ensure the output was cleared
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'stream',
@@ -489,13 +496,13 @@ class TestRunCell(ExecuteTestBase):
     def test_clear_output_wait_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A stream, followed by a clear, and then an idle
-        self.assertEqual(message_mock.call_count, 3)
+        assert message_mock.call_count == 3
         # Should be true without another message to trigger the clear
         self.assertTrue(preprocessor.clear_before_next_output)
         # Ensure the output wasn't cleared yet
-        self.assertListEqual(cell_mock.outputs, [
+        assert cell_mock.outputs == [
             {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'}
-        ])
+        ]
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'stream',
@@ -513,13 +520,37 @@ class TestRunCell(ExecuteTestBase):
     def test_clear_output_wait_then_message_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An stdout stream, followed by a wait clear, an stderr stream, and then an idle
-        self.assertEqual(message_mock.call_count, 4)
+        assert message_mock.call_count == 4
         # Should be false after the stderr message
-        self.assertFalse(preprocessor.clear_before_next_output)
+        assert not preprocessor.clear_before_next_output
         # Ensure the output wasn't cleared yet
-        self.assertListEqual(cell_mock.outputs, [
+        assert cell_mock.outputs == [
             {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
-        ])
+        ]
+
+    @ExecuteTestBase.prepare_cell_mocks({
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stdout', 'text': 'foo'}
+    }, {
+        'msg_type': 'clear_output',
+        'header': {'msg_type': 'clear_output'},
+        'content': {'wait': True}
+    }, {
+        'msg_type': 'update_display_data',
+        'header': {'msg_type': 'update_display_data'},
+        'content': {'metadata': {'metafoo': 'metabar'}, 'data': {'foo': 'bar'}}
+    })
+    def test_clear_output_wait_then_update_display_message(self, preprocessor, cell_mock, message_mock):
+        preprocessor.run_cell(cell_mock)
+        # An stdout stream, followed by a wait clear, an stderr stream, and then an idle
+        assert message_mock.call_count == 4
+        # Should be false after the stderr message
+        assert preprocessor.clear_before_next_output
+        # Ensure the output wasn't cleared yet because update_display doesn't add outputs
+        assert cell_mock.outputs == [
+            {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'}
+        ]
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'execute_reply',
@@ -529,10 +560,10 @@ class TestRunCell(ExecuteTestBase):
     def test_execution_count_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An execution count followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
-        cell_mock.__setitem__.assert_called_once_with('execution_count', 42)
+        assert message_mock.call_count == 2
+        assert cell_mock.execution_count == 42
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'stream',
@@ -542,12 +573,12 @@ class TestRunCell(ExecuteTestBase):
     def test_execution_count_with_stream_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An execution count followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
-        cell_mock.__setitem__.assert_called_once_with('execution_count', 42)
+        assert message_mock.call_count == 2
+        assert cell_mock.execution_count == 42
         # Should also consume the message stream
-        self.assertListEqual(cell_mock.outputs, [
+        assert cell_mock.outputs == [
             {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'}
-        ])
+        ]
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'comm',
@@ -560,12 +591,12 @@ class TestRunCell(ExecuteTestBase):
     def test_widget_comm_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A comm message without buffer info followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         self.assertEqual(preprocessor.widget_state, {'foobar': {'foo': 'bar'}})
         # Buffers should still be empty
-        self.assertFalse(preprocessor.widget_buffers)
+        assert not preprocessor.widget_buffers
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'comm',
@@ -582,13 +613,13 @@ class TestRunCell(ExecuteTestBase):
     def test_widget_comm_buffer_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A comm message with buffer info followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
-        self.assertEqual(preprocessor.widget_state, {'foobar': {'foo': 'bar'}})
-        self.assertEqual(preprocessor.widget_buffers,
-            {'foobar': [{'data': 'MTIz', 'encoding': 'base64', 'path': 'path'}]}
-        )
+        assert message_mock.call_count == 2
+        assert preprocessor.widget_state == {'foobar': {'foo': 'bar'}}
+        assert preprocessor.widget_buffers == {
+            'foobar': [{'data': 'MTIz', 'encoding': 'base64', 'path': 'path'}]
+        }
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'comm',
@@ -602,12 +633,12 @@ class TestRunCell(ExecuteTestBase):
     def test_unknown_comm_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An unknown comm message followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Widget states should be empty as the message has the wrong shape
-        self.assertFalse(preprocessor.widget_state)
-        self.assertFalse(preprocessor.widget_buffers)
+        assert not preprocessor.widget_state
+        assert not preprocessor.widget_buffers
         # Ensure no outputs were generated
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'execute_result',
@@ -621,17 +652,17 @@ class TestRunCell(ExecuteTestBase):
     def test_execute_result_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An execute followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
-        cell_mock.__setitem__.assert_called_once_with('execution_count', 42)
+        assert message_mock.call_count == 2
+        assert cell_mock.execution_count == 42
         # Should generate an associated message
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'execute_result',
             'metadata': {'metafoo': 'metabar'},
             'data': {'foo': 'bar'},
             'execution_count': 42
-        }])
+        }]
         # No display id was provided
-        self.assertFalse(preprocessor._display_id_map)
+        assert not preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'execute_result',
@@ -646,16 +677,16 @@ class TestRunCell(ExecuteTestBase):
     def test_execute_result_with_display_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An execute followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
-        cell_mock.__setitem__.assert_called_once_with('execution_count', 42)
+        assert message_mock.call_count == 2
+        assert cell_mock.execution_count == 42
         # Should generate an associated message
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'execute_result',
             'metadata': {'metafoo': 'metabar'},
             'data': {'foo': 'bar'},
             'execution_count': 42
-        }])
-        self.assertTrue('foobar' in preprocessor._display_id_map)
+        }]
+        assert 'foobar' in preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'display_data',
@@ -665,15 +696,15 @@ class TestRunCell(ExecuteTestBase):
     def test_display_data_without_id_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A display followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Should generate an associated message
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'display_data',
             'metadata': {'metafoo': 'metabar'},
             'data': {'foo': 'bar'}
-        }])
+        }]
         # No display id was provided
-        self.assertFalse(preprocessor._display_id_map)
+        assert not preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'display_data',
@@ -687,14 +718,14 @@ class TestRunCell(ExecuteTestBase):
     def test_display_data_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A display followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Should generate an associated message
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'display_data',
             'metadata': {'metafoo': 'metabar'},
             'data': {'foo': 'bar'}
-        }])
-        self.assertTrue('foobar' in preprocessor._display_id_map)
+        }]
+        assert 'foobar' in preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'display_data',
@@ -708,6 +739,14 @@ class TestRunCell(ExecuteTestBase):
         'msg_type': 'display_data',
         'header': {'msg_type': 'display_data'},
         'content': {
+            'transient': {'display_id': 'foobar_other'},
+            'metadata': {'metafoo_other': 'metabar_other'},
+            'data': {'foo': 'bar_other'}
+        }
+    }, {
+        'msg_type': 'display_data',
+        'header': {'msg_type': 'display_data'},
+        'content': {
             'transient': {'display_id': 'foobar'},
             'metadata': {'metafoo2': 'metabar2'},
             'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
@@ -716,18 +755,22 @@ class TestRunCell(ExecuteTestBase):
     def test_display_data_same_id_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A display followed by an idle
-        self.assertEqual(message_mock.call_count, 3)
+        assert message_mock.call_count == 4
         # Original output should be manipulated and a copy of the second now
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'display_data',
             'metadata': {'metafoo2': 'metabar2'},
             'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
         }, {
             'output_type': 'display_data',
+            'metadata': {'metafoo_other': 'metabar_other'},
+            'data': {'foo': 'bar_other'}
+        }, {
+            'output_type': 'display_data',
             'metadata': {'metafoo2': 'metabar2'},
             'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
-        }])
-        self.assertTrue('foobar' in preprocessor._display_id_map)
+        }]
+        assert 'foobar' in preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'update_display_data',
@@ -737,17 +780,25 @@ class TestRunCell(ExecuteTestBase):
     def test_update_display_data_without_id_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An update followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Display updates don't create any outputs
-        self.assertFalse(cell_mock.outputs)
+        assert cell_mock.outputs == []
         # No display id was provided
-        self.assertFalse(preprocessor._display_id_map)
+        assert not preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
+        'msg_type': 'display_data',
+        'header': {'msg_type': 'display_data'},
+        'content': {
+            'transient': {'display_id': 'foobar'},
+            'metadata': {'metafoo2': 'metabar2'},
+            'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
+        }
+    }, {
         'msg_type': 'update_display_data',
         'header': {'msg_type': 'update_display_data'},
         'content': {
-            'transient': {'display_id': 'foobar'},
+            'transient': {'display_id': 'foobar2'},
             'metadata': {'metafoo2': 'metabar2'},
             'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
         }
@@ -755,11 +806,14 @@ class TestRunCell(ExecuteTestBase):
     def test_update_display_data_mismatch_id_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An update followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 3
         # Display updates don't create any outputs
-        self.assertFalse(cell_mock.outputs)
-        # Display id wasn't found, so message was skipped
-        self.assertFalse(preprocessor._display_id_map)
+        assert cell_mock.outputs == [{
+            'output_type': 'display_data',
+            'metadata': {'metafoo2': 'metabar2'},
+            'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
+        }]
+        assert 'foobar' in preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'display_data',
@@ -781,14 +835,14 @@ class TestRunCell(ExecuteTestBase):
     def test_update_display_data_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # A display followed by an update then an idle
-        self.assertEqual(message_mock.call_count, 3)
+        assert message_mock.call_count == 3
         # Original output should be manipulated
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'display_data',
             'metadata': {'metafoo2': 'metabar2'},
             'data': {'foo': 'bar2', 'baz': 'foobarbaz'}
-        }])
-        self.assertTrue('foobar' in preprocessor._display_id_map)
+        }]
+        assert 'foobar' in preprocessor._display_id_map
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'error',
@@ -798,11 +852,11 @@ class TestRunCell(ExecuteTestBase):
     def test_error_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # An error followed by an idle
-        self.assertEqual(message_mock.call_count, 2)
+        assert message_mock.call_count == 2
         # Should also consume the message stream
-        self.assertListEqual(cell_mock.outputs, [{
+        assert cell_mock.outputs == [{
             'output_type': 'error',
             'ename': 'foo',
             'evalue': 'bar',
             'traceback': ['Boom']
-        }])
+        }]

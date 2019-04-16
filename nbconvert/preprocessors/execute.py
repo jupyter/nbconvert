@@ -463,7 +463,6 @@ class ExecutePreprocessor(Preprocessor):
                                 self.log.error(
                                     "Kernel died while waiting for execute reply.")
                                 raise RuntimeError("Kernel died")
-
                             # kernel still alive, wait for a message
                             continue
                         # message received
@@ -485,9 +484,9 @@ class ExecutePreprocessor(Preprocessor):
                 continue
 
     def run_cell(self, cell, cell_index=0):
-        msg_id = self.kc.execute(cell.source)
+        parent_msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
-        exec_reply = self._wait_for_reply(msg_id, cell)
+        exec_reply = self._wait_for_reply(parent_msg_id, cell)
 
         outs = cell.outputs = []
         self.clear_before_next_output = False
@@ -506,7 +505,7 @@ class ExecutePreprocessor(Preprocessor):
                     raise RuntimeError("Timeout waiting for IOPub output")
                 else:
                     break
-            if msg['parent_header'].get('msg_id') != msg_id:
+            if msg['parent_header'].get('msg_id') != parent_msg_id:
                 # not an output from our execution
                 continue
 
