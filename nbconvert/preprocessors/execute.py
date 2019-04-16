@@ -25,7 +25,14 @@ from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 
 
-class CellExecutionComplete(Exception): pass  # Used as a control signal
+class CellExecutionComplete(Exception):
+    """
+    Used as a control signal for cell execution across run_cell and
+    process_message function calls. Raised when all execution requests
+    are completed and no further messages are expected from the kernel
+    over zeromq channels.
+    """
+    pass
 
 class CellExecutionError(ConversionException):
     """
