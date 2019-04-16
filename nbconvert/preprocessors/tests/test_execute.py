@@ -444,7 +444,7 @@ class TestRunCell(ExecuteTestBase):
     def test_idle_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # Just the exit message should be fetched
-        message_mock.assert_called_once()
+        assert message_mock.call_count == 1
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
