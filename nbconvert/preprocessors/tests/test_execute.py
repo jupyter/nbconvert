@@ -23,7 +23,6 @@ from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 import IPython
-from mock import patch, MagicMock
 from traitlets import TraitError
 from nbformat import NotebookNode
 from jupyter_client.kernelspec import KernelSpecManager
@@ -35,6 +34,10 @@ try:
     TimeoutError  # Py 3
 except NameError:
     TimeoutError = RuntimeError  # Py 2
+try:
+    from unittest.mock import MagicMock, patch  # Py 3
+except ImportError:
+    from mock import MagicMock, patch  # Py 2
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
@@ -47,14 +50,6 @@ def _normalize_base64(b64_text):
         return b64encode(b64decode(b64_text.encode('ascii'))).decode('ascii')
     except (ValueError, TypeError):
         return b64_text
-
-
-def merge_dicts(first, second):
-    # Because this is annoying to do inline
-    outcome = {}
-    outcome.update(first)
-    outcome.update(second)
-    return outcome
 
 
 class ExecuteTestBase(PreprocessorTestsBase):
@@ -120,7 +115,8 @@ class ExecuteTestBase(PreprocessorTestsBase):
             return MagicMock(
                 side_effect=[
                     # Default the parent_header so mocks don't need to include this
-                    merge_dicts({'parent_header': {'msg_id': parent_id}}, msg)
+                    ExecuteTestBase.merge_dicts(
+                        {'parent_header': {'msg_id': parent_id}}, msg)
                     for msg in messages
                 ]
             )

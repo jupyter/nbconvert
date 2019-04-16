@@ -98,6 +98,14 @@ class TestsBase(unittest.TestCase):
         #Return directory handler
         return temp_dir
 
+    @classmethod
+    def merge_dicts(cls, *dict_args):
+        # Because this is annoying to do inline
+        outcome = {}
+        for d in dict_args:
+            outcome.update(d)
+        return outcome
+
     def create_empty_notebook(self, path):
         nb = v4.new_notebook()
         with io.open(path, 'w', encoding='utf-8') as f:
