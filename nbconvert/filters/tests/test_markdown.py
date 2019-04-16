@@ -90,11 +90,8 @@ class TestMarkdown(TestsBase):
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_path_reference(self):
         """markdown2latex replace_relative_path against referenced path test"""
-        s = 'Some ![image](reference)\n[reference]: ref.png'
-        # This isn't building correct latex today because pandoc doesn't handle multimarkdown
-        # See https://stackoverflow.com/questions/9434536/how-do-i-make-a-reference-to-a-figure-in-markdown-using-pandoc
-        # TODO: capture markdown reference patterns and do the conversion ourselves
-        l = 'Some \\includegraphics{reference} {[}reference{]}: ref.png'
+        s = 'Some ![image][reference]\n\n[reference]: ref.png'
+        l = 'Some \\includegraphics{/path/with spaces/ref.png}'
         self.assertEqual(
             convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
             l)

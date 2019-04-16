@@ -71,7 +71,7 @@ def pandoc(source, fmt, to, extra_args=None, encoding='utf-8',
 
     # For markdown formats we can manipulate image paths to correct for latex issues
     if 'markdown' in fmt:
-        source = _replace_markdown_paths(
+        source = replace_markdown_paths(
             source, relative_path_replacement, build_path_replacement)
 
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -143,61 +143,164 @@ check_pandoc_version._cached = None
 #-----------------------------------------------------------------------------
 # Utilities
 #-----------------------------------------------------------------------------
-def _replace_markdown_paths(source, relative_path_replacement, build_path_replacement):
+def replace_markdown_paths(source, relative_path_replacement, build_path_replacement):
     """Returns source with relative image references prefixed by relative_path_replacement
     and with contents linked or copied to build_path_replacement.
     """
 
-    # Building blocks for matching ![image](my_diagram.png) markdown
-    img_open_group = r'(!\[(?:[iI]mage|[aA]lt [tT]ext|)\]\()'
-    no_scheme_ahead = r'(?![^:\.]+:\/\/)'
-    no_slash_match = r'[^\/]'
-    wrapped_path_match = r'[^)\"]*'
-    no_space_match = r'[^ ]'
+    # TODO: Need a better way to organize or document these?
 
-    # The various regex groups we're matching for markdown image references
-    img_local_path_group = (r'(' + no_scheme_ahead +
-        wrapped_path_match + r'\.' + wrapped_path_match + no_space_match + r')')
-    img_rel_path_group = (r'(' + no_scheme_ahead + no_slash_match +
-        wrapped_path_match + r'\.' + wrapped_path_match + no_space_match + r')')
-    # Pandoc ignores captions, but we don't want to mangle them when we do path adjustments
-    maybe_caption_groups = r'( )?(\"[^)\"]+\")?'
+    # Building blocks for matching `![image](my_diagram.png)` markdown
+    img_open_group = r'(!\[[^\]]+\]\()' # `![anything here]`
+    no_scheme_ahead = r'(?![^:\.]+:\/\/)' # Blocks `http://`
+    slash_match = r'\/'
+    no_slash_match = r'[^\/]'
+    any_match = r'\.'
+    wrapped_path_match = r'[^\)\(\"\']*' # `(capture group here)`
+    no_space_match = r'[^ ]'
+    img_abs_path_group = (
+        r'(' +
+        no_scheme_ahead +
+        slash_match +
+        wrapped_path_match +
+        any_match +
+        wrapped_path_match +
+        no_space_match +
+        r')'
+    )
+    img_rel_path_group = (
+        r'(' +
+        no_scheme_ahead +
+        no_slash_match + # Relative paths aren't prefixed with `/`
+        wrapped_path_match +
+        any_match +
+        wrapped_path_match +
+        no_space_match +
+        r')'
+    )
     img_close_group = r'(\))'
 
-    if relative_path_replacement:
-        # We can't quote the path for xetex downstream if it has spaces in it
-        # See https://tug.org/pipermail/xetex/2009-December/015313.html
-        # However the will still render but will double render some path
-        # characters alongside the image. To avoid this also use build_path_replacement.
+    # Building blocks for matching `[reference]: m_diagram.png` markdown
+    ref_open_group = r'(\[[^\]]+\]: ?)' # `[reference]`
+    no_slash_or_space_match = r'[^\/ ]'
+    no_slash_or_space_or_arrow_match = r'[^\/< ]'
+    no_arrow = r'[^<]'
+    no_space_or_arrow_match = r'[^< ]'
+    many_no_arrow_or_newline_match = r'[^>\n]+' # arrow wrapped path match
+    many_no_whitespace_and_no_arrow_match = r'[^\s]+[^>]' # open path match
+    arrow_rel_path_ref_match = (
+        r'(?:<' +
+        no_scheme_ahead +
+        no_slash_or_space_match + # Relative paths aren't prefixed with `/`
+        many_no_arrow_or_newline_match +
+        r'>)'
+    )
+    open_rel_path_ref_match = (
+        r'(?:' +
+        no_scheme_ahead +
+        no_slash_or_space_or_arrow_match + # Relative paths aren't prefixed with `/`
+        many_no_whitespace_and_no_arrow_match +
+        r')'
+    )
+    arrow_abs_path_ref_match = (
+        r'(?:<' +
+        no_scheme_ahead +
+        slash_match +
+        no_space_match +
+        many_no_arrow_or_newline_match +
+        r'>)'
+    )
+    open_abs_path_ref_match = (
+        r'(?:' +
+        no_scheme_ahead +
+        slash_match +
+        no_space_or_arrow_match +
+        many_no_whitespace_and_no_arrow_match +
+        r')'
+    )
+    ref_rel_path_group = r'(' + arrow_rel_path_ref_match + '|' + open_rel_path_ref_match + r')'
+    ref_abs_path_group = r'(' + arrow_abs_path_ref_match + '|' + open_abs_path_ref_match + r')'
+    empty_group = r'()'
 
-        # => (!\[(?:[iI]mage|[aA]lt [tT]ext|)\]\()((?![^:\.]+:\/\/)[^\/][^)\"]*\.[^)\"]*[^ ])( )?(\"[^)\"]+\")?(\))
-        source = re.sub(img_open_group + img_rel_path_group + maybe_caption_groups + img_close_group,
-            lambda m: (
-                m.group(1) + # ![image](
-                os.path.join(pathname2url(relative_path_replacement), m.group(2)) +
-                (m.group(3) or "") + # Maybe space
-                (m.group(4) or "") + # Maybe caption
-                m.group(5) # )
-            ),
-            source)
+    # Building blocks for matching citation ` "My Citation"` markdown
+    # (older) Pandoc ignores captions, but we don't want to mangle them when we do path adjustments
+    double_quote_label = r'(?:\"[^\"]+\")'
+    single_quote_label = r'(?:\'[^\']+\')'
+    paren_quote_label = r'(?:\([^\)]+\))'
+    any_quote_label = '|'.join((double_quote_label, single_quote_label, paren_quote_label))
+    maybe_closed_label_group = r'( (?:' + any_quote_label + r'))?'
+    maybe_open_label_group = r'($| (?:' + any_quote_label + r'))'
+
+    # print(img_open_group + img_rel_path_group + maybe_closed_label_group + img_close_group)
+    # print(ref_open_group + ref_rel_path_group + maybe_open_label_group)
+    # print(img_open_group + img_abs_path_group + maybe_closed_label_group + img_close_group)
+    # print(ref_open_group + ref_abs_path_group + maybe_open_label_group)
+    # raise Exception("STOP")
+
+    if relative_path_replacement:
+        def replace_relative_path_from_groups(m):
+            # We can't quote the path for xetex downstream if it has spaces in it
+            # See https://tug.org/pipermail/xetex/2009-December/015313.html
+            # However the will still render but will double render some path
+            # characters alongside the image. To avoid this also use build_path_replacement.
+            return (
+                m.group(1) + # ![image]( OR [reference]:
+                _reapply_path_wrappers(
+                    os.path.join(
+                        pathname2url(relative_path_replacement),
+                        _strip_path_wrappers(m.group(2))),
+                    m.group(2)
+                ) +
+                (m.group(3) or "") + # Maybe "label"
+                (m.group(4) or "") # Maybe `)`
+            )
+
+        # Image links => https://regex101.com/r/UVeqHs/6
+        source = re.sub(img_open_group + img_rel_path_group + maybe_closed_label_group + img_close_group,
+            replace_relative_path_from_groups, source)
+        # Image references => https://regex101.com/r/tcruDa/9
+        source = re.sub(ref_open_group + ref_rel_path_group + maybe_open_label_group + empty_group,
+            replace_relative_path_from_groups, source)
 
     if build_path_replacement:
-        # If our file path may have non-alphanumeric characters, the only way
-        # for latex targets to correctly parse the files is to rename them in
-        # a alphanumeric path.
+        def copy_replace_abs_path_from_groups(m):
+            # If our file path may have non-alphanumeric characters, the only way
+            # for latex targets to correctly parse the files is to rename them in
+            # a alphanumeric path.
+            print(m)
+            print(m.group(3))
+            return (
+                m.group(1) + # ![image]( OR [reference]:
+                _reapply_path_wrappers(
+                    _rename_and_copy_to_build_dir(
+                        url2pathname(_strip_path_wrappers(m.group(2))),
+                        build_path_replacement),
+                    group(2)
+                ) +
+                (m.group(3) or "") + # Maybe "label"
+                (m.group(4) or "") # Maybe `)`
+            )
 
-        # => (!\[(?:[iI]mage|[aA]lt [tT]ext|)\]\()((?![^:\.]+:\/\/)[^)\"]*\.[^)\"]*[^ ])( )?(\"[^)\"]+\")?(\))
-        source = re.sub(img_open_group + img_local_path_group + maybe_caption_groups + img_close_group,
-            lambda m: (
-                m.group(1) + # ![image](
-                _rename_and_copy_to_build_dir(url2pathname(m.group(2)), build_path_replacement) +
-                (m.group(3) or "") + # Maybe space
-                (m.group(4) or "") + # Maybe caption
-                m.group(5) # )
-            ),
-            source)
+        # Image links => https://regex101.com/r/RFjB4Y/2
+        source = re.sub(img_open_group + img_abs_path_group + maybe_closed_label_group + img_close_group,
+            copy_replace_abs_path_from_groups, source)
+        # Image references => https://regex101.com/r/tuGUJI/4
+        source = re.sub(ref_open_group + ref_abs_path_group + maybe_open_label_group + empty_group,
+            copy_replace_abs_path_from_groups, source)
 
     return source
+
+def _reapply_path_wrappers(new_path, old_path):
+    for s, e in [('<', '>'), ('"', '"')]:
+        if old_path.startswith(s) and old_path.endswith(e):
+            return s + new_path + e
+    return new_path
+
+def _strip_path_wrappers(path):
+    for s, e in [('<', '>'), ('"', '"')]:
+        if path.startswith(s) and path.endswith(e):
+            return path[1:-1]
+    return path
 
 def _rename_and_copy_to_build_dir(filename, build_path):
     """Copies filename to build_path with a latex safe file name"""
