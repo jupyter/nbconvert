@@ -73,37 +73,77 @@ class ExecuteTestBase(PreprocessorTestsBase):
     @staticmethod
     def prepare_cell_mocks(*messages):
         """
-        TODO: describe how we're mocking overall with usage example
+        This function prepares a preprocessor object which has a fake kernel client
+        to mock the messages sent over zeromq. The mock kernel client will return
+        the messages passed into this wrapper back from `preproc.kc.iopub_channel.get_msg`
+        callbacks. It also appends a kernel idle message to the end of messages.
+
+        This allows for testing in with following call expectations:
+
+        @ExecuteTestBase.prepare_cell_mocks({
+            'msg_type': 'stream',
+            'header': {'msg_type': 'stream'},
+            'content': {'name': 'stdout', 'text': 'foo'},
+        })
+        def test_message_foo(self, preprocessor, cell_mock, message_mock):
+            preprocessor.kc.iopub_channel.get_msg()
+            # =>
+            # {
+            #     'msg_type': 'stream',
+            #     'parent_header': {'msg_id': 'fake_id'},
+            #     'header': {'msg_type': 'stream'},
+            #     'content': {'name': 'stdout', 'text': 'foo'},
+            # }
+            preprocessor.kc.iopub_channel.get_msg()
+            # =>
+            # {
+            #     'msg_type': 'status',
+            #     'parent_header': {'msg_id': 'fake_id'},
+            #     'content': {'execution_state': 'idle'},
+            # }
+            preprocessor.kc.iopub_channel.get_msg() # => None
+            message_mock.call_count # => 3
         """
+        parent_id = 'fake_id'
         messages = list(messages)
+        # Always terminate messages with an idle to exit the loop
+        messages.append({'msg_type': 'status', 'content': {'execution_state': 'idle'}})
+
+        def shell_channel_message_mock():
+            # Return the message generator for
+            # self.kc.shell_channel.get_msg => {'parent_header': {'msg_id': parent_id}}
+            return MagicMock(return_value={'parent_header': {'msg_id': parent_id}})
+
+        def iopub_messages_mock():
+            # Return the message generator for
+            # self.kc.iopub_channel.get_msg => messages[i]
+            return MagicMock(
+                side_effect=[
+                    # Default the parent_header so mocks don't need to include this
+                    merge_dicts({'parent_header': {'msg_id': parent_id}}, msg)
+                    for msg in messages
+                ]
+            )
+
         def prepared_wrapper(func):
             @functools.wraps(func)
             def test_mock_wrapper(self):
                 """
-                TODO: describe and slit shell mock from channel mock into separate funcs
+                This inner function wrapper populates the preprocessor object with
+                the fake kernel client. This client has it's iopub and shell
+                channels mocked so as to fake the setup handshake and return
+                the messages passed into prepare_cell_mocks as the run_cell loop
+                processes them.
                 """
-                parent_id = 'fake_id'
                 cell_mock = NotebookNode(source='"foo" = "bar"', outputs=[])
                 preprocessor = self.build_preprocessor({})
                 preprocessor.nb = {'cells': [cell_mock]}
-                shell_message_mock = MagicMock(
-                    return_value={'parent_header': {'msg_id': parent_id}})
-                # Always terminate messages with an idle to exit the loop
-                messages.append({'msg_type': 'status', 'content': {'execution_state': 'idle'}})
-                message_mock = MagicMock(
-                    side_effect=[
-                        # Default the parent_header so mocks don't need to include this
-                        merge_dicts({'parent_header': {'msg_id': parent_id}}, msg)
-                        for msg in messages
-                    ]
-                )
+
                 # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
-                channel_mock = MagicMock(get_msg=message_mock)
-                # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
-                shell_mock = MagicMock(get_msg=shell_message_mock)
+                message_mock = iopub_messages_mock()
                 preprocessor.kc = MagicMock(
-                    iopub_channel=channel_mock,
-                    shell_channel=shell_mock,
+                    iopub_channel=MagicMock(get_msg=message_mock),
+                    shell_channel=MagicMock(get_msg=shell_channel_message_mock()),
                     execute=MagicMock(return_value=parent_id)
                 )
                 return func(self, preprocessor, cell_mock, message_mock)
