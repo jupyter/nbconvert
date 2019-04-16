@@ -185,18 +185,18 @@ class TestExecute(ExecuteTestBase):
     def assert_notebooks_equal(self, expected, actual):
         expected_cells = expected['cells']
         actual_cells = actual['cells']
-        self.assertEqual(len(expected_cells), len(actual_cells))
+        assert len(expected_cells) == len(actual_cells)
 
         for expected_cell, actual_cell in zip(expected_cells, actual_cells):
             expected_outputs = expected_cell.get('outputs', [])
             actual_outputs = actual_cell.get('outputs', [])
             normalized_expected_outputs = list(map(self.normalize_output, expected_outputs))
             normalized_actual_outputs = list(map(self.normalize_output, actual_outputs))
-            self.assertEqual(normalized_expected_outputs, normalized_actual_outputs)
+            assert normalized_expected_outputs == normalized_actual_outputs
 
             expected_execution_count = expected_cell.get('execution_count', None)
             actual_execution_count = actual_cell.get('execution_count', None)
-            self.assertEqual(expected_execution_count, actual_execution_count)
+            assert expected_execution_count == actual_execution_count
 
 
     def test_constructor(self):
@@ -414,9 +414,9 @@ class TestExecute(ExecuteTestBase):
         original = copy.deepcopy(input_nb)
         wpp = WrappedPreProc()
         executed = wpp.preprocess(input_nb, {})[0]
-        self.assertEqual(outputs, [
+        assert outputs == [
             {'name': 'stdout', 'output_type': 'stream', 'text': 'Hello World\n'}
-        ])
+        ]
         self.assert_notebooks_equal(original, executed)
 
     def test_execute_function(self):
