@@ -61,54 +61,60 @@ class TestMarkdown(TestsBase):
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_relative_path(self):
-        """markdown2latex replace_relative_path test"""
+        """
+        Tests that a markdown string with a relative path replacement can
+        generate a graphics output in latex to the requested path.
+        """
         s = 'Some ![image](reference.png)'
         l = 'Some \\includegraphics{/path/with spaces/reference.png}'
-        self.assertEqual(
-            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
-            l)
+        assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces')
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_relative_path_with_caption(self):
-        """markdown2latex replace_relative_path with ignored caption test"""
+        """
+        Tests that a markdown string with a lavel and a relative path replacement
+        can generate a graphics output in latex to the requested path.
+        """
         s = 'Some ![Alt text](reference.png "ref")'
         l = 'Some \\includegraphics{/path/with spaces/reference.png}'
-        self.assertEqual(
-            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
-            l)
+        assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces')
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_abs_path(self):
-        """markdown2latex replace_relative_path against abs path test"""
+        """
+        Tests that a markdown string with an absolute path is not manipulated
+        when a relative path replacement is applied to a latex conversion.
+        """
         s = 'Some ![image](/abs/path/to/reference.png)'
         l = 'Some \\includegraphics{/abs/path/to/reference.png}'
         # Relative path replacement should be ignored
-        self.assertEqual(
-            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
-            l)
+        assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces')
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_path_reference(self):
-        """markdown2latex replace_relative_path against referenced path test"""
+        """
+        Tests that a markdown string with a relative path replacement in a
+        reference can generate a graphics output in latex to the requested path.
+        """
         s = 'Some ![image][reference]\n\n[reference]: ref.png'
         l = 'Some \\includegraphics{/path/with spaces/ref.png}'
-        self.assertEqual(
-            convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces'),
-            l)
+        assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], '/path/with spaces')
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_build_path(self):
-        """markdown2latex build_path_replacement test"""
+        """
+        Tests that a markdown string with a relative path replacement to a test
+        directory `td` can link/copy the image link to a build directory `bd`
+        and apply it as a reference in latex output.
+        """
         with TemporaryWorkingDirectory() as td:
             open('reference@with spaces.png', 'a').close()
             with TemporaryWorkingDirectory() as bd:
                 s = 'Some ![image](reference@with spaces.png)'
                 f = '{bd}/reference_with_spaces.png'.format(bd=bd)
                 l = 'Some \\includegraphics{{{filename}}}'.format(filename=f)
-                self.assertEqual(
-                    convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd),
-                    l)
-                self.assertTrue(os.path.isfile(f))
+                assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd)
+                assert os.path.isfile(f)
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_build_path_with_caption(self):
@@ -119,10 +125,8 @@ class TestMarkdown(TestsBase):
                 s = 'Some ![image](reference@with spaces.png "Nice Reference")'
                 f = '{bd}/reference_with_spaces.png'.format(bd=bd)
                 l = 'Some \\includegraphics{{{filename}}}'.format(filename=f)
-                self.assertEqual(
-                    convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd),
-                    l)
-                self.assertTrue(os.path.isfile(f))
+                assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd)
+                assert os.path.isfile(f)
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_build_abs_path(self):
@@ -133,10 +137,8 @@ class TestMarkdown(TestsBase):
                 s = 'Some ![image]({td}/reference@with spaces.png)'.format(td=td)
                 f = '{bd}/reference_with_spaces.png'.format(bd=bd)
                 l = 'Some \\includegraphics{{{filename}}}'.format(filename=f)
-                self.assertEqual(
-                    convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd),
-                    l)
-                self.assertTrue(os.path.isfile(f))
+                assert l == convert_pandoc(s, 'markdown_strict', 'latex', [], td, bd)
+                assert os.path.isfile(f)
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2latex_markup(self):
@@ -181,8 +183,8 @@ class TestMarkdown(TestsBase):
         rendered = tpl.render(long_line=long_line)
         _, latex, rst = rendered.split('#')
 
-        self.assertEqual(latex.strip(), 'latex %s' % long_line)
-        self.assertEqual(rst.strip(), 'rst %s' % long_line.replace(' ', '\n'))
+        assert latex.strip() == 'latex %s' % long_line
+        assert rst.strip() == 'rst %s' % long_line.replace(' ', '\n')
 
     def test_markdown2html(self):
         """markdown2html test"""
@@ -248,14 +250,14 @@ class TestMarkdown(TestsBase):
             math = search_result.group(0)
             # the resulting math part can not contain "<", ">" or
             # "&" not followed by "lt;", "gt;", or "amp;".
-            self.assertNotIn("<", math)
-            self.assertNotIn(">", math)
+            assert "<" not in math
+            assert ">" not in math
             # python 2.7 has assertNotRegexpMatches instead of assertNotRegex
             if not hasattr(self, 'assertNotRegex'):
                 self.assertNotRegex = self.assertNotRegexpMatches
             self.assertNotRegex(math, "&(?![gt;|lt;|amp;])")
             # the result should be able to be unescaped correctly
-            self.assertEquals(case, self._unescape(math))
+            assert case == self._unescape(math)
 
     def test_markdown2html_math_mixed(self):
         """ensure markdown between inline and inline-block math works and
@@ -306,7 +308,7 @@ i.e. the $i^{th}$"""
 
         for case in cases:
             s = markdown2html(case)
-            self.assertIn(case, self._unescape(s))
+            assert case in self._unescape(s)
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2rst(self):
@@ -330,10 +332,10 @@ i.e. the $i^{th}$"""
         try:
             results = method(test)
             if isinstance(tokens, string_types):
-                self.assertIn(tokens, results)
+                assert tokens in results
             else:
                 for token in tokens:
-                    self.assertIn(token, results)
+                    assert token in results
         except:
             if alt_tokens:
                 self._try_markdown(method, test, alt_tokens)

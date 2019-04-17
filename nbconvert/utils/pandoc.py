@@ -302,11 +302,10 @@ def _strip_path_wrappers(path):
 def _rename_and_copy_to_build_dir(filename, build_path):
     """Copies filename to build_path with a latex safe file name"""
     ensure_dir_exists(build_path)
-    link_or_copy(filename, build_path)
     new_file_path = os.path.join(build_path, os.path.basename(filename))
     # return new_file_path
     safe_file_path = os.path.join(build_path, sensitive_filename_cleanup(os.path.basename(filename)))
-    os.rename(new_file_path, safe_file_path)
+    link_or_copy(filename, safe_file_path)
     return safe_file_path
 
 
