@@ -16,10 +16,16 @@ from ipython_genutils.py3compat import cast_bytes, which
 from ipython_genutils.path import link_or_copy, ensure_dir_exists
 try:
     # Python 2
-    from urllib import pathname2url, url2pathname
+    from urllib import url2pathname
 except ImportError:
     # Python 3
-    from urllib.request import pathname2url, url2pathname
+    from urllib.request import url2pathname
+try:
+    # Python 3
+    from urllib.parse import urlparse
+except:
+    # Python 2
+    from urlparse import urlparse
 
 from .exceptions import ConversionException
 from .io import sensitive_filename_cleanup
@@ -141,170 +147,203 @@ check_pandoc_version._cached = None
 
 
 #-----------------------------------------------------------------------------
-# Utilities
+# Markdown Utilities
 #-----------------------------------------------------------------------------
-def replace_markdown_paths(source, relative_path_replacement, build_path_replacement):
-    """Returns source with relative image references prefixed by relative_path_replacement
-    and with contents linked or copied to build_path_replacement.
+def replace_markdown_paths(source, relative_path_replacement=None, build_path_replacement=None):
+    """
+    Finds and replaces markdown any markdown image links `![image](path/to/image.png)`
+    or image references `[ref]: path/to/image.png` in the source.
+
+    If relative_path_replacement is passed, then each identified relative image path
+    will have relative_path_replacement prepended to the path. With relative_path_replacement
+    having a value of `/abs` the following transformations will occur:
+
+    `![image](path/to/image.png)` -> `![image](/abs/path/to/image.png)`
+    `[ref]: path/to/image.png` -> `[ref]: /abs/path/to/image.png`
+
+    If build_path_replacement is passed, then each identified image path will be
+    copied to the build_path_replacement directory and renamed to a latex safe file name.
+    With build_path_replacement having a value of `/tmp/foo` the following transformations
+    will occur:
+
+    `![image](path/to/space in image.png)` -> `![image](/tmp/foo/space_in_image.png)`
+    `[ref]: path/to/image.png` -> `[ref]: /tmp/foo/space_in_image.png`
+
+    Returns
+    -------
+    replaced : unicode
+      The source with the described transformations applied.
     """
 
-    # TODO: Need a better way to organize or document these?
-
-    # Building blocks for matching `![image](my_diagram.png)` markdown
-    img_open_group = r'(!\[[^\]]+\]\()' # `![anything here]`
-    no_scheme_ahead = r'(?![^:\.]+:\/\/)' # Blocks `http://`
-    slash_match = r'\/'
-    no_slash_match = r'[^\/]'
-    any_match = r'\.'
-    wrapped_path_match = r'[^\)\(\"\']*' # `(capture group here)`
-    no_space_match = r'[^ ]'
-    img_abs_path_group = (
-        r'(' +
-        no_scheme_ahead +
-        slash_match +
-        wrapped_path_match +
-        any_match +
-        wrapped_path_match +
-        no_space_match +
-        r')'
-    )
-    img_rel_path_group = (
-        r'(' +
-        no_scheme_ahead +
-        no_slash_match + # Relative paths aren't prefixed with `/`
-        wrapped_path_match +
-        any_match +
-        wrapped_path_match +
-        no_space_match +
-        r')'
-    )
-    img_close_group = r'(\))'
-
-    # Building blocks for matching `[reference]: m_diagram.png` markdown
-    ref_open_group = r'(\[[^\]]+\]: ?)' # `[reference]`
-    no_slash_or_space_match = r'[^\/ ]'
-    no_slash_or_space_or_arrow_match = r'[^\/< ]'
-    no_arrow = r'[^<]'
-    no_space_or_arrow_match = r'[^< ]'
-    many_no_arrow_or_newline_match = r'[^>\n]+' # arrow wrapped path match
-    many_no_whitespace_and_no_arrow_match = r'[^\s]+[^>]' # open path match
-    arrow_rel_path_ref_match = (
-        r'(?:<' +
-        no_scheme_ahead +
-        no_slash_or_space_match + # Relative paths aren't prefixed with `/`
-        many_no_arrow_or_newline_match +
-        r'>)'
-    )
-    open_rel_path_ref_match = (
-        r'(?:' +
-        no_scheme_ahead +
-        no_slash_or_space_or_arrow_match + # Relative paths aren't prefixed with `/`
-        many_no_whitespace_and_no_arrow_match +
-        r')'
-    )
-    arrow_abs_path_ref_match = (
-        r'(?:<' +
-        no_scheme_ahead +
-        slash_match +
-        no_space_match +
-        many_no_arrow_or_newline_match +
-        r'>)'
-    )
-    open_abs_path_ref_match = (
-        r'(?:' +
-        no_scheme_ahead +
-        slash_match +
-        no_space_or_arrow_match +
-        many_no_whitespace_and_no_arrow_match +
-        r')'
-    )
-    ref_rel_path_group = r'(' + arrow_rel_path_ref_match + '|' + open_rel_path_ref_match + r')'
-    ref_abs_path_group = r'(' + arrow_abs_path_ref_match + '|' + open_abs_path_ref_match + r')'
-    empty_group = r'()'
-
-    # Building blocks for matching citation ` "My Citation"` markdown
-    # (older) Pandoc ignores captions, but we don't want to mangle them when we do path adjustments
-    double_quote_label = r'(?:\"[^\"]+\")'
-    single_quote_label = r'(?:\'[^\']+\')'
-    paren_quote_label = r'(?:\([^\)]+\))'
-    any_quote_label = '|'.join((double_quote_label, single_quote_label, paren_quote_label))
-    maybe_closed_label_group = r'( (?:' + any_quote_label + r'))?'
-    maybe_open_label_group = r'($| (?:' + any_quote_label + r'))'
-
-    # print(img_open_group + img_rel_path_group + maybe_closed_label_group + img_close_group)
-    # print(ref_open_group + ref_rel_path_group + maybe_open_label_group)
-    # print(img_open_group + img_abs_path_group + maybe_closed_label_group + img_close_group)
-    # print(ref_open_group + ref_abs_path_group + maybe_open_label_group)
-    # raise Exception("STOP")
+    # https://regex101.com/r/wZwqo1/1
+    image_link_group = r'(!\[[^\]]+\]\([^\n\)]+\)\)?)'
+    # https://regex101.com/r/9GVffV/4
+    image_reference_group = r'^(\s*)(\[[^\]]+\]: ?.+)$'
 
     if relative_path_replacement:
-        def replace_relative_path_from_groups(m):
-            # We can't quote the path for xetex downstream if it has spaces in it
-            # See https://tug.org/pipermail/xetex/2009-December/015313.html
-            # However the will still render but will double render some path
-            # characters alongside the image. To avoid this also use build_path_replacement.
-            return (
-                m.group(1) + # ![image]( OR [reference]:
-                _reapply_path_wrappers(
-                    os.path.join(
-                        pathname2url(relative_path_replacement),
-                        _strip_path_wrappers(m.group(2))),
-                    m.group(2)
-                ) +
-                (m.group(3) or "") + # Maybe "label"
-                (m.group(4) or "") # Maybe `)`
-            )
-
-        # Image links => https://regex101.com/r/UVeqHs/6
-        source = re.sub(img_open_group + img_rel_path_group + maybe_closed_label_group + img_close_group,
-            replace_relative_path_from_groups, source)
-        # Image references => https://regex101.com/r/tcruDa/9
-        source = re.sub(ref_open_group + ref_rel_path_group + maybe_open_label_group + empty_group,
-            replace_relative_path_from_groups, source)
+        # Replace relative paths in ![images]
+        source = re.sub(
+            image_link_group,
+            lambda m: _prefix_relative_image_path(m.group(0), relative_path_replacement),
+            source,
+            flags=re.M)
+        # Replace relative paths in [references]
+        source = re.sub(
+            image_reference_group,
+            lambda m: _prefix_relative_image_reference_path(m.group(0), m.group(1), relative_path_replacement),
+            source,
+            flags=re.M)
 
     if build_path_replacement:
-        def copy_replace_abs_path_from_groups(m):
-            # If our file path may have non-alphanumeric characters, the only way
-            # for latex targets to correctly parse the files is to rename them in
-            # a alphanumeric path.
-            print(m)
-            print(m.group(3))
-            return (
-                m.group(1) + # ![image]( OR [reference]:
-                _rename_and_copy_to_build_dir(
-                    url2pathname(_strip_path_wrappers(m.group(2))),
-                    build_path_replacement) +
-                (m.group(3) or "") + # Maybe "label"
-                (m.group(4) or "") # Maybe `)`
-            )
-
-        # Image links => https://regex101.com/r/RFjB4Y/2
-        source = re.sub(img_open_group + img_abs_path_group + maybe_closed_label_group + img_close_group,
-            copy_replace_abs_path_from_groups, source)
-        # Image references => https://regex101.com/r/tuGUJI/4
-        source = re.sub(ref_open_group + ref_abs_path_group + maybe_open_label_group + empty_group,
-            copy_replace_abs_path_from_groups, source)
+        # Replace paths in ![images]
+        source = re.sub(
+            image_link_group,
+            lambda m: _rename_and_copy_image_path(m.group(0), build_path_replacement),
+            source,
+            flags=re.M)
+        # Replace paths in [references]
+        source = re.sub(
+            image_reference_group,
+            lambda m: _rename_and_copy_image_reference_path(m.group(0), m.group(1), build_path_replacement),
+            source,
+            flags=re.M)
 
     return source
 
-def _reapply_path_wrappers(new_path, old_path):
-    for s, e in [('<', '>'), ('"', '"')]:
-        if old_path.startswith(s) and old_path.endswith(e):
-            return s + new_path + e
-    return new_path
+def _prefix_relative_image_path(image_match, relative_path_replacement):
+    """
+    For an image string of the shape `![image](path/to/image)`, replace the relative
+    path with value of relative_path_replacement (e.g. `![image](/abs/path/to/image)`).
+    """
+    image_tag = _extract_tag(image_match)
+    image, label = _extract_image_and_label(image_match)
+    parsed = urlparse(image)
+    if parsed.scheme or parsed.path.startswith('/'):
+        # Skip out, we aren't parsing absolute or schema'd paths
+        return image_match
+    new_path = os.path.join(relative_path_replacement, image)
+    # Combine our pieces back together
+    return "![{tag}]({path}{label})".format(
+        tag=image_tag, path=new_path, label=' ' + label if label else ''
+    )
 
-def _strip_path_wrappers(path):
-    for s, e in [('<', '>'), ('"', '"')]:
-        if path.startswith(s) and path.endswith(e):
-            return path[1:-1]
-    return path
+def _prefix_relative_image_reference_path(image_match, white_space, relative_path_replacement):
+    """
+    For a reference string of the shape `[ref]: path/to/image.png`, replace the relative
+    path with value of relative_path_replacement (e.g. `[image]: /abs/path/to/image.png`).
+    """
+    ref_tag = _extract_tag(image_match)
+    image, label = _extract_reference_and_label(image_match)
+    image_start, image_end = "", ""
+    if (image.startswith("<") and not image.endswith(">")) or (
+        not image.startswith("<") and image.endswith(">")):
+        # Skip out, not a valid image reference
+        return image_match
+    elif image.startswith("<"):
+        image_start, image_end = "<", ">"
+        image = image[1:-1]
+    parsed = urlparse(image)
+    if parsed.scheme or parsed.path.startswith('/'):
+        # Skip out, we aren't parsing absolute or schema'd paths
+        return image_match
+    new_path = image_start + os.path.join(relative_path_replacement, image) + image_end
+    # Combine our pieces back together
+    return "{ws}[{tag}]: {path}{label}".format(
+        ws=white_space, tag=ref_tag, path=new_path, label=' ' + label if label else ''
+    )
 
-def _rename_and_copy_to_build_dir(filename, build_path):
+def _rename_and_copy_image_path(image_match, build_path_replacement):
+    """
+    For an image string of the shape `![image](/abs/path/to/space image.png)`, copy the file
+    contents into the build path and rename the file (e.g. `![image](/build/space_image.png)`).
+    """
+    image_tag = _extract_tag(image_match)
+    image, label = _extract_image_and_label(image_match)
+    parsed = urlparse(image)
+    if parsed.scheme:
+        # Skip out, we aren't parsing schema'd paths
+        # TODO: Handle remote urls here for https:// link generation in pdfs
+        return image_match
+    # url2pathname to convert %20 in notebook image links
+    new_path = _rename_and_copy_to_build_dir(url2pathname(image), build_path_replacement)
+    # Combine our pieces back together
+    return "![{tag}]({path}{label})".format(
+        tag=image_tag, path=new_path, label=' ' + label if label else ''
+    )
+
+
+def _rename_and_copy_image_reference_path(image_match, white_space, build_path_replacement):
+    """
+    For an reference string of the shape `[ref]: /abs/path/to/space image.png`, copy the file
+    contents into the build path and rename the file (e.g. `[ref]: /build/space_image.png`).
+    """
+    ref_tag = _extract_tag(image_match)
+    image, label = _extract_reference_and_label(image_match)
+    image_start, image_end = "", ""
+    if (image.startswith("<") and not image.endswith(">")) or (
+        not image.startswith("<") and image.endswith(">")):
+        # Skip out, not a valid image reference
+        return image_match
+    elif image.startswith("<"):
+        image_start, image_end = "<", ">"
+        image = image[1:-1]
+    parsed = urlparse(image)
+    if parsed.scheme:
+        # Skip out, we aren't parsing schema'd paths
+        # TODO: Handle remote urls here for https:// link generation in pdfs
+        return image_match
+    new_path = (
+        image_start +
+        # url2pathname to convert %20 in notebook image links
+        _rename_and_copy_to_build_dir(url2pathname(image), build_path_replacement) +
+        image_end
+    )
+    # Combine our pieces back together
+    return "{ws}[{tag}]: {path}{label}".format(
+        ws=white_space, tag=ref_tag, path=new_path, label=' ' + label if label else ''
+    )
+
+def _extract_tag(markdown_link):
+    """
+    Pulls the tag out of `![tag](other stuff)` strings.
+    """
+    return markdown_link.split('[', 1)[-1].split(']', 1)[0]
+
+def _split_image_and_label(img_with_label):
+    """
+    Separates the image `path/to/image.png` and label `important` from
+    `path/to/image.png "important"` strings.
+    """
+    for label_start, label_end in [('"', '"'), ("'", "'"), ("(", ")")]:
+        if img_with_label[-1] == label_end:
+            image, label = img_with_label[:-1].rsplit(label_start, 1)
+            return image.strip(), label_start + label + label_end
+    return img_with_label, None
+
+def _extract_image_and_label(markdown_link):
+    """
+    Pulls the image `path/to/image.png` and label `important` out of
+    `![tag](path/to/image.png "important")` strings.
+    """
+    img_with_label = markdown_link.split('](', 1)[-1].rsplit(')', 1)[0].strip()
+    return _split_image_and_label(img_with_label)
+
+def _extract_reference_and_label(markdown_link):
+    """
+    Pulls the image `path/to/image.png` and label `important` out of
+    `[tag]: path/to/image.png "important"` strings.
+    """
+    img_with_label = markdown_link.split(']:', 1)[-1].strip()
+    return _split_image_and_label(img_with_label)
+
+def _rename_and_copy_to_build_dir(filename, build_path_replacement):
     """Copies filename to build_path with a latex safe file name"""
-    ensure_dir_exists(build_path)
-    new_file_path = os.path.join(build_path, os.path.basename(filename))
+    ensure_dir_exists(build_path_replacement)
+    new_file_path = os.path.join(
+        build_path_replacement, os.path.basename(filename))
     # return new_file_path
-    safe_file_path = os.path.join(build_path, sensitive_filename_cleanup(os.path.basename(filename)))
+    safe_file_path = os.path.join(
+        build_path_replacement, sensitive_filename_cleanup(os.path.basename(filename)))
     link_or_copy(filename, safe_file_path)
     return safe_file_path
 

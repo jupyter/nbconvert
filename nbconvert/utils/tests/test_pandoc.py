@@ -18,7 +18,7 @@ from ...tests.utils import onlyif_cmds_exist
 from nbconvert.tests.base import TestsBase
 from testpath.tempdir import TemporaryWorkingDirectory
 from .. import pandoc
-from ..pandoc import replace_markdown_paths
+from ..pandoc import replace_markdown_paths, url2pathname
 
 #-----------------------------------------------------------------------------
 # Classes and functions
@@ -132,9 +132,11 @@ def test_pandoc_markdown_image_rel_path_replacement(test_input, expected):
         ("an ![image]({td}/path/to/test.png 'citation here') with stuff", "an ![image]({bd}/test.png 'citation here') with stuff"),
         ("an ![image]({td}/path/to/test.png (citation here)) with stuff", "an ![image]({bd}/test.png (citation here)) with stuff"),
         ("an ![image]({td}/path/with spaces@test.png 'citation here') with stuff", "an ![image]({bd}/with_spaces_test.png 'citation here') with stuff"),
+        ("an ![image]({td}/path/with%20spaces@test.png 'citation here') with stuff", "an ![image]({bd}/with_spaces_test.png 'citation here') with stuff"),
         # Negative cases
         ("[no_explamantion](should/not/find.png)", "[no_explamantion](should/not/find.png)"),
         ("random", "random"),
+        ("![image][reference_not_a_file]", "![image][reference_not_a_file]"),
         ("an ![image](path/to/test.png 'citation here'", "an ![image](path/to/test.png 'citation here'"),
         ("an ![image]path/to/test.png 'citation here')", "an ![image]path/to/test.png 'citation here')"),
         ("an ![image](/abs/path/to/test.png 'citation here'", "an ![image](/abs/path/to/test.png 'citation here'"),
@@ -156,7 +158,7 @@ def test_pandoc_markdown_image_abs_path_copy(test_input, expected):
         # Some hacky filters to ensure we generate empty files for all the positive tests
         if "http" not in check and '![' in check and '(' in check and ')' in check:
             fpath = check.split('(', 1)[-1].rsplit(')', 1)[0].replace('citation here', '').rsplit(' ', 1)[0]
-            return fpath
+            return url2pathname(fpath)
 
     with TemporaryWorkingDirectory() as td:
         test_input = test_input.format(td=td)
@@ -166,6 +168,7 @@ def test_pandoc_markdown_image_abs_path_copy(test_input, expected):
             # Relative paths have subdirectories
             if not os.path.exists(os.path.dirname(fpath)):
                 os.makedirs(os.path.dirname(fpath))
+            # We need an file on disk so the copy and rename operations work
             open(fpath, 'a').close()
 
         with TemporaryWorkingDirectory() as bd:
@@ -181,19 +184,22 @@ def test_pandoc_markdown_image_abs_path_copy(test_input, expected):
     [
         # Positive cases
         ("[reference]: path/to/test.png", "[reference]: /added/path/to/test.png"),
+        ("Before\n[reference]: path/to/test.png\nAfter", "Before\n[reference]: /added/path/to/test.png\nAfter"),
+        (" [space]: path/to/test.png", " [space]: /added/path/to/test.png"),
         ('[reference]: path/to/test.png "citation here"', '[reference]: /added/path/to/test.png "citation here"'),
         ("[reference]: path/to/test.png 'citation here'", "[reference]: /added/path/to/test.png 'citation here'"),
         ("[reference]: path/to/test.png (citation here)", "[reference]: /added/path/to/test.png (citation here)"),
         ('[reference]: <path/to/test.png> "citation here"', '[reference]: </added/path/to/test.png> "citation here"'),
         ("[reference]: <path/to test.png> 'citation here'", "[reference]: </added/path/to test.png> 'citation here'"),
+        ("[reference]: <path/to%20test.png> 'citation here'", "[reference]: </added/path/to%20test.png> 'citation here'"),
         ("[reference]: <path/to/test.png> (citation here)", "[reference]: </added/path/to/test.png> (citation here)"),
-        ("[reference]:path/to/test.png", "[reference]:/added/path/to/test.png"),
-        ('[reference]:path/to/test.png "citation here"', '[reference]:/added/path/to/test.png "citation here"'),
-        ("[reference]:path/to/test.png 'citation here'", "[reference]:/added/path/to/test.png 'citation here'"),
-        ("[reference]:path/to/test.png (citation here)", "[reference]:/added/path/to/test.png (citation here)"),
-        ('[reference]:<path/to/test.png> "citation here"', '[reference]:</added/path/to/test.png> "citation here"'),
-        ("[reference]:<path/to test.png> 'citation here'", "[reference]:</added/path/to test.png> 'citation here'"),
-        ("[reference]:<path/to/test.png> (citation here)", "[reference]:</added/path/to/test.png> (citation here)"),
+        ("[reference]:path/to/test.png", "[reference]: /added/path/to/test.png"),
+        ('[reference]:path/to/test.png "citation here"', '[reference]: /added/path/to/test.png "citation here"'),
+        ("[reference]:path/to/test.png 'citation here'", "[reference]: /added/path/to/test.png 'citation here'"),
+        ("[reference]:path/to/test.png (citation here)", "[reference]: /added/path/to/test.png (citation here)"),
+        ('[reference]:<path/to/test.png> "citation here"', '[reference]: </added/path/to/test.png> "citation here"'),
+        ("[reference]:<path/to test.png> 'citation here'", "[reference]: </added/path/to test.png> 'citation here'"),
+        ("[reference]:<path/to/test.png> (citation here)", "[reference]: </added/path/to/test.png> (citation here)"),
         # Negative cases
         (": not/a/reference.png", ": not/a/reference.png"),
         ("[]: not/valid/reference.png", "[]: not/valid/reference.png"),
@@ -249,34 +255,35 @@ def test_pandoc_markdown_reference_rel_path_replacement(test_input, expected):
     "test_input,expected",
     [
         # Positive cases
-        ("[reference]: path/to/test.png", "[reference]: /added/path/to/test.png"),
-        ('[reference]: path/to/test.png "citation here"', '[reference]: /added/path/to/test.png "citation here"'),
-        ("[reference]: path/to/test.png 'citation here'", "[reference]: /added/path/to/test.png 'citation here'"),
-        ("[reference]: path/to/test.png (citation here)", "[reference]: /added/path/to/test.png (citation here)"),
-        ('[reference]: <path/to/test.png> "citation here"', '[reference]: </added/path/to/test.png> "citation here"'),
-        ("[reference]: <path/to test.png> 'citation here'", "[reference]: </added/path/to test.png> 'citation here'"),
-        ("[reference]: <path/to/test.png> (citation here)", "[reference]: </added/path/to/test.png> (citation here)"),
-        ('[reference]: <path/with spaces.png> "citation here"', '[reference]: </added/path/with spaces.png> "citation here"'),
-        ("[reference]:path/to/test.png", "[reference]:/added/path/to/test.png"),
-        ('[reference]:path/to/test.png "citation here"', '[reference]:/added/path/to/test.png "citation here"'),
-        ("[reference]:path/to/test.png 'citation here'", "[reference]:/added/path/to/test.png 'citation here'"),
-        ("[reference]:path/to/test.png (citation here)", "[reference]:/added/path/to/test.png (citation here)"),
-        ('[reference]:<path/to/test.png> "citation here"', '[reference]:</added/path/to/test.png> "citation here"'),
-        ("[reference]:<path/to test.png> 'citation here'", "[reference]:</added/path/to test.png> 'citation here'"),
-        ("[reference]:<path/to/test.png> (citation here)", "[reference]:</added/path/to/test.png> (citation here)"),
+        ("[reference]: path/to/test.png", "[reference]: {bd}/test.png"),
+        ('[reference]: path/to/test.png "citation here"', '[reference]: {bd}/test.png "citation here"'),
+        ("[reference]: path/to/test.png 'citation here'", "[reference]: {bd}/test.png 'citation here'"),
+        ("[reference]: path/to/test.png (citation here)", "[reference]: {bd}/test.png (citation here)"),
+        ('[reference]: <path/to/test.png> "citation here"', '[reference]: <{bd}/test.png> "citation here"'),
+        ("[reference]: <path/with spaces/test.png> 'citation here'", "[reference]: <{bd}/test.png> 'citation here'"),
+        ("[reference]: <path/to/test.png> (citation here)", "[reference]: <{bd}/test.png> (citation here)"),
+        ('[reference]: <path/with spaces.png> "citation here"', '[reference]: <{bd}/with_spaces.png> "citation here"'),
+        ('[reference]: <path/with%20spaces.png> "citation here"', '[reference]: <{bd}/with_spaces.png> "citation here"'),
+        ("[reference]:path/to/test.png", "[reference]: {bd}/test.png"),
+        ('[reference]:path/to/test.png "citation here"', '[reference]: {bd}/test.png "citation here"'),
+        ("[reference]:path/to/test.png 'citation here'", "[reference]: {bd}/test.png 'citation here'"),
+        ("[reference]:path/to/test.png (citation here)", "[reference]: {bd}/test.png (citation here)"),
+        ('[reference]:<path/to/test.png> "citation here"', '[reference]: <{bd}/test.png> "citation here"'),
+        ("[reference]:<path/to test.png> 'citation here'", "[reference]: <{bd}/to_test.png> 'citation here'"),
+        ("[reference]:<path/to/test.png> (citation here)", "[reference]: <{bd}/test.png> (citation here)"),
         ("[reference]: {td}/path/to/test.png", "[reference]: {bd}/test.png"),
         ('[reference]: {td}/path/to/test.png "citation here"', '[reference]: {bd}/test.png "citation here"'),
         ("[reference]: {td}/path/to/test.png 'citation here'", "[reference]: {bd}/test.png 'citation here'"),
         ("[reference]: {td}/path/to/test.png (citation here)", "[reference]: {bd}/test.png (citation here)"),
         ("[reference]: <{td}/path/to/test.png> (citation here)", "[reference]: <{bd}/test.png> (citation here)"),
         ('[reference]: <{td}/path/with spaces/test@at space.png> "citation here"', '[reference]: <{bd}/test_at_space.png> "citation here"'),
-        ("[reference]:{td}/path/to/test.png", "[reference]:{bd}/test.png"),
-        ('[reference]:{td}/path to/test.png "citation here"', '[reference]:{bd}/test.png "citation here"'),
-        ("[reference]:{td}/path/to/test.png 'citation here'", "[reference]:{bd}/test.png 'citation here'"),
-        ("[reference]:{td}/path/to/test.png (citation here)", "[reference]:{bd}/test.png (citation here)"),
-        ('[reference]:<{td}/path/to/test.png> "citation here"', '[reference]:<{bd}/test.png> "citation here"'),
-        ("[reference]:<{td}/path/to/test.png> 'citation here'", "[reference]:<{bd}/test.png> 'citation here'"),
-        ("[reference]:<{td}/path/to/test.png> (citation here)", "[reference]:<{bd}/test.png> (citation here)"),
+        ("[reference]:{td}/path/to/test.png", "[reference]: {bd}/test.png"),
+        ('[reference]:{td}/path to/test.png "citation here"', '[reference]: {bd}/test.png "citation here"'),
+        ("[reference]:{td}/path/to/test.png 'citation here'", "[reference]: {bd}/test.png 'citation here'"),
+        ("[reference]:{td}/path/to/test.png (citation here)", "[reference]: {bd}/test.png (citation here)"),
+        ('[reference]:<{td}/path/to/test.png> "citation here"', '[reference]: <{bd}/test.png> "citation here"'),
+        ("[reference]:<{td}/path/to/test.png> 'citation here'", "[reference]: <{bd}/test.png> 'citation here'"),
+        ("[reference]:<{td}/path/to/test.png> (citation here)", "[reference]: <{bd}/test.png> (citation here)"),
         # Negative cases
         (": not/a/reference.png", ": not/a/reference.png"),
         ("[]: not/valid/reference.png", "[]: not/valid/reference.png"),
@@ -287,8 +294,6 @@ def test_pandoc_markdown_reference_rel_path_replacement(test_input, expected):
         ("[reference]: /abs/path/to/test.png> 'citation here'", "[reference]: /abs/path/to/test.png> 'citation here'"),
         ("[reference]:</abs/path/to/test.png 'citation here'", "[reference]:</abs/path/to/test.png 'citation here'"),
         ("[reference]:/abs/path/to/test.png> 'citation here'", "[reference]:/abs/path/to/test.png> 'citation here'"),
-        ('[reference]: </abs/path/to/test.png> "citation here"', '[reference]: </abs/path/to/test.png> "citation here"'),
-        ("[reference]: </abs/path to/test.png> 'citation here'", "[reference]: </abs/path/to/test.png> 'citation here'"),
         ("[reference]: https://path/to/test.png", "[reference]: https://path/to/test.png"),
         ('[reference]: https://path/to/test.png "citation here"', '[reference]: https://path/to/test.png "citation here"'),
         ("[reference]: https://path/to/test.png 'citation here'", "[reference]: https://path/to/test.png 'citation here'"),
@@ -316,12 +321,10 @@ def test_pandoc_markdown_reference_abs_path_copy(test_input, expected):
     def extract_filename(check):
         # Some hacky filters to ensure we generate empty files for all the positive tests
         if "http" not in check and ']:' in check and '[]:' not in check:
-            fpath = check
-            if '<' in check and '>' in check:
+            fpath = check.split(']:', 1)[-1].replace('citation here', '').strip().rsplit(' ', 1)[0]
+            if '<' in fpath and '>' in fpath:
                 fpath = check.split('<', 1)[-1].rsplit('>', 1)[0]
-            else:
-                fpath = fpath.replace('citation here', '').rsplit(' ', 1)[0]
-            return fpath
+            return url2pathname(fpath.strip())
 
     with TemporaryWorkingDirectory() as td:
         test_input = test_input.format(td=td)
@@ -331,6 +334,7 @@ def test_pandoc_markdown_reference_abs_path_copy(test_input, expected):
             # Relative paths have subdirectories
             if not os.path.exists(os.path.dirname(fpath)):
                 os.makedirs(os.path.dirname(fpath))
+            # We need an file on disk so the copy and rename operations work
             open(fpath, 'a').close()
 
         with TemporaryWorkingDirectory() as bd:
