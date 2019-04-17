@@ -271,12 +271,9 @@ def replace_markdown_paths(source, relative_path_replacement, build_path_replace
             print(m.group(3))
             return (
                 m.group(1) + # ![image]( OR [reference]:
-                _reapply_path_wrappers(
-                    _rename_and_copy_to_build_dir(
-                        url2pathname(_strip_path_wrappers(m.group(2))),
-                        build_path_replacement),
-                    group(2)
-                ) +
+                _rename_and_copy_to_build_dir(
+                    url2pathname(_strip_path_wrappers(m.group(2))),
+                    build_path_replacement) +
                 (m.group(3) or "") + # Maybe "label"
                 (m.group(4) or "") # Maybe `)`
             )
