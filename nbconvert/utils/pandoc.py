@@ -316,7 +316,7 @@ def _split_image_and_label(img_with_label):
     """
     for label_start, label_end in [('"', '"'), ("'", "'"), ("(", ")")]:
         if img_with_label[-1] == label_end:
-            image, label = img_with_label[:-1].rsplit(label_start, 1)
+            image, label = img_with_label[:-1].split(label_start, 1)
             return image.strip(), label_start + label + label_end
     return img_with_label, None
 
