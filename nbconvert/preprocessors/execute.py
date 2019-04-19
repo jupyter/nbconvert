@@ -4,6 +4,7 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 import base64
+import time
 from textwrap import dedent
 from contextlib import contextmanager
 
@@ -436,46 +437,62 @@ class ExecutePreprocessor(Preprocessor):
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
 
+    def _poll_for_reply(self, msg_id, cell=None, timeout=None):
+        try:
+            # check with timeout if kernel is still alive
+            msg = self.kc.shell_channel.get_msg(timeout=timeout)
+            if msg['parent_header'].get('msg_id') == msg_id:
+                return msg
+            return None
+        except Empty:
+            # received no message, check if kernel is still alive
+            if not self.kc.is_alive():
+                self.log.error(
+                    "Kernel died while waiting for execute reply.")
+                raise RuntimeError("Kernel died")
+            # kernel still alive, wait for a message
+            return None
+
+    def _get_timeout(self, cell):
+        if self.timeout_func is not None and cell is not None:
+            timeout = self.timeout_func(cell)
+        else:
+            timeout = self.timeout
+
+        if not timeout or timeout < 0:
+            timeout = None
+
+        return timeout
+
+    def _handle_timeout(self):
+        self.log.error(
+            "Timeout waiting for execute reply (%is)." % self.timeout)
+        if self.interrupt_on_timeout:
+            self.log.error("Interrupting kernel")
+            self.km.interrupt_kernel()
+            return
+        else:
+            raise TimeoutError("Cell execution timed out")
+
     def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
         while True:
             try:
-                if self.timeout_func is not None and cell is not None:
-                    timeout = self.timeout_func(cell)
-                else:
-                    timeout = self.timeout
-
-                if not timeout or timeout < 0:
-                    timeout = None
-
+                timeout = self._get_timeout(cell)
                 if timeout is not None:
                     # timeout specified
                     msg = self.kc.shell_channel.get_msg(timeout=timeout)
                 else:
                     # no timeout specified, if kernel dies still handle this correctly
                     while True:
-                        try:
-                            # check every few seconds if kernel is still alive
-                            msg = self.kc.shell_channel.get_msg(timeout=5)
-                        except Empty:
-                            # received no message, check if kernel is still alive
-                            if not self.kc.is_alive():
-                                self.log.error(
-                                    "Kernel died while waiting for execute reply.")
-                                raise RuntimeError("Kernel died")
-                            # kernel still alive, wait for a message
+                        msg = self._poll_for_reply(msg_id, cell, 5)
+                        if msg is None:
                             continue
                         # message received
                         break
             except Empty:
-                self.log.error(
-                    "Timeout waiting for execute reply (%is)." % self.timeout)
-                if self.interrupt_on_timeout:
-                    self.log.error("Interrupting kernel")
-                    self.km.interrupt_kernel()
-                    break
-                else:
-                    raise TimeoutError("Cell execution timed out")
+                self._handle_timeout()
+                break
 
             if msg['parent_header'].get('msg_id') == msg_id:
                 return msg
@@ -483,64 +500,103 @@ class ExecutePreprocessor(Preprocessor):
                 # not our reply
                 continue
 
+    def _timeout_with_deadline(self, timeout, deadline):
+        if deadline is not None and deadline - time.time() < timeout:
+            timeout = deadline - time.time()
+
+        if timeout < 0:
+            timeout = 0
+
+        return timeout
+
+    def _passed_deadline(self, deadline):
+        if deadline is not None and deadline - time.time() <= 0:
+            self._handle_timeout()
+            return True
+        return False
+
     def run_cell(self, cell, cell_index=0):
         parent_msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
-        exec_reply = self._wait_for_reply(parent_msg_id, cell)
+        exec_timeout = self._get_timeout(cell)
+        if exec_timeout is not None:
+            deadline = time.time() + exec_timeout # verify this is correct. (monotonic)
 
         outs = cell.outputs = []
         self.clear_before_next_output = False
 
-        while True:
-            try:
-                # We've already waited for execute_reply, so all output
-                # should already be waiting. However, on slow networks, like
-                # in certain CI systems, waiting < 1 second might miss messages.
-                # So long as the kernel sends a status:idle message when it
-                # finishes, we won't actually have to wait this long, anyway.
-                msg = self.kc.iopub_channel.get_msg(timeout=self.iopub_timeout)
-            except Empty:
-                self.log.warning("Timeout waiting for IOPub output")
-                if self.raise_on_iopub_timeout:
-                    raise RuntimeError("Timeout waiting for IOPub output")
-                else:
-                    break
-            if msg['parent_header'].get('msg_id') != parent_msg_id:
-                # not an output from our execution
-                continue
+        more_output = True
+        polling_exec_reply = True
 
-            msg_type = msg['msg_type']
-            self.log.debug("output: %s", msg_type)
-            content = msg['content']
+        while more_output or polling_exec_reply:
 
-            # set the prompt number for the input and the output
-            if 'execution_count' in content:
-                cell['execution_count'] = content['execution_count']
-
-            if msg_type == 'status':
-                if content['execution_state'] == 'idle':
-                    break
-                else:
-                    continue
-            elif msg_type == 'execute_input':
-                continue
-            elif msg_type == 'clear_output':
-                self.clear_output(outs, msg, cell_index)
-                continue
-            elif msg_type.startswith('comm'):
-                self.handle_comm_msg(outs, msg, cell_index)
-                continue
-
-            display_id = None
-            if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
-                display_id = msg['content'].get('transient', {}).get('display_id', None)
-                if display_id:
-                    self._update_display_id(display_id, msg)
-                if msg_type == 'update_display_data':
-                    # update_display_data doesn't get recorded
+            if polling_exec_reply:
+                if self._passed_deadline(deadline):
+                    self._handle_timeout()
+                    polling_exec_reply = False
                     continue
 
-            self.output(outs, msg, display_id, cell_index)
+                # if we wait 5s, can output still fill up?
+                # should we poll output first?
+                timeout = self._timeout_with_deadline(5, deadline)
+                exec_reply = self._poll_for_reply(parent_msg_id, cell, timeout)
+                if exec_reply is not None:
+                    polling_exec_reply = False
+
+            if more_output:
+                try:
+                    timeout = self.iopub_timeout
+                    if polling_exec_reply:
+                        timeout = self._timeout_with_deadline(timeout, deadline)
+                    msg = self.kc.iopub_channel.get_msg(timeout=timeout)
+                except Empty:
+                    if polling_exec_reply:
+                        continue
+
+                    self.log.warning("Timeout waiting for IOPub output")
+                    if self.raise_on_iopub_timeout:
+                        raise RuntimeError("Timeout waiting for IOPub output")
+                    else:
+                        more_output = False
+                        continue
+                if msg['parent_header'].get('msg_id') != parent_msg_id:
+                    # not an output from our execution
+                    continue
+
+                msg_type = msg['msg_type']
+                self.log.debug("output: %s", msg_type)
+                content = msg['content']
+
+                # set the prompt number for the input and the output
+                if 'execution_count' in content:
+                    cell['execution_count'] = content['execution_count']
+
+                if msg_type == 'status':
+                    if content['execution_state'] == 'idle':
+                        more_output = False
+                        polling_exec_reply = False
+                        continue
+                    else:
+                        continue
+                elif msg_type == 'execute_input':
+                    continue
+                elif msg_type == 'clear_output':
+                    self.clear_output(outs, msg, cell_index)
+                    continue
+                elif msg_type.startswith('comm'):
+                    self.handle_comm_msg(outs, msg, cell_index)
+                    continue
+
+                display_id = None
+                if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
+                    display_id = msg['content'].get('transient', {}).get('display_id', None)
+                    if display_id:
+                        self._update_display_id(display_id, msg)
+                    if msg_type == 'update_display_data':
+                        # update_display_data doesn't get recorded
+                        continue
+
+                self.output(outs, msg, display_id, cell_index)
 
         return exec_reply, outs
 
