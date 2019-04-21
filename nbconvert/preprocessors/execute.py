@@ -409,7 +409,9 @@ class ExecutePreprocessor(Preprocessor):
         if cell.cell_type != 'code' or not cell.source.strip():
             return cell, resources
 
-        reply = self.run_cell(cell, cell_index)
+        reply, outputs = self.run_cell(cell, cell_index)
+        # Backwards compatability for processes that wrap run_cell
+        cell.outputs = outputs
 
         cell_allows_errors = (self.allow_errors or "raises-exception"
                               in cell.metadata.get("tags", []))
@@ -523,7 +525,8 @@ class ExecutePreprocessor(Preprocessor):
             except CellExecutionComplete:
                 break
 
-        return exec_reply
+        # Return cell.outputs still for backwards compatability
+        return exec_reply, cell.outputs
 
     def process_message(self, msg, cell, cell_index):
         """
