@@ -15,7 +15,7 @@ class ScriptExporter(TemplateExporter):
     _exporters = Dict()
     _lang_exporters = Dict()
     export_form_notebook = "script"
-    
+
     @default('template_file')
     def _template_file_default(self):
         return 'script.tpl'
@@ -33,19 +33,21 @@ class ScriptExporter(TemplateExporter):
             except entrypoints.NoSuchEntryPoint:
                 self._lang_exporters[lang_name] = None
             else:
-                self._lang_exporters[lang_name] = Exporter(parent=self)
+                # TODO: passing config is wrong, but changing this revealed more complicated issues
+                self._lang_exporters[lang_name] = Exporter(config=self.config, parent=self)
         return self._lang_exporters[lang_name]
 
     def from_notebook_node(self, nb, resources=None, **kw):
         langinfo = nb.metadata.get('language_info', {})
-        
+
         # delegate to custom exporter, if specified
         exporter_name = langinfo.get('nbconvert_exporter')
         if exporter_name and exporter_name != 'script':
             self.log.debug("Loading script exporter: %s", exporter_name)
             if exporter_name not in self._exporters:
                 Exporter = get_exporter(exporter_name)
-                self._exporters[exporter_name] = Exporter(parent=self)
+                # TODO: passing config is wrong, but changing this revealed more complicated issues
+                self._exporters[exporter_name] = Exporter(config=self.config, parent=self)
             exporter = self._exporters[exporter_name]
             return exporter.from_notebook_node(nb, resources, **kw)
 

@@ -239,6 +239,7 @@ class TemplateExporter(Exporter):
     def _raw_mimetypes_default(self):
         return [self.output_mimetype, '']
 
+    # TODO: passing config is wrong, but changing this revealed more complicated issues
     def __init__(self, config=None, **kw):
         """
         Public constructor
