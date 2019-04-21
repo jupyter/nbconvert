@@ -33,7 +33,8 @@ class ScriptExporter(TemplateExporter):
             except entrypoints.NoSuchEntryPoint:
                 self._lang_exporters[lang_name] = None
             else:
-                self._lang_exporters[lang_name] = Exporter(self.config, parent=self)
+                # TODO: passing config is wrong, but changing this revealed more complicated issues
+                self._lang_exporters[lang_name] = Exporter(config=self.config, parent=self)
         return self._lang_exporters[lang_name]
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -45,7 +46,8 @@ class ScriptExporter(TemplateExporter):
             self.log.debug("Loading script exporter: %s", exporter_name)
             if exporter_name not in self._exporters:
                 Exporter = get_exporter(exporter_name)
-                self._exporters[exporter_name] = Exporter(self.config, parent=self)
+                # TODO: passing config is wrong, but changing this revealed more complicated issues
+                self._exporters[exporter_name] = Exporter(config=self.config, parent=self)
             exporter = self._exporters[exporter_name]
             return exporter.from_notebook_node(nb, resources, **kw)
 
