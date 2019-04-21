@@ -588,12 +588,12 @@ class ExecutePreprocessor(Preprocessor):
         except ValueError:
             self.log.error("unhandled iopub msg: " + msg_type)
             return
-        else:
-            if self.clear_before_next_output:
-                self.log.debug('Executing delayed clear_output')
-                outs[:] = []
-                self.clear_display_id_mapping(cell_index)
-                self.clear_before_next_output = False
+
+        if self.clear_before_next_output:
+            self.log.debug('Executing delayed clear_output')
+            outs[:] = []
+            self.clear_display_id_mapping(cell_index)
+            self.clear_before_next_output = False
 
         if display_id:
             # record output index in:
