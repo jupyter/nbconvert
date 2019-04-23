@@ -443,7 +443,6 @@ class ExecutePreprocessor(Preprocessor):
             msg = self.kc.shell_channel.get_msg(timeout=timeout)
             if msg['parent_header'].get('msg_id') == msg_id:
                 return msg
-            return None
         except Empty:
             # received no message, check if kernel is still alive
             if not self.kc.is_alive():
@@ -451,7 +450,6 @@ class ExecutePreprocessor(Preprocessor):
                     "Kernel died while waiting for execute reply.")
                 raise RuntimeError("Kernel died")
             # kernel still alive, wait for a message
-            return None
 
     def _get_timeout(self, cell):
         if self.timeout_func is not None and cell is not None:
@@ -486,10 +484,9 @@ class ExecutePreprocessor(Preprocessor):
                     # no timeout specified, if kernel dies still handle this correctly
                     while True:
                         msg = self._poll_for_reply(msg_id, cell, 5)
-                        if msg is None:
-                            continue
-                        # message received
-                        break
+                        if msg is not None:
+                            # message received
+                            break
             except Empty:
                 self._handle_timeout()
                 break
@@ -536,9 +533,7 @@ class ExecutePreprocessor(Preprocessor):
                     polling_exec_reply = False
                     continue
 
-                # if we wait 5s, can output still fill up?
-                # should we poll output first?
-                timeout = self._timeout_with_deadline(5, deadline)
+                timeout = self._timeout_with_deadline(1, deadline)
                 exec_reply = self._poll_for_reply(parent_msg_id, cell, timeout)
                 if exec_reply is not None:
                     polling_exec_reply = False
@@ -553,10 +548,10 @@ class ExecutePreprocessor(Preprocessor):
                     if polling_exec_reply:
                         continue
 
-                    self.log.warning("Timeout waiting for IOPub output")
                     if self.raise_on_iopub_timeout:
                         raise RuntimeError("Timeout waiting for IOPub output")
                     else:
+                        self.log.warning("Timeout waiting for IOPub output")
                         more_output = False
                         continue
                 if msg['parent_header'].get('msg_id') != parent_msg_id:
