@@ -23,6 +23,7 @@ from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb
 
 import IPython
+from mock import MagicMock
 from traitlets import TraitError
 from nbformat import NotebookNode
 from jupyter_client.kernelspec import KernelSpecManager
@@ -50,7 +51,6 @@ def _normalize_base64(b64_text):
         return b64encode(b64decode(b64_text.encode('ascii'))).decode('ascii')
     except (ValueError, TypeError):
         return b64_text
-
 
 class ExecuteTestBase(PreprocessorTestsBase):
     def build_preprocessor(self, opts):
@@ -185,18 +185,18 @@ class TestExecute(ExecuteTestBase):
     def assert_notebooks_equal(self, expected, actual):
         expected_cells = expected['cells']
         actual_cells = actual['cells']
-        self.assertEqual(len(expected_cells), len(actual_cells))
+        assert len(expected_cells) == len(actual_cells)
 
         for expected_cell, actual_cell in zip(expected_cells, actual_cells):
             expected_outputs = expected_cell.get('outputs', [])
             actual_outputs = actual_cell.get('outputs', [])
             normalized_expected_outputs = list(map(self.normalize_output, expected_outputs))
             normalized_actual_outputs = list(map(self.normalize_output, actual_outputs))
-            self.assertEqual(normalized_expected_outputs, normalized_actual_outputs)
+            assert normalized_expected_outputs == normalized_actual_outputs
 
             expected_execution_count = expected_cell.get('execution_count', None)
             actual_execution_count = actual_cell.get('execution_count', None)
-            self.assertEqual(expected_execution_count, actual_execution_count)
+            assert expected_execution_count == actual_execution_count
 
 
     def test_constructor(self):
@@ -394,6 +394,30 @@ class TestExecute(ExecuteTestBase):
 
         for method, call_count in expected:
             self.assertNotEqual(call_count, 0, '{} was called'.format(method))
+
+    def test_process_message_wrapper(self):
+        outputs = []
+
+        class WrappedPreProc(ExecutePreprocessor):
+            def process_message(self, msg, cell, cell_index):
+                result = super(WrappedPreProc, self).process_message(msg, cell, cell_index)
+                if result:
+                    outputs.append(result)
+                return result
+
+        current_dir = os.path.dirname(__file__)
+        filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
+
+        with io.open(filename) as f:
+            input_nb = nbformat.read(f, 4)
+
+        original = copy.deepcopy(input_nb)
+        wpp = WrappedPreProc()
+        executed = wpp.preprocess(input_nb, {})[0]
+        assert outputs == [
+            {'name': 'stdout', 'output_type': 'stream', 'text': 'Hello World\n'}
+        ]
+        self.assert_notebooks_equal(original, executed)
 
     def test_execute_function(self):
         # Test the executenb() convenience API

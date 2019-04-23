@@ -26,6 +26,15 @@ from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 
 
+class CellExecutionComplete(Exception):
+    """
+    Used as a control signal for cell execution across run_cell and
+    process_message function calls. Raised when all execution requests
+    are completed and no further messages are expected from the kernel
+    over zeromq channels.
+    """
+    pass
+
 class CellExecutionError(ConversionException):
     """
     Custom exception to propagate exceptions that are raised during
@@ -402,13 +411,14 @@ class ExecutePreprocessor(Preprocessor):
             return cell, resources
 
         reply, outputs = self.run_cell(cell, cell_index)
+        # Backwards compatability for processes that wrap run_cell
         cell.outputs = outputs
 
         cell_allows_errors = (self.allow_errors or "raises-exception"
                               in cell.metadata.get("tags", []))
 
         if self.force_raise_errors or not cell_allows_errors:
-            for out in outputs:
+            for out in cell.outputs:
                 if out.output_type == 'error':
                     raise CellExecutionError.from_cell_and_msg(cell, out)
             if (reply is not None) and reply['content']['status'] == 'error':
@@ -519,7 +529,7 @@ class ExecutePreprocessor(Preprocessor):
         if exec_timeout is not None:
             deadline = time.time() + exec_timeout # verify this is correct. (monotonic)
 
-        outs = cell.outputs = []
+        cell.outputs = []
         self.clear_before_next_output = False
 
         more_output = True
@@ -554,67 +564,93 @@ class ExecutePreprocessor(Preprocessor):
                         self.log.warning("Timeout waiting for IOPub output")
                         more_output = False
                         continue
-                if msg['parent_header'].get('msg_id') != parent_msg_id:
-                    # not an output from our execution
-                    continue
+            if msg['parent_header'].get('msg_id') != parent_msg_id:
+                # not an output from our execution
+                continue
 
-                msg_type = msg['msg_type']
-                self.log.debug("output: %s", msg_type)
-                content = msg['content']
+            # Will raise CellExecutionComplete when completed
+            try:
+                self.process_message(msg, cell, cell_index)
+            except CellExecutionComplete:
+                break
 
-                # set the prompt number for the input and the output
-                if 'execution_count' in content:
-                    cell['execution_count'] = content['execution_count']
+        # Return cell.outputs still for backwards compatability
+        return exec_reply, cell.outputs
 
-                if msg_type == 'status':
-                    if content['execution_state'] == 'idle':
-                        more_output = False
-                        polling_exec_reply = False
-                        continue
-                    else:
-                        continue
-                elif msg_type == 'execute_input':
-                    continue
-                elif msg_type == 'clear_output':
-                    self.clear_output(outs, msg, cell_index)
-                    continue
-                elif msg_type.startswith('comm'):
-                    self.handle_comm_msg(outs, msg, cell_index)
-                    continue
+    def process_message(self, msg, cell, cell_index):
+        """
+        Processes a kernel message, updates cell state, and returns the
+        resulting output object that was appended to cell.outputs.
+        The input argument `cell` is modified in-place.
+        Parameters
+        ----------
+        msg : dict
+            The kernel message being processed.
+        cell : nbformat.NotebookNode
+            The cell which is currently being processed.
+        cell_index : int
+            The position of the cell within the notebook object.
+        Returns
+        -------
+        output : dict
+            The execution output payload (or None for no output).
 
-                display_id = None
-                if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
-                    display_id = msg['content'].get('transient', {}).get('display_id', None)
-                    if display_id:
-                        self._update_display_id(display_id, msg)
-                    if msg_type == 'update_display_data':
-                        # update_display_data doesn't get recorded
-                        continue
+        Raises
+        ------
+        CellExecutionComplete
+          Once a message arrives which indicates computation completeness.
 
-                self.output(outs, msg, display_id, cell_index)
+        """
+        msg_type = msg['msg_type']
+        self.log.debug("msg_type: %s", msg_type)
+        content = msg['content']
+        self.log.debug("content: %s", content)
 
-        return exec_reply, outs
+        display_id = content.get('transient', {}).get('display_id', None)
+        if display_id and msg_type in {'execute_result', 'display_data', 'update_display_data'}:
+            self._update_display_id(display_id, msg)
+
+        # set the prompt number for the input and the output
+        if 'execution_count' in content:
+            cell['execution_count'] = content['execution_count']
+
+        if msg_type == 'status':
+            if content['execution_state'] == 'idle':
+                raise CellExecutionComplete()
+        elif msg_type == 'clear_output':
+            self.clear_output(cell.outputs, msg, cell_index)
+        elif msg_type.startswith('comm'):
+            self.handle_comm_msg(cell.outputs, msg, cell_index)
+        # Check for remaining messages we don't process
+        elif msg_type not in ['execute_input', 'update_display_data']:
+            # Assign output as our processed "result"
+            return self.output(cell.outputs, msg, display_id, cell_index)
 
     def output(self, outs, msg, display_id, cell_index):
         msg_type = msg['msg_type']
-        if self.clear_before_next_output:
-            self.log.debug('Executing delayed clear_output')
-            outs[:] = []
-            self.clear_display_id_mapping(cell_index)
-            self.clear_before_next_output = False
 
         try:
             out = output_from_msg(msg)
         except ValueError:
             self.log.error("unhandled iopub msg: " + msg_type)
             return
+
+        if self.clear_before_next_output:
+            self.log.debug('Executing delayed clear_output')
+            outs[:] = []
+            self.clear_display_id_mapping(cell_index)
+            self.clear_before_next_output = False
+
         if display_id:
             # record output index in:
             #   _display_id_map[display_id][cell_idx]
             cell_map = self._display_id_map.setdefault(display_id, {})
             output_idx_list = cell_map.setdefault(cell_index, [])
             output_idx_list.append(len(outs))
+
         outs.append(out)
+
+        return out
 
     def clear_output(self, outs, msg, cell_index):
         content = msg['content']
