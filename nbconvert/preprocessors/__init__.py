@@ -10,6 +10,7 @@ from .clearoutput import ClearOutputPreprocessor
 from .execute import ExecutePreprocessor, CellExecutionError
 from .regexremove import RegexRemovePreprocessor
 from .tagremove import TagRemovePreprocessor
+from .clearmetadata import ClearMetadataPreprocessor
 
 # decorated function Preprocessors
 from .coalescestreams import coalesce_streams
