@@ -539,7 +539,6 @@ class ExecutePreprocessor(Preprocessor):
 
             if polling_exec_reply:
                 if self._passed_deadline(deadline):
-                    self._handle_timeout()
                     polling_exec_reply = False
                     continue
 
