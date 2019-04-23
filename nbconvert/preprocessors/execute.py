@@ -581,7 +581,9 @@ class ExecutePreprocessor(Preprocessor):
         """
         Processes a kernel message, updates cell state, and returns the
         resulting output object that was appended to cell.outputs.
+
         The input argument `cell` is modified in-place.
+
         Parameters
         ----------
         msg : dict
@@ -590,6 +592,7 @@ class ExecutePreprocessor(Preprocessor):
             The cell which is currently being processed.
         cell_index : int
             The position of the cell within the notebook object.
+
         Returns
         -------
         output : dict
