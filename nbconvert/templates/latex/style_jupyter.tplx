@@ -113,7 +113,7 @@
 %===============================================================================
 
 ((* block input scoped *))
-    ((( draw_cell(cell.source | highlight_code(strip_verbatim=True), cell, 'In', 'incolor', '\\ ') )))
+    ((( draw_cell(cell.source | highlight_code(strip_verbatim=True), cell, 'In', 'incolor', '\\hspace{4pt}') )))
 ((* endblock input *))
 
 
@@ -128,7 +128,7 @@
 ((* block execute_result scoped *))
     ((*- for type in output.data | filter_data_type -*))
         ((*- if type in ['text/plain']*))
-            ((( draw_cell(output.data['text/plain'] | wrap_text(charlim) | escape_latex, cell, 'Out', 'outcolor', '\\ ') )))
+            ((( draw_cell(output.data['text/plain'] | wrap_text(charlim) | escape_latex, cell, 'Out', 'outcolor', '\\hspace{3.5pt}') )))
         ((* else -*))
             ((( " " )))
             ((( draw_prompt(cell, 'Out', 'outcolor','') )))((( super() )))
