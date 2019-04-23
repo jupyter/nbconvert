@@ -508,8 +508,8 @@ class ExecutePreprocessor(Preprocessor):
                 continue
 
     def _timeout_with_deadline(self, timeout, deadline):
-        if deadline is not None and deadline - time.time() < timeout:
-            timeout = deadline - time.time()
+        if deadline is not None and deadline - time.monotonic() < timeout:
+            timeout = deadline - time.monotonic()
 
         if timeout < 0:
             timeout = 0
@@ -517,7 +517,7 @@ class ExecutePreprocessor(Preprocessor):
         return timeout
 
     def _passed_deadline(self, deadline):
-        if deadline is not None and deadline - time.time() <= 0:
+        if deadline is not None and deadline - time.monotonic() <= 0:
             self._handle_timeout()
             return True
         return False
@@ -527,7 +527,7 @@ class ExecutePreprocessor(Preprocessor):
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
         if exec_timeout is not None:
-            deadline = time.time() + exec_timeout # verify this is correct. (monotonic)
+            deadline = time.monotonic() + exec_timeout
 
         cell.outputs = []
         self.clear_before_next_output = False
