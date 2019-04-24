@@ -24,6 +24,8 @@ from nbformat.v4 import output_from_msg
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 
+class KernelIsDead(RuntimeError):
+    pass
 
 class CellExecutionComplete(Exception):
     """
