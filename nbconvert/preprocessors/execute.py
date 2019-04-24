@@ -4,9 +4,12 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 import base64
-import time
 from textwrap import dedent
 from contextlib import contextmanager
+try:
+    from time import monotonic
+except ImportError:
+    from time import time as monotonic
 
 try:
     from queue import Empty  # Py 3
@@ -508,8 +511,8 @@ class ExecutePreprocessor(Preprocessor):
                 continue
 
     def _timeout_with_deadline(self, timeout, deadline):
-        if deadline is not None and deadline - time.monotonic() < timeout:
-            timeout = deadline - time.monotonic()
+        if deadline is not None and deadline - monotonic() < timeout:
+            timeout = deadline - monotonic()
 
         if timeout < 0:
             timeout = 0
@@ -517,7 +520,7 @@ class ExecutePreprocessor(Preprocessor):
         return timeout
 
     def _passed_deadline(self, deadline):
-        if deadline is not None and deadline - time.monotonic() <= 0:
+        if deadline is not None and deadline - monotonic() <= 0:
             self._handle_timeout()
             return True
         return False
@@ -527,7 +530,7 @@ class ExecutePreprocessor(Preprocessor):
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
         if exec_timeout is not None:
-            deadline = time.monotonic() + exec_timeout
+            deadline = monotonic() + exec_timeout
 
         cell.outputs = []
         self.clear_before_next_output = False
