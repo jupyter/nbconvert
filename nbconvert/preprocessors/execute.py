@@ -24,7 +24,7 @@ from nbformat.v4 import output_from_msg
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 
-class KernelIsDead(RuntimeError):
+class DeadKernelError(RuntimeError):
     pass
 
 class CellExecutionComplete(Exception):
@@ -453,7 +453,7 @@ class ExecutePreprocessor(Preprocessor):
         if not self.kc.is_alive():
             self.log.error(
                 "Kernel died while waiting for execute reply.")
-            raise KernelIsDead("Kernel died")
+            raise DeadKernelError("Kernel died")
 
     def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
@@ -468,42 +468,22 @@ class ExecutePreprocessor(Preprocessor):
         timeout_interval = 5
         while True:
             try:
-
-                while True: 
-                    try:
-                        msg = self.kc.shell_channel.get_msg(timeout=timeout_interval)
-                    except Empty:
-                        cummulative_time += timeout_interval
-                        self._check_alive()
-                        if timeout is None or cummulative_time <= timeout:
-                            continue
-                        else:
-                            self.log.error( "Timeout waiting for execute reply (%is)." % self.timeout)
-                            if self.interrupt_on_timeout:
-                                self.log.error("Interrupting kernel")
-                                self.km.interrupt_kernel()
-                                break
-                            else:
-                                raise TimeoutError("Cell execution timed out")
-                    break
-
-
+                msg = self.kc.shell_channel.get_msg(timeout=timeout_interval)
             except Empty:
                 self._check_alive()
-                self.log.error(
-                    "Timeout waiting for execute reply (%is)." % self.timeout)
-                if self.interrupt_on_timeout:
-                    self.log.error("Interrupting kernel")
-                    self.km.interrupt_kernel()
-                    break
-                else:
-                    raise TimeoutError("Cell execution timed out")
-
-            if msg['parent_header'].get('msg_id') == msg_id:
-                return msg
+                cummulative_time += timeout_interval
+                if timeout and cummulative_time > timeout:
+                    self.log.error(
+                        "Timeout waiting for execute reply (%is)." % self.timeout)
+                    if self.interrupt_on_timeout:
+                        self.log.error("Interrupting kernel")
+                        self.km.interrupt_kernel()
+                        break
+                    else:
+                        raise TimeoutError("Cell execution timed out")
             else:
-                # not our reply
-                continue
+                if msg['parent_header'].get('msg_id') == msg_id:
+                    return msg
 
     def run_cell(self, cell, cell_index=0):
         parent_msg_id = self.kc.execute(cell.source)

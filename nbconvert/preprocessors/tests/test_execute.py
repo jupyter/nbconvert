@@ -20,7 +20,7 @@ import pytest
 import functools
 
 from .base import PreprocessorTestsBase
-from ..execute import ExecutePreprocessor, CellExecutionError, executenb, KernelIsDead
+from ..execute import ExecutePreprocessor, CellExecutionError, executenb, DeadKernelError
 
 import IPython
 from mock import MagicMock
@@ -323,7 +323,7 @@ class TestExecute(ExecuteTestBase):
         with pytest.raises(TimeoutError):
             self.run_notebook(filename, dict(timeout_func=timeout_func), res)
 
-    def test_runtime_kernel_death(self):
+    def test_kernel_death(self):
         """Check that an error is raised when the kernel is_alive is false"""
         filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
         with io.open(filename, 'r') as f:
@@ -335,26 +335,15 @@ class TestExecute(ExecuteTestBase):
 
         try:
             input_nb, output_nb = preprocessor(input_nb, {})
-        except TimeoutError as e:
+        except TimeoutError:
             pass
         km, kc = preprocessor.start_new_kernel()
         
         with patch.object(km, "is_alive") as alive_mock:
             alive_mock.return_value = False
-            with pytest.raises(KernelIsDead):
+            with pytest.raises(DeadKernelError):
                 input_nb, output_nb = preprocessor.preprocess(input_nb, {}, km=km)
     
-    @patch('jupyter_client.KernelManager.is_alive')
-    def test_startup_kernel_dead(self, alive_mock):
-        """Check that an error is raised when the kernel is_alive is false"""
-        current_dir = os.path.dirname(__file__)
-        filename = os.path.join(current_dir, 'files', 'Interrupt.ipynb')
-        res = self.build_resources()
-        res['metadata']['path'] = os.path.dirname(filename)
-
-        with pytest.raises(RuntimeError):
-            alive_mock.return_value = False
-            self.run_notebook(filename, {}, res)
 
     def test_allow_errors(self):
         """
