@@ -457,68 +457,37 @@ class ExecutePreprocessor(Preprocessor):
 
     def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
+        if self.timeout_func is not None and cell is not None:
+            timeout = self.timeout_func(cell)
+        else:
+            timeout = self.timeout
+
+        if not timeout or timeout < 0:
+            timeout = None
+        cummulative_time = 0
+        timeout_interval = 5
         while True:
             try:
-                if self.timeout_func is not None and cell is not None:
-                    timeout = self.timeout_func(cell)
-                else:
-                    timeout = self.timeout
 
-                if not timeout or timeout < 0:
-                    timeout = None
-                
-                # timeout_interval = 5
-                # try: 
-                #     msg = self.kc.shell_channel.get_msg(timeout=timeout_interval)
-                # except Empty:
-                #     self._check_alive()
-                #     cummulative_time += timeout_interval
-                #     if timeout is None or cummulative_time <= timeout:
-                #         continue
-                # message received 
-
-
-                if timeout is not None:
-                    # timeout specified
-                    # msg = self.kc.shell_channel.get_msg(timeout=timeout)
-                    cumm_time = 0
-                    intervals = 5
-                    while True:
-                        try:
-                            msg = self.kc.shell_channel.get_msg(timeout=timeout/intervals)
-                        except Empty:
-                            if cumm_time<=timeout:
-                                cumm_time += timeout/intervals
-                                self._check_alive()
-                                continue
-                            else:
-                                self._check_alive()
-                                self.log.error( "Timeout waiting for execute reply (%is)." % self.timeout)
-                                if self.interrupt_on_timeout:
-                                    self.log.error("Interrupting kernel")
-                                    self.km.interrupt_kernel()
-                                    break
-                                else:
-                                    raise TimeoutError("Cell execution timed out")
-                        break
-
-                else:
-                    # no timeout specified, if kernel dies still handle this correctly
-                    while True:
-                        try:
-                            # check every few seconds if kernel is still alive
-                            msg = self.kc.shell_channel.get_msg(timeout=5)
-                        except Empty:
-                            # received no message, check if kernel is still alive
-                            self._check_alive()
-                            # if not self.kc.is_alive():
-                            #     self.log.error(
-                            #         "Kernel died while waiting for execute reply.")
-                            #     raise RuntimeError("Kernel died")
-                            # kernel still alive, wait for a message
+                while True: 
+                    try:
+                        msg = self.kc.shell_channel.get_msg(timeout=timeout_interval)
+                    except Empty:
+                        cummulative_time += timeout_interval
+                        self._check_alive()
+                        if timeout is None or cummulative_time <= timeout:
                             continue
-                        # message received
-                        break
+                        else:
+                            self.log.error( "Timeout waiting for execute reply (%is)." % self.timeout)
+                            if self.interrupt_on_timeout:
+                                self.log.error("Interrupting kernel")
+                                self.km.interrupt_kernel()
+                                break
+                            else:
+                                raise TimeoutError("Cell execution timed out")
+                    break
+
+
             except Empty:
                 self._check_alive()
                 self.log.error(
