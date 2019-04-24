@@ -339,7 +339,7 @@ class TestExecute(ExecuteTestBase):
             pass
         km, kc = preprocessor.start_new_kernel()
         
-        with patch.object(kc, "is_alive") as alive_mock:
+        with patch.object(km, "is_alive") as alive_mock:
             alive_mock.return_value = False
             with pytest.raises(KernelIsDead):
                 input_nb, output_nb = preprocessor.preprocess(input_nb, {}, km=km)

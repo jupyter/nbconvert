@@ -448,6 +448,13 @@ class ExecutePreprocessor(Preprocessor):
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
 
+
+    def _check_alive(self):
+        if not self.kc.is_alive():
+            self.log.error(
+                "Kernel died while waiting for execute reply.")
+            raise KernelIsDead("Kernel died")
+
     def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
         while True:
@@ -459,10 +466,42 @@ class ExecutePreprocessor(Preprocessor):
 
                 if not timeout or timeout < 0:
                     timeout = None
+                
+                # timeout_interval = 5
+                # try: 
+                #     msg = self.kc.shell_channel.get_msg(timeout=timeout_interval)
+                # except Empty:
+                #     self._check_alive()
+                #     cummulative_time += timeout_interval
+                #     if timeout is None or cummulative_time <= timeout:
+                #         continue
+                # message received 
+
 
                 if timeout is not None:
                     # timeout specified
-                    msg = self.kc.shell_channel.get_msg(timeout=timeout)
+                    # msg = self.kc.shell_channel.get_msg(timeout=timeout)
+                    cumm_time = 0
+                    intervals = 5
+                    while True:
+                        try:
+                            msg = self.kc.shell_channel.get_msg(timeout=timeout/intervals)
+                        except Empty:
+                            if cumm_time<=timeout:
+                                cumm_time += timeout/intervals
+                                self._check_alive()
+                                continue
+                            else:
+                                self._check_alive()
+                                self.log.error( "Timeout waiting for execute reply (%is)." % self.timeout)
+                                if self.interrupt_on_timeout:
+                                    self.log.error("Interrupting kernel")
+                                    self.km.interrupt_kernel()
+                                    break
+                                else:
+                                    raise TimeoutError("Cell execution timed out")
+                        break
+
                 else:
                     # no timeout specified, if kernel dies still handle this correctly
                     while True:
@@ -471,15 +510,17 @@ class ExecutePreprocessor(Preprocessor):
                             msg = self.kc.shell_channel.get_msg(timeout=5)
                         except Empty:
                             # received no message, check if kernel is still alive
-                            if not self.kc.is_alive():
-                                self.log.error(
-                                    "Kernel died while waiting for execute reply.")
-                                raise RuntimeError("Kernel died")
+                            self._check_alive()
+                            # if not self.kc.is_alive():
+                            #     self.log.error(
+                            #         "Kernel died while waiting for execute reply.")
+                            #     raise RuntimeError("Kernel died")
                             # kernel still alive, wait for a message
                             continue
                         # message received
                         break
             except Empty:
+                self._check_alive()
                 self.log.error(
                     "Timeout waiting for execute reply (%is)." % self.timeout)
                 if self.interrupt_on_timeout:
