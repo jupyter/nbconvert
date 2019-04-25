@@ -102,8 +102,6 @@ class TemplateExporter(Exporter):
 
     _template_cached = None
 
-    export_from_notebook = "custom"
-
     def _invalidate_template_cache(self, change=None):
         self._template_cached = None
 
