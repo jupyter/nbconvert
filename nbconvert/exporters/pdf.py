@@ -69,6 +69,10 @@ class PDFExporter(LatexExporter):
     
     _captured_output = List()
 
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.pdf'
+
     def run_command(self, command_list, filename, count, log_function):
         """Run command_list count times.
         
