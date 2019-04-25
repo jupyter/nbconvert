@@ -8,7 +8,7 @@ import os
 import sys
 
 from ipython_genutils.py3compat import which, cast_bytes_py2, getcwd
-from traitlets import Integer, List, Bool, Instance, Unicode
+from traitlets import Integer, List, Bool, Instance, Unicode, default
 from testpath.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 
