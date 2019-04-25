@@ -172,6 +172,7 @@ class PDFExporter(LatexExporter):
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
             notebook_name = 'notebook'
+            resources['output_extension'] = '.tex'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
             rc = self.run_latex(tex_file)
