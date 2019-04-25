@@ -171,7 +171,7 @@ class TestLatexExporter(ExportersTestsBase):
         assert "shape" in output
         assert "evs" in output
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc', 'inkscape')
     def test_svg(self):
         """
         Can a LatexExporter export when it recieves raw binary strings form svg?
