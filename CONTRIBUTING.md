@@ -30,6 +30,8 @@ If you want to build the docs you will need to install the docs dependencies in 
 the standard dependencies. You can get all of the dependencies by running `pip install -e
 .[all]` and if you want only those needed to run the docs you can access them with `pip install -e .[docs]`.
 
+Full build instructions can be found at [docs/README.md](docs/README.md).
+
 # Releasing
 
 If you are going to release a version of `nbconvert` you should also be capable

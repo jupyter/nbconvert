@@ -4,6 +4,123 @@
 Changes in nbconvert
 ====================
 
+5.5
+---
+
+The following 18 authors contributed 144 commits -- Thank you all!
+
+* Benjamin Ragan-Kelley
+* Clayton A Davis
+* DInne Bosman
+* Doug Blank
+* Henrique Silva
+* Jeff Hale
+* Lukasz Mitusinski
+* M Pacer
+* Maarten Breddels
+* Madhumitha N
+* Matthew Seal
+* Paul Gowder
+* Philipp A
+* Rick Lupton
+* Rüdiger Busche
+* Thomas Kluyver
+* Tyler Makaro
+* WrRan
+
+The full list of changes they made can be seen `on GitHub <https://github.com/jupyter/nbconvert/issues?q=milestone%3A5.5+>`__
+
+Significant Changes
+~~~~~~~~~~~~~~~~~~~
+
+Deprecations
+++++++++++++
+
+Python 3.4 support was dropped. Many of our upstream libraries stopped supporting 3.4 and it was found that serious bugs were being caught during testing against those libraries updating past 3.4.
+
+See :ghpull:`979` for details.
+
+IPyWidget Support
++++++++++++++++++
+
+Now when a notebook executing contains `Jupyter Widgets <https://github.com/jupyter-widgets/ipywidgets/>`__, the state of all the widgets can be stored in the notebook's metadata. This allows rendering of the live widgets on, for instance nbviewer, or when converting to html.
+
+You can tell nbconvert to not store the state using the `store_widget_state` argument::
+
+     jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
+
+This widget rendering is not performed against a browser during execution, so only widget default states or states manipulated via user code will be calculated during execution. `%%javascript` cells will execute upon notebook rendering, enabling complex interactions to function as expected when viewed by a UI.
+
+If you can't view widget results after execution, you may need to select `Trust Notebook` under the `File` menu of the UI in question.
+
+See :ghpull:`779`, :ghpull:`900`, and :ghpull:`983` for details.
+
+Execute Preprocessor Rework
++++++++++++++++++++++++++++
+
+Based on monkey patching required in `papermill <https://github.com/nteract/papermill/blob/0.19.1/papermill/preprocess.py>`__ the `run_cell` code path in the ExecutePreprocessor was reworked to allow for accessing individual message parses without reimplementing the entire function. Now there is a `processs_message` function which take a ZeroMQ message and applies all of its side-effect updates on the cell/notebook objects before returning the output it generated, if it generated any such output.
+
+The change required a much more extensive test suite covering cell execution as test coverage on the various, sometimes wonky, code paths made improvements and reworks impossible to prove undamaging. Now changes to kernel message processing has much better coverage, so future additions or changes with specs over time will be easier to add.
+
+See :ghpull:`905` and :ghpull:`982` for details
+
+Out Of Memory Kernel Failure Catches
+++++++++++++++++++++++++++++++++++++
+
+When running out of memory on a machine, if the kernel process was killed by the operating system it would result in a timeout error at best and hang indefinitely at worst. Now regardless of timeout configuration, if the underlying kernel process dies before emitting any messages to the effect an exception will be raised notifying the consumer of the lost kernel within a few seconds.
+
+See :ghpull:`959`, :ghpull:`971`, and :ghpull:`998` for details
+
+Latex / PDF Template Improvements
++++++++++++++++++++++++++++++++++
+
+The latex template was long overdue for improvements. The default template had a rewrite which makes exports for latex and pdf look a lot better. Code cells in particular render much better with line breaks and styling the more closely matches notebook browser rendering. Thanks t-makaro for the efforts here!
+
+See :ghpull:`992` for details
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+New Features
+++++++++++++
+- IPyWidget Support :ghpull:`779`, :ghpull:`900`, and :ghpull:`983`
+- A new ClearMetadata Preprocessor is available :ghpull:`805`:
+- Support for pandoc 2 :ghpull:`964`:
+- New, and better, latex template :ghpull:`992`:
+
+Fixing Problems
++++++++++++++++
+- Refactored execute preprocessor to have a process_message function :ghpull:`905`:
+- Fixed OOM kernel failures hanging :ghpull:`959` and :ghpull:`971`:
+- Fixed latex export for svg data in python 3 :ghpull:`985`:
+- Enabled configuration to be shared to exporters from script exporter :ghpull:`993`:
+- Make latex errors less verbose :ghpull:`988`:
+- Typo in template syntax :ghpull:`984`:
+- Improved attachments +fix supporting non-unique names :ghpull:`980`:
+- PDFExporter "output_mimetype" traitlet is not longer 'text/latex' :ghpull:`972`:
+- FIX: respect wait for clear_output :ghpull:`969`:
+- address deprecation warning in cgi.escape :ghpull:`963`:
+- Correct inaccurate description of available LaTeX template :ghpull:`958`:
+- Fixed kernel death detection for executions with timeouts :ghpull:`998`:
+- Fixed export names for various templates :ghpull:`1000`, :ghpull:`1001`, and :ghpull:`1001`:
+
+Deprecations
+++++++++++++
+- Dropped support for python 3.4 :ghpull:`979`:
+- Removed deprecated ``export_by_name`` :ghpull:`945`:
+
+Testing, Docs, and Builds
++++++++++++++++++++++++++
+- Added tests for each branch in execute's run_cell method :ghpull:`982`:
+- Mention formats in --to options more clearly :ghpull:`991`:
+- Adds ascii output type to command line docs page, mention image folder output :ghpull:`956`:
+- Simplify setup.py :ghpull:`949`:
+- Use utf-8 encoding in execute_api example :ghpull:`921`:
+- Upgrade pytest on Travis :ghpull:`941`:
+- Fix LaTeX base template name in docs :ghpull:`940`:
+- Updated release instructions based on 5.4 release walk-through :ghpull:`887`:
+- Fixed broken link to jinja docs :ghpull:`997`:
+
 5.4.1
 -----
 `5.4.1 on Github <https://github.com/jupyter/nbconvert/milestones/5.4.1>`__
