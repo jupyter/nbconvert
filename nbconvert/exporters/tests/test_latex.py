@@ -114,6 +114,38 @@ class TestLatexExporter(ExportersTestsBase):
         """
         (output, resources) = LatexExporter().from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb"))
+        
+        in_regex = r"\\prompt\{In\}\{incolor\}\{(\d+|\s*)\}"
+        out_regex = r"\\prompt\{Out\}\{outcolor\}\{(\d+|\s*)\}"
+
+        ins = ["2", "10", " ", " ",  "0"]
+        outs = ["10"]
+
+        assert re.findall(in_regex, output) == ins
+        assert re.findall(out_regex, output) == outs
+
+    @onlyif_cmds_exist('pandoc')
+    def test_prompt_number_color_ipython(self):
+        """
+        Does LatexExporter properly format input and output prompts in color?
+        
+        Uses an in memory latex template to load style_ipython as the cell style.
+        """
+        my_loader_tplx = DictLoader({'my_template': 
+            """
+            ((* extends 'style_ipython.tplx' *))
+
+            ((* block docclass *))
+            \documentclass[11pt]{article}
+            ((* endblock docclass *))
+            """})
+
+        class MyExporter(LatexExporter):
+            template_file = 'my_template'
+
+        (output, resources) = MyExporter(extra_loaders=[my_loader_tplx]).from_filename(
+            self._get_notebook(nb_name="prompt_numbers.ipynb"))
+        
         in_regex = r"In \[\{\\color\{incolor\}(.*)\}\]:"
         out_regex = r"Out\[\{\\color\{outcolor\}(.*)\}\]:"
 
@@ -122,7 +154,7 @@ class TestLatexExporter(ExportersTestsBase):
 
         assert re.findall(in_regex, output) == ins
         assert re.findall(out_regex, output) == outs
-
+        
     @onlyif_cmds_exist('pandoc')
     def test_no_prompt_yes_input(self):
         no_prompt = {
@@ -139,7 +171,7 @@ class TestLatexExporter(ExportersTestsBase):
         assert "shape" in output
         assert "evs" in output
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist('pandoc', 'inkscape')
     def test_svg(self):
         """
         Can a LatexExporter export when it recieves raw binary strings form svg?

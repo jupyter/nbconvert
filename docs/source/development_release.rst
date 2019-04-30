@@ -70,7 +70,7 @@ Create the release
 
 #.  Update the :doc:`changelog <changelog>` to account for all the PRs assigned to this milestone.
 
-#.  Update version number in ``notebook/_version.py``.
+#.  Update version number in ``notebook/_version.py`` and remove ``.dev`` from dev_info.
 
 #.  Commit and tag the release with the current version number:
 

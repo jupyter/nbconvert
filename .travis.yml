@@ -2,7 +2,7 @@
 # https://docs.travis-ci.com/user/trusty-ci-environment/
 # needs these two lines:
 sudo: required
-dist: trusty
+dist: xenial # required for Python >=3.7 (travis-ci/travis-ci#9069), and defaults to newer texlive install.
 language: python
 
 matrix:
@@ -11,7 +11,6 @@ matrix:
         - python: 3.5
         - python: 3.6
         - python: 3.7
-          dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
         - python: nightly
     allow_failures:
         - python: nightly

@@ -28,6 +28,8 @@ from nbformat.v4 import output_from_msg
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 
+class DeadKernelError(RuntimeError):
+    pass
 
 class CellExecutionComplete(Exception):
     """
@@ -485,30 +487,29 @@ class ExecutePreprocessor(Preprocessor):
         else:
             raise TimeoutError("Cell execution timed out")
 
+    def _check_alive(self):
+        if not self.kc.is_alive():
+            self.log.error(
+                "Kernel died while waiting for execute reply.")
+            raise DeadKernelError("Kernel died")
+
     def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
+        timeout = self._get_timeout(cell)
+        cummulative_time = 0
+        timeout_interval = 5
         while True:
             try:
-                timeout = self._get_timeout(cell)
-                if timeout is not None:
-                    # timeout specified
-                    msg = self.kc.shell_channel.get_msg(timeout=timeout)
-                else:
-                    # no timeout specified, if kernel dies still handle this correctly
-                    while True:
-                        msg = self._poll_for_reply(msg_id, cell, 5)
-                        if msg is not None:
-                            # message received
-                            break
+                msg = self.kc.shell_channel.get_msg(timeout=timeout_interval)
             except Empty:
-                self._handle_timeout()
-                break
-
-            if msg['parent_header'].get('msg_id') == msg_id:
-                return msg
+                self._check_alive()
+                cummulative_time += timeout_interval
+                if timeout and cummulative_time > timeout:
+                    self._handle_timeout()
+                    break
             else:
-                # not our reply
-                continue
+                if msg['parent_header'].get('msg_id') == msg_id:
+                    return msg
 
     def _timeout_with_deadline(self, timeout, deadline):
         if deadline is not None and deadline - monotonic() < timeout:

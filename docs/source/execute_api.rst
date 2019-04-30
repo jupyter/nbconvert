@@ -166,9 +166,9 @@ Widget state
 
 If your notebook contains any
 `Jupyter Widgets <https://github.com/jupyter-widgets/ipywidgets/>`_,
-the state of all the widgets can be stored in the notebook's metadata (starting
-from nbconvert 5.5). This allows rendering of the live widgets on for instance
-nbviewer, or when converting to html.
+the state of all the widgets can be stored in the notebook's metadata.
+This allows rendering of the live widgets on for instance nbviewer, or when
+converting to html.
 
 We can tell nbconvert to not store the state using the `store_widget_state`
 argument::
