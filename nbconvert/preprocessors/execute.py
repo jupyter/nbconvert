@@ -460,10 +460,7 @@ class ExecutePreprocessor(Preprocessor):
                 return msg
         except Empty:
             # received no message, check if kernel is still alive
-            if not self.kc.is_alive():
-                self.log.error(
-                    "Kernel died while waiting for execute reply.")
-                raise RuntimeError("Kernel died")
+            self._check_alive()
             # kernel still alive, wait for a message
 
     def _get_timeout(self, cell):
