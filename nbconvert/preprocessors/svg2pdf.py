@@ -1,4 +1,4 @@
-"""Module containing a preprocessor that converts outputs in the notebook from 
+"""Module containing a preprocessor that converts outputs in the notebook from
 one format to another.
 """
 
@@ -42,19 +42,20 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
     command = Unicode(
         help="""The command to use for converting SVG to PDF
-        
+
         This string is a template, which will be formatted with the keys
         to_filename and from_filename.
-        
+
         The conversion call must read the SVG from {from_flename},
         and write a PDF to {to_filename}.
         """).tag(config=True)
 
     @default('command')
     def _command_default(self):
+        print(self.inkscape)
         return self.inkscape + \
                ' --without-gui --export-pdf="{to_filename}" "{from_filename}"'
-    
+
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
     @default('inkscape')
     def _inkscape_default(self):
@@ -64,8 +65,9 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         if sys.platform == "win32":
             wr_handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
             try:
-                rkey = winreg.OpenKey(wr_handle, "SOFTWARE\\Classes\\inkscape.svg\\DefaultIcon")
+                rkey = winreg.OpenKey(wr_handle, "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\App Paths\\inkscape.exe")
                 inkscape = winreg.QueryValueEx(rkey, "")[0]
+                inkscape = '"' + inkscape + '"'
             except FileNotFoundError:
                 raise FileNotFoundError("Inkscape executable not found")
             return inkscape
@@ -79,7 +81,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
         #Work in a temporary directory
         with TemporaryDirectory() as tmpdir:
-            
+
             #Write fig to temp file
             input_filename = os.path.join(tmpdir, 'figure.svg')
             # SVG data is unicode text
@@ -88,7 +90,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
             #Call conversion application
             output_filename = os.path.join(tmpdir, 'figure.pdf')
-            shell = self.command.format(from_filename=input_filename, 
+            shell = self.command.format(from_filename=input_filename,
                                    to_filename=output_filename)
             subprocess.call(shell, shell=True) #Shell=True okay since input is trusted.
 
