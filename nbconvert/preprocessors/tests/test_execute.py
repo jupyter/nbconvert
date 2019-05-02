@@ -32,6 +32,10 @@ from testpath import modified_env
 from ipython_genutils.py3compat import string_types
 
 try:
+    from queue import Queue # Py 3
+except ImportError:
+    from Queue import Queue # Py2
+try:
     TimeoutError  # Py 3
 except NameError:
     TimeoutError = RuntimeError  # Py 2
@@ -506,6 +510,28 @@ class TestRunCell(ExecuteTestBase):
         assert message_mock.call_count == 2
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
+
+    @ExecuteTestBase.prepare_cell_mocks()
+    def test_deadline_exec_reply(self, preprocessor, cell_mock, message_mock):
+        q = Queue()
+        # Both channels will never receive, so we expect to hit the timeout.
+        preprocessor.kc.shell_channel.get_msg = lambda timeout=0 : q.get(timeout=timeout)
+        preprocessor.kc.iopub_channel.get_msg = lambda timeout=0 : q.get(timeout=timeout)
+        preprocessor.timeout = 1
+
+        with pytest.raises(TimeoutError):
+            preprocessor.run_cell(cell_mock)
+
+    @ExecuteTestBase.prepare_cell_mocks()
+    def test_deadline_iopub(self, preprocessor, cell_mock, message_mock):
+        q = Queue()
+        # The shell_channel will complete, so we expect only to hit the iopub timeout.
+        preprocessor.kc.iopub_channel.get_msg = lambda timeout=0 : q.get(timeout=timeout)
+        preprocessor.iopub_timeout = 1
+        preprocessor.raise_on_iopub_timeout = True
+
+        with pytest.raises(RuntimeError):
+            preprocessor.run_cell(cell_mock)
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'execute_input',

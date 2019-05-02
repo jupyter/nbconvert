@@ -7,9 +7,9 @@ import base64
 from textwrap import dedent
 from contextlib import contextmanager
 try:
-    from time import monotonic
+    from time import monotonic # Py 3
 except ImportError:
-    from time import time as monotonic
+    from time import time as monotonic # Py 2
 
 try:
     from queue import Empty  # Py 3
@@ -526,6 +526,7 @@ class ExecutePreprocessor(Preprocessor):
         parent_msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
+        deadline = None
         if exec_timeout is not None:
             deadline = monotonic() + exec_timeout
 
