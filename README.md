@@ -33,7 +33,7 @@ filename of the Jupyter notebook.
 
 ### Example: Convert a notebook to HTML
 
-Convert Juptyer notebook file, `mynotebook.ipynb`, to HTML using:
+Convert Jupyter notebook file, `mynotebook.ipynb`, to HTML using:
 
     $ jupyter nbconvert --to html mynotebook.ipynb
 
