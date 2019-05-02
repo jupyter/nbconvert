@@ -480,7 +480,6 @@ class ExecutePreprocessor(Preprocessor):
         if self.interrupt_on_timeout:
             self.log.error("Interrupting kernel")
             self.km.interrupt_kernel()
-            return
         else:
             raise TimeoutError("Cell execution timed out")
 
