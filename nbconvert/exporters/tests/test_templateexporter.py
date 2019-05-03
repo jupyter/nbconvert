@@ -398,7 +398,6 @@ class TestExporter(ExportersTestsBase):
         nb_no_output_prompt, resources_no_output_prompt = exporter_no_output_prompt.from_filename(self._get_notebook())
 
         assert not resources_no_output_prompt['global_content_filter']['include_output_prompt']
-        assert "Out[" not in nb_no_output_prompt
 
     def test_remove_elements_with_tags(self):
 

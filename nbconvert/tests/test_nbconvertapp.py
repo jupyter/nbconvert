@@ -311,7 +311,6 @@ class TestNbConvertApp(TestsBase):
             with open("notebook1.html",'r') as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
-                assert "Out[" not in text
             self.nbconvert('notebook1.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook1.html')
             with open("notebook1.html",'r') as f:
@@ -329,7 +328,6 @@ class TestNbConvertApp(TestsBase):
             with open("notebook1.html",'r') as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
-                assert "Out[" not in text
                 assert ('<span class="n">x</span>'
                         '<span class="p">,</span>'
                         '<span class="n">y</span>'
