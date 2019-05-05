@@ -32,9 +32,9 @@ from testpath import modified_env
 from ipython_genutils.py3compat import string_types
 
 try:
-    from queue import Queue # Py 3
+    from queue import Empty  # Py 3
 except ImportError:
-    from Queue import Queue # Py2
+    from Queue import Empty  # Py 2
 try:
     TimeoutError  # Py 3
 except NameError:
@@ -146,6 +146,7 @@ class ExecuteTestBase(PreprocessorTestsBase):
                     shell_channel=MagicMock(get_msg=shell_channel_message_mock()),
                     execute=MagicMock(return_value=parent_id)
                 )
+                preprocessor.parent_id = parent_id
                 return func(self, preprocessor, cell_mock, message_mock)
             return test_mock_wrapper
         return prepared_wrapper
@@ -342,12 +343,12 @@ class TestExecute(ExecuteTestBase):
         except TimeoutError:
             pass
         km, kc = preprocessor.start_new_kernel()
-        
+
         with patch.object(km, "is_alive") as alive_mock:
             alive_mock.return_value = False
             with pytest.raises(DeadKernelError):
                 input_nb, output_nb = preprocessor.preprocess(input_nb, {}, km=km)
-    
+
 
     def test_allow_errors(self):
         """
@@ -511,27 +512,64 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks()
+    @ExecuteTestBase.prepare_cell_mocks({
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stdout', 'text': 'foo'},
+    }, {
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stderr', 'text': 'bar'}
+    })
     def test_deadline_exec_reply(self, preprocessor, cell_mock, message_mock):
-        q = Queue()
-        # Both channels will never receive, so we expect to hit the timeout.
-        preprocessor.kc.shell_channel.get_msg = lambda timeout=0 : q.get(timeout=timeout)
-        preprocessor.kc.iopub_channel.get_msg = lambda timeout=0 : q.get(timeout=timeout)
+        # exec_reply is never received, so we expect to hit the timeout.
+        preprocessor.kc.shell_channel.get_msg = MagicMock(side_effect=Empty())
         preprocessor.timeout = 1
 
         with pytest.raises(TimeoutError):
             preprocessor.run_cell(cell_mock)
 
+        assert message_mock.call_count == 3
+        # Ensure the output was captured
+        self.assertListEqual(cell_mock.outputs, [
+            {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'},
+            {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
+        ])
+
     @ExecuteTestBase.prepare_cell_mocks()
     def test_deadline_iopub(self, preprocessor, cell_mock, message_mock):
-        q = Queue()
         # The shell_channel will complete, so we expect only to hit the iopub timeout.
-        preprocessor.kc.iopub_channel.get_msg = lambda timeout=0 : q.get(timeout=timeout)
-        preprocessor.iopub_timeout = 1
+        message_mock.side_effect = Empty()
         preprocessor.raise_on_iopub_timeout = True
 
-        with pytest.raises(RuntimeError):
+        with pytest.raises(TimeoutError):
             preprocessor.run_cell(cell_mock)
+
+    @ExecuteTestBase.prepare_cell_mocks({
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stdout', 'text': 'foo'},
+    }, {
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stderr', 'text': 'bar'}
+    })
+    def test_eventual_deadline_iopub(self, preprocessor, cell_mock, message_mock):
+        # Process a few messages before raising a timeout from iopub
+        message_mock.side_effect = list(message_mock.side_effect)[:-1] + [Empty()]
+        preprocessor.kc.shell_channel.get_msg = MagicMock(
+            return_value={'parent_header': {'msg_id': preprocessor.parent_id}})
+        preprocessor.raise_on_iopub_timeout = True
+
+        with pytest.raises(TimeoutError):
+            preprocessor.run_cell(cell_mock)
+
+        assert message_mock.call_count == 3
+        # Ensure the output was captured
+        self.assertListEqual(cell_mock.outputs, [
+            {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'},
+            {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
+        ])
 
     @ExecuteTestBase.prepare_cell_mocks({
         'msg_type': 'execute_input',

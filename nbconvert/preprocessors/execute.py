@@ -537,7 +537,6 @@ class ExecutePreprocessor(Preprocessor):
         polling_exec_reply = True
 
         while more_output or polling_exec_reply:
-
             if polling_exec_reply:
                 if self._passed_deadline(deadline):
                     polling_exec_reply = False
@@ -559,7 +558,7 @@ class ExecutePreprocessor(Preprocessor):
                         continue
 
                     if self.raise_on_iopub_timeout:
-                        raise RuntimeError("Timeout waiting for IOPub output")
+                        raise TimeoutError("Timeout waiting for IOPub output")
                     else:
                         self.log.warning("Timeout waiting for IOPub output")
                         more_output = False
@@ -568,11 +567,11 @@ class ExecutePreprocessor(Preprocessor):
                 # not an output from our execution
                 continue
 
-            # Will raise CellExecutionComplete when completed
             try:
+                # Will raise CellExecutionComplete when completed
                 self.process_message(msg, cell, cell_index)
             except CellExecutionComplete:
-                break
+                more_output = False
 
         # Return cell.outputs still for backwards compatability
         return exec_reply, cell.outputs
