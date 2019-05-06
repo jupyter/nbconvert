@@ -21,6 +21,7 @@ import functools
 
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb, DeadKernelError
+from ...exporters.exporter import ResourcesDict
 
 import IPython
 from mock import MagicMock
@@ -43,8 +44,10 @@ except ImportError:
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
 current_dir = os.path.dirname(__file__)
+IPY_MAJOR = IPython.version_info[0]
 
-def _normalize_base64(b64_text):
+
+def normalize_base64(b64_text):
     # if it's base64, pass it through b64 decode/encode to avoid
     # equivalent values from being considered unequal
     try:
@@ -52,211 +55,211 @@ def _normalize_base64(b64_text):
     except (ValueError, TypeError):
         return b64_text
 
-class ExecuteTestBase(PreprocessorTestsBase):
-    def build_preprocessor(self, opts):
-        """Make an instance of a preprocessor"""
-        preprocessor = ExecutePreprocessor()
-        preprocessor.enabled = True
-        for opt in opts:
-            setattr(preprocessor, opt, opts[opt])
-        # Perform some state setup that should probably be in the init
-        preprocessor._display_id_map = {}
-        preprocessor.widget_state = {}
-        preprocessor.widget_buffers = {}
-        return preprocessor
 
-    @staticmethod
-    def prepare_cell_mocks(*messages):
-        """
-        This function prepares a preprocessor object which has a fake kernel client
-        to mock the messages sent over zeromq. The mock kernel client will return
-        the messages passed into this wrapper back from `preproc.kc.iopub_channel.get_msg`
-        callbacks. It also appends a kernel idle message to the end of messages.
+def build_preprocessor(opts):
+    """Make an instance of a preprocessor"""
+    preprocessor = ExecutePreprocessor()
+    preprocessor.enabled = True
+    for opt in opts:
+        setattr(preprocessor, opt, opts[opt])
+    # Perform some state setup that should probably be in the init
+    preprocessor._display_id_map = {}
+    preprocessor.widget_state = {}
+    preprocessor.widget_buffers = {}
+    return preprocessor
 
-        This allows for testing in with following call expectations:
 
-        @ExecuteTestBase.prepare_cell_mocks({
-            'msg_type': 'stream',
-            'header': {'msg_type': 'stream'},
-            'content': {'name': 'stdout', 'text': 'foo'},
-        })
-        def test_message_foo(self, preprocessor, cell_mock, message_mock):
-            preprocessor.kc.iopub_channel.get_msg()
-            # =>
-            # {
-            #     'msg_type': 'stream',
-            #     'parent_header': {'msg_id': 'fake_id'},
-            #     'header': {'msg_type': 'stream'},
-            #     'content': {'name': 'stdout', 'text': 'foo'},
-            # }
-            preprocessor.kc.iopub_channel.get_msg()
-            # =>
-            # {
-            #     'msg_type': 'status',
-            #     'parent_header': {'msg_id': 'fake_id'},
-            #     'content': {'execution_state': 'idle'},
-            # }
-            preprocessor.kc.iopub_channel.get_msg() # => None
-            message_mock.call_count # => 3
-        """
-        parent_id = 'fake_id'
-        messages = list(messages)
-        # Always terminate messages with an idle to exit the loop
-        messages.append({'msg_type': 'status', 'content': {'execution_state': 'idle'}})
+def run_notebook(filename, opts, resources):
+    """Loads and runs a notebook, returning both the version prior to
+    running it and the version after running it.
 
-        def shell_channel_message_mock():
-            # Return the message generator for
-            # self.kc.shell_channel.get_msg => {'parent_header': {'msg_id': parent_id}}
-            return MagicMock(return_value={'parent_header': {'msg_id': parent_id}})
+    """
+    with io.open(filename) as f:
+        input_nb = nbformat.read(f, 4)
 
-        def iopub_messages_mock():
-            # Return the message generator for
-            # self.kc.iopub_channel.get_msg => messages[i]
-            return MagicMock(
-                side_effect=[
-                    # Default the parent_header so mocks don't need to include this
-                    ExecuteTestBase.merge_dicts(
-                        {'parent_header': {'msg_id': parent_id}}, msg)
-                    for msg in messages
-                ]
+    preprocessor = build_preprocessor(opts)
+    cleaned_input_nb = copy.deepcopy(input_nb)
+    for cell in cleaned_input_nb.cells:
+        if 'execution_count' in cell:
+            del cell['execution_count']
+        cell['outputs'] = []
+
+    # Override terminal size to standardise traceback format
+    with modified_env({'COLUMNS': '80', 'LINES': '24'}):
+        output_nb, _ = preprocessor(cleaned_input_nb, resources)
+
+    return input_nb, output_nb
+
+
+def prepare_cell_mocks(*messages):
+    """
+    This function prepares a preprocessor object which has a fake kernel client
+    to mock the messages sent over zeromq. The mock kernel client will return
+    the messages passed into this wrapper back from `preproc.kc.iopub_channel.get_msg`
+    callbacks. It also appends a kernel idle message to the end of messages.
+
+    This allows for testing in with following call expectations:
+
+    @prepare_cell_mocks({
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stdout', 'text': 'foo'},
+    })
+    def test_message_foo(self, preprocessor, cell_mock, message_mock):
+        preprocessor.kc.iopub_channel.get_msg()
+        # =>
+        # {
+        #     'msg_type': 'stream',
+        #     'parent_header': {'msg_id': 'fake_id'},
+        #     'header': {'msg_type': 'stream'},
+        #     'content': {'name': 'stdout', 'text': 'foo'},
+        # }
+        preprocessor.kc.iopub_channel.get_msg()
+        # =>
+        # {
+        #     'msg_type': 'status',
+        #     'parent_header': {'msg_id': 'fake_id'},
+        #     'content': {'execution_state': 'idle'},
+        # }
+        preprocessor.kc.iopub_channel.get_msg() # => None
+        message_mock.call_count # => 3
+    """
+    parent_id = 'fake_id'
+    messages = list(messages)
+    # Always terminate messages with an idle to exit the loop
+    messages.append({'msg_type': 'status', 'content': {'execution_state': 'idle'}})
+
+    def shell_channel_message_mock():
+        # Return the message generator for
+        # self.kc.shell_channel.get_msg => {'parent_header': {'msg_id': parent_id}}
+        return MagicMock(return_value={'parent_header': {'msg_id': parent_id}})
+
+    def iopub_messages_mock():
+        # Return the message generator for
+        # self.kc.iopub_channel.get_msg => messages[i]
+        return MagicMock(
+            side_effect=[
+                # Default the parent_header so mocks don't need to include this
+                PreprocessorTestsBase.merge_dicts(
+                    {'parent_header': {'msg_id': parent_id}}, msg)
+                for msg in messages
+            ]
+        )
+
+    def prepared_wrapper(func):
+        @functools.wraps(func)
+        def test_mock_wrapper(self):
+            """
+            This inner function wrapper populates the preprocessor object with
+            the fake kernel client. This client has it's iopub and shell
+            channels mocked so as to fake the setup handshake and return
+            the messages passed into prepare_cell_mocks as the run_cell loop
+            processes them.
+            """
+            cell_mock = NotebookNode(source='"foo" = "bar"', outputs=[])
+            preprocessor = build_preprocessor({})
+            preprocessor.nb = {'cells': [cell_mock]}
+
+            # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
+            message_mock = iopub_messages_mock()
+            preprocessor.kc = MagicMock(
+                iopub_channel=MagicMock(get_msg=message_mock),
+                shell_channel=MagicMock(get_msg=shell_channel_message_mock()),
+                execute=MagicMock(return_value=parent_id)
             )
-
-        def prepared_wrapper(func):
-            @functools.wraps(func)
-            def test_mock_wrapper(self):
-                """
-                This inner function wrapper populates the preprocessor object with
-                the fake kernel client. This client has it's iopub and shell
-                channels mocked so as to fake the setup handshake and return
-                the messages passed into prepare_cell_mocks as the run_cell loop
-                processes them.
-                """
-                cell_mock = NotebookNode(source='"foo" = "bar"', outputs=[])
-                preprocessor = self.build_preprocessor({})
-                preprocessor.nb = {'cells': [cell_mock]}
-
-                # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
-                message_mock = iopub_messages_mock()
-                preprocessor.kc = MagicMock(
-                    iopub_channel=MagicMock(get_msg=message_mock),
-                    shell_channel=MagicMock(get_msg=shell_channel_message_mock()),
-                    execute=MagicMock(return_value=parent_id)
-                )
-                return func(self, preprocessor, cell_mock, message_mock)
-            return test_mock_wrapper
-        return prepared_wrapper
+            return func(self, preprocessor, cell_mock, message_mock)
+        return test_mock_wrapper
+    return prepared_wrapper
 
 
-class TestExecute(ExecuteTestBase):
+def normalize_output(output):
+    """
+    Normalizes outputs for comparison.
+    """
+    output = dict(output)
+    if 'metadata' in output:
+        del output['metadata']
+    if 'text' in output:
+        output['text'] = re.sub(addr_pat, '<HEXADDR>', output['text'])
+    if 'text/plain' in output.get('data', {}):
+        output['data']['text/plain'] = \
+            re.sub(addr_pat, '<HEXADDR>', output['data']['text/plain'])
+    if 'application/vnd.jupyter.widget-view+json' in output.get('data', {}):
+        output['data']['application/vnd.jupyter.widget-view+json'] \
+            ['model_id'] = '<MODEL_ID>'
+    for key, value in output.get('data', {}).items():
+        if isinstance(value, string_types):
+            if sys.version_info.major == 2:
+                value = value.replace('u\'', '\'')
+            output['data'][key] = normalize_base64(value)
+    if 'traceback' in output:
+        tb = [
+            re.sub(ipython_input_pat, '<IPY-INPUT>', strip_ansi(line))
+            for line in output['traceback']
+        ]
+        output['traceback'] = tb
+
+    return output
+
+
+def assert_notebooks_equal(expected, actual):
+    expected_cells = expected['cells']
+    actual_cells = actual['cells']
+    assert len(expected_cells) == len(actual_cells)
+
+    for expected_cell, actual_cell in zip(expected_cells, actual_cells):
+        expected_outputs = expected_cell.get('outputs', [])
+        actual_outputs = actual_cell.get('outputs', [])
+        normalized_expected_outputs = list(map(normalize_output, expected_outputs))
+        normalized_actual_outputs = list(map(normalize_output, actual_outputs))
+        assert normalized_expected_outputs == normalized_actual_outputs
+
+        expected_execution_count = expected_cell.get('execution_count', None)
+        actual_execution_count = actual_cell.get('execution_count', None)
+        assert expected_execution_count == actual_execution_count
+
+
+@pytest.mark.parametrize(
+    ["input_name", "opts"],
+    [
+        ("Clear Output.ipynb", dict(kernel_name="python")),
+        ("Empty Cell.ipynb", dict(kernel_name="python")),
+        ("Factorials.ipynb", dict(kernel_name="python")),
+        ("HelloWorld.ipynb", dict(kernel_name="python")),
+        ("Inline Image.ipynb", dict(kernel_name="python")),
+        ("Interrupt-IPY6.ipynb", dict(kernel_name="python", timeout=1, interrupt_on_timeout=True, allow_errors=True)) if IPY_MAJOR < 7 else
+            ("Interrupt.ipynb", dict(kernel_name="python", timeout=1, interrupt_on_timeout=True, allow_errors=True)),
+        ("JupyterWidgets.ipynb", dict(kernel_name="python")),
+        ("Skip Exceptions with Cell Tags-IPY6.ipynb", dict(kernel_name="python")) if IPY_MAJOR < 7 else
+            ("Skip Exceptions with Cell Tags.ipynb", dict(kernel_name="python")),
+        ("Skip Exceptions-IPY6.ipynb", dict(kernel_name="python", allow_errors=True)) if IPY_MAJOR < 7 else
+            ("Skip Exceptions.ipynb", dict(kernel_name="python", allow_errors=True)),
+        ("SVG.ipynb", dict(kernel_name="python")),
+        ("Unicode.ipynb", dict(kernel_name="python")),
+        ("UnicodePy3.ipynb", dict(kernel_name="python")),
+        ("update-display-id.ipynb", dict(kernel_name="python")),
+    ]
+)
+def test_run_all_notebooks(input_name, opts):
+    """Runs a series of test notebooks and compares them to their actual output"""
+    input_file = os.path.join(current_dir, 'files', input_name)
+    res = ResourcesDict()
+    res['metadata'] = ResourcesDict()
+    res['metadata']['path'] = os.path.join(current_dir, 'files')
+    input_nb, output_nb = run_notebook(input_file, opts, res)
+    assert_notebooks_equal(input_nb, output_nb)
+
+
+class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
     maxDiff = None
 
-    @staticmethod
-    def normalize_output(output):
-        """
-        Normalizes outputs for comparison.
-        """
-        output = dict(output)
-        if 'metadata' in output:
-            del output['metadata']
-        if 'text' in output:
-            output['text'] = re.sub(addr_pat, '<HEXADDR>', output['text'])
-        if 'text/plain' in output.get('data', {}):
-            output['data']['text/plain'] = \
-                re.sub(addr_pat, '<HEXADDR>', output['data']['text/plain'])
-        if 'application/vnd.jupyter.widget-view+json' in output.get('data', {}):
-            output['data']['application/vnd.jupyter.widget-view+json'] \
-                ['model_id'] = '<MODEL_ID>'
-        for key, value in output.get('data', {}).items():
-            if isinstance(value, string_types):
-                if sys.version_info.major == 2:
-                    value = value.replace('u\'', '\'')
-                output['data'][key] = _normalize_base64(value)
-        if 'traceback' in output:
-            tb = [
-                re.sub(ipython_input_pat, '<IPY-INPUT>', strip_ansi(line))
-                for line in output['traceback']
-            ]
-            output['traceback'] = tb
-
-        return output
-
-
-    def assert_notebooks_equal(self, expected, actual):
-        expected_cells = expected['cells']
-        actual_cells = actual['cells']
-        assert len(expected_cells) == len(actual_cells)
-
-        for expected_cell, actual_cell in zip(expected_cells, actual_cells):
-            expected_outputs = expected_cell.get('outputs', [])
-            actual_outputs = actual_cell.get('outputs', [])
-            normalized_expected_outputs = list(map(self.normalize_output, expected_outputs))
-            normalized_actual_outputs = list(map(self.normalize_output, actual_outputs))
-            assert normalized_expected_outputs == normalized_actual_outputs
-
-            expected_execution_count = expected_cell.get('execution_count', None)
-            actual_execution_count = actual_cell.get('execution_count', None)
-            assert expected_execution_count == actual_execution_count
-
-
     def test_constructor(self):
         """Can a ExecutePreprocessor be constructed?"""
-        self.build_preprocessor({})
-
-
-    def run_notebook(self, filename, opts, resources):
-        """Loads and runs a notebook, returning both the version prior to
-        running it and the version after running it.
-
-        """
-        with io.open(filename) as f:
-            input_nb = nbformat.read(f, 4)
-
-        preprocessor = self.build_preprocessor(opts)
-        cleaned_input_nb = copy.deepcopy(input_nb)
-        for cell in cleaned_input_nb.cells:
-            if 'execution_count' in cell:
-                del cell['execution_count']
-            cell['outputs'] = []
-
-        # Override terminal size to standardise traceback format
-        with modified_env({'COLUMNS': '80', 'LINES': '24'}):
-            output_nb, _ = preprocessor(cleaned_input_nb, resources)
-
-        return input_nb, output_nb
-
-    def test_run_notebooks(self):
-        """Runs a series of test notebooks and compares them to their actual output"""
-        input_files = glob.glob(os.path.join(current_dir, 'files', '*.ipynb'))
-        shared_opts = dict(kernel_name="python")
-        for filename in input_files:
-            # There is some slight differences between the output in IPython 6 and IPython 7.
-            IPY_MAJOR = IPython.version_info[0]
-            if os.path.basename(filename).endswith("-IPY6.ipynb"):
-                print(filename, IPY_MAJOR)
-                if IPY_MAJOR >= 7:
-                    continue
-            elif os.path.basename(filename) in ("Interrupt.ipynb", "Skip Exceptions with Cell Tags.ipynb", "Skip Exceptions.ipynb"):
-                if IPY_MAJOR < 7:
-                    continue
-
-            # Special arguments for the notebooks
-            if os.path.basename(filename) == "Disable Stdin.ipynb":
-                continue
-            elif os.path.basename(filename) in ("Interrupt.ipynb", "Interrupt-IPY6.ipynb"):
-                opts = dict(timeout=1, interrupt_on_timeout=True, allow_errors=True)
-            elif os.path.basename(filename) in ("Skip Exceptions.ipynb", "Skip Exceptions-IPY6.ipynb"):
-                opts = dict(allow_errors=True)
-            else:
-                opts = dict()
-            res = self.build_resources()
-            res['metadata']['path'] = os.path.dirname(filename)
-            opts.update(shared_opts)
-            input_nb, output_nb = self.run_notebook(filename, opts, res)
-            self.assert_notebooks_equal(input_nb, output_nb)
+        build_preprocessor({})
 
     def test_populate_language_info(self):
-        preprocessor = self.build_preprocessor(opts=dict(kernel_name="python"))
+        preprocessor = build_preprocessor(opts=dict(kernel_name="python"))
         nb = nbformat.v4.new_notebook()  # Certainly has no language_info.
         nb, _ = preprocessor.preprocess(nb, resources={})
         assert 'language_info' in nb.metadata
@@ -266,8 +269,8 @@ class TestExecute(ExecuteTestBase):
         filename = os.path.join(current_dir, 'files', 'HelloWorld.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = ''
-        input_nb, output_nb = self.run_notebook(filename, {}, res)
-        self.assert_notebooks_equal(input_nb, output_nb)
+        input_nb, output_nb = run_notebook(filename, {}, res)
+        assert_notebooks_equal(input_nb, output_nb)
 
     @pytest.mark.xfail("python3" not in KernelSpecManager().find_kernel_specs(),
                         reason="requires a python3 kernelspec")
@@ -279,17 +282,17 @@ class TestExecute(ExecuteTestBase):
         """
         filename = os.path.join(current_dir, 'files', 'UnicodePy3.ipynb')
         res = self.build_resources()
-        input_nb, output_nb = self.run_notebook(filename, {"kernel_name": ""}, res)
-        self.assert_notebooks_equal(input_nb, output_nb)
+        input_nb, output_nb = run_notebook(filename, {"kernel_name": ""}, res)
+        assert_notebooks_equal(input_nb, output_nb)
         with pytest.raises(TraitError):
-            input_nb, output_nb = self.run_notebook(filename, {"kernel_name": None}, res)
+            input_nb, output_nb = run_notebook(filename, {"kernel_name": None}, res)
 
     def test_disable_stdin(self):
         """Test disabling standard input"""
         filename = os.path.join(current_dir, 'files', 'Disable Stdin.ipynb')
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
-        input_nb, output_nb = self.run_notebook(filename, dict(allow_errors=True), res)
+        input_nb, output_nb = run_notebook(filename, dict(allow_errors=True), res)
 
         # We need to special-case this particular notebook, because the
         # traceback contains machine-specific stuff like where IPython
@@ -309,7 +312,7 @@ class TestExecute(ExecuteTestBase):
         res['metadata']['path'] = os.path.dirname(filename)
 
         with pytest.raises(TimeoutError):
-            self.run_notebook(filename, dict(timeout=1), res)
+            run_notebook(filename, dict(timeout=1), res)
 
     def test_timeout_func(self):
         """Check that an error is raised when a computation times out"""
@@ -321,7 +324,7 @@ class TestExecute(ExecuteTestBase):
             return 10
 
         with pytest.raises(TimeoutError):
-            self.run_notebook(filename, dict(timeout_func=timeout_func), res)
+            run_notebook(filename, dict(timeout_func=timeout_func), res)
 
     def test_kernel_death(self):
         """Check that an error is raised when the kernel is_alive is false"""
@@ -331,19 +334,19 @@ class TestExecute(ExecuteTestBase):
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
 
-        preprocessor = self.build_preprocessor({"timeout": 5})
+        preprocessor = build_preprocessor({"timeout": 5})
 
         try:
             input_nb, output_nb = preprocessor(input_nb, {})
         except TimeoutError:
             pass
         km, kc = preprocessor.start_new_kernel()
-        
+
         with patch.object(km, "is_alive") as alive_mock:
             alive_mock.return_value = False
             with pytest.raises(DeadKernelError):
                 input_nb, output_nb = preprocessor.preprocess(input_nb, {}, km=km)
-    
+
 
     def test_allow_errors(self):
         """
@@ -353,7 +356,7 @@ class TestExecute(ExecuteTestBase):
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
         with pytest.raises(CellExecutionError) as exc:
-            self.run_notebook(filename, dict(allow_errors=False), res)
+            run_notebook(filename, dict(allow_errors=False), res)
             self.assertIsInstance(str(exc.value), str)
             if sys.version_info >= (3, 0):
                 assert u"# üñîçø∂é" in str(exc.value)
@@ -370,7 +373,7 @@ class TestExecute(ExecuteTestBase):
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
         with pytest.raises(CellExecutionError) as exc:
-            self.run_notebook(filename, dict(force_raise_errors=True), res)
+            run_notebook(filename, dict(force_raise_errors=True), res)
             self.assertIsInstance(str(exc.value), str)
             if sys.version_info >= (3, 0):
                 assert u"# üñîçø∂é" in str(exc.value)
@@ -385,7 +388,7 @@ class TestExecute(ExecuteTestBase):
         with io.open(filename) as f:
             input_nb = nbformat.read(f, 4)
 
-        preprocessor = self.build_preprocessor({
+        preprocessor = build_preprocessor({
             'kernel_manager_class': FakeCustomKernelManager
         })
 
@@ -427,7 +430,7 @@ class TestExecute(ExecuteTestBase):
         assert outputs == [
             {'name': 'stdout', 'output_type': 'stream', 'text': 'Hello World\n'}
         ]
-        self.assert_notebooks_equal(original, executed)
+        assert_notebooks_equal(original, executed)
 
     def test_execute_function(self):
         # Test the executenb() convenience API
@@ -438,7 +441,7 @@ class TestExecute(ExecuteTestBase):
 
         original = copy.deepcopy(input_nb)
         executed = executenb(original, os.path.dirname(filename))
-        self.assert_notebooks_equal(original, executed)
+        assert_notebooks_equal(original, executed)
 
     def test_widgets(self):
         """Runs a test notebook with widgets and checks the widget state is saved."""
@@ -446,7 +449,7 @@ class TestExecute(ExecuteTestBase):
         opts = dict(kernel_name="python")
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(input_file)
-        input_nb, output_nb = self.run_notebook(input_file, opts, res)
+        input_nb, output_nb = run_notebook(input_file, opts, res)
 
         output_data = [
             output.get('data', {})
@@ -471,10 +474,10 @@ class TestExecute(ExecuteTestBase):
         assert 'version_minor' in wdata
 
 
-class TestRunCell(ExecuteTestBase):
+class TestRunCell(PreprocessorTestsBase):
     """Contains test functions for ExecutePreprocessor.run_cell"""
 
-    @ExecuteTestBase.prepare_cell_mocks()
+    @prepare_cell_mocks()
     def test_idle_message(self, preprocessor, cell_mock, message_mock):
         preprocessor.run_cell(cell_mock)
         # Just the exit message should be fetched
@@ -482,7 +485,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'execute_reply'},
         'parent_header': {'msg_id': 'wrong_parent'},
@@ -495,7 +498,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no output was written
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'status',
         'header': {'msg_type': 'status'},
         'content': {'execution_state': 'busy'}
@@ -507,7 +510,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'execute_input',
         'header': {'msg_type': 'execute_input'},
         'content': {}
@@ -519,7 +522,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'name': 'stdout', 'text': 'foo'},
@@ -538,7 +541,7 @@ class TestRunCell(ExecuteTestBase):
             {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
         ])
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'execute_reply'},
         'content': {'name': 'stdout', 'text': 'foo'}
@@ -554,7 +557,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure the output was cleared
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'name': 'stdout', 'text': 'foo'}
@@ -574,7 +577,7 @@ class TestRunCell(ExecuteTestBase):
             {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'}
         ]
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'name': 'stdout', 'text': 'foo'}
@@ -598,7 +601,7 @@ class TestRunCell(ExecuteTestBase):
             {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
         ]
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'name': 'stdout', 'text': 'foo'}
@@ -622,7 +625,7 @@ class TestRunCell(ExecuteTestBase):
             {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'}
         ]
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'execute_reply',
         'header': {'msg_type': 'execute_reply'},
         'content': {'execution_count': 42}
@@ -635,7 +638,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'execution_count': 42, 'name': 'stdout', 'text': 'foo'}
@@ -650,7 +653,7 @@ class TestRunCell(ExecuteTestBase):
             {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'}
         ]
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'comm',
         'header': {'msg_type': 'comm'},
         'content': {
@@ -668,7 +671,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'comm',
         'header': {'msg_type': 'comm'},
         'buffers': [b'123'],
@@ -691,7 +694,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'comm',
         'header': {'msg_type': 'comm'},
         'content': {
@@ -710,7 +713,7 @@ class TestRunCell(ExecuteTestBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'execute_result',
         'header': {'msg_type': 'execute_result'},
         'content': {
@@ -734,7 +737,7 @@ class TestRunCell(ExecuteTestBase):
         # No display id was provided
         assert not preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'execute_result',
         'header': {'msg_type': 'execute_result'},
         'content': {
@@ -758,7 +761,7 @@ class TestRunCell(ExecuteTestBase):
         }]
         assert 'foobar' in preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'display_data',
         'header': {'msg_type': 'display_data'},
         'content': {'metadata': {'metafoo': 'metabar'}, 'data': {'foo': 'bar'}}
@@ -776,7 +779,7 @@ class TestRunCell(ExecuteTestBase):
         # No display id was provided
         assert not preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'display_data',
         'header': {'msg_type': 'display_data'},
         'content': {
@@ -797,7 +800,7 @@ class TestRunCell(ExecuteTestBase):
         }]
         assert 'foobar' in preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'display_data',
         'header': {'msg_type': 'display_data'},
         'content': {
@@ -842,7 +845,7 @@ class TestRunCell(ExecuteTestBase):
         }]
         assert 'foobar' in preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'update_display_data',
         'header': {'msg_type': 'update_display_data'},
         'content': {'metadata': {'metafoo': 'metabar'}, 'data': {'foo': 'bar'}}
@@ -856,7 +859,7 @@ class TestRunCell(ExecuteTestBase):
         # No display id was provided
         assert not preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'display_data',
         'header': {'msg_type': 'display_data'},
         'content': {
@@ -885,7 +888,7 @@ class TestRunCell(ExecuteTestBase):
         }]
         assert 'foobar' in preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'display_data',
         'header': {'msg_type': 'display_data'},
         'content': {
@@ -914,7 +917,7 @@ class TestRunCell(ExecuteTestBase):
         }]
         assert 'foobar' in preprocessor._display_id_map
 
-    @ExecuteTestBase.prepare_cell_mocks({
+    @prepare_cell_mocks({
         'msg_type': 'error',
         'header': {'msg_type': 'error'},
         'content': {'ename': 'foo', 'evalue': 'bar', 'traceback': ['Boom']}
