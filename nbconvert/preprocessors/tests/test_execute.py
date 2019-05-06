@@ -139,7 +139,7 @@ def prepare_cell_mocks(*messages):
         return MagicMock(
             side_effect=[
                 # Default the parent_header so mocks don't need to include this
-                ExecuteTestBase.merge_dicts(
+                PreprocessorTestsBase.merge_dicts(
                     {'parent_header': {'msg_id': parent_id}}, msg)
                 for msg in messages
             ]
@@ -156,7 +156,7 @@ def prepare_cell_mocks(*messages):
             processes them.
             """
             cell_mock = NotebookNode(source='"foo" = "bar"', outputs=[])
-            preprocessor = self.build_preprocessor({})
+            preprocessor = build_preprocessor({})
             preprocessor.nb = {'cells': [cell_mock]}
 
             # self.kc.iopub_channel.get_msg => message_mock.side_effect[i]
@@ -254,10 +254,10 @@ class TestExecute(PreprocessorTestsBase):
 
     def test_constructor(self):
         """Can a ExecutePreprocessor be constructed?"""
-        self.build_preprocessor({})
+        build_preprocessor({})
 
     def test_populate_language_info(self):
-        preprocessor = self.build_preprocessor(opts=dict(kernel_name="python"))
+        preprocessor = build_preprocessor(opts=dict(kernel_name="python"))
         nb = nbformat.v4.new_notebook()  # Certainly has no language_info.
         nb, _ = preprocessor.preprocess(nb, resources={})
         assert 'language_info' in nb.metadata
@@ -332,7 +332,7 @@ class TestExecute(PreprocessorTestsBase):
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
 
-        preprocessor = self.build_preprocessor({"timeout": 5})
+        preprocessor = build_preprocessor({"timeout": 5})
 
         try:
             input_nb, output_nb = preprocessor(input_nb, {})
@@ -386,7 +386,7 @@ class TestExecute(PreprocessorTestsBase):
         with io.open(filename) as f:
             input_nb = nbformat.read(f, 4)
 
-        preprocessor = self.build_preprocessor({
+        preprocessor = build_preprocessor({
             'kernel_manager_class': FakeCustomKernelManager
         })
 
