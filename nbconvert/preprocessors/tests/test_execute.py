@@ -238,6 +238,7 @@ def assert_notebooks_equal(expected, actual):
         ("Unicode.ipynb", dict(kernel_name="python")),
         ("UnicodePy3.ipynb", dict(kernel_name="python")),
         ("update-display-id.ipynb", dict(kernel_name="python")),
+        ("Check History in Memory.ipynb", dict(kernel_name="python")),
     ]
 )
 def test_run_all_notebooks(input_name, opts):
