@@ -21,6 +21,7 @@ import functools
 
 from .base import PreprocessorTestsBase
 from ..execute import ExecutePreprocessor, CellExecutionError, executenb, DeadKernelError
+from ...exporters.exporter import ResourcesDict
 
 import IPython
 from mock import MagicMock
@@ -242,7 +243,8 @@ def assert_notebooks_equal(expected, actual):
 def test_run_all_notebooks(input_name, opts):
     """Runs a series of test notebooks and compares them to their actual output"""
     input_file = os.path.join(current_dir, 'files', input_name)
-    res = PreprocessorTestsBase().build_resources()
+    res = ResourcesDict()
+    res['metadata'] = ResourcesDict()
     res['metadata']['path'] = os.path.join(current_dir, 'files')
     input_nb, output_nb = run_notebook(input_file, opts, res)
     assert_notebooks_equal(input_nb, output_nb)
