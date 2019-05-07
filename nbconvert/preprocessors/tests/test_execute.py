@@ -12,7 +12,10 @@ import copy
 import glob
 import io
 import os
+import logging
 import re
+import threading
+import multiprocessing as mp
 
 import nbformat
 import sys
@@ -69,13 +72,16 @@ def build_preprocessor(opts):
     return preprocessor
 
 
-def run_notebook(filename, opts, resources):
+def run_notebook(filename, opts, resources, preprocess_notebook=None):
     """Loads and runs a notebook, returning both the version prior to
     running it and the version after running it.
 
     """
     with io.open(filename) as f:
         input_nb = nbformat.read(f, 4)
+
+    if preprocess_notebook:
+        input_nb = preprocess_notebook(input_nb)
 
     preprocessor = build_preprocessor(opts)
     cleaned_input_nb = copy.deepcopy(input_nb)
@@ -218,6 +224,12 @@ def assert_notebooks_equal(expected, actual):
         actual_execution_count = actual_cell.get('execution_count', None)
         assert expected_execution_count == actual_execution_count
 
+def notebook_resources():
+    res = ResourcesDict()
+    res['metadata'] = ResourcesDict()
+    res['metadata']['path'] = os.path.join(current_dir, 'files')
+    return res
+
 
 @pytest.mark.parametrize(
     ["input_name", "opts"],
@@ -244,11 +256,58 @@ def assert_notebooks_equal(expected, actual):
 def test_run_all_notebooks(input_name, opts):
     """Runs a series of test notebooks and compares them to their actual output"""
     input_file = os.path.join(current_dir, 'files', input_name)
-    res = ResourcesDict()
-    res['metadata'] = ResourcesDict()
-    res['metadata']['path'] = os.path.join(current_dir, 'files')
-    input_nb, output_nb = run_notebook(input_file, opts, res)
+    input_nb, output_nb = run_notebook(input_file, opts, notebook_resources())
     assert_notebooks_equal(input_nb, output_nb)
+
+
+def label_parallel_notebook(nb, label):
+    """Insert a cell in a notebook which sets the variable `this_notebook` to the string `label`.
+    
+    Used for parallel testing to label two notebooks which are run simultaneously.
+    """
+    label_cell = nbformat.NotebookNode(
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": "this_notebook = '{}'".format(label),
+        }
+    )
+
+    nb.cells.insert(1, label_cell)
+    return nb
+
+
+def test_parallel_notebooks(capfd, tmpdir):
+    """Two notebooks should be able to be run simultaneously without problems.
+    
+    The two notebooks spawned here use the filesystem to check that the other notebook
+    wrote to the filesystem."""
+
+    opts = dict(kernel_name="python")
+    input_name = "Parallel Execute.ipynb"
+    input_file = os.path.join(current_dir, "files", input_name)
+    res = notebook_resources()
+
+    with modified_env({"NBEXECUTE_TEST_PARALLEL_TMPDIR": str(tmpdir)}):
+        threads = [
+            threading.Thread(
+                target=run_notebook,
+                args=(
+                    input_file,
+                    opts,
+                    res,
+                    functools.partial(label_parallel_notebook, label=label),
+                ),
+            )
+            for label in ("A", "B")
+        ]
+        [t.start() for t in threads]
+        [t.join(timeout=2) for t in threads]
+
+    captured = capfd.readouterr()
+    assert captured.err == ""
 
 
 class TestExecute(PreprocessorTestsBase):
