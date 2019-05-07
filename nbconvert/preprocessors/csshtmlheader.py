@@ -66,11 +66,21 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Construct path to Jupyter CSS
         sheet_filename = os.path.join(
             os.path.dirname(nbconvert.resources.__file__),
-            'style.min.css',
+            'index.css',
         )
         
         # Load style CSS file.
         with io.open(sheet_filename, encoding='utf-8') as f:
+            header.append(f.read())
+
+        # Construct path to theme CSS
+        theme_filename = os.path.join(
+            os.path.dirname(nbconvert.resources.__file__),
+            'theme-light.css',
+        )
+        
+        # Load style theme file.
+        with io.open(theme_filename, encoding='utf-8') as f:
             header.append(f.read())
 
         # Add pygments CSS

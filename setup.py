@@ -55,7 +55,7 @@ for d, _, _ in os.walk(pjoin(here, name)):
 
 package_data = {
     'nbconvert.filters' : ['marked.js'],
-    'nbconvert.resources' : ['style.min.css'],
+    'nbconvert.resources' : ['index.css', 'theme-light.css', 'theme-dark.css'],
     'nbconvert' : [
         'tests/files/*.*',
         'tests/exporter_entrypoint/*.py',
@@ -66,23 +66,29 @@ package_data = {
 }
 
 
-# notebook_css_version = '5.4.0'
-# css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
-css_url = "https://perso.crans.org/~corlay/style.min.css"
+jupyterlab_css_version = '0.1.0'
+css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
+
+theme_light_version = '0.19.1'
+theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/static/embed.css" % theme_light_version
+
+theme_dark_version = '0.19.1'
+theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/embed.css" % theme_dark_version
 
 
 class FetchCSS(Command):
-    description = "Fetch Notebook CSS from Jupyter CDN"
+    description = "Fetch Notebook CSS from CDN"
     user_options = []
+
     def initialize_options(self):
         pass
 
     def finalize_options(self):
         pass
 
-    def _download(self):
+    def _download(self, url):
         try:
-            return urlopen(css_url).read()
+            return urlopen(url).read()
         except Exception as e:
             if 'ssl' in str(e).lower():
                 try:
@@ -92,39 +98,43 @@ class FetchCSS(Command):
                     raise e
                 else:
                     print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
-                    return self._download_pycurl()
+                    return self._download_pycurl(url)
             raise e
 
-    def _download_pycurl(self):
+    def _download_pycurl(self, url):
         """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
         import pycurl
         c = pycurl.Curl()
-        c.setopt(c.URL, css_url)
+        c.setopt(c.URL, url)
         buf = BytesIO()
         c.setopt(c.WRITEDATA, buf)
         c.perform()
         return buf.getvalue()
 
     def run(self):
-        dest = os.path.join('nbconvert', 'resources', 'style.min.css')
-        if not os.path.exists('.git') and os.path.exists(dest):
-            # not running from git, nothing to do
-            return
-        print("Downloading CSS: %s" % css_url)
+        css_dest = os.path.join('nbconvert', 'resources', 'index.css')
+        theme_light_dest = os.path.join('nbconvert', 'resources', 'theme-light.css')
+        theme_dark_dest = os.path.join('nbconvert', 'resources', 'theme-dark.css')
+
         try:
-            css = self._download()
+            css = self._download(css_url)
+            theme_light = self._download(theme_light_url)
+            theme_dark = self._download(theme_dark_url)
         except Exception as e:
-            msg = "Failed to download css from %s: %s" % (css_url, e)
+            msg = "Failed to download CSS: %s" % e
             print(msg, file=sys.stderr)
-            if os.path.exists(dest):
-                print("Already have CSS: %s, moving on." % dest)
+            if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
+                print("Already have CSS, moving on.")
             else:
-                raise OSError("Need Notebook CSS to proceed: %s" % dest)
+                raise OSError("Need Notebook CSS to proceed.")
             return
 
-        with open(dest, 'wb') as f:
+        with open(css_dest, 'wb') as f:
             f.write(css)
-        print("Downloaded Notebook CSS to %s" % dest)
+        with open(theme_light_dest, 'wb') as f:
+            f.write(theme_light)
+        with open(theme_dark_dest, 'wb') as f:
+            f.write(theme_dark)
 
 cmdclass = {'css': FetchCSS}
 

@@ -7,7 +7,9 @@ docs/source/api/generated
 docs/source/config/options
 docs/source/interactive/magics-generated.txt
 docs/gh-pages
-nbconvert/resources/style.min.css
+nbconvert/resources/index.css
+nbconvert/resources/theme-light.css
+nbconvert/resources/theme-dark.css
 *.py[co]
 __pycache__
 *.egg-info
