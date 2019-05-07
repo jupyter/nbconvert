@@ -32,6 +32,10 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
             help='Name of the pygments style to use'
     ).tag(config=True)
 
+    theme = Unicode('light',
+            help='JupyterLab CSS theme'
+    ).tag(config=True)
+
     def __init__(self, *pargs, **kwargs):
         Preprocessor.__init__(self, *pargs, **kwargs)
         self._default_css_hash = None
@@ -76,7 +80,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Construct path to theme CSS
         theme_filename = os.path.join(
             os.path.dirname(nbconvert.resources.__file__),
-            'theme-light.css',
+            'theme-%s.css' % self.theme,
         )
         
         # Load style theme file.
