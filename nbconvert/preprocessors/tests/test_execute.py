@@ -309,7 +309,7 @@ def test_parallel_notebooks(capfd, tmpdir):
     captured = capfd.readouterr()
     assert captured.err == ""
 
-
+@pytest.mark.xfail
 def test_many_parallel_notebooks(capfd):
     """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
     
@@ -339,6 +339,7 @@ def test_many_parallel_notebooks(capfd):
     captured = capfd.readouterr()
     assert captured.err == ""
 
+@pytest.mark.xfail
 def test_parallel_fork_notebooks(capfd):
     """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
     
@@ -370,9 +371,9 @@ def test_parallel_fork_notebooks(capfd):
         zmq.Context.instance().destroy()
         
         with mp.Pool(4) as pool:
-            pool.starmap(run_notebook, [(input_file, opts, res) for _ in range(8)])
+            pool.starmap(run_notebook, [(fast_file, opts, res) for _ in range(8)])
     finally:
-        thread.join(timeout=2)
+        thread.join(timeout=1)
     
     captured = capfd.readouterr()
     assert captured.err == ""
