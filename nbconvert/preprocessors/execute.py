@@ -282,7 +282,7 @@ class ExecutePreprocessor(Preprocessor):
         return km, kc
 
     @contextmanager
-    def setup_preprocessor(self, nb, resources, km=None):
+    def setup_preprocessor(self, nb, resources, km=None, **kwargs):
         """
         Context manager for setting up the class to execute a notebook.
 
@@ -321,7 +321,8 @@ class ExecutePreprocessor(Preprocessor):
         self.widget_buffers = {}
 
         if km is None:
-            self.km, self.kc = self.start_new_kernel(cwd=path)
+            kwargs["cwd"] = path
+            self.km, self.kc = self.start_new_kernel(**kwargs)
             try:
                 # Yielding unbound args for more easier understanding and downstream consumption
                 yield nb, self.km, self.kc
