@@ -515,7 +515,7 @@ class TestRunCell(PreprocessorTestsBase):
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
 
-    @ExecuteTestBase.prepare_cell_mocks({
+   @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'name': 'stdout', 'text': 'foo'},
@@ -539,7 +539,7 @@ class TestRunCell(PreprocessorTestsBase):
             {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
         ])
 
-    @ExecuteTestBase.prepare_cell_mocks()
+   @prepare_cell_mocks()
     def test_deadline_iopub(self, preprocessor, cell_mock, message_mock):
         # The shell_channel will complete, so we expect only to hit the iopub timeout.
         message_mock.side_effect = Empty()
@@ -548,7 +548,7 @@ class TestRunCell(PreprocessorTestsBase):
         with pytest.raises(TimeoutError):
             preprocessor.run_cell(cell_mock)
 
-    @ExecuteTestBase.prepare_cell_mocks({
+   @prepare_cell_mocks({
         'msg_type': 'stream',
         'header': {'msg_type': 'stream'},
         'content': {'name': 'stdout', 'text': 'foo'},
@@ -574,7 +574,7 @@ class TestRunCell(PreprocessorTestsBase):
             {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
         ])
 
-    @ExecuteTestBase.prepare_cell_mocks({
+   @prepare_cell_mocks({
         'msg_type': 'execute_input',
         'header': {'msg_type': 'execute_input'},
         'content': {}
