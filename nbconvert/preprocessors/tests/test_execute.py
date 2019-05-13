@@ -265,16 +265,7 @@ def label_parallel_notebook(nb, label):
     
     Used for parallel testing to label two notebooks which are run simultaneously.
     """
-    label_cell = nbformat.NotebookNode(
-        {
-            "cell_type": "code",
-            "execution_count": None,
-            "metadata": {},
-            "outputs": [],
-            "source": "this_notebook = '{}'".format(label),
-        }
-    )
-
+    label_cell = nbformat.v4.new_code_cell(source="this_notebook = '{}'".format(label))
     nb.cells.insert(1, label_cell)
     return nb
 
