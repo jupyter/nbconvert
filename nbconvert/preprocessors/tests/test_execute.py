@@ -12,7 +12,6 @@ import copy
 import glob
 import io
 import os
-import logging
 import re
 import threading
 import multiprocessing as mp
@@ -225,6 +224,7 @@ def assert_notebooks_equal(expected, actual):
         assert expected_execution_count == actual_execution_count
 
 def notebook_resources():
+    """Prepare a notebook resources dictionary for executing test notebooks in the `files` folder."""
     res = ResourcesDict()
     res['metadata'] = ResourcesDict()
     res['metadata']['path'] = os.path.join(current_dir, 'files')
