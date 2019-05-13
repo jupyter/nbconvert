@@ -3,6 +3,7 @@
 
 ((*- block packages -*))
     \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
     \usepackage{float}
     \floatplacement{figure}{H} % forces figures to be placed at the correct location
     ((( super() )))
