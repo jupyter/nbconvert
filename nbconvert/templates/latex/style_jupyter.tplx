@@ -3,7 +3,6 @@
 
 ((*- block packages -*))
     \usepackage[breakable]{tcolorbox}
-    \tcbset{nobeforeafter} % prevents tcolorboxes being placing in paragraphs
     \usepackage{float}
     \floatplacement{figure}{H} % forces figures to be placed at the correct location
     ((( super() )))
