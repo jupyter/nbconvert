@@ -100,9 +100,12 @@
     ((*- endblock style_colors *))
     
     % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+	\makeatother
     ((*- block style_prompt *))
     \newcommand{\prompt}[4]{
-        \llap{{\color{#2}[#3]: #4}}\vspace{-1.25em}
+        \ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}
     }
     ((* endblock style_prompt *))
     
@@ -113,7 +116,7 @@
 %===============================================================================
 
 ((* block input scoped *))
-    ((( draw_cell(cell.source | highlight_code(strip_verbatim=True), cell, 'In', 'incolor', '\\hspace{4pt}') )))
+    ((( draw_cell(cell.source | highlight_code(strip_verbatim=True), cell, 'In', 'incolor', '\\boxspacing') )))
 ((* endblock input *))
 
 
@@ -128,7 +131,7 @@
 ((* block execute_result scoped *))
     ((*- for type in output.data | filter_data_type -*))
         ((*- if type in ['text/plain']*))
-            ((( draw_cell(output.data['text/plain'] | wrap_text(charlim) | escape_latex, cell, 'Out', 'outcolor', '\\hspace{3.5pt}') )))
+            ((( draw_cell(output.data['text/plain'] | wrap_text(charlim) | escape_latex, cell, 'Out', 'outcolor', '\\boxspacing') )))
         ((* else -*))
             ((( " " )))
             ((( draw_prompt(cell, 'Out', 'outcolor','') )))((( super() )))
@@ -152,7 +155,7 @@
 ((* macro draw_cell(text, cell, prompt, prompt_color, extra_space) -*))
 ((*- if prompt == 'In' -*))
 ((*- set style = "breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder"-*))
-((*- else -*))((*- set style = "breakable, boxrule=.5pt, size=fbox, pad at break*=1mm, opacityfill=0"-*))((*-  endif -*))
+((*- else -*))((*- set style = "breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0"-*))((*-  endif -*))
 
 \begin{tcolorbox}[((( style )))]
 (((- draw_prompt(cell, prompt, prompt_color, extra_space) )))
