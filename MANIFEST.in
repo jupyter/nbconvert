@@ -9,7 +9,7 @@ include nbconvert/tests/README.md
 # Documentation
 graft docs
 exclude docs/\#*
-exclude readthedocs.yml
+exclude .readthedocs.yml
 exclude codecov.yml
 
 # Examples

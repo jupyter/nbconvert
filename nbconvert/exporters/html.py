@@ -71,7 +71,7 @@ class HTMLExporter(TemplateExporter):
     @contextfilter
     def markdown2html(self, context, source):
         """Markdown to HTML filter respecting the anchor_link_text setting"""
-        cell = context['cell']
+        cell = context.get('cell', {})
         attachments = cell.get('attachments', {})
         renderer = IPythonRenderer(escape=False, attachments=attachments,
                                    anchor_link_text=self.anchor_link_text)
