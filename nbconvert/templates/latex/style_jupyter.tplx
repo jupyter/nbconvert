@@ -102,7 +102,7 @@
     % prompt
     \makeatletter
     \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
-	\makeatother
+    \makeatother
     ((*- block style_prompt *))
     \newcommand{\prompt}[4]{
         \ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}
