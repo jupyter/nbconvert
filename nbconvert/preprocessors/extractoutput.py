@@ -5,6 +5,7 @@ notebook file.  The extracted outputs are returned in the 'resources' dictionary
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from textwrap import dedent
 from binascii import a2b_base64
 import sys
 import os
@@ -82,6 +83,8 @@ class ExtractOutputPreprocessor(Preprocessor):
         for index, out in enumerate(cell.get('outputs', [])):
             if out.output_type not in {'display_data', 'execute_result'}:
                 continue
+            if 'text/html' in out.data:
+                out['data']['text/html'] = dedent(out['data']['text/html'])
             #Get the output in data formats that the template needs extracted
             for mime_type in self.extract_output_types:
                 if mime_type in out.data:
