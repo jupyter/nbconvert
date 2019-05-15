@@ -26,8 +26,8 @@ This template does not define a docclass, the inheriting class must define this.
     % proper Figure object with a Caption API and a way to capture that
     % in the conversion process - todo).
     \usepackage{caption}
-    \DeclareCaptionFormat{nolabel}{}
-    \captionsetup{format=nolabel}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
 
     \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
     \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
