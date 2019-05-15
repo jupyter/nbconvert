@@ -27,7 +27,7 @@ This template does not define a docclass, the inheriting class must define this.
     % in the conversion process - todo).
     \usepackage{caption}
     \DeclareCaptionLabelFormat{nolabel}{}
-    \captionsetup{labelformat=nolabel}
+    \captionsetup{format=nolabel}
 
     \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
     \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
