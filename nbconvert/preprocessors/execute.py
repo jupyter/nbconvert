@@ -534,7 +534,16 @@ class ExecutePreprocessor(Preprocessor):
         cell.outputs = []
         self.clear_before_next_output = False
 
+        # This loop resolves #659. By polling iopub_channel's and shell_channel's
+        # output we avoid dropping output and important signals (like idle) from
+        # iopub_channel. Prior to this change, iopub_channel wasn't polled until
+        # after exec_reply was obtained from shell_channel, leading to the
+        # aforementioned dropped data.
+
+        # These two variables are used to track what still needs polling:
+        # more_output=true => continue to poll the iopub_channel
         more_output = True
+        # polling_exec_reply=true => continue to poll the shell_channel
         polling_exec_reply = True
 
         while more_output or polling_exec_reply:
@@ -543,6 +552,8 @@ class ExecutePreprocessor(Preprocessor):
                     polling_exec_reply = False
                     continue
 
+                # Avoid exceeding the execution timeout (deadline), but stop
+                # after at most 1s so we can poll output from iopub_channel.
                 timeout = self._timeout_with_deadline(1, deadline)
                 exec_reply = self._poll_for_reply(parent_msg_id, cell, timeout)
                 if exec_reply is not None:
@@ -552,10 +563,14 @@ class ExecutePreprocessor(Preprocessor):
                 try:
                     timeout = self.iopub_timeout
                     if polling_exec_reply:
+                        # Avoid exceeding the execution timeout (deadline) while
+                        # polling for output.
                         timeout = self._timeout_with_deadline(timeout, deadline)
                     msg = self.kc.iopub_channel.get_msg(timeout=timeout)
                 except Empty:
                     if polling_exec_reply:
+                        # Still waiting for execution to finish so we expect that
+                        # output may not always be produced yet.
                         continue
 
                     if self.raise_on_iopub_timeout:
