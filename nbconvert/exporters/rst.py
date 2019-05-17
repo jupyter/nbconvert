@@ -23,7 +23,7 @@ class RSTExporter(TemplateExporter):
         return 'rst.tpl'
 
     output_mimetype = 'text/restructuredtext'
-    export_from_notebook = "rst"
+    export_from_notebook = "reST"
 
     @property
     def default_config(self):

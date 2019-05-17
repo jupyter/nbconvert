@@ -23,7 +23,7 @@ class HTMLExporter(TemplateExporter):
     custom preprocessors/filters.  If you don't need custom preprocessors/
     filters, just change the 'template_file' config option.
     """
-    export_from_notebook = "html"
+    export_from_notebook = "HTML"
 
     anchor_link_text = Unicode(u'¶',
         help="The text used as the text for anchor links.").tag(config=True)
