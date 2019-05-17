@@ -26,7 +26,7 @@ class NotebookExporter(Exporter):
         return '.ipynb'
 
     output_mimetype = 'application/json'
-    export_from_notebook = "notebook"
+    export_from_notebook = "Notebook"
 
     def from_notebook_node(self, nb, resources=None, **kw):
         nb_copy, resources = super(NotebookExporter, self).from_notebook_node(nb, resources, **kw)

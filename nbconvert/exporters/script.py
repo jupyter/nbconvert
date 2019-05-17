@@ -14,7 +14,7 @@ class ScriptExporter(TemplateExporter):
     # Caches of already looked-up and instantiated exporters for delegation:
     _exporters = Dict()
     _lang_exporters = Dict()
-    export_from_notebook = "script"
+    export_from_notebook = "Script"
 
     @default('template_file')
     def _template_file_default(self):
