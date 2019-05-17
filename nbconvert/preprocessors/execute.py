@@ -6,6 +6,10 @@ and updates outputs"""
 import base64
 from textwrap import dedent
 from contextlib import contextmanager
+try:
+    from time import monotonic # Py 3
+except ImportError:
+    from time import time as monotonic # Py 2
 
 try:
     from queue import Empty  # Py 3
@@ -449,6 +453,36 @@ class ExecutePreprocessor(Preprocessor):
                 outputs[output_idx]['data'] = out['data']
                 outputs[output_idx]['metadata'] = out['metadata']
 
+    def _poll_for_reply(self, msg_id, cell=None, timeout=None):
+        try:
+            # check with timeout if kernel is still alive
+            msg = self.kc.shell_channel.get_msg(timeout=timeout)
+            if msg['parent_header'].get('msg_id') == msg_id:
+                return msg
+        except Empty:
+            # received no message, check if kernel is still alive
+            self._check_alive()
+            # kernel still alive, wait for a message
+
+    def _get_timeout(self, cell):
+        if self.timeout_func is not None and cell is not None:
+            timeout = self.timeout_func(cell)
+        else:
+            timeout = self.timeout
+
+        if not timeout or timeout < 0:
+            timeout = None
+
+        return timeout
+
+    def _handle_timeout(self):
+        self.log.error(
+            "Timeout waiting for execute reply (%is)." % self.timeout)
+        if self.interrupt_on_timeout:
+            self.log.error("Interrupting kernel")
+            self.km.interrupt_kernel()
+        else:
+            raise TimeoutError("Cell execution timed out")
 
     def _check_alive(self):
         if not self.kc.is_alive():
@@ -458,13 +492,7 @@ class ExecutePreprocessor(Preprocessor):
 
     def _wait_for_reply(self, msg_id, cell=None):
         # wait for finish, with timeout
-        if self.timeout_func is not None and cell is not None:
-            timeout = self.timeout_func(cell)
-        else:
-            timeout = self.timeout
-
-        if not timeout or timeout < 0:
-            timeout = None
+        timeout = self._get_timeout(cell)
         cummulative_time = 0
         timeout_interval = 5
         while True:
@@ -474,49 +502,92 @@ class ExecutePreprocessor(Preprocessor):
                 self._check_alive()
                 cummulative_time += timeout_interval
                 if timeout and cummulative_time > timeout:
-                    self.log.error(
-                        "Timeout waiting for execute reply (%is)." % self.timeout)
-                    if self.interrupt_on_timeout:
-                        self.log.error("Interrupting kernel")
-                        self.km.interrupt_kernel()
-                        break
-                    else:
-                        raise TimeoutError("Cell execution timed out")
+                    self._handle_timeout()
+                    break
             else:
                 if msg['parent_header'].get('msg_id') == msg_id:
                     return msg
 
+    def _timeout_with_deadline(self, timeout, deadline):
+        if deadline is not None and deadline - monotonic() < timeout:
+            timeout = deadline - monotonic()
+
+        if timeout < 0:
+            timeout = 0
+
+        return timeout
+
+    def _passed_deadline(self, deadline):
+        if deadline is not None and deadline - monotonic() <= 0:
+            self._handle_timeout()
+            return True
+        return False
+
     def run_cell(self, cell, cell_index=0):
         parent_msg_id = self.kc.execute(cell.source)
         self.log.debug("Executing cell:\n%s", cell.source)
-        exec_reply = self._wait_for_reply(parent_msg_id, cell)
+        exec_timeout = self._get_timeout(cell)
+        deadline = None
+        if exec_timeout is not None:
+            deadline = monotonic() + exec_timeout
 
         cell.outputs = []
         self.clear_before_next_output = False
 
-        while True:
-            try:
-                # We've already waited for execute_reply, so all output
-                # should already be waiting. However, on slow networks, like
-                # in certain CI systems, waiting < 1 second might miss messages.
-                # So long as the kernel sends a status:idle message when it
-                # finishes, we won't actually have to wait this long, anyway.
-                msg = self.kc.iopub_channel.get_msg(timeout=self.iopub_timeout)
-            except Empty:
-                self.log.warning("Timeout waiting for IOPub output")
-                if self.raise_on_iopub_timeout:
-                    raise RuntimeError("Timeout waiting for IOPub output")
-                else:
-                    break
+        # This loop resolves #659. By polling iopub_channel's and shell_channel's
+        # output we avoid dropping output and important signals (like idle) from
+        # iopub_channel. Prior to this change, iopub_channel wasn't polled until
+        # after exec_reply was obtained from shell_channel, leading to the
+        # aforementioned dropped data.
+
+        # These two variables are used to track what still needs polling:
+        # more_output=true => continue to poll the iopub_channel
+        more_output = True
+        # polling_exec_reply=true => continue to poll the shell_channel
+        polling_exec_reply = True
+
+        while more_output or polling_exec_reply:
+            if polling_exec_reply:
+                if self._passed_deadline(deadline):
+                    polling_exec_reply = False
+                    continue
+
+                # Avoid exceeding the execution timeout (deadline), but stop
+                # after at most 1s so we can poll output from iopub_channel.
+                timeout = self._timeout_with_deadline(1, deadline)
+                exec_reply = self._poll_for_reply(parent_msg_id, cell, timeout)
+                if exec_reply is not None:
+                    polling_exec_reply = False
+
+            if more_output:
+                try:
+                    timeout = self.iopub_timeout
+                    if polling_exec_reply:
+                        # Avoid exceeding the execution timeout (deadline) while
+                        # polling for output.
+                        timeout = self._timeout_with_deadline(timeout, deadline)
+                    msg = self.kc.iopub_channel.get_msg(timeout=timeout)
+                except Empty:
+                    if polling_exec_reply:
+                        # Still waiting for execution to finish so we expect that
+                        # output may not always be produced yet.
+                        continue
+
+                    if self.raise_on_iopub_timeout:
+                        raise TimeoutError("Timeout waiting for IOPub output")
+                    else:
+                        self.log.warning("Timeout waiting for IOPub output")
+                        more_output = False
+                        continue
             if msg['parent_header'].get('msg_id') != parent_msg_id:
                 # not an output from our execution
                 continue
 
-            # Will raise CellExecutionComplete when completed
             try:
+                # Will raise CellExecutionComplete when completed
                 self.process_message(msg, cell, cell_index)
             except CellExecutionComplete:
-                break
+                more_output = False
 
         # Return cell.outputs still for backwards compatability
         return exec_reply, cell.outputs

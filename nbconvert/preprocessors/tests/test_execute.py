@@ -33,6 +33,10 @@ from testpath import modified_env
 from ipython_genutils.py3compat import string_types
 
 try:
+    from queue import Empty  # Py 3
+except ImportError:
+    from Queue import Empty  # Py 2
+try:
     TimeoutError  # Py 3
 except NameError:
     TimeoutError = RuntimeError  # Py 2
@@ -167,6 +171,7 @@ def prepare_cell_mocks(*messages):
                 shell_channel=MagicMock(get_msg=shell_channel_message_mock()),
                 execute=MagicMock(return_value=parent_id)
             )
+            preprocessor.parent_id = parent_id
             return func(self, preprocessor, cell_mock, message_mock)
         return test_mock_wrapper
     return prepared_wrapper
@@ -509,6 +514,65 @@ class TestRunCell(PreprocessorTestsBase):
         assert message_mock.call_count == 2
         # Ensure no outputs were generated
         assert cell_mock.outputs == []
+
+    @prepare_cell_mocks({
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stdout', 'text': 'foo'},
+    }, {
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stderr', 'text': 'bar'}
+    })
+    def test_deadline_exec_reply(self, preprocessor, cell_mock, message_mock):
+        # exec_reply is never received, so we expect to hit the timeout.
+        preprocessor.kc.shell_channel.get_msg = MagicMock(side_effect=Empty())
+        preprocessor.timeout = 1
+
+        with pytest.raises(TimeoutError):
+            preprocessor.run_cell(cell_mock)
+
+        assert message_mock.call_count == 3
+        # Ensure the output was captured
+        self.assertListEqual(cell_mock.outputs, [
+            {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'},
+            {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
+        ])
+
+    @prepare_cell_mocks()
+    def test_deadline_iopub(self, preprocessor, cell_mock, message_mock):
+        # The shell_channel will complete, so we expect only to hit the iopub timeout.
+        message_mock.side_effect = Empty()
+        preprocessor.raise_on_iopub_timeout = True
+
+        with pytest.raises(TimeoutError):
+            preprocessor.run_cell(cell_mock)
+
+    @prepare_cell_mocks({
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stdout', 'text': 'foo'},
+    }, {
+        'msg_type': 'stream',
+        'header': {'msg_type': 'stream'},
+        'content': {'name': 'stderr', 'text': 'bar'}
+    })
+    def test_eventual_deadline_iopub(self, preprocessor, cell_mock, message_mock):
+        # Process a few messages before raising a timeout from iopub
+        message_mock.side_effect = list(message_mock.side_effect)[:-1] + [Empty()]
+        preprocessor.kc.shell_channel.get_msg = MagicMock(
+            return_value={'parent_header': {'msg_id': preprocessor.parent_id}})
+        preprocessor.raise_on_iopub_timeout = True
+
+        with pytest.raises(TimeoutError):
+            preprocessor.run_cell(cell_mock)
+
+        assert message_mock.call_count == 3
+        # Ensure the output was captured
+        self.assertListEqual(cell_mock.outputs, [
+            {'output_type': 'stream', 'name': 'stdout', 'text': 'foo'},
+            {'output_type': 'stream', 'name': 'stderr', 'text': 'bar'}
+        ])
 
     @prepare_cell_mocks({
         'msg_type': 'execute_input',
