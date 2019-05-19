@@ -28,6 +28,7 @@ from nbconvert import exporters, preprocessors, writers, postprocessors, __versi
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 from .utils.io import unicode_stdin_stream
+from .utils.commands import ensure_user_template_dir_exists
 
 #-----------------------------------------------------------------------------
 #Classes and functions
@@ -280,6 +281,7 @@ class NbConvertApp(JupyterApp):
         """Initialize application, notebooks, writer, and postprocessor"""
         self.init_syspath()
         super(NbConvertApp, self).initialize(argv)
+        ensure_user_template_dir_exists()
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
