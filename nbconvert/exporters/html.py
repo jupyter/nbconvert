@@ -8,6 +8,7 @@ import os
 
 from traitlets import default, Unicode
 from traitlets.config import Config
+from jupyter_core.paths import jupyter_config_dir
 from jinja2 import contextfilter
 
 from nbconvert.filters.highlight import Highlight2HTML
@@ -35,6 +36,10 @@ class HTMLExporter(TemplateExporter):
     @default('default_template_path')
     def _default_template_path_default(self):
         return os.path.join("..", "templates", "html")
+    
+    @default('user_config_template_path')
+    def _user_config_template_path_default(self):
+        return os.path.join(jupyter_config_dir(), "nbconvert", "templates", "html")
 
     @default('template_file')
     def _template_file_default(self):

@@ -15,6 +15,7 @@ from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
+from jupyter_core.paths import jupyter_config_dir
 from jinja2 import (
     TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
     DictLoader
@@ -182,6 +183,11 @@ class TemplateExporter(Exporter):
     template_skeleton_path = Unicode(
         os.path.join("..", "templates", "skeleton"),
         help="Path where the template skeleton files are located.",
+    ).tag(affects_environment=True)
+
+    user_config_template_path = Unicode(
+        os.path.join(jupyter_config_dir(), "nbconvert","templates"),
+        help="Path where users can store templates."
     ).tag(affects_environment=True)
 
     #Extension that the template files use.
@@ -393,7 +399,8 @@ class TemplateExporter(Exporter):
 
         paths = self.template_path + \
             [os.path.join(here, self.default_template_path),
-             os.path.join(here, self.template_skeleton_path)]
+             os.path.join(here, self.template_skeleton_path),
+             self.user_config_template_path]
 
         loaders = self.extra_loaders + [
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
