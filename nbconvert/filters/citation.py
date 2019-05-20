@@ -28,7 +28,7 @@ def citation2latex(s):
     """Parse citations in Markdown cells.
     
     This looks for HTML tags having a data attribute names `data-cite`
-    and replaces it by the call to LaTeX cite command. The tranformation
+    and replaces it by the call to LaTeX cite command. The transformation
     looks like this:
     
     `<cite data-cite="granger">(Granger, 2013)</cite>`

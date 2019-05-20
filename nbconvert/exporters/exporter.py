@@ -255,7 +255,7 @@ class Exporter(LoggingConfigurable):
         """
         self._preprocessors = []
 
-        # Load default preprocessors (not necessarly enabled by default).
+        # Load default preprocessors (not necessarily enabled by default).
         for preprocessor in self.default_preprocessors:
             self.register_preprocessor(preprocessor)
 

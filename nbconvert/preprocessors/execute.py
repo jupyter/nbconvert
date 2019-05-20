@@ -307,7 +307,7 @@ class ExecutePreprocessor(Preprocessor):
             passing ``{'metadata': {'path': run_path}}`` sets the
             execution path to ``run_path``.
         km : KernerlManager (optional)
-            Optional kernel manaher. If none is provided, a kernel manager will
+            Optional kernel manager. If none is provided, a kernel manager will
             be created.
 
         Returns
@@ -417,7 +417,7 @@ class ExecutePreprocessor(Preprocessor):
             return cell, resources
 
         reply, outputs = self.run_cell(cell, cell_index)
-        # Backwards compatability for processes that wrap run_cell
+        # Backwards compatibility for processes that wrap run_cell
         cell.outputs = outputs
 
         cell_allows_errors = (self.allow_errors or "raises-exception"
@@ -589,7 +589,7 @@ class ExecutePreprocessor(Preprocessor):
             except CellExecutionComplete:
                 more_output = False
 
-        # Return cell.outputs still for backwards compatability
+        # Return cell.outputs still for backwards compatibility
         return exec_reply, cell.outputs
 
     def process_message(self, msg, cell, cell_index):

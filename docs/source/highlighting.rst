@@ -59,4 +59,4 @@ You can preview all the styles from an environment that can display html like ju
 Making your own styles
 ----------------------
 To make your own style you must subclass ``pygments.styles.Style``, and then you must register your new style with Pygments using
-their pluggin system. This is explained in detail in the `Pygments documentation <http://pygments.org/docs/styles/>`_.
+their plugin system. This is explained in detail in the `Pygments documentation <http://pygments.org/docs/styles/>`_.
