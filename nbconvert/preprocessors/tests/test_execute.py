@@ -24,7 +24,6 @@ from ..execute import ExecutePreprocessor, CellExecutionError, executenb, DeadKe
 from ...exporters.exporter import ResourcesDict
 
 import IPython
-from mock import MagicMock
 from traitlets import TraitError
 from nbformat import NotebookNode
 from jupyter_client.kernelspec import KernelSpecManager

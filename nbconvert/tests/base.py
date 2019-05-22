@@ -146,9 +146,17 @@ class TestsBase(unittest.TestCase):
         ignore_return_code : optional bool (default False)
             Throw an OSError if the return code
         """
-        if isinstance(parameters, string_types):
-            parameters = shlex.split(parameters)
-        cmd = [sys.executable, '-m', 'nbconvert'] + parameters
+        cmd = [sys.executable, '-m', 'nbconvert']
+        if sys.platform == 'win32':
+            if isinstance(parameters, string_types):
+                cmd = ' '.join(cmd) + ' ' + parameters
+            else:
+                cmd = ' '.join(cmd + parameters)
+        elif isinstance(parameters, string_types):
+                parameters = shlex.split(parameters)
+                cmd += parameters
+        else:
+            cmd += parameters
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
         stdout, stderr = p.communicate(input=stdin)
         if not (p.returncode == 0 or ignore_return_code):
