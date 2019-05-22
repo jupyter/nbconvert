@@ -46,7 +46,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         This string is a template, which will be formatted with the keys
         to_filename and from_filename.
         
-        The conversion call must read the SVG from {from_flename},
+        The conversion call must read the SVG from {from_filename},
         and write a PDF to {to_filename}.
         """).tag(config=True)
 

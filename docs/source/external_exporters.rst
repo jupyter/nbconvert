@@ -218,4 +218,4 @@ And the template file, that inherits from the html `full` template and prepend/a
 
 Assuming you install this package locally, or from PyPI, you can now use::
 
-    jupyter nbconvert --to mypackage.MyEporter notebook.ipynb
+    jupyter nbconvert --to mypackage.MyExporter notebook.ipynb
