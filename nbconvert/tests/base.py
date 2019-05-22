@@ -152,10 +152,9 @@ class TestsBase(unittest.TestCase):
                 cmd = ' '.join(cmd) + ' ' + parameters
             else:
                 cmd = ' '.join(cmd + parameters)
-        elif isinstance(parameters, string_types):
-                parameters = shlex.split(parameters)
-                cmd += parameters
         else:
+            if isinstance(parameters, string_types):
+                parameters = shlex.split(parameters)
             cmd += parameters
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
         stdout, stderr = p.communicate(input=stdin)
