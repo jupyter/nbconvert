@@ -65,7 +65,6 @@ package_data = {
     ],
 }
 
-
 jupyterlab_css_version = '0.1.0'
 css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
 
@@ -77,7 +76,7 @@ theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/e
 
 
 class FetchCSS(Command):
-    description = "Fetch Notebook CSS from CDN"
+    description = "Fetch JupyterLab CSS from CDN"
     user_options = []
 
     def initialize_options(self):
@@ -126,7 +125,7 @@ class FetchCSS(Command):
             if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
                 print("Already have CSS, moving on.")
             else:
-                raise OSError("Need Notebook CSS to proceed.")
+                raise OSError("Need JupyterLab CSS to proceed.")
             return
 
         with open(css_dest, 'wb') as f:
@@ -210,7 +209,8 @@ setup_args = dict(
 setup_args['install_requires'] = [
     'mistune>=0.8.1',
     'jinja2>=2.4',
-    'pygments',
+    'pygments>=2.4.1',
+    'jupyterlab_pygments',
     'traitlets>=4.2',
     'jupyter_core',
     'nbformat>=4.4',

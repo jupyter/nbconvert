@@ -9,9 +9,11 @@ import io
 import hashlib
 import nbconvert.resources
 
-from traitlets import Unicode
-from .base import Preprocessor
+from traitlets import Unicode, Union, Type
+from pygments.style import Style
+from jupyterlab_pygments import JupyterStyle
 
+from .base import Preprocessor
 
 try:
     from notebook import DEFAULT_STATIC_FILES_PATH
@@ -28,12 +30,13 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
                               help="CSS highlight class identifier"
     ).tag(config=True)
 
-    style = Unicode('default',
-            help='Name of the pygments style to use'
+    style = Union([Unicode('default'), Type(klass=Style)],
+                  help='Name of the pygments style to use',
+                  default_value=JupyterStyle
     ).tag(config=True)
 
     theme = Unicode('light',
-            help='JupyterLab CSS theme'
+                    help='JupyterLab CSS theme'
     ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
@@ -44,9 +47,9 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         """Fetch and add CSS to the resource dictionary
 
         Fetch CSS from IPython and Pygments to add at the beginning
-        of the html files.  Add this css in resources in the 
+        of the html files.  Add this css in resources in the
         "inlining.css" key
-        
+
         Parameters
         ----------
         nb : NotebookNode
@@ -60,19 +63,19 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         return nb, resources
 
     def _generate_header(self, resources):
-        """ 
-        Fills self.header with lines of CSS extracted from IPython 
+        """
+        Fills self.header with lines of CSS extracted from IPython
         and Pygments.
         """
         from pygments.formatters import HtmlFormatter
         header = []
-        
+
         # Construct path to Jupyter CSS
         sheet_filename = os.path.join(
             os.path.dirname(nbconvert.resources.__file__),
             'index.css',
         )
-        
+
         # Load style CSS file.
         with io.open(sheet_filename, encoding='utf-8') as f:
             header.append(f.read())
@@ -82,57 +85,14 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
             os.path.dirname(nbconvert.resources.__file__),
             'theme-%s.css' % self.theme,
         )
-        
+
         # Load style theme file.
         with io.open(theme_filename, encoding='utf-8') as f:
             header.append(f.read())
 
         # Add pygments CSS
-        # formatter = HtmlFormatter(style=self.style)
-        # pygments_css = formatter.get_style_defs(self.highlight_class)
-
-        pygments_css = '''
-.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
-.highlight  { background: var(--jp-cell-editor-background); }
-.highlight .c { color: var(--jp-mirror-editor-comment-color) } /* Comment */
-.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
-.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
-.highlight .o { color: var(--jp-mirror-editor-operator-color) } /* Operator */
-.highlight .ch { color: var(--jp-mirror-editor-comment-color) } /* Comment.Hashbang */
-.highlight .cm { color: var(--jp-mirror-editor-comment-color) } /* Comment.Multiline */
-.highlight .cp { color: var(--jp-mirror-editor-comment-color) } /* Comment.Preproc */
-.highlight .cpf { color: var(--jp-mirror-editor-comment-color) } /* Comment.PreprocFile */
-.highlight .c1 { color: var(--jp-mirror-editor-comment-color) } /* Comment.Single */
-.highlight .cs { color: var(--jp-mirror-editor-comment-color) } /* Comment.Special */
-.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
-.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
-.highlight .m { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number */
-.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
-.highlight .ow { color: var(--jp-mirror-editor-operator-color) } /* Operator.Word */
-.highlight .mb { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number.Bin */
-.highlight .mf { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number.Float */
-.highlight .mh { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number.Hex */
-.highlight .mi { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number.Integer */
-.highlight .mo { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number.Oct */
-.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
-.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
-.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
-.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
-.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
-.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
-.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
-.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
-.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
-.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
-.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
-.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
-.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
-.highlight .il { color: var(--jp-mirror-editor-number-color); font-weight: bold } /* Literal.Number.Integer.Long */
-'''
+        formatter = HtmlFormatter(style=self.style)
+        pygments_css = formatter.get_style_defs(self.highlight_class)
         header.append(pygments_css)
 
         # Load the user's custom CSS and IPython's default custom CSS.  If they
