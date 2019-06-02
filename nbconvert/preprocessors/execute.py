@@ -540,7 +540,8 @@ class ExecutePreprocessor(Preprocessor):
         return False
 
     def run_cell(self, cell, cell_index=0):
-        parent_msg_id = self.kc.execute(cell.source)
+        parent_msg_id = self.kc.execute(
+            cell.source, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
         deadline = None
