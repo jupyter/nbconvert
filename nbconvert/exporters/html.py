@@ -42,7 +42,7 @@ class HTMLExporter(TemplateExporter):
         return os.path.join(jupyter_config_dir(), "nbconvert", "templates", "html")
 
     @default('template_data_paths')
-    def _user_config_template_path_default(self):
+    def _template_data_paths_default(self):
         return jupyter_path("nbconvert", "templates", "html")
 
     @default('template_file')
