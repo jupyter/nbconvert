@@ -44,6 +44,10 @@ class LatexExporter(TemplateExporter):
     @default('user_config_template_path')
     def _user_config_template_path_default(self):
         return os.path.join(jupyter_config_dir(), "nbconvert", "templates", "latex")
+
+    @default('template_data_paths')
+    def _user_config_template_path_default(self):
+        return jupyter_path("nbconvert", "templates", "latex")
     
     #Extension that the template files use.
     template_extension = Unicode(".tplx").tag(config=True)
