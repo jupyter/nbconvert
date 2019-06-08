@@ -281,7 +281,7 @@ class NbConvertApp(JupyterApp):
         """Initialize application, notebooks, writer, and postprocessor"""
         self.init_syspath()
         super(NbConvertApp, self).initialize(argv)
-        ensure_user_template_dir_exists()
+        ensure_template_dirs_exists()
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
