@@ -7,7 +7,7 @@ import os
 
 from traitlets import Unicode, default
 from traitlets.config import Config
-from jupyter_core.paths import jupyter_config_dir
+from jupyter_core.paths import jupyter_config_dir, jupyter_path
 
 from nbconvert.filters.highlight import Highlight2Latex
 from nbconvert.filters.filter_links import resolve_references
