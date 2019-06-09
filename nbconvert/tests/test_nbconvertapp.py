@@ -318,7 +318,7 @@ class TestNbConvertApp(TestsBase):
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
                 assert "Out[" in text2
-                
+
     def test_no_input(self):
         """
         Verify that the html has no input when given --no-input.
@@ -369,6 +369,14 @@ class TestNbConvertApp(TestsBase):
             output1, _ = self.nbconvert('--to markdown --stdout notebook3*.ipynb')  # no cell execution
             output2, _ = self.nbconvert('--to markdown --allow-errors --stdout notebook3*.ipynb')  # no cell execution; --allow-errors should have no effect
             output3, _ = self.nbconvert('--execute --allow-errors --to markdown --stdout notebook3*.ipynb')  # with cell execution; errors are allowed
+
+            print("-----------output1-----------")
+            print(output1)
+            print("-----------output2-----------")
+            print(output2)
+            print("-----------output3-----------")
+            print(output3)
+            print("-----------done-----------")
 
             # Un-executed outputs should not contain either
             # of the two numbers computed in the notebook.
