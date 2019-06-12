@@ -371,7 +371,7 @@ class ExecutePreprocessor(Preprocessor):
                 for attr in ['nb', 'km', 'kc']:
                     delattr(self, attr)
 
-    def preprocess(self, nb, resources, km=None):
+    def preprocess(self, nb, resources=None, km=None):
         """
         Preprocess notebook executing each code cell.
 
@@ -381,7 +381,7 @@ class ExecutePreprocessor(Preprocessor):
         ----------
         nb : NotebookNode
             Notebook being executed.
-        resources : dictionary
+        resources : dictionary (optional)
             Additional resources used in the conversion process. For example,
             passing ``{'metadata': {'path': run_path}}`` sets the
             execution path to ``run_path``.
@@ -396,6 +396,9 @@ class ExecutePreprocessor(Preprocessor):
         resources : dictionary
             Additional resources used in the conversion process.
         """
+
+        if not resources:
+            resources = {}
 
         with self.setup_preprocessor(nb, resources, km=km):
             self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
@@ -540,7 +543,8 @@ class ExecutePreprocessor(Preprocessor):
         return False
 
     def run_cell(self, cell, cell_index=0):
-        parent_msg_id = self.kc.execute(cell.source)
+        parent_msg_id = self.kc.execute(
+            cell.source, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
         deadline = None

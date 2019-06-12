@@ -166,7 +166,7 @@ class IPythonRenderer(mistune.Renderer):
                 if preferred_mime_type in attachment:
                     break
             else:  # otherwise we choose the first mimetype we can find
-                preferred_mime_types = attachment.keys()[0]
+                preferred_mime_type = list(attachment.keys())[0]
             mime_type = preferred_mime_type
             data = attachment[mime_type]
             src = 'data:' + mime_type + ';base64,' + data
