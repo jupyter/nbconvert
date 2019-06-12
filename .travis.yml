@@ -38,6 +38,7 @@ script:
     - check-manifest
     # cd so we test the install, not the repo
     - cd `mktemp -d`
-    - py.test --cov nbconvert -v --pyargs nbconvert
+    # Only run coverage over fast tests, as the slow tests go substantially slower with that turned on
+    - py.test --slow-only -v --pyargs nbconvert && py.test --skip-slow --cov nbconvert -v --pyargs nbconvert
 after_success:
     - codecov

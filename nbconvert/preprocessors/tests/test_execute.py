@@ -296,6 +296,8 @@ def test_parallel_notebooks(capfd, tmpdir):
     captured = capfd.readouterr()
     assert captured.err == ""
 
+@pytest.mark.skipif(not PY3,
+                    reason = "Not tested for Python 2")
 @pytest.mark.slow
 def test_many_parallel_notebooks(capfd):
     """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
@@ -315,8 +317,8 @@ def test_many_parallel_notebooks(capfd):
 
     with ProcessPool(max_workers=4) as pool:
         futures = [
-            # Need at least 60s for Travis even though 10 is enough on most dev machines
-            pool.schedule(run_notebook, args=(input_file, opts, res), timeout=60)
+            # Travis needs a lot more time even though 10s is enough on most dev machines
+            pool.schedule(run_notebook, args=(input_file, opts, res), timeout=240)
             for i in range(0, 8)
         ]
         for index, future in enumerate(futures):
