@@ -305,8 +305,8 @@ def test_many_parallel_notebooks(capfd):
     due to using the same SQLite history database.
     """
 
-    # Need at least 15s for Travis even though 5 is enough on most dev machines
-    opts = dict(kernel_name="python", timeout=15)
+    # I've put timeout=5, which is a bit aggressive, but in testing it proved to fail
+    opts = dict(kernel_name="python", timeout=5)
     input_name = "HelloWorld.ipynb"
     input_file = os.path.join(current_dir, "files", input_name)
     res = PreprocessorTestsBase().build_resources()
@@ -317,7 +317,8 @@ def test_many_parallel_notebooks(capfd):
 
     with ProcessPool(max_workers=4) as pool:
         futures = [
-            pool.schedule(run_notebook, args=(input_file, opts, res), timeout=10)
+            # Need at least 30s for Travis even though 10 is enough on most dev machines
+            pool.schedule(run_notebook, args=(input_file, opts, res), timeout=30)
             for i in range(0, 8)
         ]
         for index, future in enumerate(futures):
