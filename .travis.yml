@@ -38,6 +38,8 @@ script:
     - check-manifest
     # cd so we test the install, not the repo
     - cd `mktemp -d`
+    # Needed for pytest configurations to load correctly :/
+    - cp $TRAVIS_BUILD_DIR/conftest.py ./
     # Only run coverage over fast tests, as the slow tests go substantially slower with that turned on
     - py.test --slow-only -v --pyargs nbconvert && py.test --skip-slow --cov nbconvert -v --pyargs nbconvert
 after_success:
