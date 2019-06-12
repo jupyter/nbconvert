@@ -296,6 +296,74 @@ def test_parallel_notebooks(capfd, tmpdir):
     captured = capfd.readouterr()
     assert captured.err == ""
 
+@pytest.mark.xfail
+def test_many_parallel_notebooks(capfd):
+    """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
+    
+    Specifically, many IPython kernels when run simultaneously would enocunter errors
+    due to using the same SQLite history database.
+    """
+
+    # I've put timeout=5, which is a bit aggressive, but if I destroy the ZMQ context
+    # below, timeout=5 works well enough.
+    opts = dict(kernel_name="python", timeout=5)
+    input_name = "HelloWorld.ipynb"
+    input_file = os.path.join(current_dir, "files", input_name)
+    res = PreprocessorTestsBase().build_resources()
+    res["metadata"]["path"] = os.path.join(current_dir, "files")
+
+    # run once, to trigger creating the original context
+    run_notebook(input_file, opts, res)
+
+    # Destroy the context - if you don't do this, the context
+    # will survive across the fork, and then fail to start properly.
+    import zmq
+    zmq.Context.instance().destroy()
+    
+    with mp.Pool(4) as pool:
+        pool.starmap(run_notebook, [(input_file, opts, res) for _ in range(8)])
+
+    captured = capfd.readouterr()
+    assert captured.err == ""
+
+@pytest.mark.xfail
+def test_parallel_fork_notebooks(capfd):
+    """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
+    
+    Specifically, many IPython kernels when run simultaneously would enocunter errors
+    due to using the same SQLite history database.
+    """
+
+    opts = dict(kernel_name="python", timeout=5)
+    input_name = "Sleep One.ipynb"
+    input_file = os.path.join(current_dir, "files", input_name)
+
+    fast_name = "HelloWorld.ipynb"
+    fast_file = os.path.join(current_dir, "files", fast_name)
+
+
+    res = PreprocessorTestsBase().build_resources()
+    res["metadata"]["path"] = os.path.join(current_dir, "files")
+
+    # run once, to trigger creating the original context
+    thread = threading.Thread(target=run_notebook, args=(input_file, opts, res))
+    thread.start()
+
+    try:
+        # Destroy the context - if you don't do this, the context
+        # will survive across the fork, and then fail to start properly.
+        # but if you do do this, then the context will get destroyed
+        # while the kernel is running in the current thread.
+        import zmq
+        zmq.Context.instance().destroy()
+        
+        with mp.Pool(4) as pool:
+            pool.starmap(run_notebook, [(fast_file, opts, res) for _ in range(8)])
+    finally:
+        thread.join(timeout=1)
+    
+    captured = capfd.readouterr()
+    assert captured.err == ""
 
 @pytest.mark.skipif(not PY3,
                     reason = "Not tested for Python 2")
