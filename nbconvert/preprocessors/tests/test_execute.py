@@ -305,8 +305,8 @@ def test_many_parallel_notebooks(capfd):
     due to using the same SQLite history database.
     """
 
-    # I've put timeout=5, which is a bit aggressive, but in testing it proved to fail
-    opts = dict(kernel_name="python", timeout=5)
+    # Need at least 15s for Travis even though 5 is enough on most dev machines
+    opts = dict(kernel_name="python", timeout=15)
     input_name = "HelloWorld.ipynb"
     input_file = os.path.join(current_dir, "files", input_name)
     res = PreprocessorTestsBase().build_resources()
