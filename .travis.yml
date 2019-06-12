@@ -37,6 +37,6 @@ install:
 script:
     - check-manifest
     # Only run coverage over fast tests, as the slow tests go substantially slower with that turned on
-    - py.test --slow-only -v && py.test --skip-slow --cov nbconvert -v
+    - py.test --slow-only -v nbconvert && py.test --skip-slow --cov nbconvert -v nbconvert
 after_success:
     - codecov
