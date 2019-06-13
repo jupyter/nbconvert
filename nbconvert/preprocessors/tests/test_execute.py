@@ -80,13 +80,11 @@ def build_preprocessor(opts):
     return preprocessor
 
 
-def run_notebook(filename, opts, resources, counter=None):
+def run_notebook(filename, opts, resources):
     """Loads and runs a notebook, returning both the version prior to
     running it and the version after running it.
 
     """
-    print("started {}".format(counter))
-
     with io.open(filename) as f:
         input_nb = nbformat.read(f, 4)
 
@@ -318,7 +316,7 @@ def test_many_parallel_notebooks(capfd):
     with ProcessPool(max_workers=4) as pool:
         futures = [
             # Travis needs a lot more time even though 10s is enough on most dev machines
-            pool.schedule(run_notebook, args=(input_file, opts, res, i), timeout=30)
+            pool.schedule(run_notebook, args=(input_file, opts, res), timeout=30)
             for i in range(0, 8)
         ]
         for index, future in enumerate(futures):
