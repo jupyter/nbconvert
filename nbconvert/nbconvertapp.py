@@ -517,7 +517,7 @@ class NbConvertApp(JupyterApp):
         Return a string containing descriptions of all the flags.
         """
         flags = "The following flags are defined:\n\n"
-        for flag, (cfg, fhelp) in NbConvertApp().flags.items():
+        for flag, (cfg, fhelp) in self.flags.items():
             flags += "{}\n".format(flag)
             flags += indent(fill(fhelp, 80), '\t') + '\n\n'
             flags += indent(fill("Long Form: "+str(cfg), 80), '\t') + '\n\n'
@@ -527,7 +527,7 @@ class NbConvertApp(JupyterApp):
         """Return a string containing all of the aliases"""
 
         aliases = "The folowing aliases are defined:\n\n"
-        for alias, longname in NbConvertApp().aliases.items():
+        for alias, longname in self.aliases.items():
             aliases += "\t**{}** ({})\n\n".format(alias, longname)
         return aliases
 
@@ -541,7 +541,7 @@ class NbConvertApp(JupyterApp):
                     for category in ['app', 'exporter', 'writer', 'preprocessor', 'postprocessor']}
         accounted_for = {c for category in categories.values() for c in category}
         categories['other']=  [c for c in self._classes_inc_parents() if c not in accounted_for]
-        
+
         header = dedent("""
                         {section} Options
                         -----------------------
