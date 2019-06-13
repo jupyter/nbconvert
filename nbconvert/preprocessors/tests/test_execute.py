@@ -300,14 +300,13 @@ def test_parallel_notebooks(capfd, tmpdir):
 
 @pytest.mark.skipif(not PY3,
                     reason = "Not tested for Python 2")
-@pytest.mark.slow
 def test_many_parallel_notebooks(capfd):
     """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
 
     Specifically, many IPython kernels when run simultaneously would enocunter errors
     due to using the same SQLite history database.
     """
-    opts = dict(kernel_name="python", timeout=15, startup_timeout=600)
+    opts = dict(kernel_name="python", timeout=5)
     input_name = "HelloWorld.ipynb"
     input_file = os.path.join(current_dir, "files", input_name)
     res = PreprocessorTestsBase().build_resources()
@@ -319,7 +318,7 @@ def test_many_parallel_notebooks(capfd):
     with ProcessPool(max_workers=4) as pool:
         futures = [
             # Travis needs a lot more time even though 10s is enough on most dev machines
-            pool.schedule(run_notebook, args=(input_file, opts, res, i), timeout=240)
+            pool.schedule(run_notebook, args=(input_file, opts, res, i), timeout=30)
             for i in range(0, 8)
         ]
         for index, future in enumerate(futures):
