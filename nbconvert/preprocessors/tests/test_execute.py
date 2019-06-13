@@ -305,8 +305,7 @@ def test_many_parallel_notebooks(capfd):
     Specifically, many IPython kernels when run simultaneously would enocunter errors
     due to using the same SQLite history database.
     """
-    # I've put timeout=5, which is a bit aggressive, but in testing it proved to fail
-    opts = dict(kernel_name="python", timeout=5)
+    opts = dict(kernel_name="python", timeout=15, startup_timeout=600)
     input_name = "HelloWorld.ipynb"
     input_file = os.path.join(current_dir, "files", input_name)
     res = PreprocessorTestsBase().build_resources()
