@@ -524,7 +524,7 @@ class NbConvertApp(JupyterApp):
         return flags
 
     def document_alias_help(self):
-        """Print the alias parts of the help."""
+        """Return a string containing all of the aliases"""
 
         aliases = "The folowing aliases are defined:\n\n"
         for alias, longname in NbConvertApp().aliases.items():

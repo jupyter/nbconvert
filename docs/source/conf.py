@@ -20,7 +20,7 @@ import os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
-# Automatically generate the config_options.rst
+# Automatically generate config_options.rst
 with open('../autogen_config.py') as f:
     exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
 
