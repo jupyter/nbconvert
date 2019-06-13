@@ -34,9 +34,6 @@ install:
     - pip install nbconvert[execute,serve,test]
     - pip install check-manifest
     - python -m ipykernel.kernelspec --user
-    # Temporal solution to travis issue #155
-    - sudo chmod 777 /dev/shm
-    - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
 script:
     - check-manifest
     # Only run coverage over fast tests, as the slow tests go substantially slower with that turned on
