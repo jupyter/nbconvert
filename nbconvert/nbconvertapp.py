@@ -13,7 +13,8 @@ import logging
 import sys
 import os
 import glob
-from textwrap import fill, indent, dedent
+from textwrap import fill, dedent
+from ipython_genutils.text import indent
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
@@ -519,8 +520,8 @@ class NbConvertApp(JupyterApp):
         flags = "The following flags are defined:\n\n"
         for flag, (cfg, fhelp) in self.flags.items():
             flags += "{}\n".format(flag)
-            flags += indent(fill(fhelp, 80), '\t') + '\n\n'
-            flags += indent(fill("Long Form: "+str(cfg), 80), '\t') + '\n\n'
+            flags += indent(fill(fhelp, 80)) + '\n\n'
+            flags += indent(fill("Long Form: "+str(cfg), 80)) + '\n\n'
         return flags
 
     def document_alias_help(self):
