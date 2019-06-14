@@ -21,7 +21,8 @@ import os
 #sys.path.insert(0, os.path.abspath('.'))
 
 # Automatically generate config_options.rst
-with open('../autogen_config.py') as f:
+import os
+with open(os.path.join(os.path.dirname(__file__), '..', 'autogen_config.py')) as f:
     exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
 
 # -- General configuration ------------------------------------------------
