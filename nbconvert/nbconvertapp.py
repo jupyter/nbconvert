@@ -13,6 +13,8 @@ import logging
 import sys
 import os
 import glob
+from textwrap import fill, dedent
+from ipython_genutils.text import indent
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets.config import catch_config_error, Configurable
@@ -510,6 +512,50 @@ class NbConvertApp(JupyterApp):
             input_buffer = unicode_stdin_stream()
             # default name when conversion from stdin
             self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
+
+    def document_flag_help(self):
+        """
+        Return a string containing descriptions of all the flags.
+        """
+        flags = "The following flags are defined:\n\n"
+        for flag, (cfg, fhelp) in self.flags.items():
+            flags += "{}\n".format(flag)
+            flags += indent(fill(fhelp, 80)) + '\n\n'
+            flags += indent(fill("Long Form: "+str(cfg), 80)) + '\n\n'
+        return flags
+
+    def document_alias_help(self):
+        """Return a string containing all of the aliases"""
+
+        aliases = "The folowing aliases are defined:\n\n"
+        for alias, longname in self.aliases.items():
+            aliases += "\t**{}** ({})\n\n".format(alias, longname)
+        return aliases
+
+    def document_config_options(self):
+        """
+        Provides a much improves version of the configuration documentation by
+        breaking the configuration options into app, exporter, writer,
+        preprocessor, postprocessor, and other sections.
+        """
+        categories = {category: [c for c in self._classes_inc_parents() if category in c.__name__.lower()]
+                    for category in ['app', 'exporter', 'writer', 'preprocessor', 'postprocessor']}
+        accounted_for = {c for category in categories.values() for c in category}
+        categories['other']=  [c for c in self._classes_inc_parents() if c not in accounted_for]
+
+        header = dedent("""
+                        {section} Options
+                        -----------------------
+
+                        """)
+        sections = ""
+        for category in categories:
+            sections += header.format(section=category.title())
+            if category in ['exporter','preprocessor','writer']:
+                sections += ".. image:: _static/{image}_inheritance.png\n\n".format(image=category)
+            sections += '\n'.join(c.class_config_rst_doc() for c in categories[category])
+
+        return sections
             
 #-----------------------------------------------------------------------------
 # Main entry point
