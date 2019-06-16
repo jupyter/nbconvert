@@ -555,7 +555,7 @@ class NbConvertApp(JupyterApp):
                 sections += ".. image:: _static/{image}_inheritance.png\n\n".format(image=category)
             sections += '\n'.join(c.class_config_rst_doc() for c in categories[category])
 
-        return sections.replace(':',r'\:')
+        return sections.replace(' : ',r' \: ')
             
 #-----------------------------------------------------------------------------
 # Main entry point
