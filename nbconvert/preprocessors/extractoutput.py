@@ -12,7 +12,7 @@ import os
 import json
 from mimetypes import guess_extension
 
-from traitlets import Unicode, Set
+from traitlets import Unicode, Set, Bool
 from .base import Preprocessor
 
 if sys.version_info < (3,):
@@ -54,6 +54,11 @@ class ExtractOutputPreprocessor(Preprocessor):
         {'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}
     ).tag(config=True)
 
+    escape_dir_spaces = Bool(
+        False, help="If True, spaces will be replaced with underscores in the "
+        "output directory."
+    ).tag(config=True)
+
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
@@ -72,8 +77,12 @@ class ExtractOutputPreprocessor(Preprocessor):
         #Get the unique key from the resource dict if it exists.  If it does not
         #exist, use 'output' as the default.  Also, get files directory if it
         #has been specified
-        unique_key = resources.get('unique_key', 'output').replace(' ', '_')
-        output_files_dir = resources.get('output_files_dir', None).replace(' ', '_')
+        unique_key = resources.get('unique_key', 'output')
+        output_files_dir = resources.get('output_files_dir', None)
+        if self.escape_dir_spaces:
+            unique_key = unique_key.replace(' ', '_')
+            if output_files_dir is not None:
+                output_files_dir = unique_key.replace(' ', '_')
 
         #Make sure outputs key exists
         if not isinstance(resources['outputs'], dict):

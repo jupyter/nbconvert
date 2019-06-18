@@ -172,7 +172,8 @@ class NbConvertApp(JupyterApp):
     output_files_dir = Unicode('{notebook_name}_files',
          help='''Directory to copy extra files (figures) to.
                '{notebook_name}' in the string will be converted to notebook
-               basename. Spaces will be replaced with underscores.'''
+               basename. Spaces will be replaced with underscores when using
+               the latex/pdf exporters.'''
     ).tag(config=True)
 
     examples = Unicode(u"""

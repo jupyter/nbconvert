@@ -56,7 +56,8 @@ class LatexExporter(TemplateExporter):
                 'display_data_priority' : ['text/latex', 'application/pdf', 'image/png', 'image/jpeg', 'image/svg+xml', 'text/markdown', 'text/plain']
                 },
              'ExtractOutputPreprocessor': {
-                    'enabled':True
+                    'enabled':True,
+                    'escape_dir_spaces':True
                  },
              'SVG2PDFPreprocessor': {
                     'enabled':True
