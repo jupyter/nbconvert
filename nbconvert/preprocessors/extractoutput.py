@@ -72,8 +72,8 @@ class ExtractOutputPreprocessor(Preprocessor):
         #Get the unique key from the resource dict if it exists.  If it does not
         #exist, use 'output' as the default.  Also, get files directory if it
         #has been specified
-        unique_key = resources.get('unique_key', 'output')
-        output_files_dir = resources.get('output_files_dir', None)
+        unique_key = resources.get('unique_key', 'output').replace(' ', '_')
+        output_files_dir = resources.get('output_files_dir', None).replace(' ', '_')
 
         #Make sure outputs key exists
         if not isinstance(resources['outputs'], dict):
