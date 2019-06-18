@@ -175,7 +175,7 @@ class PDFExporter(LatexExporter):
             self.texinputs = resources['metadata']['path']
         else:
             self.texinputs = getcwd()
-        
+
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
             notebook_name = 'notebook'

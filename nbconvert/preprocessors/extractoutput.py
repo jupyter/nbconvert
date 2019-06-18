@@ -81,8 +81,11 @@ class ExtractOutputPreprocessor(Preprocessor):
         output_files_dir = resources.get('output_files_dir', None)
         if self.escape_dir_spaces:
             unique_key = unique_key.replace(' ', '_')
+            resources['unique_key'] = unique_key
             if output_files_dir is not None:
-                output_files_dir = unique_key.replace(' ', '_')
+                output_files_dir = output_files_dir.replace(' ', '_')
+                resources['output_files_dir'] = output_files_dir
+            
 
         #Make sure outputs key exists
         if not isinstance(resources['outputs'], dict):
