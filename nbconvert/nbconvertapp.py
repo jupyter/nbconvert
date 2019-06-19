@@ -28,7 +28,6 @@ from nbconvert import exporters, preprocessors, writers, postprocessors, __versi
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 from .utils.io import unicode_stdin_stream
-from .utils.commands import ensure_template_dirs_exist
 
 #-----------------------------------------------------------------------------
 #Classes and functions
