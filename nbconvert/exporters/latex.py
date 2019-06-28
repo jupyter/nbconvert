@@ -27,25 +27,14 @@ class LatexExporter(TemplateExporter):
     def _file_extension_default(self):
         return '.tex'
 
-    @default('template_file')
-    def _template_file_default(self):
-        return 'article.tplx'
-
-    # Latex constants
-    @default('default_template_path')
-    def _default_template_path_default(self):
-        return os.path.join("..", "templates", "latex")
-
-    @default('template_skeleton_path')
-    def _template_skeleton_path_default(self):
-        return os.path.join("..", "templates", "latex", "skeleton")
 
     @default('template_data_paths')
     def _template_data_paths_default(self):
         return jupyter_path("nbconvert", "templates", "latex")
-    
-    #Extension that the template files use.
-    template_extension = Unicode(".tplx").tag(config=True)
+
+    @default('template_name')
+    def _template_name_default(self):
+        return 'latex'
 
     output_mimetype = 'text/latex'
 

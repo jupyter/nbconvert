@@ -52,7 +52,7 @@ class Exporter(LoggingConfigurable):
     accompanying resources dict.
     """
 
-    file_extension = FilenameExtension('.txt',
+    file_extension = FilenameExtension(
         help="Extension of the file that should be written to disk"
     ).tag(config=True)
 

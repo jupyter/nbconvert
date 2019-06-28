@@ -91,27 +91,27 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook2.py')
 
     def test_absolute_template_file(self):
-        """--template '/path/to/template.tpl'"""
+        """--template-file '/path/to/template.tpl'"""
         with self.create_temp_cwd(['notebook*.ipynb']), tempdir.TemporaryDirectory() as td:
             template = os.path.join(td, 'mytemplate.tpl')
             test_output = 'success!'
             with open(template, 'w') as f:
                 f.write(test_output)
-            self.nbconvert('--log-level 0 notebook2 --template %s' % template)
+            self.nbconvert('--log-level 0 notebook2 --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
             with open('notebook2.html') as f:
                 text = f.read()
             assert text == test_output
 
     def test_relative_template_file(self):
-        """Test --template 'relative/path.tpl'"""
+        """Test --template-file 'relative/path.tpl'"""
         with self.create_temp_cwd(['notebook*.ipynb']):
             os.mkdir('relative')
             template = os.path.join('relative', 'path.tpl')
             test_output = 'success!'
             with open(template, 'w') as f:
                 f.write(test_output)
-            self.nbconvert('--log-level 0 notebook2 --template %s' % template)
+            self.nbconvert('--log-level 0 notebook2 --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
             with open('notebook2.html') as f:
                 text = f.read()
@@ -171,7 +171,7 @@ class TestNbConvertApp(TestsBase):
         """Is embedded png data well formed in HTML?"""
         with self.create_temp_cwd(['notebook2.ipynb']):
             self.nbconvert('--log-level 0 --to HTML '
-                      'notebook2.ipynb --template full')
+                      'notebook2.ipynb --template lab')
             assert os.path.isfile('notebook2.html')
             with open('notebook2.html') as f:
                 assert "data:image/png;base64,b'" not in f.read()
