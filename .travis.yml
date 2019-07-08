@@ -33,7 +33,6 @@ install:
     - pip install -f travis-wheels/wheelhouse . codecov coverage
     - pip install nbconvert[execute,serve,test]
     - pip install check-manifest
-    - pip install -U git+https://github.com/jupyter/jupyter_client.git@master
     - python -m ipykernel.kernelspec --user
 script:
     - check-manifest
