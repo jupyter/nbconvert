@@ -32,6 +32,7 @@ from jupyter_client.kernelspec import KernelSpecManager
 from nbconvert.filters import strip_ansi
 from testpath import modified_env
 from ipython_genutils.py3compat import string_types
+from pebble import ProcessPool
 
 try:
     from queue import Empty  # Py 3
@@ -45,6 +46,11 @@ try:
     from unittest.mock import MagicMock, patch  # Py 3
 except ImportError:
     from mock import MagicMock, patch  # Py 2
+
+
+PY3 = False
+if sys.version_info[0] >= 3:
+    PY3 = True
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
 ipython_input_pat = re.compile(r'<ipython-input-\d+-[0-9a-f]+>')
@@ -74,16 +80,13 @@ def build_preprocessor(opts):
     return preprocessor
 
 
-def run_notebook(filename, opts, resources, preprocess_notebook=None):
+def run_notebook(filename, opts, resources):
     """Loads and runs a notebook, returning both the version prior to
     running it and the version after running it.
 
     """
     with io.open(filename) as f:
         input_nb = nbformat.read(f, 4)
-
-    if preprocess_notebook:
-        input_nb = preprocess_notebook(input_nb)
 
     preprocessor = build_preprocessor(opts)
     cleaned_input_nb = copy.deepcopy(input_nb)
@@ -264,24 +267,14 @@ def test_run_all_notebooks(input_name, opts):
     assert_notebooks_equal(input_nb, output_nb)
 
 
-def label_parallel_notebook(nb, label):
-    """Insert a cell in a notebook which sets the variable `this_notebook` to the string `label`.
-    
-    Used for parallel testing to label two notebooks which are run simultaneously.
-    """
-    label_cell = nbformat.v4.new_code_cell(source="this_notebook = '{}'".format(label))
-    nb.cells.insert(1, label_cell)
-    return nb
-
-
 def test_parallel_notebooks(capfd, tmpdir):
     """Two notebooks should be able to be run simultaneously without problems.
-    
+
     The two notebooks spawned here use the filesystem to check that the other notebook
     wrote to the filesystem."""
 
     opts = dict(kernel_name="python")
-    input_name = "Parallel Execute.ipynb"
+    input_name = "Parallel Execute {label}.ipynb"
     input_file = os.path.join(current_dir, "files", input_name)
     res = notebook_resources()
 
@@ -290,10 +283,9 @@ def test_parallel_notebooks(capfd, tmpdir):
             threading.Thread(
                 target=run_notebook,
                 args=(
-                    input_file,
+                    input_file.format(label=label),
                     opts,
                     res,
-                    functools.partial(label_parallel_notebook, label=label),
                 ),
             )
             for label in ("A", "B")
@@ -304,6 +296,34 @@ def test_parallel_notebooks(capfd, tmpdir):
     captured = capfd.readouterr()
     assert captured.err == ""
 
+@pytest.mark.skipif(not PY3,
+                    reason = "Not tested for Python 2")
+def test_many_parallel_notebooks(capfd):
+    """Ensure that when many IPython kernels are run in parallel, nothing awful happens.
+
+    Specifically, many IPython kernels when run simultaneously would enocunter errors
+    due to using the same SQLite history database.
+    """
+    opts = dict(kernel_name="python", timeout=5)
+    input_name = "HelloWorld.ipynb"
+    input_file = os.path.join(current_dir, "files", input_name)
+    res = PreprocessorTestsBase().build_resources()
+    res["metadata"]["path"] = os.path.join(current_dir, "files")
+
+    # run once, to trigger creating the original context
+    run_notebook(input_file, opts, res)
+
+    with ProcessPool(max_workers=4) as pool:
+        futures = [
+            # Travis needs a lot more time even though 10s is enough on most dev machines
+            pool.schedule(run_notebook, args=(input_file, opts, res), timeout=30)
+            for i in range(0, 8)
+        ]
+        for index, future in enumerate(futures):
+            future.result()
+
+    captured = capfd.readouterr()
+    assert captured.err == ""
 
 class TestExecute(PreprocessorTestsBase):
     """Contains test functions for execute.py"""
