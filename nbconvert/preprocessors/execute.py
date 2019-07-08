@@ -426,7 +426,7 @@ class ExecutePreprocessor(Preprocessor):
                 if buffers:
                     widget['buffers'] = buffers
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
         """
         Executes a single code cell. See base.py for details.
 
@@ -435,7 +435,7 @@ class ExecutePreprocessor(Preprocessor):
         if cell.cell_type != 'code' or not cell.source.strip():
             return cell, resources
 
-        reply, outputs = self.run_cell(cell, cell_index)
+        reply, outputs = self.run_cell(cell, cell_index, store_history)
         # Backwards compatibility for processes that wrap run_cell
         cell.outputs = outputs
 
@@ -542,9 +542,9 @@ class ExecutePreprocessor(Preprocessor):
             return True
         return False
 
-    def run_cell(self, cell, cell_index=0):
-        parent_msg_id = self.kc.execute(
-            cell.source, stop_on_error=not self.allow_errors)
+    def run_cell(self, cell, cell_index=0, store_history=True):
+        parent_msg_id = self.kc.execute(cell.source,
+            store_history=store_history, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
         deadline = None

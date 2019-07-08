@@ -14,22 +14,17 @@
 # serve to show the default.
 
 import os
+import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../../.')) # path to nbconvert for autodoc
 
-if os.environ.get('READTHEDOCS', ''):
-    # RTD doesn't use the repo's Makefile to build docs. We run
-    # autogen_config.py to create the config docs (i.e. Configuration Options
-    # page).
-    import subprocess
-    
-    #  subprocess.run([sys.executable,'-m','pip','install','-e','../../.'])
-    
-    with open('../autogen_config.py') as f:
-        exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
+# Automatically generate config_options.rst
+with open(os.path.join(os.path.dirname(__file__), '..', 'autogen_config.py')) as f:
+    exec(compile(f.read(), 'autogen_config.py', 'exec'), {})
 
 # -- General configuration ------------------------------------------------
 
