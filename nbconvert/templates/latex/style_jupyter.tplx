@@ -129,7 +129,7 @@
 ((* block execute_result scoped *))
     ((*- for type in output.data | filter_data_type -*))
         ((*- if type in ['text/plain']*))
-            ((( draw_cell(output.data['text/plain'] | wrap_text(charlim) | escape_latex, cell, 'Out', 'outcolor', '\\boxspacing') )))
+            ((( draw_cell(output.data['text/plain'] | wrap_text(charlim) | escape_latex | ansi2latex, cell, 'Out', 'outcolor', '\\boxspacing') )))
         ((* else -*))
             ((( " " )))
             ((( draw_prompt(cell, 'Out', 'outcolor','') )))((( super() )))
