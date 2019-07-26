@@ -27,6 +27,7 @@ addons:
     - cm-super # more fonts
     - texlive-xetex # latex to pdf converter
     - inkscape # for svgs in pdf output
+    - lmodern # latex package
 install:
     - wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb && sudo dpkg -i pandoc-2.7-1-amd64.deb
     - pip install --upgrade setuptools pip pytest
