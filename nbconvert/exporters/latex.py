@@ -7,6 +7,7 @@ import os
 
 from traitlets import Unicode, default
 from traitlets.config import Config
+from jupyter_core.paths import jupyter_path
 
 from nbconvert.filters.highlight import Highlight2Latex
 from nbconvert.filters.filter_links import resolve_references
@@ -38,6 +39,10 @@ class LatexExporter(TemplateExporter):
     @default('template_skeleton_path')
     def _template_skeleton_path_default(self):
         return os.path.join("..", "templates", "latex", "skeleton")
+
+    @default('template_data_paths')
+    def _template_data_paths_default(self):
+        return jupyter_path("nbconvert", "templates", "latex")
     
     #Extension that the template files use.
     template_extension = Unicode(".tplx").tag(config=True)
