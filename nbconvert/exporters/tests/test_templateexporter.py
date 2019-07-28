@@ -11,7 +11,6 @@ from traitlets import default
 from traitlets.config import Config
 from jinja2 import DictLoader, TemplateNotFound
 from nbformat import v4
-from jupyter_core.paths import jupyter_config_dir
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
@@ -20,7 +19,6 @@ from ..rst import RSTExporter
 from ..html import HTMLExporter
 from ..markdown import MarkdownExporter
 from testpath import tempdir
-from tempfile import NamedTemporaryFile
 
 import pytest
 
@@ -427,14 +425,3 @@ class TestExporter(ExportersTestsBase):
             # give it a default if not specified
             exporter.template_file = 'python'
         return exporter
-
-    def test_config_dir_template(self):
-        dir = os.path.join(jupyter_config_dir(), 'nbconvert', 'templates')
-        with NamedTemporaryFile(dir=dir, suffix='.tpl', delete=False) as template:
-            template.write('test'.encode('utf-8'))
-            template.close() # must close file to test on windows.
-
-            (output, resources) = TemplateExporter(template_file=template.name).from_filename(self._get_notebook())
-
-            os.remove(template.name)
-            assert output == "test"
