@@ -14,8 +14,6 @@ This template does not define a docclass, the inheriting class must define this.
     
     ((* block packages *))
     \usepackage{fontspec}
-    % Nicer default font (+ math font) than Computer Modern for most use cases
-    \usepackage{mathpazo}
 
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
