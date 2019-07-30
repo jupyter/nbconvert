@@ -75,7 +75,6 @@ class ExtractOutputPreprocessor(Preprocessor):
         unique_key = resources.get('unique_key', 'output')
         output_files_dir = resources.get('output_files_dir', None)
 
-
         #Make sure outputs key exists
         if not isinstance(resources['outputs'], dict):
             resources['outputs'] = {}
