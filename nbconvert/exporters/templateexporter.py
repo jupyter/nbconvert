@@ -319,6 +319,8 @@ class TemplateExporter(Exporter):
 
         # Top level variables are passed to the template_exporter here.
         output = self.template.render(nb=nb_copy, resources=resources)
+        if resources.get('strip_preceding_newlines', True):
+            output = output.lstrip('\r\n')
         return output, resources
 
     def _register_filter(self, environ, name, jinja_filter):
