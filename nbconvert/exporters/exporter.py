@@ -168,7 +168,7 @@ class Exporter(LoggingConfigurable):
         if not 'metadata' in resources or resources['metadata'] == '':
             resources['metadata'] = ResourcesDict()
         path, basename = os.path.split(filename)
-        notebook_name = basename[:basename.rfind('.')]
+        notebook_name = os.path.splitext(basename)[0]
         resources['metadata']['name'] = notebook_name
         resources['metadata']['path'] = path
 
