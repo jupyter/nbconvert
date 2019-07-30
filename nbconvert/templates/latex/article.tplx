@@ -14,4 +14,4 @@
 
 ((*- block docclass -*))
 \documentclass[11pt]{article}
-((* endblock docclass *))
+((*- endblock docclass -*))
