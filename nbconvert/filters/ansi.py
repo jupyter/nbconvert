@@ -189,6 +189,10 @@ def _ansi2anything(text, converter):
     numbers = []
     out = []
 
+    fix_ending_space = (converter == _latexconverter) and text.endswith('\n')
+    if fix_ending_space:
+        text = text[:-1]
+
     while text:
         m = _ANSI_RE.search(text)
         if m:
@@ -258,7 +262,11 @@ def _ansi2anything(text, converter):
                 bg = n - 100 + 8
             else:
                 pass  # Unknown codes are ignored
-    return ''.join(out)
+
+    output = ''.join(out)
+    if fix_ending_space:
+        output += '\n'
+    return output
 
 
 def _get_extended_color(numbers):
