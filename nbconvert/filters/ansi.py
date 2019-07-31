@@ -74,7 +74,9 @@ def ansi2latex(text):
     fix_ending_space = text.endswith('\n')
     if fix_ending_space:
         text = text[:-1]
+
     text = _ansi2anything(text, _latexconverter)
+
     if fix_ending_space:
         text += '\n'
     return text
@@ -264,7 +266,6 @@ def _ansi2anything(text, converter):
                 bg = n - 100 + 8
             else:
                 pass  # Unknown codes are ignored
-
     return ''.join(out)
 
 
