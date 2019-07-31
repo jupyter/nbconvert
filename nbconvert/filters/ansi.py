@@ -71,7 +71,13 @@ def ansi2latex(text):
         Text containing ANSI colors to convert to LaTeX
 
     """
-    return _ansi2anything(text, _latexconverter)
+    fix_ending_space = text.endswith('\n')
+    if fix_ending_space:
+        text = text[:-1]
+    text = _ansi2anything(text, _latexconverter)
+    if fix_ending_space:
+        text += '\n'
+    return text
 
 
 def _htmlconverter(fg, bg, bold, underline, inverse):
@@ -189,10 +195,6 @@ def _ansi2anything(text, converter):
     numbers = []
     out = []
 
-    fix_ending_space = (converter == _latexconverter) and text.endswith('\n')
-    if fix_ending_space:
-        text = text[:-1]
-
     while text:
         m = _ANSI_RE.search(text)
         if m:
@@ -263,10 +265,7 @@ def _ansi2anything(text, converter):
             else:
                 pass  # Unknown codes are ignored
 
-    output = ''.join(out)
-    if fix_ending_space:
-        output += '\n'
-    return output
+    return ''.join(out)
 
 
 def _get_extended_color(numbers):
