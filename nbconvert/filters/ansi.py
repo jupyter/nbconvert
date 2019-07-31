@@ -71,15 +71,9 @@ def ansi2latex(text):
         Text containing ANSI colors to convert to LaTeX
 
     """
-    fix_ending_space = text.endswith('\n')
-    if fix_ending_space:
+    if text.endswith('\n'):
         text = text[:-1]
-
-    text = _ansi2anything(text, _latexconverter)
-
-    if fix_ending_space:
-        text += '\n'
-    return text
+    return _ansi2anything(text, _latexconverter)
 
 
 def _htmlconverter(fg, bg, bold, underline, inverse):
