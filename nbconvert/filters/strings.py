@@ -39,6 +39,7 @@ __all__ = [
     'add_prompts',
     'ascii_only',
     'prevent_list_blocks',
+    'strip_trailing_newline',
 ]
 
 
@@ -241,3 +242,11 @@ def prevent_list_blocks(s):
     out = re.sub('(^\s*)\+', '\\1\+', out)
     out = re.sub('(^\s*)\*', '\\1\*', out)
     return out
+
+def strip_trailing_newline(text):
+    """
+    Strips a newline from the end of text.
+    """
+    if text.endswith('\n'):
+        text = text[:-1]
+    return text

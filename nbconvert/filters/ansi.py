@@ -71,8 +71,6 @@ def ansi2latex(text):
         Text containing ANSI colors to convert to LaTeX
 
     """
-    if text.endswith('\n'):
-        text = text[:-1]
     return _ansi2anything(text, _latexconverter)
 
 

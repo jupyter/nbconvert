@@ -58,6 +58,7 @@ default_filters = {
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
+        'strip_trailing_newline': filters.strip_trailing_newline,
 }
 
 class ExtensionTolerantLoader(BaseLoader):
