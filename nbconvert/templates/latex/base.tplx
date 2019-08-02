@@ -13,7 +13,7 @@ override this.-=))
 ((*- block header -*))
     ((* block docclass *))\documentclass[11pt]{article}((* endblock docclass *))
 
-    ((* block packages -*))
+    ((* block packages *))
     \usepackage[T1]{fontenc}
     % Nicer default font (+ math font) than Computer Modern for most use cases
     \usepackage{mathpazo}
