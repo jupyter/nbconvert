@@ -1,8 +1,8 @@
 
 ((=- Default to the notebook output style -=))
-((* if not cell_style is defined *))
+((*- if not cell_style is defined -*))
     ((* set cell_style = 'style_jupyter.tplx' *))
-((* endif *))
+((*- endif -*))
 
 ((=- Inherit from the specified cell style. -=))
 ((* extends cell_style *))
@@ -12,6 +12,6 @@
 % Latex Article
 %===============================================================================
 
-((* block docclass *))
+((*- block docclass -*))
 \documentclass[11pt]{article}
-((* endblock docclass *))
+((*- endblock docclass -*))

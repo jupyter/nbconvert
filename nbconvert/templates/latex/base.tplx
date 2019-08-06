@@ -1,7 +1,8 @@
-((= Latex base template (must inherit)
+((=- Latex base template (must inherit)
 This template builds upon the abstract template, adding common latex output
-functions.  Figures, data_text,
-This template does not define a docclass, the inheriting class must define this.=))
+functions. Figures, data_text,
+This template defines defines a default docclass, the inheriting class should
+override this.-=))
 
 ((*- extends 'document_contents.tplx' -*))
 
@@ -9,9 +10,9 @@ This template does not define a docclass, the inheriting class must define this.
 % Abstract overrides
 %===============================================================================
 
-((* block header *))
-    ((* block docclass *))((* endblock docclass *))
-    
+((*- block header -*))
+    ((* block docclass *))\documentclass[11pt]{article}((* endblock docclass *))
+
     ((* block packages *))
     \usepackage{iftex}
     \ifPDFTeX
@@ -179,8 +180,7 @@ This template does not define a docclass, the inheriting class must define this.
 ((* endblock header *))
 
 ((* block body *))
-    \begin{document}
-    
+\begin{document}
     ((* block predoc *))
     ((* block maketitle *))\maketitle((* endblock maketitle *))
     ((* block abstract *))((* endblock abstract *))
@@ -192,5 +192,5 @@ This template does not define a docclass, the inheriting class must define this.
     ((* block postdoc *))
     ((* block bibliography *))((* endblock bibliography *))
     ((* endblock postdoc *))
-    \end{document}
+\end{document}
 ((* endblock body *))

@@ -6,9 +6,9 @@ all: clean $(TPLS)
 # see http://flask.pocoo.org/snippets/55/ for more info
 ../latex/skeleton/%.tplx: %.tpl
 	@echo 'generating tex equivalent of $^: $@'
-	@echo '((= Auto-generated template file, DO NOT edit directly!\n' \
+	@echo '((=- Auto-generated template file, DO NOT edit directly!\n' \
 		  '   To edit this file, please refer to ../../skeleton/README.md' \
-		  '=))\n\n' > $@
+		  '-=))\n\n' > $@
 	@sed \
 		-e 's/{%/((*/g' \
 		-e 's/%}/*))/g' \
