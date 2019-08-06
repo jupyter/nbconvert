@@ -73,9 +73,9 @@ class PDFExporter(LatexExporter):
     def _file_extension_default(self):
         return '.pdf'
 
-    def run_command(self, command_list, filename, count, log_function):
+    def run_command(self, command_list, filename, count, log_function, raise_on_failure=None):
         """Run command_list count times.
-        
+
         Parameters
         ----------
         command_list : list
@@ -85,7 +85,10 @@ class PDFExporter(LatexExporter):
             The name of the file to convert.
         count : int
             How many times to run the command.
-        
+         raise_on_failure: Exception class (default None)
+            If provided, will raise the given exception for if an instead of
+            returning False on command failure.
+
         Returns
         -------
         success : bool
@@ -109,7 +112,7 @@ class PDFExporter(LatexExporter):
             raise OSError("{formatter} not found on PATH, if you have not installed "
                           "{formatter} you may need to do so. Find further instructions "
                           "at {link}.".format(formatter=command_list[0], link=link))
-        
+
         times = 'time' if count == 1 else 'times'
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
         
@@ -136,20 +139,24 @@ class PDFExporter(LatexExporter):
                         out = out.decode('utf-8', 'replace')
                     log_function(command, out)
                     self._captured_output.append(out)
+                    if raise_on_failure:
+                        raise raise_on_failure(
+                            'Failed to run "{command}" command:\n{output}'.format(
+                            command=command, output=out))
                     return False # failure
         return True # success
 
-    def run_latex(self, filename):
+    def run_latex(self, filename, raise_on_failure=LatexFailed):
         """Run xelatex self.latex_count times."""
 
         def log_error(command, out):
             self.log.critical(u"%s failed: %s\n%s", command[0], command, out)
 
         return self.run_command(self.latex_command, filename,
-            self.latex_count, log_error)
+            self.latex_count, log_error, raise_on_failure)
 
-    def run_bib(self, filename):
-        """Run bibtex self.latex_count times."""
+    def run_bib(self, filename, raise_on_failure=False):
+        """Run bibtex one time."""
         filename = os.path.splitext(filename)[0]
 
         def log_error(command, out):
@@ -157,7 +164,7 @@ class PDFExporter(LatexExporter):
                 command[0])
             self.log.debug(u"%s output: %s\n%s", command[0], command, out)
 
-        return self.run_command(self.bib_command, filename, 1, log_error)
+        return self.run_command(self.bib_command, filename, 1, log_error, raise_on_failure)
     
     def from_notebook_node(self, nb, resources=None, **kw):
         latex, resources = super(PDFExporter, self).from_notebook_node(
@@ -168,19 +175,17 @@ class PDFExporter(LatexExporter):
             self.texinputs = resources['metadata']['path']
         else:
             self.texinputs = getcwd()
-        
+
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
             notebook_name = 'notebook'
             resources['output_extension'] = '.tex'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
             self.log.info("Building PDF")
-            rc = self.run_latex(tex_file)
-            if rc:
-                rc = self.run_bib(tex_file)
-            if rc:
-                rc = self.run_latex(tex_file)
-            
+            self.run_latex(tex_file)
+            if self.run_bib(tex_file):
+                self.run_latex(tex_file)
+
             pdf_file = notebook_name + '.pdf'
             if not os.path.isfile(pdf_file):
                 raise LatexFailed('\n'.join(self._captured_output))
