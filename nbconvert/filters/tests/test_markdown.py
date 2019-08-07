@@ -159,7 +159,7 @@ class TestMarkdown(TestsBase):
         for case in cases:
             result = markdown2html(case)
             # find the equation in the generated texts
-            search_result = re.search("\$.*\$", result, re.DOTALL)
+            search_result = re.search(r"\$.*\$", result, re.DOTALL)
             if search_result is None:
                 search_result = re.search(
                     "\\\\begin\\{equation.*\\}.*\\\\end\\{equation.*\\}",
