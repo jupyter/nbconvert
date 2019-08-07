@@ -237,10 +237,10 @@ def prevent_list_blocks(s):
     """
     Prevent presence of enumerate or itemize blocks in latex headings cells
     """
-    out = re.sub('(^\s*\d*)\.', '\\1\.', s)
-    out = re.sub('(^\s*)\-', '\\1\-', out)
-    out = re.sub('(^\s*)\+', '\\1\+', out)
-    out = re.sub('(^\s*)\*', '\\1\*', out)
+    out = re.sub(r'(^\s*\d*)\.', r'\1\.', s)
+    out = re.sub(r'(^\s*)\-', r'\1\-', out)
+    out = re.sub(r'(^\s*)\+', r'\1\+', out)
+    out = re.sub(r'(^\s*)\*', r'\1\*', out)
     return out
 
 def strip_trailing_newline(text):

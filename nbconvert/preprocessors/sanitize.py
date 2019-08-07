@@ -27,13 +27,13 @@ class SanitizeHTML(Preprocessor):
         help="Allowed HTML tag attributes",
     )
     tags = List(
-        Unicode,
+        Unicode(),
         config=True,
         default_value=ALLOWED_TAGS,
         help="List of HTML tags to allow",
     )
     styles = List(
-        Unicode,
+        Unicode(),
         config=True,
         default_value=ALLOWED_STYLES,
         help="Allowed CSS styles if <style> tag is whitelisted"
