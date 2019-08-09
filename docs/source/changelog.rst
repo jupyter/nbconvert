@@ -38,6 +38,10 @@ The full list of changes they made can be seen `on GitHub <<https://github.com/j
 Significant Changes
 ~~~~~~~~~~~~~~~~~~~
 
+Jupter Client Pin
++++++++++++++++++
+The ``jupyter_client`` dependency is now pinned to ``>5.3.1``. This is done to support the `Parallel NBConvert` below, and future versions may require interface changes from that version.
+
 Parallel NBConvert
 ++++++++++++++++++
 NBConvert ``--execute`` can now be run in parallel via threads, multiprocessing, or async patterns! This means you can now parallelize nbconvert via a bash loop, or a python concurrency pattern and it should be able to execute those notebooks in parallel.
