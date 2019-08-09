@@ -71,7 +71,7 @@ Fixing Problems
 - Very fast stream outputs no longer drop some messages :ghpull:`994`:
 - LaTeX errors now properly raise exceptions :ghpull:`1053`:
 - Improve template whitespacing :ghpull:`1076`:
-- Fixes for character in LaTeX expoerts and flters :ghpull:`1068`:, :ghpull:`1039`:, :ghpull:`1024`:, and :ghpull:`1077`:
+- Fixes for character in LaTeX exports and filters :ghpull:`1068`:, :ghpull:`1039`:, :ghpull:`1024`:, and :ghpull:`1077`:
 - Mistune pinned in preparation for 2.0 release :ghpull:`1074`:
 - Require mock only on Python 2 :ghpull:`1060`: and :ghpull:`1011`:
 - Fix selection of mimetype when converting to HTML :ghpull:`1036`:
