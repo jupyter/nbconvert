@@ -40,7 +40,7 @@ Significant Changes
 
 Parallel NBConvert
 ++++++++++++++++++
-NBConvert --execute can now be run in parallel via threads, multiprocessing, or async patterns! This means you can now parallelize nbconvert via a bash loop, or a python concurrency pattern and it should be able to execute those notebooks in parallel.
+NBConvert ``--execute`` can now be run in parallel via threads, multiprocessing, or async patterns! This means you can now parallelize nbconvert via a bash loop, or a python concurrency pattern and it should be able to execute those notebooks in parallel.
 
 Not all kernels are safe to execute concurrently. The ipython kernel as of version 1.5.2, for python 3, should now be safe to run concurrently. But the python 2 version for ipython sometimes fails with a socket bind exception. Other kernels were not tested heavily.
 
@@ -50,7 +50,7 @@ We'll keep an eye for issues related to this new capability and try to quickly p
 
 Execute Loop Rewrite
 ++++++++++++++++++++
-The execution loop responsible for monitoring kernel messages until cell execution is completed was rewritten. This removes an error where kernel messages could be dropped if too many were posted too quickly. Furthermore the change means that messages are not buffered and can be logged immediately rather than waiting for the cell to terminate.
+This release completely rewrote the execution loop responsible for monitoring kernel messages until cell execution is completed. This removes an error where kernel messages could be dropped if too many were posted too quickly. Furthermore, the change means that messages are not buffered. Now, messages can be logged immediately rather than waiting for the cell to terminate.
 
 See :ghpull:`994`: for exact code changes if you're curious.
 
@@ -61,26 +61,26 @@ New Features
 ++++++++++++
 - Make a default global location for custom user templates :ghpull:`1028`:
 - Parallel execution improvements :ghpull:`1018`:, and :ghpull:`1017`:
-- Added 'store_history' option to 'preprocess_cell' and 'run_cell' :ghpull:`1055`:
+- Added ``store_history`` option to ``preprocess_cell`` and ``run_cell`` :ghpull:`1055`:
 - Simplify the function signature for preprocess() :ghpull:`1042`:
 - Set flag to not always stop kernel execution on errors :ghpull:`1040`:
-- setup_preprocessor passes kwargs to start_new_kernel :ghpull:`1021`:
+- ``setup_preprocessor`` passes kwargs to ``start_new_kernel`` :ghpull:`1021`:
 
 Fixing Problems
 +++++++++++++++
-- Very fast steam outputs no longer drop some messages :ghpull:`994`:
-- Latex errors now properly raise exceptions :ghpull:`1053`:
+- Very fast stream outputs no longer drop some messages :ghpull:`994`:
+- LaTeX errors now properly raise exceptions :ghpull:`1053`:
 - Improve template whitespacing :ghpull:`1076`:
 - Fixes for character in LaTeX expoerts and flters :ghpull:`1068`:, :ghpull:`1039`:, :ghpull:`1024`:, and :ghpull:`1077`:
 - Mistune pinned in preparation for 2.0 release :ghpull:`1074`:
 - Require mock only on Python 2 :ghpull:`1060`: and :ghpull:`1011`:
 - Fix selection of mimetype when converting to HTML :ghpull:`1036`:
 - Correct a few typos :ghpull:`1029`:
-- Update export_from_notebook names :ghpull:`1027`:
+- Update ``export_from_notebook`` names :ghpull:`1027`:
 - Dedenting html in ExtractOutputPreprocessor :ghpull:`1023`:
 - Fix backwards incompatibility with markdown2html :ghpull:`1022`:
 - Fixed html image tagging :ghpull:`1013`:
-- Remove un-necessary css :ghpull:`1010`:
+- Remove unnecessary css :ghpull:`1010`:
 
 Testing, Docs, and Builds
 +++++++++++++++++++++++++
@@ -89,7 +89,7 @@ Testing, Docs, and Builds
 - Add issue templates :ghpull:`1046`:
 - Added instructions for bumping the version forward when releasing :ghpull:`1034`:
 - Fix Testing on Windows :ghpull:`1030`:
-- Refactored test_run_notebooks :ghpull:`1015`:
+- Refactored ``test_run_notebooks`` :ghpull:`1015`:
 - Fixed documentation typos :ghpull:`1009`:
 
 5.5
