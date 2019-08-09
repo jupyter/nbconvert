@@ -70,8 +70,8 @@ Fixing Problems
 +++++++++++++++
 - Very fast steam outputs no longer drop some messages :ghpull:`994`:
 - Latex errors now properly raise exceptions :ghpull:`1053`:
-- Improve template whitespacing :ghpull:`1076`:
-- Fixes for character in LaTeX expoerts and flters :ghpull:`1068`:, :ghpull:`1039`:, :ghpull:`1024`:, and :ghpull:`1077`:
+- Improve template white spacing :ghpull:`1076`:
+- Fixes for character in LaTeX exports and filters :ghpull:`1068`:, :ghpull:`1039`:, :ghpull:`1024`:, and :ghpull:`1077`:
 - Mistune pinned in preparation for 2.0 release :ghpull:`1074`:
 - Require mock only on Python 2 :ghpull:`1060`: and :ghpull:`1011`:
 - Fix selection of mimetype when converting to HTML :ghpull:`1036`:
@@ -80,7 +80,7 @@ Fixing Problems
 - Dedenting html in ExtractOutputPreprocessor :ghpull:`1023`:
 - Fix backwards incompatibility with markdown2html :ghpull:`1022`:
 - Fixed html image tagging :ghpull:`1013`:
-- Remove un-necessary css :ghpull:`1010`:
+- Remove unnecessary css :ghpull:`1010`:
 
 Testing, Docs, and Builds
 +++++++++++++++++++++++++
