@@ -42,11 +42,11 @@ Parallel NBConvert
 ++++++++++++++++++
 NBConvert ``--execute`` can now be run in parallel via threads, multiprocessing, or async patterns! This means you can now parallelize nbconvert via a bash loop, or a python concurrency pattern and it should be able to execute those notebooks in parallel.
 
-Not all kernels are safe to execute concurrently. The ipython kernel as of version 1.5.2, for python 3, should now be safe to run concurrently. But the python 2 version for ipython sometimes fails with a socket bind exception. Other kernels were not tested heavily.
+Kernels have varying support for safe concurrent execution. The ipython kernel (ipykernel version 1.5.2 and higher) should be safe to run concurrently using Python 3. However, the Python 2 ipykernel does not always provide safe concurrent execution and sometimes fails with a socket bind exception. Unlike ipykernel which is maintained by the project, other community-maintained kernels may have varying support for concurrent execution, and these kernels were not tested heavily.
 
 Issues for nbconvert can be viewed here: :ghpull:`1018`:, and :ghpull:`1017`:
 
-We'll keep an eye for issues related to this new capability and try to quickly patch any discovered issues post release. The improvement required touching three projects with separate releases, so if you do find an issue try upgrading dependencies and listing your dependencies for your environment when reporting.
+.. note: We'll keep an eye for issues related to this new capability and try to quickly patch any discovered issues post release. The improvement required touching three projects with separate releases, so if you do find an issue try upgrading dependencies and listing your dependencies for your environment when reporting.
 
 Execute Loop Rewrite
 ++++++++++++++++++++
