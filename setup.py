@@ -209,7 +209,7 @@ setup_args['install_requires'] = [
     'testpath',
     'defusedxml',
 ]
-jupyter_client_req = 'jupyter_client>=4.3'
+jupyter_client_req = 'jupyter_client>=5.3.1'
 
 extra_requirements = {
     'test': ['pytest', 'pytest-cov', 'mock; python_version < "3.4"', 'ipykernel', jupyter_client_req, 'ipywidgets>=7', 'pebble'],

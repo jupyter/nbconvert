@@ -4,6 +4,98 @@
 Changes in nbconvert
 ====================
 
+5.6
+---
+
+The following 24 authors and reviewers contributed 224 commits -- Thank you all!
+* 00Kai0
+* Aidan Feldman
+* Alex Rudy
+* Alexander Kapshuna
+* Alexander Rudy
+* amniskin
+* Carol Willing
+* Dustin H
+* Hsiaoming Yang
+* imtsuki
+* Jessica B. Hamrick
+* KrokodileDandy
+* Kunal Marwaha
+* Matthew Seal
+* Matthias Geier
+* Miro Hrončok
+* M Pacer
+* Nils Japke
+* njapke
+* Sebastian Führ
+* Sylvain Corlay
+* Tyler Makaro
+* Valery M
+* Wayne Witzel
+
+The full list of changes they made can be seen `on GitHub <<https://github.com/jupyter/nbconvert/issues?q=milestone%3A5.6+>`__
+
+Significant Changes
+~~~~~~~~~~~~~~~~~~~
+
+Jupter Client Pin
++++++++++++++++++
+The ``jupyter_client`` dependency is now pinned to ``>5.3.1``. This is done to support the `Parallel NBConvert` below, and future versions may require interface changes from that version.
+
+Parallel NBConvert
+++++++++++++++++++
+NBConvert ``--execute`` can now be run in parallel via threads, multiprocessing, or async patterns! This means you can now parallelize nbconvert via a bash loop, or a python concurrency pattern and it should be able to execute those notebooks in parallel.
+
+Kernels have varying support for safe concurrent execution. The ipython kernel (ipykernel version 1.5.2 and higher) should be safe to run concurrently using Python 3. However, the Python 2 ipykernel does not always provide safe concurrent execution and sometimes fails with a socket bind exception. Unlike ipykernel which is maintained by the project, other community-maintained kernels may have varying support for concurrent execution, and these kernels were not tested heavily.
+
+Issues for nbconvert can be viewed here: :ghpull:`1018`:, and :ghpull:`1017`:
+
+.. note: We'll keep an eye for issues related to this new capability and try to quickly patch any discovered issues post release. The improvement required touching three projects with separate releases, so if you do find an issue try upgrading dependencies and listing your dependencies for your environment when reporting.
+
+Execute Loop Rewrite
+++++++++++++++++++++
+This release completely rewrote the execution loop responsible for monitoring kernel messages until cell execution is completed. This removes an error where kernel messages could be dropped if too many were posted too quickly. Furthermore, the change means that messages are not buffered. Now, messages can be logged immediately rather than waiting for the cell to terminate.
+
+See :ghpull:`994`: for exact code changes if you're curious.
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+New Features
+++++++++++++
+- Make a default global location for custom user templates :ghpull:`1028`:
+- Parallel execution improvements :ghpull:`1018`:, and :ghpull:`1017`:
+- Added ``store_history`` option to ``preprocess_cell`` and ``run_cell`` :ghpull:`1055`:
+- Simplify the function signature for preprocess() :ghpull:`1042`:
+- Set flag to not always stop kernel execution on errors :ghpull:`1040`:
+- ``setup_preprocessor`` passes kwargs to ``start_new_kernel`` :ghpull:`1021`:
+
+Fixing Problems
++++++++++++++++
+- Very fast stream outputs no longer drop some messages :ghpull:`994`:
+- LaTeX errors now properly raise exceptions :ghpull:`1053`:
+- Improve template whitespacing :ghpull:`1076`:
+- Fixes for character in LaTeX exports and filters :ghpull:`1068`:, :ghpull:`1039`:, :ghpull:`1024`:, and :ghpull:`1077`:
+- Mistune pinned in preparation for 2.0 release :ghpull:`1074`:
+- Require mock only on Python 2 :ghpull:`1060`: and :ghpull:`1011`:
+- Fix selection of mimetype when converting to HTML :ghpull:`1036`:
+- Correct a few typos :ghpull:`1029`:
+- Update ``export_from_notebook`` names :ghpull:`1027`:
+- Dedenting html in ExtractOutputPreprocessor :ghpull:`1023`:
+- Fix backwards incompatibility with markdown2html :ghpull:`1022`:
+- Fixed html image tagging :ghpull:`1013`:
+- Remove unnecessary css :ghpull:`1010`:
+
+Testing, Docs, and Builds
++++++++++++++++++++++++++
+- Pip-install nbconvert on readthedocs.org :ghpull:`1069`:
+- Fix various doc build issues :ghpull:`1051`:, :ghpull:`1050`:, :ghpull:`1019`:, and :ghpull:`1048`:
+- Add issue templates :ghpull:`1046`:
+- Added instructions for bumping the version forward when releasing :ghpull:`1034`:
+- Fix Testing on Windows :ghpull:`1030`:
+- Refactored ``test_run_notebooks`` :ghpull:`1015`:
+- Fixed documentation typos :ghpull:`1009`:
+
 5.5
 ---
 
