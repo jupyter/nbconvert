@@ -22,6 +22,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
                             tagged with these values
     remove_single_output_tags: removes individual output objects on
                                outputs tagged with these values
+    remove_input_tags: removes inputs tagged with these values
 
     """
 
