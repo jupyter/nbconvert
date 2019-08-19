@@ -257,7 +257,7 @@ class TemplateExporter(Exporter):
         extra_loaders : list[of Jinja Loaders]
             ordered list of Jinja loader to find templates. Will be tried in order
             before the default FileSystem ones.
-        template : str (optional, kw arg)
+        template_file : str (optional, kw arg)
             Template to use when exporting.
         """
         super(TemplateExporter, self).__init__(config=config, **kw)
