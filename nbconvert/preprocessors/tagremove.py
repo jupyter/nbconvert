@@ -12,17 +12,25 @@ from . import ClearOutputPreprocessor
 
 class TagRemovePreprocessor(ClearOutputPreprocessor):
     """
-    Removes cells from a notebook that have tags that designate they are to be
-    removed prior to exporting the notebook.
+    Removes inputs, outputs, or cells from a notebook that
+    have tags that designate they are to be removed prior to exporting
+    the notebook.
 
-    Traitlets:
-    ----------
-    remove_cell_tags: removes cells tagged with these values
-    remove_all_output_tags: removes entire output areas on cells
-                            tagged with these values
-    remove_single_output_tags: removes individual output objects on
-                               outputs tagged with these values
-    remove_input_tags: removes inputs tagged with these values
+    Traitlets
+    ---------
+    remove_cell_tags
+        removes cells tagged with these values
+
+    remove_all_output_tags
+        removes entire output areas on cells
+        tagged with these values
+
+    remove_single_output_tags
+        removes individual output objects on
+        outputs tagged with these values
+
+    remove_input_tags
+        removes inputs tagged with these values
 
     """
 

@@ -2,6 +2,7 @@ Preprocessors
 =============
 
 .. module:: nbconvert.preprocessors
+   :noindex:
 
 .. seealso::
 
@@ -19,21 +20,40 @@ Preprocessors
 Specialized preprocessors
 -------------------------
 
+Converting and extracting figures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. autoclass:: ConvertFiguresPreprocessor
 
 .. autoclass:: SVG2PDFPreprocessor
 
 .. autoclass:: ExtractOutputPreprocessor
 
+Converting text
+~~~~~~~~~~~~~~~
+
 .. autoclass:: LatexPreprocessor
+
+.. autoclass:: HighlightMagicsPreprocessor
+
+Metadata and header control
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: ClearMetadataPreprocessor
 
 .. autoclass:: CSSHTMLHeaderPreprocessor
 
-.. autoclass:: HighlightMagicsPreprocessor
+Removing cells, inputs, and outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ClearOutputPreprocessor
 
 .. autoclass:: RegexRemovePreprocessor
+
+.. autoclass:: TagRemovePreprocessor
+
+Executing Notebooks
+~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ExecutePreprocessor
     :members:
