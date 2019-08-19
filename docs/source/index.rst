@@ -38,6 +38,7 @@ batch of notebook files to another format.
    usage
    nbconvert_library
    latex_citations
+   removing_cells
    execute_api
 
 .. toctree::
