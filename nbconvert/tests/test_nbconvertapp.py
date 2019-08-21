@@ -318,6 +318,21 @@ class TestNbConvertApp(TestsBase):
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
                 assert "Out[" in text2
+
+    def test_cell_tag_output(self):
+        """
+        Verify that the html has tags in cell attributes if they exist.
+        """
+        with self.create_temp_cwd(["notebook_tags.ipynb"]):
+            self.nbconvert('notebook_tags.ipynb --log-level 0 --to html')
+            assert os.path.isfile('notebook_tags.html')
+            with open("notebook_tags.html",'r') as f:
+                text = f.read()
+                assert 'code_cell rendered" data-cell-tags="mycelltag, mysecondcelltag">' in text
+                assert 'code_cell rendered">' in text    
+                assert 'markdown_cell rendered" data-cell-tags="mymarkdowncelltag">' in text
+                assert 'markdown_cell rendered">' in text    
+            
                 
     def test_no_input(self):
         """
