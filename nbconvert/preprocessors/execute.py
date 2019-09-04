@@ -227,15 +227,15 @@ class ExecutePreprocessor(Preprocessor):
     ipython_hist_file = Unicode(
         default_value=':memory:',
         help="""Path to file to use for SQLite history database for an IPython kernel.
-        
+
         The specific value `:memory:` (including the colon
         at both end but not the back ticks), avoids creating a history file. Otherwise, IPython
-        will create a history file for each kernel. 
-        
+        will create a history file for each kernel.
+
         When running kernels simultaneously (e.g. via multiprocessing) saving history a single
         SQLite file can result in database errors, so using `:memory:` is recommended in non-interactive
         contexts.
-        
+
         """).tag(config=True)
 
     kernel_manager_class = Type(
@@ -542,7 +542,7 @@ class ExecutePreprocessor(Preprocessor):
             return True
         return False
 
-    def run_cell(self, cell, cell_index=0, store_history=True):
+    def run_cell(self, cell, cell_index=0, store_history=False):
         parent_msg_id = self.kc.execute(cell.source,
             store_history=store_history, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
