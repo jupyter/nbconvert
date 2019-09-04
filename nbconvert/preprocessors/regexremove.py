@@ -40,8 +40,7 @@ class RegexRemovePreprocessor(Preprocessor):
 
     def check_conditions(self, cell):
         """
-        Checks that a cell matches the pattern and that (if a code cell)
-        it does not have any outputs.
+        Checks that a cell matches the pattern.
 
         Returns: Boolean.
         True means cell should *not* be removed.
@@ -54,7 +53,7 @@ class RegexRemovePreprocessor(Preprocessor):
                              for pattern in self.patterns))
 
         # Filter out cells that meet the pattern and have no outputs
-        return cell.get('outputs') or not pattern.match(cell.source)
+        return not pattern.match(cell.source)
 
     def preprocess(self, nb, resources):
         """

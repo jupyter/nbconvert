@@ -69,24 +69,3 @@ class TestRegexRemove(PreprocessorTestsBase):
                 for pattern in patterns:
                     self.assertFalse(pattern.match(cell.source))
 
-    def test_nosource_with_output(self):
-        """
-        Test that the check_conditions returns true when given a code-cell
-        that has non-empty outputs but no source.
-        """
-
-        cell = {
-            'cell_type': 'code',
-            'execution_count': 2,
-            'metadata': {},
-            'outputs': [{
-                'name': 'stdout',
-                'output_type': 'stream',
-                'text': 'I exist.\n'
-            }],
-            'source': ''
-        }
-        preprocessor = self.build_preprocessor()
-        node = from_dict(cell)
-        assert preprocessor.check_conditions(node)
-
