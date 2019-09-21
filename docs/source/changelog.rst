@@ -8,6 +8,7 @@ Changes in nbconvert
 ---
 
 The following 24 authors and reviewers contributed 224 commits -- Thank you all!
+
 * 00Kai0
 * Aidan Feldman
 * Alex Rudy
