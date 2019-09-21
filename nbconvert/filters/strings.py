@@ -44,10 +44,10 @@ __all__ = [
 
 
 def wrap_text(text, width=100):
-    """ 
+    """
     Intelligently wrap text.
     Wrap text without breaking words if possible.
-    
+
     Parameters
     ----------
     text : str
@@ -64,7 +64,7 @@ def wrap_text(text, width=100):
 
 def html2text(element):
     """extract inner text from html
-    
+
     Analog of jQuery's $(element).text()
     """
     if isinstance(element, py3compat.string_types):
@@ -73,7 +73,7 @@ def html2text(element):
         except Exception:
             # failed to parse, just return it unmodified
             return element
-    
+
     text = element.text or ""
     for child in element:
         text += html2text(child)
@@ -83,16 +83,17 @@ def html2text(element):
 
 def _convert_header_id(header_contents):
     """Convert header contents to valid id value. Takes string as input, returns string.
-    
+
     Note: this may be subject to change in the case of changes to how we wish to generate ids.
 
     For use on markdown headings.
     """
     return header_contents.replace(' ', '-')
 
+
 def add_anchor(html, anchor_link_text=u'¶'):
     """Add an id and an anchor-link to an html header
-    
+
     For use on markdown headings
     """
     try:
@@ -102,8 +103,13 @@ def add_anchor(html, anchor_link_text=u'¶'):
         return html
     link = _convert_header_id(html2text(h))
     h.set('id', link)
-    a = Element("a", {"class" : "anchor-link", "href" : "#" + link})
-    a.text = anchor_link_text
+    a = Element("a", {"class": "anchor-link", "href": "#" + link})
+    try:
+        # Test if the anchor link text is HTML (e.g. an image)
+        a.append(ElementTree.fromstring(anchor_link_text))
+    except Exception:
+        # If we fail to parse, assume we've just got regular text
+        a.text = anchor_link_text
     h.append(a)
 
     # Known issue of Python3.x, ElementTree.tostring() returns a byte string
@@ -121,11 +127,11 @@ def add_prompts(code, first='>>> ', cont='... '):
         new_code.append(cont + line)
     return '\n'.join(new_code)
 
-    
+
 def strip_dollars(text):
     """
     Remove all dollar symbols from text
-    
+
     Parameters
     ----------
     text : str
@@ -142,7 +148,7 @@ def strip_files_prefix(text):
     """
     Fix all fake URLs that start with `files/`, stripping out the `files/` prefix.
     Applies to both urls (for html) and relative paths (for markdown paths).
-    
+
     Parameters
     ----------
     text : str
@@ -156,7 +162,7 @@ def strip_files_prefix(text):
 def comment_lines(text, prefix='# '):
     """
     Build a Python comment line from input text.
-    
+
     Parameters
     ----------
     text : str
@@ -164,18 +170,18 @@ def comment_lines(text, prefix='# '):
     prefix : str
         Character to append to the start of each line.
     """
-    
+
     #Replace line breaks with line breaks and comment symbols.
     #Also add a comment symbol at the beginning to comment out
     #the first line.
-    return prefix + ('\n'+prefix).join(text.split('\n')) 
+    return prefix + ('\n'+prefix).join(text.split('\n'))
 
 
 def get_lines(text, start=None,end=None):
     """
-    Split the input text into separate lines and then return the 
+    Split the input text into separate lines and then return the
     lines that the caller is interested in.
-    
+
     Parameters
     ----------
     text : str
@@ -185,10 +191,10 @@ def get_lines(text, start=None,end=None):
     end : int, optional
         Last line to grab from.
     """
-    
+
     # Split the input into lines.
     lines = text.split("\n")
-    
+
     # Return the right lines.
     return "\n".join(lines[start:end]) #re-join
 
@@ -215,7 +221,7 @@ def ipython2python(code):
 
 def posix_path(path):
     """Turn a path into posix-style path/to/etc
-    
+
     Mainly for use in latex on Windows,
     where native Windows paths are not allowed.
     """
