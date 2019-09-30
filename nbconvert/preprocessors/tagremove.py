@@ -21,7 +21,7 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
     remove_cell_tags
         removes cells tagged with these values
 
-    remove_all_output_tags
+    remove_all_outputs_tags
         removes entire output areas on cells
         tagged with these values
 
