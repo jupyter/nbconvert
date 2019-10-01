@@ -6,7 +6,7 @@
 
 import os
 
-from traitlets import default, Unicode
+from traitlets import default, Unicode, Bool
 from traitlets.config import Config
 from jupyter_core.paths import jupyter_path
 from jinja2 import contextfilter
@@ -28,6 +28,9 @@ class HTMLExporter(TemplateExporter):
 
     anchor_link_text = Unicode(u'¶',
         help="The text used as the text for anchor links.").tag(config=True)
+
+    exclude_anchor_links = Bool(False,
+        help="If anchor links should be included or not.").tag(config=True)
 
     @default('file_extension')
     def _file_extension_default(self):
@@ -79,7 +82,8 @@ class HTMLExporter(TemplateExporter):
         cell = context.get('cell', {})
         attachments = cell.get('attachments', {})
         renderer = IPythonRenderer(escape=False, attachments=attachments,
-                                   anchor_link_text=self.anchor_link_text)
+                                   anchor_link_text=self.anchor_link_text,
+                                   exclude_anchor_links=self.exclude_anchor_links)
         return MarkdownWithMath(renderer=renderer).render(source)
 
     def default_filters(self):
