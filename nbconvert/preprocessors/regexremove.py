@@ -50,10 +50,11 @@ class RegexRemovePreprocessor(Preprocessor):
         # by a non-capturing group to ensure the correct order of precedence
         # and the patterns are joined with a logical or
         pattern = re.compile('|'.join('(?:%s)' % pattern
-                             for pattern in self.patterns))
+                             for pattern in self.patterns),
+                             re.MULTILINE)
 
         # Filter out cells that meet the pattern and have no outputs
-        return not pattern.match(cell.source)
+        return not pattern.search(cell.source)
 
     def preprocess(self, nb, resources):
         """
