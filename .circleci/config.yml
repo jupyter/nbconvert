@@ -1,0 +1,93 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build_docs:
+    docker:
+      # https://github.com/dante-ev/docker-texlive
+      - image: danteev/texlive
+
+    working_directory: ~/checkout
+
+    environment:
+      MINICONDA_INSTALLER: https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+      ACTIVATE: source /root/miniconda/bin/activate nbconvert_docs
+      PIP_INSTALL: python3 -m pip install --user --progress-bar off --upgrade
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-miniconda-{{ .Branch }}-{{ checksum "docs/environment.yml" }}
+            - v1-miniconda-{{ .Branch }}-
+            - v1-miniconda-
+
+      - run:
+          name: Installing Miniconda
+          command: |
+            if [ ! -d /root/miniconda ]
+            then
+              wget $MINICONDA_INSTALLER -O miniconda-installer.sh
+              bash miniconda-installer.sh -b -p /root/miniconda
+            else
+              echo Miniconda is already installed
+            fi
+
+      - run:
+          name: Creating/Updating conda environment
+          command: |
+            /root/miniconda/bin/conda env update -f docs/environment.yml --prune
+
+      - save_cache:
+          key: v1-miniconda-{{ .Branch }}-{{ checksum "docs/environment.yml" }}
+          paths:
+            - /root/miniconda
+
+      - run:
+          name: Installing nbconvert
+          command: |
+            $ACTIVATE
+            $PIP_INSTALL .
+
+      - run:
+          name: Building HTML
+          command: |
+            $ACTIVATE
+            python3 setup.py build_sphinx -b html
+
+      - store_artifacts:
+          name: Uploading HTML files
+          path: build/sphinx/html
+          destination: html
+
+      - run:
+          name: Building LaTeX
+          command: |
+            $ACTIVATE
+            python3 setup.py build_sphinx -b latex
+
+      - run:
+          name: Building PDF
+          command: |
+            cd build/sphinx/latex
+            latexmk -pdf
+
+      - store_artifacts:
+          name: Uploading PDF file
+          path: build/sphinx/latex/nbconvert.pdf
+          destination: nbconvert.pdf
+
+      - run:
+          name: Checking for broken links
+          command: |
+            $ACTIVATE
+            python3 setup.py build_sphinx -b linkcheck
+
+workflows:
+  version: 2
+  docs:
+    jobs:
+      - build_docs
