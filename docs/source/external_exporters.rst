@@ -32,7 +32,7 @@ these be distributed as Python libraries.
 Registering a custom exporter as an entry point
 -----------------------------------------------
 
-Additional exporters may be registered as named `entry_points`_.
+Additional exporters may be registered as named entry_points_.
 nbconvert uses the ``nbconvert.exporters`` entry point to find exporters
 from any package you may have installed.
 
@@ -60,7 +60,8 @@ custom exporters can call the entry point name::
 
 instead of having to specify the full import name of the custom exporter.
 
-.. _entry_points: https://packaging.python.org/en/latest/distributing/#entry-points
+.. _entry_points: https://packaging.python.org/guides/
+    creating-and-discovering-plugins/#using-package-metadata
 
 
 Using a custom exporter without entrypoints
