@@ -17,6 +17,12 @@ from traitlets import Unicode, default
 
 from .convertfigures import ConvertFiguresPreprocessor
 
+if sys.version_info >= (3,3):
+    from shutil import which
+    get_inkscape_path = which('inkscape')
+else:
+    get_inkscape_path = None
+
 
 INKSCAPE_APP = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 
@@ -58,6 +64,8 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
     @default('inkscape')
     def _inkscape_default(self):
+        if get_inkscape_path is not None:
+            return get_inkscape_path 
         if sys.platform == "darwin":
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
