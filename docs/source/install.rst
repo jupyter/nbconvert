@@ -15,7 +15,7 @@ Nbconvert is packaged for both pip and conda, so you can install it with::
     # OR
     conda install nbconvert
 
-If you're new to Python, we recommend installing `Anaconda <https://www.continuum.io/downloads>`_,
+If you're new to Python, we recommend installing `Anaconda <https://www.anaconda.com/distribution/>`_,
 a Python distribution which includes nbconvert and the other Jupyter components.
 
 .. important::
