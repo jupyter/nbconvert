@@ -266,7 +266,8 @@ def test_run_all_notebooks(input_name, opts):
     input_nb, output_nb = run_notebook(input_file, opts, notebook_resources())
     assert_notebooks_equal(input_nb, output_nb)
 
-
+@pytest.mark.skipif(not PY3,
+                    reason = "Not tested for Python 2")
 def test_parallel_notebooks(capfd, tmpdir):
     """Two notebooks should be able to be run simultaneously without problems.
 
