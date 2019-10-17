@@ -19,3 +19,7 @@ class MyExporter(HTMLExporter):
         The new file extension is `.test_ext`
         """
         return '.test_ext'
+
+    @default('template_extension')
+    def _template_extension_default(self):
+        return '.html.j2'

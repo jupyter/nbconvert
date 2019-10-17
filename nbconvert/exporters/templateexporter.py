@@ -11,6 +11,7 @@ import os
 import uuid
 import json
 
+from jupyter_core.paths import jupyter_path
 from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
@@ -27,6 +28,10 @@ from .exporter import Exporter
 
 # Jinja2 extensions to load.
 JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
+
+ROOT = os.path.dirname(__file__)
+DEV_MODE = os.path.exists(os.path.join(ROOT, '../../setup.py')) and os.path.exists(os.path.join(ROOT, '../../share'))
+
 
 default_filters = {
         'indent': filters.indent,
@@ -60,6 +65,29 @@ default_filters = {
         'json_dumps': json.dumps,
         'strip_trailing_newline': filters.strip_trailing_newline,
 }
+
+
+# copy of https://github.com/jupyter/jupyter_server/blob/b62458a7f5ad6b5246d2f142258dedaa409de5d9/jupyter_server/config_manager.py#L19
+def recursive_update(target, new):
+    """Recursively update one dictionary using another.
+    None values will delete their keys.
+    """
+    for k, v in new.items():
+        if isinstance(v, dict):
+            if k not in target:
+                target[k] = {}
+            recursive_update(target[k], v)
+            if not target[k]:
+                # Prune empty subdicts
+                del target[k]
+
+        elif v is None:
+            target.pop(k, None)
+
+        else:
+            target[k] = v
+    return target  # return for convenience
+
 
 class ExtensionTolerantLoader(BaseLoader):
     """A template loader which optionally adds a given extension when searching.
@@ -139,7 +167,10 @@ class TemplateExporter(Exporter):
         c.merge(super(TemplateExporter, self).default_config)
         return c
 
-    template_file = Unicode(
+    template_name = Unicode(help="Name of the template to use"
+    ).tag(config=True, affects_template=True)
+
+    template_file = Unicode(None, allow_none=True,
             help="Name of the template file to use"
     ).tag(config=True, affects_template=True)
 
@@ -165,27 +196,20 @@ class TemplateExporter(Exporter):
 
     @default('template_file')
     def _template_file_default(self):
-        return self.default_template
+        if self.template_extension:
+            return 'index' + self.template_extension
 
     @observe('raw_template')
     def _raw_template_changed(self, change):
         if not change['new']:
-            self.template_file = self.default_template or self._last_template_file
+            self.template_file = self._last_template_file
         self._invalidate_template_cache()
-
-    default_template = Unicode(u'').tag(affects_template=True)
 
     template_path = List(['.']).tag(config=True, affects_environment=True)
 
-    default_template_path = Unicode(
-        os.path.join("..", "templates"),
-        help="Path where the template files are located."
-    ).tag(affects_environment=True)
+    #Extension that the template files use.
+    template_extension = Unicode().tag(config=True, affects_environment=True)
 
-    template_skeleton_path = Unicode(
-        os.path.join("..", "templates", "skeleton"),
-        help="Path where the template skeleton files are located.",
-    ).tag(affects_environment=True)
 
     template_data_paths = List(
         jupyter_path('nbconvert','templates'),
@@ -194,6 +218,17 @@ class TemplateExporter(Exporter):
 
     #Extension that the template files use.
     template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
+    @default('template_extension')
+    def _template_extension_default(self):
+        if self.file_extension:
+            return self.file_extension + ".j2"
+        else:
+            return self.file_extension
+
+    @default('template_file')
+    def _template_file_default(self):
+        if self.template_extension:
+            return 'index' + self.template_extension
 
     exclude_input = Bool(False,
         help = "This allows you to exclude code cell inputs from all templates if set to True."
@@ -398,19 +433,8 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        here = os.path.dirname(os.path.realpath(__file__))
-
-        additional_paths = self.template_data_paths
-        for path in additional_paths:
-            try:
-                ensure_dir_exists(path, mode=0o700)
-            except OSError:
-                pass
-
-        paths = self.template_path + \
-            additional_paths + \
-            [os.path.join(here, self.default_template_path),
-             os.path.join(here, self.template_skeleton_path)]
+        paths = self.get_template_paths()
+        self.log.info('template paths:\n\t%s', '\n\t'.join(paths))
 
         loaders = self.extra_loaders + [
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
@@ -433,3 +457,74 @@ class TemplateExporter(Exporter):
                 self._register_filter(environment, key, user_filter)
 
         return environment
+
+    def get_template_paths(self, prune=False, root_dirs=None):
+        full_paths = []
+        paths = list(self.template_path)
+        root_dirs = self.get_prefix_root_dirs()
+        template_names = self.get_template_names()
+        for template_name in template_names:
+            for root_dir in root_dirs:
+                base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
+                path = os.path.join(base_dir, template_name)
+                if not prune or os.path.exists(path):
+                    paths.append(path)
+
+        for root_dir in root_dirs:
+            # we include root_dir for when we want to be very explicit, e.g.
+            # {% extends 'nbconvert/templates/classic/base.html' %}
+            paths.append(root_dir)
+            # we include base_dir for when we want to be explicit, but less than root_dir, e.g.
+            # {% extends 'classic/base.html' %}
+            base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
+            paths.append(base_dir)
+
+        additional_paths = self.template_data_paths
+        for path in additional_paths:
+            try:
+                ensure_dir_exists(path, mode=0o700)
+            except OSError:
+                pass
+
+
+        return additional_paths + paths
+
+    def get_template_names(self):
+        # finds a list of template name where each successive template name is the base template
+        template_names = []
+        root_dirs = self.get_prefix_root_dirs()
+        template_name = self.template_name
+        merged_conf = {}  # the configuration once all conf files are merged
+        while template_name is not None:
+            template_names.append(template_name)
+            conf = {}
+            found_at_least_one = False
+            for root_dir in root_dirs:
+                template_dir = os.path.join(root_dir, 'nbconvert', 'templates', template_name)
+                if os.path.exists(template_dir):
+                    found_at_least_one = True
+                conf_file = os.path.join(template_dir, 'conf.json')
+                if os.path.exists(conf_file):
+                    with open(conf_file) as f:
+                        conf = recursive_update(json.load(f), conf)
+            if not found_at_least_one:
+                paths = "\n\t".join(root_dirs)
+                raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (template_name, paths))
+            merged_conf = recursive_update(dict(conf), merged_conf)
+            template_name = conf.get('base_template')
+        conf = merged_conf
+        mimetypes = [mimetype for mimetype, enabled in conf.get('mimetypes', {}).items() if enabled]
+        if self.output_mimetype and self.output_mimetype not in mimetypes:
+            supported_mimetypes = '\n\t'.join(mimetypes)
+            raise ValueError('Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s' %\
+                (self.output_mimetype, self.template_name, supported_mimetypes))
+        return template_names
+
+    def get_prefix_root_dirs(self):
+        # We look at the usual jupyter locations, and for development purposes also
+        # relative to the package directory (first entry, meaning with highest precedence)
+        root_dirs = []
+        if DEV_MODE:
+            root_dirs.append(os.path.abspath(os.path.join(ROOT, '..', '..', 'share', 'jupyter')))
+        root_dirs.extend(jupyter_path())
+        return root_dirs

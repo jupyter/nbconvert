@@ -19,9 +19,9 @@ class MarkdownExporter(TemplateExporter):
     def _file_extension_default(self):
         return '.md'
 
-    @default('template_file')
-    def _template_file_default(self):
-        return 'markdown.tpl'
+    @default('template_name')
+    def _template_name_default(self):
+        return 'markdown'
 
     output_mimetype = 'text/markdown'
 

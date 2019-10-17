@@ -18,7 +18,11 @@ class ScriptExporter(TemplateExporter):
 
     @default('template_file')
     def _template_file_default(self):
-        return 'script.tpl'
+        return 'script.j2'
+
+    @default('template_name')
+    def _template_name_default(self):
+        return 'script'
 
     def _get_language_exporter(self, lang_name):
         """Find an exporter for the language name from notebook metadata.

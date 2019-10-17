@@ -16,8 +16,8 @@ class PythonExporter(TemplateExporter):
     def _file_extension_default(self):
         return '.py'
 
-    @default('template_file')
-    def _template_file_default(self):
-        return 'python.tpl'
+    @default('template_name')
+    def _template_name_default(self):
+        return 'python'
 
     output_mimetype = 'text/x-python'

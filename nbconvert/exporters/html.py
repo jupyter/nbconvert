@@ -5,11 +5,15 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import mimetypes
+import base64
 
 from traitlets import default, Unicode
 from traitlets.config import Config
 from jupyter_core.paths import jupyter_path
 from jinja2 import contextfilter
+from jinja2.loaders import split_template_path
+import jinja2
 
 from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
@@ -33,17 +37,18 @@ class HTMLExporter(TemplateExporter):
     def _file_extension_default(self):
         return '.html'
 
-    @default('default_template_path')
-    def _default_template_path_default(self):
-        return os.path.join("..", "templates", "html")
+    @default('template_name')
+    def _template_name_default(self):
+        return 'classic'
 
     @default('template_data_paths')
     def _template_data_paths_default(self):
         return jupyter_path("nbconvert", "templates", "html")
 
-    @default('template_file')
-    def _template_file_default(self):
-        return 'full.tpl'
+
+    theme = Unicode('light',
+                    help='Template specific theme(e.g. the JupyterLab CSS theme for the lab template)'
+    ).tag(config=True)
 
     output_mimetype = 'text/html'
 
@@ -93,3 +98,46 @@ class HTMLExporter(TemplateExporter):
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
         self.register_filter('highlight_code', highlight_code)
         return super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
+
+    def _init_resources(self, resources):
+        def resources_include_css(name):
+            env = self.environment
+            code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])
+            return jinja2.Markup(code)
+
+        def resources_include_js(name):
+            env = self.environment
+            code = """<script>\n%s</script>""" % (env.loader.get_source(env, name)[0])
+            return jinja2.Markup(code)
+
+        def resources_include_url(name):
+            env = self.environment
+            mime_type, encoding = mimetypes.guess_type(name)
+            try:
+                # we try to load via the jinja loader, but that tries to load
+                # as (encoded) text
+                data = env.loader.get_source(env, name)[0].encode('utf8')
+            except UnicodeDecodeError:
+                # if that fails (for instance a binary file, png or ttf)
+                # we mimic jinja2
+                pieces = split_template_path(name)
+                searchpaths = self.get_template_paths()
+                for searchpath in searchpaths:
+                    filename = os.path.join(searchpath, *pieces)
+                    print(filename, os.path.exists(filename))
+                    if os.path.exists(filename):
+                        with open(filename, "rb") as f:
+                            data = f.read()
+                            break
+                else:
+                    raise ValueError("No file %r found in %r" % (name, searchpaths))
+            data = base64.b64encode(data)
+            data = data.replace(b'\n', b'').decode('ascii')
+            src = 'data:{mime_type};base64,{data}'.format(mime_type=mime_type, data=data)
+            return jinja2.Markup(src)
+        resources = super(HTMLExporter, self)._init_resources(resources)
+        resources['theme'] = self.theme
+        resources['include_css'] = resources_include_css
+        resources['include_js'] = resources_include_js
+        resources['include_url'] = resources_include_url
+        return resources

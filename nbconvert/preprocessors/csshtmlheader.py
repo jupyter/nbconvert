@@ -9,9 +9,11 @@ import io
 import hashlib
 import nbconvert.resources
 
-from traitlets import Unicode
-from .base import Preprocessor
+from traitlets import Unicode, Union, Type
+from pygments.style import Style
+from jupyterlab_pygments import JupyterStyle
 
+from .base import Preprocessor
 
 try:
     from notebook import DEFAULT_STATIC_FILES_PATH
@@ -28,8 +30,9 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
                               help="CSS highlight class identifier"
     ).tag(config=True)
 
-    style = Unicode('default',
-            help='Name of the pygments style to use'
+    style = Union([Unicode('default'), Type(klass=Style)],
+                  help='Name of the pygments style to use',
+                  default_value=JupyterStyle
     ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
@@ -40,9 +43,9 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         """Fetch and add CSS to the resource dictionary
 
         Fetch CSS from IPython and Pygments to add at the beginning
-        of the html files.  Add this css in resources in the 
+        of the html files.  Add this css in resources in the
         "inlining.css" key
-        
+
         Parameters
         ----------
         nb : NotebookNode
@@ -56,24 +59,13 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         return nb, resources
 
     def _generate_header(self, resources):
-        """ 
-        Fills self.header with lines of CSS extracted from IPython 
+        """
+        Fills self.header with lines of CSS extracted from IPython
         and Pygments.
         """
         from pygments.formatters import HtmlFormatter
         header = []
-        
-        # Construct path to Jupyter CSS
-        sheet_filename = os.path.join(
-            os.path.dirname(nbconvert.resources.__file__),
-            'style.min.css',
-        )
-        
-        # Load style CSS file.
-        with io.open(sheet_filename, encoding='utf-8') as f:
-            header.append(f.read())
 
-        # Add pygments CSS
         formatter = HtmlFormatter(style=self.style)
         pygments_css = formatter.get_style_defs(self.highlight_class)
         header.append(pygments_css)

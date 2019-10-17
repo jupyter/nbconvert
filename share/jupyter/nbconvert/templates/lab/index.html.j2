@@ -1,0 +1,29 @@
+{%- extends 'classic/index.html.j2' -%}
+
+
+{% block notebook_css %}
+{{ resources.include_css("static/index.css") }}
+{% if resources.theme == 'dark' %}
+    {{ resources.include_css("static/theme-dark.css") }}
+{% else %}
+    {{ resources.include_css("static/theme-light.css") }}
+{% endif %}
+<style type="text/css">
+a.anchor-link {
+   display: none;
+}
+.highlight  {
+    margin: 0.4em;
+}
+</style>
+
+{% endblock notebook_css %}
+
+
+{%- block body_header -%}
+{% if resources.theme == 'dark' %}
+<body class="jp-Notebook theme-dark">
+{% else %}
+<body class="jp-Notebook theme-light">
+{% endif %}
+{%- endblock body_header -%}

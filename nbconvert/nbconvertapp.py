@@ -51,7 +51,8 @@ nbconvert_aliases = {}
 nbconvert_aliases.update(base_aliases)
 nbconvert_aliases.update({
     'to' : 'NbConvertApp.export_format',
-    'template' : 'TemplateExporter.template_file',
+    'template' : 'TemplateExporter.template_name',
+    'template-file' : 'TemplateExporter.template_file',
     'writer' : 'NbConvertApp.writer_class',
     'post': 'NbConvertApp.postprocessor_class',
     'output': 'NbConvertApp.output_base',
@@ -191,7 +192,7 @@ class NbConvertApp(JupyterApp):
         'base', 'article' and 'report'.  HTML includes 'basic' and 'full'. You
         can specify the flavor of the format used.
 
-        > jupyter nbconvert --to html --template basic mynotebook.ipynb
+        > jupyter nbconvert --to html --template lab mynotebook.ipynb
         
         You can also pipe the output to stdout, rather than a file
         
