@@ -21,8 +21,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-miniconda-{{ .Branch }}-{{ checksum "docs/environment.yml" }}
-            - v1-miniconda-{{ .Branch }}-
+            - v1-miniconda-{{ checksum "docs/environment.yml" }}
             - v1-miniconda-
 
       - run:
@@ -43,7 +42,7 @@ jobs:
             conda env update -f docs/environment.yml -n root --prune
 
       - save_cache:
-          key: v1-miniconda-{{ .Branch }}-{{ checksum "docs/environment.yml" }}
+          key: v1-miniconda-{{ checksum "docs/environment.yml" }}
           paths:
             - /root/miniconda
 
