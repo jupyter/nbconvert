@@ -4,6 +4,54 @@
 Changes in nbconvert
 ====================
 
+5.6.1
+-----
+
+The following authors and reviewers contributed the changes for this release -- Thanks you all!
+
+* Charles Frye
+* Chris Holdgraf
+* Felipe Rodrigues
+* Gregor Sturm
+* Jim
+* Kerwin Sun
+* Ryan Beesley
+* Matthew Seal
+* Matthias Geier
+* thuy-van
+* Tyler Makaro
+
+Significant Changes
+~~~~~~~~~~~~~~~~~~~
+
+RegExRemove applies to all cells
+++++++++++++++++++++++++++++++++
+
+RegExRemove preprocessor now removes cells regardless of cell outputs. Before this only cells that had outputs were filtered.
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+New Features
+++++++++++++
+- Add support for alt tags for jpeg and png images :ghpull:`1112`:
+- Allow HTML header anchor text to be HTML :ghpull:`1101`:
+- Change RegExRemove to remove code cells with output :ghpull:`1095`:
+- Added cell tag data attributes to HTML exporter :ghpull:`1090`: and :ghpull:`1089`:
+
+Fixing Problems
++++++++++++++++
+- Update svg2pdf.py to search the PATH for inkscape :ghpull:`1115`:
+- Fix latex dependencies installation command for Ubuntu systems :ghpull:`1109`:
+
+Testing, Docs, and Builds
++++++++++++++++++++++++++
+- Added Circle CI builds for documentation :ghpull:`1114`: :ghpull:`1120`:, and :ghpull:`1116`:
+- Fix typo in argument name in docstring (TagRemovePreprocessor) :ghpull:`1103`:
+- Changelog typo fix :ghpull:`1100`:
+- Updated API page for TagRemovePreprocessor and TemplateExporter :ghpull:`1088`:
+- Added remove_input_tag traitlet to the docstring :ghpull:`1088`:
+
 5.6
 ---
 
