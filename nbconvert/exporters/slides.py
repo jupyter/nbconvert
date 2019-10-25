@@ -77,6 +77,14 @@ class SlidesExporter(HTMLExporter):
 
     export_from_notebook = "Reveal.js slides"
 
+    @default('template_name')
+    def _template_name_default(self):
+        return 'reveal'
+
+    template_name = Unicode('reveal',
+            help="Name of the template to use"
+    ).tag(config=True, affects_template=True)
+
     reveal_url_prefix = Unicode(
         help="""The URL prefix for reveal.js (version 3.x).
         This defaults to the reveal CDN, but can be any url pointing to a copy 
@@ -160,9 +168,9 @@ class SlidesExporter(HTMLExporter):
     def _file_extension_default(self):
         return '.slides.html'
 
-    @default('template_file')
-    def _template_file_default(self):
-        return 'slides_reveal.tpl'
+    @default('template_extension')
+    def _template_extension_default(self):
+        return '.html.j2'
 
     output_mimetype = 'text/html'
 

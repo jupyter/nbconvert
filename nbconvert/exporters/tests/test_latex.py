@@ -54,23 +54,6 @@ class TestLatexExporter(ExportersTestsBase):
 
 
     @onlyif_cmds_exist('pandoc')
-    def test_export_basic(self):
-        """
-        Can a LatexExporter export using 'article' template?
-        """
-        (output, resources) = LatexExporter(template_file='article').from_filename(self._get_notebook())
-        assert len(output) > 0
-
-
-    @onlyif_cmds_exist('pandoc')
-    def test_export_article(self):
-        """
-        Can a LatexExporter export using 'article' template?
-        """
-        (output, resources) = LatexExporter(template_file='article').from_filename(self._get_notebook())
-        assert len(output) > 0
-
-    @onlyif_cmds_exist('pandoc')
     def test_very_long_cells(self):
         """
         Torture test that long cells do not cause issues
@@ -104,7 +87,7 @@ class TestLatexExporter(ExportersTestsBase):
             with open(nbfile, 'w') as f:
                 write(nb, f, 4)
 
-            (output, resources) = LatexExporter(template_file='article').from_filename(nbfile)
+            (output, resources) = LatexExporter().from_filename(nbfile)
             assert len(output) > 0
 
     @onlyif_cmds_exist('pandoc')
@@ -133,7 +116,7 @@ class TestLatexExporter(ExportersTestsBase):
         """
         my_loader_tplx = DictLoader({'my_template': 
             """
-            ((* extends 'style_ipython.tplx' *))
+            ((* extends 'style_ipython.tex.j2' *))
 
             ((* block docclass *))
             \documentclass[11pt]{article}
@@ -184,7 +167,7 @@ class TestLatexExporter(ExportersTestsBase):
         # Loads in an in memory latex template (.tplx) using jinja2.DictLoader
         # creates a class that uses this template with the template_file argument
         # converts an empty notebook using this mechanism
-        my_loader_tplx = DictLoader({'my_template': "{%- extends 'article.tplx' -%}"})
+        my_loader_tplx = DictLoader({'my_template': "{%- extends 'index' -%}"})
 
         class MyExporter(LatexExporter):
             template_file = 'my_template'

@@ -65,13 +65,27 @@ package_data = {
     ],
 }
 
-
 notebook_css_version = '5.4.0'
-css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
+notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
+
+
+jupyterlab_css_version = '0.1.0'
+jupyterlab_css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
+
+jupyterlab_theme_light_version = '0.19.1'
+jupyterlab_theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/static/embed.css" % jupyterlab_theme_light_version
+
+jupyterlab_theme_dark_version = '0.19.1'
+jupyterlab_theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/embed.css" % jupyterlab_theme_dark_version
+
+template_css_urls = {
+    'lab': [(jupyterlab_css_url, 'index.css'), (jupyterlab_theme_light_url, 'theme-light.css'), (jupyterlab_theme_dark_url, 'theme-dark.css')],
+    'classic': [(notebook_css_url, 'style.css')]
+}
 
 
 class FetchCSS(Command):
-    description = "Fetch Notebook CSS from Jupyter CDN"
+    description = "Fetch CSS from CDN"
     user_options = []
     def initialize_options(self):
         pass
@@ -79,9 +93,9 @@ class FetchCSS(Command):
     def finalize_options(self):
         pass
 
-    def _download(self):
+    def _download(self, url):
         try:
-            return urlopen(css_url).read()
+            return urlopen(url).read()
         except Exception as e:
             if 'ssl' in str(e).lower():
                 try:
@@ -91,39 +105,48 @@ class FetchCSS(Command):
                     raise e
                 else:
                     print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
-                    return self._download_pycurl()
+                    return self._download_pycurl(url)
             raise e
 
-    def _download_pycurl(self):
+    def _download_pycurl(self, url):
         """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
         import pycurl
         c = pycurl.Curl()
-        c.setopt(c.URL, css_url)
+        c.setopt(c.URL, url)
         buf = BytesIO()
         c.setopt(c.WRITEDATA, buf)
         c.perform()
         return buf.getvalue()
 
     def run(self):
-        dest = os.path.join('nbconvert', 'resources', 'style.min.css')
-        if not os.path.exists('.git') and os.path.exists(dest):
-            # not running from git, nothing to do
-            return
-        print("Downloading CSS: %s" % css_url)
-        try:
-            css = self._download()
-        except Exception as e:
-            msg = "Failed to download css from %s: %s" % (css_url, e)
-            print(msg, file=sys.stderr)
-            if os.path.exists(dest):
-                print("Already have CSS: %s, moving on." % dest)
-            else:
-                raise OSError("Need Notebook CSS to proceed: %s" % dest)
-            return
+        for template_name, resources in template_css_urls.items():
+            for url, filename in resources:
+                directory = os.path.join('share', 'jupyter', 'nbconvert', 'templates', template_name, 'static')
+                dest = os.path.join(directory, filename)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                if not os.path.exists('.git') and os.path.exists(dest):
+                    # not running from git, nothing to do
+                    return
+                print("Downloading CSS: %s" % url)
+                try:
+                    css = self._download(url)
+                except Exception as e:
+                    msg = "Failed to download css from %s: %s" % (url, e)
+                    print(msg, file=sys.stderr)
+                    if os.path.exists(dest):
+                        print("Already have CSS: %s, moving on." % dest)
+                    else:
+                        raise OSError("Need CSS to proceed.")
+                    return
 
-        with open(dest, 'wb') as f:
-            f.write(css)
-        print("Downloaded Notebook CSS to %s" % dest)
+                with open(dest, 'wb') as f:
+                    f.write(css)
+                print("Downloaded Notebook CSS to %s" % dest)
+
+        # update package data in case this created new files
+        self.distribution.data_files = get_data_files()
+        update_package_data(self.distribution)
 
 cmdclass = {'css': FetchCSS}
 
@@ -160,6 +183,24 @@ with open(pjoin(here, name, '_version.py')) as f:
 with io.open(pjoin(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+
+def update_package_data(distribution):
+    """update package_data to catch changes during setup"""
+    build_py = distribution.get_command_obj('build_py')
+    # distribution.package_data = find_package_data()
+    # re-init build_py options which load package_data
+    build_py.finalize_options()
+
+
+def get_data_files():
+    # Add all the templates
+    data_files = []
+    for (dirpath, dirnames, filenames) in os.walk('share/jupyter/nbconvert/templates/'):
+        if filenames:
+            data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
+    return data_files
+
+
 setup_args = dict(
     name            = name,
     description     = "Converting Jupyter Notebooks",
@@ -168,6 +209,7 @@ setup_args = dict(
     packages        = packages,
     long_description= long_description,
     package_data    = package_data,
+    data_files      = get_data_files(),
     cmdclass        = cmdclass,
     python_requires = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     author          = 'Jupyter Development Team',
@@ -199,7 +241,8 @@ setup_args = dict(
 setup_args['install_requires'] = [
     'mistune>=0.8.1,<2',
     'jinja2>=2.4',
-    'pygments',
+    'pygments>=2.4.1',
+    'jupyterlab_pygments',
     'traitlets>=4.2',
     'jupyter_core',
     'nbformat>=4.4',

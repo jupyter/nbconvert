@@ -18,8 +18,8 @@ class ASCIIDocExporter(TemplateExporter):
     def _file_extension_default(self):
         return '.asciidoc'
 
-    @default('template_file')
-    def _template_file_default(self):
+    @default('template_name')
+    def _template_name_default(self):
         return 'asciidoc'
 
     output_mimetype = 'text/asciidoc'

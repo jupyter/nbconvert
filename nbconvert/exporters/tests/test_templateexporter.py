@@ -22,7 +22,7 @@ from testpath import tempdir
 
 import pytest
 
-raw_template = """{%- extends 'rst.tpl' -%}
+raw_template = """{%- extends 'index.rst.j2' -%}
 {%- block in_prompt -%}
 blah
 {%- endblock in_prompt -%}
@@ -140,7 +140,7 @@ class TestExporter(ExportersTestsBase):
         class AttrExporter(TemplateExporter):
             raw_template = raw_template
 
-        exporter_attr = AttrExporter()
+        exporter_attr = AttrExporter(template_name='rst')
         output_attr, _ = exporter_attr.from_notebook_node(nb)
         assert "blah" in output_attr
 
@@ -163,7 +163,7 @@ class TestExporter(ExportersTestsBase):
         output_init, _ = exporter_init.from_notebook_node(nb)
         assert "blah" in output_init
         exporter_init.raw_template = ''
-        assert exporter_init.template_file == "rst.tpl"
+        assert exporter_init.template_file == "index.rst.j2"
         output_init, _ = exporter_init.from_notebook_node(nb)
         assert "blah" not in output_init
 
@@ -178,19 +178,19 @@ class TestExporter(ExportersTestsBase):
         nb.cells.append(v4.new_code_cell("some_text"))
 
         class AttrDynamicExporter(TemplateExporter):
-            @default('template_file')
+            @default('default_template_file')
             def _template_file_default(self):
-                return "rst.tpl"
+                return "index.rst.j2"
 
             @default('raw_template')
             def _raw_template_default(self):
                 return raw_template
 
-        exporter_attr_dynamic = AttrDynamicExporter()
+        exporter_attr_dynamic = AttrDynamicExporter(template_name='rst')
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" in output_attr_dynamic
         exporter_attr_dynamic.raw_template = ''
-        assert exporter_attr_dynamic.template_file == "rst.tpl"
+        assert exporter_attr_dynamic.template_file == "index.rst.j2"
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" not in output_attr_dynamic
 
@@ -209,15 +209,15 @@ class TestExporter(ExportersTestsBase):
             def _raw_template_default(self):
                 return raw_template
 
-            @default('template_file')
+            @default('default_template_file')
             def _template_file_default(self):
-                return "rst.tpl"
+                return 'index.rst.j2'
 
-        exporter_attr_dynamic = AttrDynamicExporter()
+        exporter_attr_dynamic = AttrDynamicExporter(template_name='rst')
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" in output_attr_dynamic
         exporter_attr_dynamic.raw_template = ''
-        assert exporter_attr_dynamic.template_file == "rst.tpl"
+        assert exporter_attr_dynamic.template_file == 'index.rst.j2'
         output_attr_dynamic, _ = exporter_attr_dynamic.from_notebook_node(nb)
         assert "blah" not in output_attr_dynamic
 
@@ -229,7 +229,7 @@ class TestExporter(ExportersTestsBase):
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
 
-        output_constructor, _ = TemplateExporter(
+        output_constructor, _ = TemplateExporter(template_name='rst',
             raw_template=raw_template).from_notebook_node(nb)
         assert "blah" in output_constructor
 
@@ -239,7 +239,7 @@ class TestExporter(ExportersTestsBase):
         """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
-        exporter_assign = TemplateExporter()
+        exporter_assign = TemplateExporter(template_name='rst')
         exporter_assign.raw_template = raw_template
         output_assign, _ = exporter_assign.from_notebook_node(nb)
         assert "blah" in output_assign
@@ -250,7 +250,7 @@ class TestExporter(ExportersTestsBase):
         """
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
-        exporter_reassign = TemplateExporter()
+        exporter_reassign = TemplateExporter(template_name='rst')
         exporter_reassign.raw_template = raw_template
         output_reassign, _ = exporter_reassign.from_notebook_node(nb)
         assert "blah" in output_reassign
@@ -270,7 +270,7 @@ class TestExporter(ExportersTestsBase):
         output_deassign, _ = exporter_deassign.from_notebook_node(nb)
         assert "blah" in output_deassign
         exporter_deassign.raw_template = ''
-        assert exporter_deassign.template_file == 'rst.tpl'
+        assert exporter_deassign.template_file == 'index.rst.j2'
         output_deassign, _ = exporter_deassign.from_notebook_node(nb)
         assert "blah" not in output_deassign
 
@@ -289,7 +289,7 @@ class TestExporter(ExportersTestsBase):
         output_dereassign, _ = exporter_dereassign.from_notebook_node(nb)
         assert "baz" in output_dereassign
         exporter_dereassign.raw_template = ''
-        assert exporter_dereassign.template_file == 'rst.tpl'
+        assert exporter_dereassign.template_file == 'index.rst.j2'
         output_dereassign, _ = exporter_dereassign.from_notebook_node(nb)
         assert "blah" not in output_dereassign
 
@@ -317,8 +317,8 @@ class TestExporter(ExportersTestsBase):
             }
         }
         c_no_io = Config(no_io)
-        exporter_no_io = TemplateExporter(config=c_no_io)
-        exporter_no_io.template_file = 'markdown'
+        exporter_no_io = TemplateExporter(config=c_no_io, template_name='markdown')
+        exporter_no_io.template_file = 'index.md.j2'
         nb_no_io, resources_no_io = exporter_no_io.from_filename(self._get_notebook())
 
         assert not resources_no_io['global_content_filter']['include_input']
@@ -335,8 +335,8 @@ class TestExporter(ExportersTestsBase):
             }
         }
         c_no_code = Config(no_code)
-        exporter_no_code = TemplateExporter(config=c_no_code)
-        exporter_no_code.template_file = 'markdown'
+        exporter_no_code = TemplateExporter(config=c_no_code, template_name='markdown')
+        exporter_no_code.template_file = 'index.md.j2'
         nb_no_code, resources_no_code = exporter_no_code.from_filename(self._get_notebook())
 
         assert not resources_no_code['global_content_filter']['include_code']
@@ -375,8 +375,8 @@ class TestExporter(ExportersTestsBase):
         }
 
         c_no_md = Config(no_md)
-        exporter_no_md = TemplateExporter(config=c_no_md)
-        exporter_no_md.template_file = 'python'
+        exporter_no_md = TemplateExporter(config=c_no_md, template_name='python')
+        exporter_no_md.template_file = 'index.py.j2'
         nb_no_md, resources_no_md = exporter_no_md.from_filename(self._get_notebook())
 
         assert not resources_no_md['global_content_filter']['include_markdown']
@@ -423,5 +423,6 @@ class TestExporter(ExportersTestsBase):
         exporter = TemplateExporter(config=config)
         if not exporter.template_file:
             # give it a default if not specified
-            exporter.template_file = 'python'
+            exporter.template_name = 'python'
+            exporter.template_file = 'index.py.j2'
         return exporter
