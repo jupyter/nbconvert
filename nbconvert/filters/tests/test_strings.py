@@ -172,7 +172,7 @@ class TestStrings(TestsBase):
                 ('', ''),
                 ('  ', '  '),
                 ('Hello', 'Hello'),
-                ('Hello 中文', 'Hello ??????'),
+                ('Hello 中文', 'Hello ??'),
         ]
         for test in tests:
             self.assertEqual(test[1], ascii_only(test[0]))
