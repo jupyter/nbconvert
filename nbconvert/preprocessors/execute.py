@@ -539,7 +539,6 @@ class ExecutePreprocessor(Preprocessor):
                 raise CellExecutionTimeoutError.from_cell_and_msg(cell)
             else:
                 raise TimeoutError("Cell execution timed out")
-            raise TimeoutError("Cell execution timed out")
 
     def _check_alive(self):
         if not self.kc.is_alive():
