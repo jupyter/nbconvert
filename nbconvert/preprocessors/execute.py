@@ -81,6 +81,40 @@ An error occurred while executing the following cell:
 {ename}: {evalue}
 """
 
+class CellExecutionTimeoutError(TimeoutError):
+    """
+    Custom exception to propagate exceptions that are raised during
+    notebook execution to the caller. This is mostly useful when
+    using nbconvert as a library, since it allows to deal with
+    failures gracefully.
+    """
+    def __init__(self, traceback):
+        super(CellExecutionTimeoutError, self).__init__(traceback)
+        self.traceback = traceback
+
+    def __str__(self):
+        s = self.__unicode__()
+        if not isinstance(s, str):
+            s = s.encode('utf8', 'replace')
+        return s
+
+    def __unicode__(self):
+        return self.traceback
+
+    @classmethod
+    def from_cell_and_msg(cls, cell):
+        """Instantiate from a code cell object
+        (message is timeout when executing cell)
+        """
+        return cls(exec_timeout_err_msg.format(cell=cell))
+
+exec_timeout_err_msg = u"""\
+Timed out while executing the following cell:
+------------------
+{cell.source}
+------------------
+"""
+
 class ExecutePreprocessor(Preprocessor):
     """
     Executes all the cells in a notebook
@@ -494,13 +528,17 @@ class ExecutePreprocessor(Preprocessor):
 
         return timeout
 
-    def _handle_timeout(self):
+    def _handle_timeout(self, cell=None):
         self.log.error(
             "Timeout waiting for execute reply (%is)." % self.timeout)
         if self.interrupt_on_timeout:
             self.log.error("Interrupting kernel")
             self.km.interrupt_kernel()
         else:
+            if cell is not None:
+                raise CellExecutionTimeoutError.from_cell_and_msg(cell)
+            else:
+                raise TimeoutError("Cell execution timed out")
             raise TimeoutError("Cell execution timed out")
 
     def _check_alive(self):
@@ -536,9 +574,9 @@ class ExecutePreprocessor(Preprocessor):
 
         return timeout
 
-    def _passed_deadline(self, deadline):
+    def _passed_deadline(self, deadline, cell=None):
         if deadline is not None and deadline - monotonic() <= 0:
-            self._handle_timeout()
+            self._handle_timeout(cell)
             return True
         return False
 
@@ -568,7 +606,7 @@ class ExecutePreprocessor(Preprocessor):
 
         while more_output or polling_exec_reply:
             if polling_exec_reply:
-                if self._passed_deadline(deadline):
+                if self._passed_deadline(deadline, cell=cell):
                     polling_exec_reply = False
                     continue
 
