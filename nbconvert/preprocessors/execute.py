@@ -84,9 +84,9 @@ An error occurred while executing the following cell:
 class CellExecutionTimeoutError(TimeoutError):
     """
     Custom exception to propagate exceptions that are raised during
-    notebook execution to the caller. This is mostly useful when
-    using nbconvert as a library, since it allows to deal with
-    failures gracefully.
+    notebook execution to the caller for timeout. This is mostly
+    useful when using nbconvert as a library, since it allows to
+    deal with failures gracefully.
     """
     def __init__(self, traceback):
         super(CellExecutionTimeoutError, self).__init__(traceback)
