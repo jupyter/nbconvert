@@ -310,14 +310,14 @@ class Exporter(LoggingConfigurable):
         nbc =  copy.deepcopy(nb)
         resc = copy.deepcopy(resources)
 
-        #Run each preprocessor on the notebook.  Carry the output along
-        #to each preprocessor
+        # Run each preprocessor on the notebook.  Carry the output along
+        # to each preprocessor
         for preprocessor in self._preprocessors:
             nbc, resc = preprocessor(nbc, resc)
             try: 
                 nbformat.validate(nbc, relax_add_props=True)
             except nbformat.ValidationError:
-                self.log.error('Notebook is invalid after preprocessor {}',
+                self.log.error('Notebook is invalid after preprocessor %s',
                                preprocessor)
                 raise
 
