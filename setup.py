@@ -16,12 +16,10 @@ name = 'nbconvert'
 import sys
 
 v = sys.version_info
-if v[:2] < (2,7) or (v[0] >= 3 and v[:2] < (3,5)):
-    error = "ERROR: %s requires Python version 2.7 or 3.5 or above." % name
+if v[:2] < (3, 5):
+    error = "ERROR: %s requires Python version 3.5 or above." % name
     print(error, file=sys.stderr)
     sys.exit(1)
-
-PY3 = (sys.version_info[0] >= 3)
 
 #-----------------------------------------------------------------------------
 # get on with it
@@ -35,10 +33,7 @@ from setuptools.command.bdist_egg import bdist_egg
 from setuptools.command.develop import develop
 
 from io import BytesIO
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib import urlopen
+from urllib.request import urlopen
 
 from distutils.cmd import Command
 from distutils.command.build import build
@@ -211,7 +206,7 @@ setup_args = dict(
     package_data    = package_data,
     data_files      = get_data_files(),
     cmdclass        = cmdclass,
-    python_requires = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
+    python_requires = '>=3.5',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'https://jupyter.org',
@@ -230,7 +225,6 @@ setup_args = dict(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
