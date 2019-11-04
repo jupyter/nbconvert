@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """
 Module with tests for Strings
 """
@@ -18,7 +19,7 @@ import os
 from ...tests.base import TestsBase
 from ..strings import (wrap_text, html2text, add_anchor, strip_dollars, 
     strip_files_prefix, get_lines, comment_lines, ipython2python, posix_path,
-    add_prompts, prevent_list_blocks
+    add_prompts, prevent_list_blocks,ascii_only
 )
 
 
@@ -70,6 +71,7 @@ class TestStrings(TestsBase):
         """strip_dollars test"""
         tests = [
             ('', ''), 
+            ('  ', '  '),
             ('$$', ''), 
             ('$H$', 'H'), 
             ('$He', 'He'), 
@@ -163,3 +165,14 @@ class TestStrings(TestsBase):
         ]
         for test in tests:
             self.assertEqual(prevent_list_blocks(test[0]), test[1])
+
+    def test_ascii_only(self):
+        """ascii only test"""
+        tests = [
+                ('', ''),
+                ('  ', '  '),
+                ('Hello', 'Hello'),
+                ('Hello 中文', 'Hello ??'),
+        ]
+        for test in tests:
+            self.assertEqual(test[1], ascii_only(test[0]))
