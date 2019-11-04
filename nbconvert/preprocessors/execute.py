@@ -30,10 +30,16 @@ from ..utils.exceptions import ConversionException
 
 
 class CellTimeoutError(TimeoutError):
+    """
+    A custom exception to capture when a cell has timed out during execution.
+    """
     @classmethod
     def error_from_timeout_and_cell(cls, msg, timeout, cell):
-        src_by_lines = cell.source.strip().split("\n")
-        src = cell.source if len(src_by_lines) < 11 else "{}\n...\n{}".format(src_by_lines[:5], src_by_lines[-5:])
+        if cell and cell.source:
+            src_by_lines = cell.source.strip().split("\n")
+            src = cell.source if len(src_by_lines) < 11 else "{}\n...\n{}".format(src_by_lines[:5], src_by_lines[-5:])
+        else:
+            src = "Cell contents not found."
         return cls(timeout_err_msg.format(timeout=timeout, msg=msg, cell_contents=src))
 
 
