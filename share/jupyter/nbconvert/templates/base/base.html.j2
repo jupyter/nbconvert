@@ -217,8 +217,8 @@ alt="{{ alttext }}"
 
 {%- block data_javascript scoped %}
 {% set div_id = uuid4() %}
-<div id="{{ div_id }}"></div>
 <div class="output_subarea output_javascript {{ extra_class }}">
+<div id="{{ div_id }}"></div>
 <script type="text/javascript">
 var element = $('#{{ div_id }}');
 {{ output.data['application/javascript'] }}
@@ -230,8 +230,8 @@ var element = $('#{{ div_id }}');
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %} 
 {% set datatype = datatype_list[0]%} 
-<div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_state {{ extra_class }}">
+<div id="{{ div_id }}"></div>
 <script type="text/javascript">
 var element = $('#{{ div_id }}');
 </script>
@@ -245,8 +245,8 @@ var element = $('#{{ div_id }}');
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %} 
 {% set datatype = datatype_list[0]%} 
-<div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_view {{ extra_class }}">
+<div id="{{ div_id }}"></div>
 <script type="text/javascript">
 var element_id = '#{{ div_id }}';
 </script>
