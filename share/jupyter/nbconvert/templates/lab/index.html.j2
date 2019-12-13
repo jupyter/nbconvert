@@ -1,6 +1,11 @@
 {%- extends 'classic/index.html.j2' -%}
 
 
+{%- block html_head_js_jquery -%}
+{# no jQuery in Jupyter lab, so also not in this template #}
+{%- endblock html_head_js_jquery -%}
+
+
 {% block notebook_css %}
 {{ resources.include_css("static/index.css") }}
 {% if resources.theme == 'dark' %}
