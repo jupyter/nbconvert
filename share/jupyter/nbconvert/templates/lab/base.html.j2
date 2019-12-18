@@ -223,10 +223,9 @@ class="unconfined"
 
 {% set div_id = uuid4() %}
 {%- block data_javascript scoped %}
-<div id="{{ div_id }}"></div>
-<div class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript">
+<div id="{{ div_id }}" class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript">
 <script type="text/javascript">
-var element_id = '#{{ div_id }}';
+var element = document.getElementById('{{ div_id }}');
 {{ output.data['application/javascript'] }}
 </script>
 </div>
@@ -236,10 +235,9 @@ var element_id = '#{{ div_id }}';
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %}
 {% set datatype = datatype_list[0]%}
-<div id="{{ div_id }}"></div>
-<div class="output_subarea output_widget_state {{ extra_class }}">
+<div id="{{ div_id }}" class="output_subarea output_widget_state {{ extra_class }}">
 <script type="text/javascript">
-var element_id = '#{{ div_id }}';
+var element = document.getElementById('{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
 {{ output.data[datatype] | json_dumps }}
@@ -251,10 +249,9 @@ var element_id = '#{{ div_id }}';
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %}
 {% set datatype = datatype_list[0]%}
-<div id="{{ div_id }}"></div>
-<div class="jupyter-widgets jp-OutputArea-output {{ extra_class }}">
+<div id="{{ div_id }}" class="jupyter-widgets jp-OutputArea-output {{ extra_class }}">
 <script type="text/javascript">
-var element_id = '#{{ div_id }}';
+var element = document.getElementById('{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
 {{ output.data[datatype] | json_dumps }}
