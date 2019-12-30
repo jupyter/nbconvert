@@ -28,8 +28,24 @@ from nbformat.v4 import output_from_msg
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
 
+
+class CellTimeoutError(TimeoutError):
+    """
+    A custom exception to capture when a cell has timed out during execution.
+    """
+    @classmethod
+    def error_from_timeout_and_cell(cls, msg, timeout, cell):
+        if cell and cell.source:
+            src_by_lines = cell.source.strip().split("\n")
+            src = cell.source if len(src_by_lines) < 11 else "{}\n...\n{}".format(src_by_lines[:5], src_by_lines[-5:])
+        else:
+            src = "Cell contents not found."
+        return cls(timeout_err_msg.format(timeout=timeout, msg=msg, cell_contents=src))
+
+
 class DeadKernelError(RuntimeError):
     pass
+
 
 class CellExecutionComplete(Exception):
     """
@@ -39,6 +55,7 @@ class CellExecutionComplete(Exception):
     over zeromq channels.
     """
     pass
+
 
 class CellExecutionError(ConversionException):
     """
@@ -71,6 +88,7 @@ class CellExecutionError(ConversionException):
                                        evalue=msg.get('evalue', '')
                                       ))
 
+
 exec_err_msg = u"""\
 An error occurred while executing the following cell:
 ------------------
@@ -80,6 +98,17 @@ An error occurred while executing the following cell:
 {traceback}
 {ename}: {evalue}
 """
+
+
+timeout_err_msg = u"""\
+A cell timed out while it was being executed, after {timeout} seconds.
+The message was: {msg}.
+Here is a preview of the cell contents:
+-------------------
+{cell_contents}
+-------------------
+"""
+
 
 class ExecutePreprocessor(Preprocessor):
     """
@@ -494,14 +523,14 @@ class ExecutePreprocessor(Preprocessor):
 
         return timeout
 
-    def _handle_timeout(self):
+    def _handle_timeout(self, timeout, cell=None):
         self.log.error(
-            "Timeout waiting for execute reply (%is)." % self.timeout)
+            "Timeout waiting for execute reply (%is)." % timeout)
         if self.interrupt_on_timeout:
             self.log.error("Interrupting kernel")
             self.km.interrupt_kernel()
         else:
-            raise TimeoutError("Cell execution timed out")
+            raise CellTimeoutError.error_from_timeout_and_cell("Cell execution timed out", timeout, cell)
 
     def _check_alive(self):
         if not self.kc.is_alive():
@@ -521,7 +550,7 @@ class ExecutePreprocessor(Preprocessor):
                 self._check_alive()
                 cummulative_time += timeout_interval
                 if timeout and cummulative_time > timeout:
-                    self._handle_timeout()
+                    self._handle_timeout(timeout, cell)
                     break
             else:
                 if msg['parent_header'].get('msg_id') == msg_id:
@@ -538,7 +567,6 @@ class ExecutePreprocessor(Preprocessor):
 
     def _passed_deadline(self, deadline):
         if deadline is not None and deadline - monotonic() <= 0:
-            self._handle_timeout()
             return True
         return False
 
@@ -569,6 +597,7 @@ class ExecutePreprocessor(Preprocessor):
         while more_output or polling_exec_reply:
             if polling_exec_reply:
                 if self._passed_deadline(deadline):
+                    self._handle_timeout(exec_timeout, cell)
                     polling_exec_reply = False
                     continue
 
@@ -594,7 +623,9 @@ class ExecutePreprocessor(Preprocessor):
                         continue
 
                     if self.raise_on_iopub_timeout:
-                        raise TimeoutError("Timeout waiting for IOPub output")
+                        raise CellTimeoutError.error_from_timeout_and_cell(
+                            "Timeout waiting for IOPub output", self.iopub_timeout, cell
+                        )
                     else:
                         self.log.warning("Timeout waiting for IOPub output")
                         more_output = False

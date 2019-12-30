@@ -387,8 +387,15 @@ class TestExecute(PreprocessorTestsBase):
         res = self.build_resources()
         res['metadata']['path'] = os.path.dirname(filename)
 
-        with pytest.raises(TimeoutError):
+        with pytest.raises(TimeoutError) as err:
             run_notebook(filename, dict(timeout=1), res)
+        self.assertEqual(str(err.value.args[0]), """A cell timed out while it was being executed, after 1 seconds.
+The message was: Cell execution timed out.
+Here is a preview of the cell contents:
+-------------------
+while True: continue
+-------------------
+""")
 
     def test_timeout_func(self):
         """Check that an error is raised when a computation times out"""
