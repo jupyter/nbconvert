@@ -130,6 +130,8 @@ class IPythonRenderer(mistune.Renderer):
 
     def header(self, text, level, raw=None):
         html = super(IPythonRenderer, self).header(text, level, raw=raw)
+        if self.options.get("exclude_anchor_links"):
+            return html
         anchor_link_text = self.options.get('anchor_link_text', u'¶')
         return add_anchor(html, anchor_link_text=anchor_link_text)
 
