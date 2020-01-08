@@ -472,9 +472,6 @@ class ExecutePreprocessor(Preprocessor):
                               in cell.metadata.get("tags", []))
 
         if self.force_raise_errors or not cell_allows_errors:
-            for out in cell.outputs:
-                if out.output_type == 'error':
-                    raise CellExecutionError.from_cell_and_msg(cell, out)
             if (reply is not None) and reply['content']['status'] == 'error':
                 raise CellExecutionError.from_cell_and_msg(cell, reply['content'])
         return cell, resources
