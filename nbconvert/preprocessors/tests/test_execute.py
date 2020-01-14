@@ -102,7 +102,7 @@ def run_notebook(filename, opts, resources):
     return input_nb, output_nb
 
 
-def prepare_cell_mocks(*messages):
+def prepare_cell_mocks(*messages, reply_msg=None):
     """
     This function prepares a preprocessor object which has a fake kernel client
     to mock the messages sent over zeromq. The mock kernel client will return
@@ -143,7 +143,9 @@ def prepare_cell_mocks(*messages):
     def shell_channel_message_mock():
         # Return the message generator for
         # self.kc.shell_channel.get_msg => {'parent_header': {'msg_id': parent_id}}
-        return MagicMock(return_value={'parent_header': {'msg_id': parent_id}})
+        return MagicMock(return_value=PreprocessorTestsBase.merge_dicts(
+            {'parent_header': {'msg_id': parent_id}}, reply_msg or {}
+        ))
 
     def iopub_messages_mock():
         # Return the message generator for
@@ -167,7 +169,11 @@ def prepare_cell_mocks(*messages):
             the messages passed into prepare_cell_mocks as the run_cell loop
             processes them.
             """
-            cell_mock = NotebookNode(source='"foo" = "bar"', outputs=[])
+            cell_mock = NotebookNode(
+                source='"foo" = "bar"',
+                metadata={},
+                cell_type='code',
+                outputs=[])
             preprocessor = build_preprocessor({})
             preprocessor.nb = {'cells': [cell_mock]}
 
@@ -1075,3 +1081,128 @@ class TestRunCell(PreprocessorTestsBase):
             'evalue': 'bar',
             'traceback': ['Boom']
         }]
+
+
+class TestPreprocessCell(PreprocessorTestsBase):
+    """Contains test functions for ExecutePreprocessor.run_cell"""
+
+    @prepare_cell_mocks({
+        'msg_type': 'error',
+        'header': {'msg_type': 'error'},
+        'content': {'ename': 'foo', 'evalue': 'bar', 'traceback': ['Boom']}
+    }, reply_msg={
+        'msg_type': 'execute_reply',
+        'header': {'msg_type': 'execute_reply'},
+        # ERROR
+        'content': {'status': 'error'}
+    })
+    def test_error_and_error_status_messages(self, preprocessor, cell_mock, message_mock):
+        with self.assertRaises(CellExecutionError):
+            preprocessor.preprocess_cell(cell_mock, {}, 0)
+
+        # An error followed by an idle
+        assert message_mock.call_count == 2
+        # Cell outputs should still be copied
+        assert cell_mock.outputs == [{
+            'output_type': 'error',
+            'ename': 'foo',
+            'evalue': 'bar',
+            'traceback': ['Boom']
+        }]
+
+    @prepare_cell_mocks({
+        'msg_type': 'error',
+        'header': {'msg_type': 'error'},
+        'content': {'ename': 'foo', 'evalue': 'bar', 'traceback': ['Boom']}
+    }, reply_msg={
+        'msg_type': 'execute_reply',
+        'header': {'msg_type': 'execute_reply'},
+        # OK
+        'content': {'status': 'ok'}
+    })
+    def test_error_message_only(self, preprocessor, cell_mock, message_mock):
+        # Should NOT raise
+        preprocessor.preprocess_cell(cell_mock, {}, 0)
+
+        # An error followed by an idle
+        assert message_mock.call_count == 2
+        # Should also consume the message stream
+        assert cell_mock.outputs == [{
+            'output_type': 'error',
+            'ename': 'foo',
+            'evalue': 'bar',
+            'traceback': ['Boom']
+        }]
+
+    @prepare_cell_mocks(reply_msg={
+        'msg_type': 'execute_reply',
+        'header': {'msg_type': 'execute_reply'},
+        # ERROR
+        'content': {'status': 'error'}
+    })
+    def test_allow_errors(self, preprocessor, cell_mock, message_mock):
+        preprocessor.allow_errors = True
+        # Should NOT raise
+        preprocessor.preprocess_cell(cell_mock, {}, 0)
+
+        # An error followed by an idle
+        assert message_mock.call_count == 1
+        # Should also consume the message stream
+        assert cell_mock.outputs == []
+
+    @prepare_cell_mocks(reply_msg={
+        'msg_type': 'execute_reply',
+        'header': {'msg_type': 'execute_reply'},
+        # ERROR
+        'content': {'status': 'error'}
+    })
+    def test_raises_exception_tag(self, preprocessor, cell_mock, message_mock):
+        cell_mock.metadata['tags'] = ['raises-exception']
+        # Should NOT raise
+        preprocessor.preprocess_cell(cell_mock, {}, 0)
+
+        # An error followed by an idle
+        assert message_mock.call_count == 1
+        # Should also consume the message stream
+        assert cell_mock.outputs == []
+
+    @prepare_cell_mocks(reply_msg={
+        'msg_type': 'execute_reply',
+        'header': {'msg_type': 'execute_reply'},
+        # ERROR
+        'content': {'status': 'error'}
+    })
+    def test_non_code_cell(self, preprocessor, cell_mock, message_mock):
+        cell_mock = NotebookNode(
+            source='"foo" = "bar"',
+            metadata={},
+            cell_type='raw',
+            outputs=[])
+        # Should NOT raise nor execute any code
+        preprocessor.preprocess_cell(cell_mock, {}, 0)
+
+        # An error followed by an idle
+        assert message_mock.call_count == 0
+        # Should also consume the message stream
+        assert cell_mock.outputs == []
+
+    @prepare_cell_mocks(reply_msg={
+        'msg_type': 'execute_reply',
+        'header': {'msg_type': 'execute_reply'},
+        # ERROR
+        'content': {'status': 'error'}
+    })
+    def test_no_source(self, preprocessor, cell_mock, message_mock):
+        cell_mock = NotebookNode(
+            # Stripped source is empty
+            source='     ',
+            metadata={},
+            cell_type='code',
+            outputs=[])
+        # Should NOT raise nor execute any code
+        preprocessor.preprocess_cell(cell_mock, {}, 0)
+
+        # An error followed by an idle
+        assert message_mock.call_count == 0
+        # Should also consume the message stream
+        assert cell_mock.outputs == []
