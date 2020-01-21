@@ -482,6 +482,9 @@ class TemplateExporter(Exporter):
             base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
             paths.append(base_dir)
 
+            compatibility_dir = os.path.join(root_dir, 'nbconvert', 'templates', 'compatibility')
+            paths.append(compatibility_dir)
+
         additional_paths = self.template_data_paths
         for path in additional_paths:
             try:
