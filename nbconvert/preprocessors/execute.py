@@ -397,6 +397,7 @@ class ExecutePreprocessor(Preprocessor):
             try:
                 yield nb, self.km, self.kc
             finally:
+                self.kc.stop_channels()
                 for attr in ['nb', 'km', 'kc']:
                     delattr(self, attr)
 
