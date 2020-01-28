@@ -59,7 +59,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     @default('command')
     def _command_default(self):
         return self.inkscape + \
-               ' --without-gui --export-pdf="{to_filename}" "{from_filename}"'
+               ' --without-gui --export-file="{to_filename}" "{from_filename}"'
     
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
     @default('inkscape')
