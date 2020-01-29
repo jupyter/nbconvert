@@ -1,4 +1,4 @@
-"""Module containing a preprocessor that converts outputs in the notebook from 
+"""Module containing a preprocessor that converts outputs in the notebook from
 one format to another.
 """
 
@@ -17,11 +17,7 @@ from traitlets import Unicode, default
 
 from .convertfigures import ConvertFiguresPreprocessor
 
-if sys.version_info >= (3,3):
-    from shutil import which
-    get_inkscape_path = which('inkscape')
-else:
-    get_inkscape_path = None
+from shutil import which
 
 
 INKSCAPE_APP = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
@@ -46,26 +42,48 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     def _to_format_default(self):
         return 'application/pdf'
 
+    inkscape_version = Unicode(
+        help="""The version of inkscpae being used.
+
+        This affects how the conversion command is run.
+        """
+    ).tag(config=True)
+
+    @default('inkscape_version')
+    def _inkscape_version_default(self):
+        p = subprocess.Popen([self.inkscape, '--version'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        output, _ = p.communicate()
+        if p.returncode != 0:
+            raise RuntimeError("Unable to find inkscape executable --version")
+        return output.decode('utf-8').split(' ')[1]
+
     command = Unicode(
         help="""The command to use for converting SVG to PDF
-        
+
         This string is a template, which will be formatted with the keys
         to_filename and from_filename.
-        
+
         The conversion call must read the SVG from {from_filename},
         and write a PDF to {to_filename}.
         """).tag(config=True)
 
     @default('command')
     def _command_default(self):
-        return self.inkscape + \
-               ' --without-gui --export-file="{to_filename}" "{from_filename}"'
-    
+        major_verison = self.inkscape_version.split('.')[0]
+        export_option = '--export-file' if int(major_verison) > 0 else '--export-pdf'
+
+        return '{inkscape} --without-gui {export_option}='.format(
+            inkscape=self.inkscape, export_option=export_option
+        ) + '"{to_filename}" "{from_filename}"'
+
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
     @default('inkscape')
     def _inkscape_default(self):
-        if get_inkscape_path is not None:
-            return get_inkscape_path 
+        inkscape_path = which('inkscape')
+        if inkscape_path is not None:
+            return inkscape_path
         if sys.platform == "darwin":
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
@@ -85,22 +103,22 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         Convert a single SVG figure to PDF.  Returns converted data.
         """
 
-        #Work in a temporary directory
+        # Work in a temporary directory
         with TemporaryDirectory() as tmpdir:
-            
-            #Write fig to temp file
+
+            # Write fig to temp file
             input_filename = os.path.join(tmpdir, 'figure.svg')
             # SVG data is unicode text
             with io.open(input_filename, 'w', encoding='utf8') as f:
                 f.write(cast_unicode_py2(data))
 
-            #Call conversion application
+            # Call conversion application
             output_filename = os.path.join(tmpdir, 'figure.pdf')
-            shell = self.command.format(from_filename=input_filename, 
+            shell = self.command.format(from_filename=input_filename,
                                    to_filename=output_filename)
-            subprocess.call(shell, shell=True) #Shell=True okay since input is trusted.
+            subprocess.call(shell, shell=True) # Shell=True okay since input is trusted.
 
-            #Read output from drive
+            # Read output from drive
             # return value expects a filename
             if os.path.isfile(output_filename):
                 with open(output_filename, 'rb') as f:

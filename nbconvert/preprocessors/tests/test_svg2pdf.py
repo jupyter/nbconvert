@@ -4,6 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from nbformat import v4 as nbformat
+from unittest.mock import patch, Mock
 
 from .base import PreprocessorTestsBase
 from ..svg2pdf import SVG2PDFPreprocessor
@@ -51,9 +52,9 @@ class Testsvg2pdf(PreprocessorTestsBase):
         return nbformat.new_notebook(cells=cells)
 
 
-    def build_preprocessor(self):
+    def build_preprocessor(self, **kwargs):
         """Make an instance of a preprocessor"""
-        preprocessor = SVG2PDFPreprocessor()
+        preprocessor = SVG2PDFPreprocessor(**kwargs)
         preprocessor.enabled = True
         return preprocessor
 
@@ -71,4 +72,23 @@ class Testsvg2pdf(PreprocessorTestsBase):
         preprocessor = self.build_preprocessor()
         nb, res = preprocessor(nb, res)
         self.assertIn('application/pdf', nb.cells[0].outputs[0].data)
-        
+
+    @patch('subprocess.Popen')
+    def test_inkscape_version_default(self, mock_popen):
+        mock_popen().communicate.return_value = (b'Inkscape 0.92.3 (2405546, 2018-03-11)', b'')
+        mock_popen().returncode = 0
+
+        preprocessor = self.build_preprocessor()
+        self.assertEquals(preprocessor.inkscape_version, '0.92.3')
+
+    def test_inkscape_pre_v1_command(self):
+        preprocessor = self.build_preprocessor(inkscape_version='0.92.3')
+        self.assertEquals(preprocessor.command, '0.92.3')
+
+    def test_inkscape_pre_v1_command(self):
+        preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='0.92.3')
+        self.assertEquals(preprocessor.command, 'fake-inkscape --without-gui --export-pdf="{to_filename}" "{from_filename}"')
+
+    def test_inkscape_v1_command(self):
+        preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='1.0beta2')
+        self.assertEquals(preprocessor.command, 'fake-inkscape --without-gui --export-file="{to_filename}" "{from_filename}"')
