@@ -6,9 +6,9 @@
 
 % Displaying simple data text
 ((* block data_text *))
-    \begin{verbatim}
-((( output.data['text/plain'] )))
-    \end{verbatim}
+    \begin{Verbatim}[commandchars=\\\{\}]
+((( output.data['text/plain'] | escape_latex | ansi2latex )))
+    \end{Verbatim}
 ((* endblock data_text *))
 
 % Display python error text as-is
