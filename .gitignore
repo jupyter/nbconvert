@@ -30,4 +30,6 @@ docs/source/config_options.rst
 .settings
 
 # VSCode
+*.code-workspace
+.history
 .vscode
