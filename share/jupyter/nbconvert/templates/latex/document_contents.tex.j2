@@ -11,15 +11,16 @@
     \end{Verbatim}
 ((* endblock data_text *))
 
-% Display python error text as-is
+% Display python error text with colored frame (saves printer ink vs bkgnd)
 ((* block error *))
-    \begin{Verbatim}[commandchars=\\\{\}]
-((( super() )))
+    \begin{Verbatim}[commandchars=\\\{\}, frame=single, framerule=2mm, rulecolor=\color{outerrorbackground}]
+(((- super() )))
     \end{Verbatim}
 ((* endblock error *))
-((* block traceback_line *))
-    ((( line | indent | strip_ansi | escape_latex )))
-((* endblock traceback_line *))
+% Display error lines with coloring
+((*- block traceback_line *))
+((( line | escape_latex | ansi2latex )))
+((*- endblock traceback_line *))
 
 % Display stream ouput with coloring
 ((* block stream *))
