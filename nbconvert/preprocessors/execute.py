@@ -24,6 +24,7 @@ except NameError:
 from traitlets import List, Unicode, Bool, Enum, Any, Type, Dict, Integer, default
 
 from nbformat.v4 import output_from_msg
+import zmq
 
 from .base import Preprocessor
 from ..utils.exceptions import ConversionException
@@ -569,8 +570,7 @@ class ExecutePreprocessor(Preprocessor):
         return False
 
     def run_cell(self, cell, cell_index=0, store_history=False):
-        parent_msg_id = self.kc.execute(cell.source,
-            store_history=store_history, stop_on_error=not self.allow_errors)
+        parent_msg_id = self.kc.execute(cell.source, store_history=store_history, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
         deadline = None
@@ -580,67 +580,45 @@ class ExecutePreprocessor(Preprocessor):
         cell.outputs = []
         self.clear_before_next_output = False
 
-        # This loop resolves #659. By polling iopub_channel's and shell_channel's
-        # output we avoid dropping output and important signals (like idle) from
-        # iopub_channel. Prior to this change, iopub_channel wasn't polled until
-        # after exec_reply was obtained from shell_channel, leading to the
-        # aforementioned dropped data.
-
-        # These two variables are used to track what still needs polling:
-        # more_output=true => continue to poll the iopub_channel
-        more_output = True
-        # polling_exec_reply=true => continue to poll the shell_channel
-        polling_exec_reply = True
-
-        while more_output or polling_exec_reply:
-            if polling_exec_reply:
-                if self._passed_deadline(deadline):
-                    self._handle_timeout(exec_timeout, cell)
-                    polling_exec_reply = False
-                    continue
-
-                # Avoid exceeding the execution timeout (deadline), but stop
-                # after at most 1s so we can poll output from iopub_channel.
-                timeout = self._timeout_with_deadline(1, deadline)
-                exec_reply = self._poll_for_reply(parent_msg_id, cell, timeout)
-                if exec_reply is not None:
-                    polling_exec_reply = False
-
-            if more_output:
-                try:
-                    timeout = self.iopub_timeout
-                    if polling_exec_reply:
-                        # Avoid exceeding the execution timeout (deadline) while
-                        # polling for output.
-                        timeout = self._timeout_with_deadline(timeout, deadline)
-                    msg = self.kc.iopub_channel.get_msg(timeout=timeout)
-                except Empty:
-                    if polling_exec_reply:
-                        # Still waiting for execution to finish so we expect that
-                        # output may not always be produced yet.
-                        continue
-
-                    if self.raise_on_iopub_timeout:
-                        raise CellTimeoutError.error_from_timeout_and_cell(
-                            "Timeout waiting for IOPub output", self.iopub_timeout, cell
-                        )
+        # we need to have a reply, and return to idle before we can consider the cell executed
+        idle = False
+        execute_reply = None
+        while not idle or execute_reply is None:
+            # we want to timeout regularly, to see if the kernel is still alive
+            # this is tested in preprocessors/test/test_execute.py#test_kernel_death
+            # this actually fakes the kernel death, and we might be able to use the xlist
+            # to detect a disconnected kernel
+            timeout = min(1, deadline - monotonic())
+            # if we interrupt on timeout, we allow 1 seconds to pass till deadline
+            # to make sure we get the interrupt message
+            if timeout >= (-1 if self.interrupt_on_timeout else 0):
+                # we include 0, which simply is a poll to see if we have messages left
+                rlist, wlist, xlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], min(0, timeout))
+                # print("lists", rlist, wlist, xlist)
+                if not rlist and not wlist and not xlist:
+                    self._check_alive()
+                    if monotonic() > deadline:
+                        self._handle_timeout(exec_timeout, cell)
+                if xlist:
+                    raise RuntimeError("Oops, unexpected rror")
+                if self.kc.shell_channel.socket in rlist:
+                    msg = self.kc.shell_channel.get_msg(block=False)
+                    if msg['parent_header'].get('msg_id') == parent_msg_id:
+                        execute_reply = msg
+                if self.kc.iopub_channel.socket in rlist:
+                    msg = self.kc.iopub_channel.get_msg(block=False)
+                    if msg['parent_header'].get('msg_id') == parent_msg_id:
+                        if msg['msg_type'] == 'status' and msg['content']['execution_state'] == 'idle':
+                            idle = True
+                        else:
+                            self.process_message(msg, cell, cell_index)
                     else:
-                        self.log.warning("Timeout waiting for IOPub output")
-                        more_output = False
-                        continue
-            if msg['parent_header'].get('msg_id') != parent_msg_id:
-                # not an output from our execution
-                continue
+                        self.log.debug("Received message for which we were not the parent: %s", msg)
+            else:
+                self._handle_timeout(exec_timeout, cell)
+                break
 
-            try:
-                # Will raise CellExecutionComplete when completed
-                self.process_message(msg, cell, cell_index)
-            except CellExecutionComplete:
-                more_output = False
-
-        # Return cell.outputs still for backwards compatibility
-        return exec_reply, cell.outputs
-
+        return execute_reply, cell.outputs
     def process_message(self, msg, cell, cell_index):
         """
         Processes a kernel message, updates cell state, and returns the
