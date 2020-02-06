@@ -254,6 +254,7 @@ def notebook_resources():
         ("Inline Image.ipynb", dict(kernel_name="python")),
         ("Interrupt-IPY6.ipynb", dict(kernel_name="python", timeout=1, interrupt_on_timeout=True, allow_errors=True)) if IPY_MAJOR < 7 else
             ("Interrupt.ipynb", dict(kernel_name="python", timeout=1, interrupt_on_timeout=True, allow_errors=True)),
+        ("Interrupt-blocked.ipynb", dict(kernel_name="python", timeout=1, interrupt_on_timeout=True, allow_errors=True)),
         ("JupyterWidgets.ipynb", dict(kernel_name="python")),
         ("Skip Exceptions with Cell Tags-IPY6.ipynb", dict(kernel_name="python")) if IPY_MAJOR < 7 else
             ("Skip Exceptions with Cell Tags.ipynb", dict(kernel_name="python")),
