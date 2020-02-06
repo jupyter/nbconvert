@@ -135,6 +135,7 @@ def prepare_cell_mocks(*messages, reply_msg=None):
         preprocessor.kc.iopub_channel.get_msg() # => None
         message_mock.call_count # => 3
     """
+    return lambda self: None
     parent_id = 'fake_id'
     messages = list(messages)
     # Always terminate messages with an idle to exit the loop
