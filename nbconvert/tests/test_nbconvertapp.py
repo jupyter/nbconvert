@@ -97,7 +97,7 @@ class TestNbConvertApp(TestsBase):
             test_output = 'success!'
             with open(template, 'w') as f:
                 f.write(test_output)
-            self.nbconvert('--log-level 0 notebook2 --template-file %s' % template)
+            self.nbconvert('--log-level 0 notebook2 --to html --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
             with open('notebook2.html') as f:
                 text = f.read()
@@ -111,7 +111,7 @@ class TestNbConvertApp(TestsBase):
             test_output = 'success!'
             with open(template, 'w') as f:
                 f.write(test_output)
-            self.nbconvert('--log-level 0 notebook2 --template-file %s' % template)
+            self.nbconvert('--log-level 0 notebook2 --to html --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
             with open('notebook2.html') as f:
                 text = f.read()

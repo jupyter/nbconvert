@@ -263,7 +263,7 @@ class NbConvertApp(JupyterApp):
 
 
     export_format = Unicode(
-        'html',
+        'notebook',
         allow_none=False,
         help="""The export format to be used, either one of the built-in formats
         {formats}
