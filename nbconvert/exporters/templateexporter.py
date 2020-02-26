@@ -176,6 +176,8 @@ class TemplateExporter(Exporter):
 
     raw_template = Unicode('', help="raw template string").tag(affects_environment=True)
 
+    enable_async = Bool(False, help="Enable Jinja async template execution").tag(affects_environment=True)
+
     _last_template_file = ""
     _raw_template_key = "<memory>"
 
@@ -442,7 +444,8 @@ class TemplateExporter(Exporter):
         ]
         environment = Environment(
             loader=ChoiceLoader(loaders),
-            extensions=JINJA_EXTENSIONS
+            extensions=JINJA_EXTENSIONS,
+            enable_async=self.enable_async
             )
 
         environment.globals['uuid4'] = uuid.uuid4
