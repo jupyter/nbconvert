@@ -20,7 +20,11 @@ from .convertfigures import ConvertFiguresPreprocessor
 from shutil import which
 
 
+# inkscape path for darwin (macOS)
 INKSCAPE_APP = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
+# Recent versions of Inkscpae (v1.0) moved the executable from 
+# Resources/bin/inkscape to MacOS/inkscape
+INKSCAPE_APP_v1 = '/Applications/Inkscape.app/Contents/MacOS/inkscape'
 
 if sys.platform == "win32":
     try:
@@ -85,6 +89,10 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         if inkscape_path is not None:
             return inkscape_path
         if sys.platform == "darwin":
+            if os.path.isfile(INKSCAPE_APP_v1):
+                return INKSCAPE_APP_v1
+            # Order is important. If INKSCAPE_APP exists, prefer it over
+            # the executable in the MacOS directory.
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
         if sys.platform == "win32":
