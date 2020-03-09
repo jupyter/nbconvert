@@ -228,11 +228,12 @@ setup_args['install_requires'] = [
     'pandocfilters>=1.4.1',
     'testpath',
     'defusedxml',
+    'nbclient',
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
 extra_requirements = {
-    'test': ['pytest', 'pytest-cov', 'mock; python_version < "3.4"', 'ipykernel', jupyter_client_req, 'ipywidgets>=7', 'pebble'],
+    'test': ['pytest', 'pytest-cov', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
     'serve': ['tornado>=4.0'],
     'execute': [jupyter_client_req],
     'docs': ['sphinx>=1.5.1',
