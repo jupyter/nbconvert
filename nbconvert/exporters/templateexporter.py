@@ -164,7 +164,7 @@ class TemplateExporter(Exporter):
                 'enabled': True
                 }
             })
-        c.merge(super(TemplateExporter, self).default_config)
+        c.merge(super().default_config)
         return c
 
     template_name = Unicode(help="Name of the template to use"
@@ -297,7 +297,7 @@ class TemplateExporter(Exporter):
         template_file : str (optional, kw arg)
             Template to use when exporting.
         """
-        super(TemplateExporter, self).__init__(config=config, **kw)
+        super().__init__(config=config, **kw)
 
         self.observe(self._invalidate_environment_cache,
                      list(self.traits(affects_environment=True)))
@@ -341,7 +341,7 @@ class TemplateExporter(Exporter):
           Additional resources that can be accessed read/write by
           preprocessors and filters.
         """
-        nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
+        nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
         resources['global_content_filter'] = {
                 'include_code': not self.exclude_code_cell,

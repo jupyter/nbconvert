@@ -13,7 +13,7 @@ class TestClearMetadata(PreprocessorTestsBase):
     """Contains test functions for clearmetadata.py"""
 
     def build_notebook(self):
-        notebook = super(TestClearMetadata, self).build_notebook()
+        notebook = super().build_notebook()
         # Add a test field to the first cell
         if 'metadata' not in notebook.cells[0]:
             notebook.cells[0].metadata = {}

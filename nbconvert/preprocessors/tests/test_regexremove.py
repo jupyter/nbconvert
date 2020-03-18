@@ -16,7 +16,7 @@ class TestRegexRemove(PreprocessorTestsBase):
     """Contains test functions for regexremove.py"""
 
     def build_notebook(self):
-        notebook = super(TestRegexRemove, self).build_notebook()
+        notebook = super().build_notebook()
         # Add a few empty cells
         notebook.cells.extend([
             nbformat.new_code_cell(''),

@@ -29,7 +29,7 @@ class CheesePreprocessor(Preprocessor):
         """
         Public constructor
         """
-        super(CheesePreprocessor, self).__init__(**kw)
+        super().__init__(**kw)
 
 
     def preprocess(self, nb, resources):

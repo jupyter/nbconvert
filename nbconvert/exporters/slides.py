@@ -188,4 +188,4 @@ class SlidesExporter(HTMLExporter):
 
         nb = prepare(nb)
 
-        return super(SlidesExporter, self).from_notebook_node(nb, resources=resources, **kw)
+        return super().from_notebook_node(nb, resources=resources, **kw)

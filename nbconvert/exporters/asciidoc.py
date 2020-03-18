@@ -47,5 +47,5 @@ class ASCIIDocExporter(TemplateExporter):
                 'enabled':True
                 },
         })
-        c.merge(super(ASCIIDocExporter, self).default_config)
+        c.merge(super().default_config)
         return c

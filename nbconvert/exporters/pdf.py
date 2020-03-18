@@ -172,7 +172,7 @@ class PDFExporter(LatexExporter):
         return self.run_command(self.bib_command, filename, 1, log_error, raise_on_failure)
     
     def from_notebook_node(self, nb, resources=None, **kw):
-        latex, resources = super(PDFExporter, self).from_notebook_node(
+        latex, resources = super().from_notebook_node(
             nb, resources=resources, **kw
         )
         # set texinputs directory, so that local files will be found
