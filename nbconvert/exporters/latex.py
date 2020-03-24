@@ -39,7 +39,7 @@ class LatexExporter(TemplateExporter):
     output_mimetype = 'text/latex'
 
     def default_filters(self):
-        for x in super(LatexExporter, self).default_filters():
+        for x in super().default_filters():
             yield x 
         yield ('resolve_references', resolve_references)
 
@@ -65,7 +65,7 @@ class LatexExporter(TemplateExporter):
                     'enabled':True
                  }
          })
-        c.merge(super(LatexExporter,self).default_config)
+        c.merge(super().default_config)
         return c
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -74,10 +74,10 @@ class LatexExporter(TemplateExporter):
         highlight_code = self.filters.get('highlight_code', Highlight2Latex(pygments_lexer=lexer, parent=self))
         self.register_filter('highlight_code', highlight_code)
         
-        return super(LatexExporter, self).from_notebook_node(nb, resources, **kw)
+        return super().from_notebook_node(nb, resources, **kw)
 
     def _create_environment(self):
-        environment = super(LatexExporter, self)._create_environment()
+        environment = super()._create_environment()
 
         # Set special Jinja2 syntax that will not conflict with latex.
         environment.block_start_string = "((*"

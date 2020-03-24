@@ -41,7 +41,7 @@ class FilesWriter(WriterBase):
             ensure_dir_exists(new)
 
     def __init__(self, **kw):
-        super(FilesWriter, self).__init__(**kw)
+        super().__init__(**kw)
         self._build_directory_changed({'new': self.build_directory})
     
     def _makedir(self, path):

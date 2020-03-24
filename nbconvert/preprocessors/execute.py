@@ -65,7 +65,7 @@ class CellExecutionError(ConversionException):
     failures gracefully.
     """
     def __init__(self, traceback):
-        super(CellExecutionError, self).__init__(traceback)
+        super().__init__(traceback)
         self.traceback = traceback
 
     def __str__(self):
@@ -432,7 +432,7 @@ class ExecutePreprocessor(Preprocessor):
 
         with self.setup_preprocessor(nb, resources, km=km):
             self.log.info("Executing notebook with kernel: %s" % self.kernel_name)
-            nb, resources = super(ExecutePreprocessor, self).preprocess(nb, resources)
+            nb, resources = super().preprocess(nb, resources)
             info_msg = self._wait_for_reply(self.kc.kernel_info())
             nb.metadata['language_info'] = info_msg['content']['language_info']
             self.set_widgets_metadata()

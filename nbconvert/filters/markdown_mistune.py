@@ -50,7 +50,7 @@ class MathBlockLexer(mistune.BlockLexer):
     def __init__(self, rules=None, **kwargs):
         if rules is None:
             rules = MathBlockGrammar()
-        super(MathBlockLexer, self).__init__(rules, **kwargs)
+        super().__init__(rules, **kwargs)
 
     def parse_multiline_math(self, m):
         """Add token to pass through mutiline math."""
@@ -86,7 +86,7 @@ class MathInlineLexer(mistune.InlineLexer):
     def __init__(self, renderer, rules=None, **kwargs):
         if rules is None:
             rules = MathInlineGrammar()
-        super(MathInlineLexer, self).__init__(renderer, rules, **kwargs)
+        super().__init__(renderer, rules, **kwargs)
 
     def output_inline_math(self, m):
         return self.renderer.inline_math(m.group(1) or m.group(2))
@@ -105,7 +105,7 @@ class MarkdownWithMath(mistune.Markdown):
             kwargs['inline'] = MathInlineLexer
         if 'block' not in kwargs:
             kwargs['block'] = MathBlockLexer
-        super(MarkdownWithMath, self).__init__(renderer, **kwargs)
+        super().__init__(renderer, **kwargs)
 
     
     def output_multiline_math(self):
@@ -129,7 +129,7 @@ class IPythonRenderer(mistune.Renderer):
         return highlight(code, lexer, formatter)
 
     def header(self, text, level, raw=None):
-        html = super(IPythonRenderer, self).header(text, level, raw=raw)
+        html = super().header(text, level, raw=raw)
         if self.options.get("exclude_anchor_links"):
             return html
         anchor_link_text = self.options.get('anchor_link_text', u'¶')
@@ -172,7 +172,7 @@ class IPythonRenderer(mistune.Renderer):
             mime_type = preferred_mime_type
             data = attachment[mime_type]
             src = 'data:' + mime_type + ';base64,' + data
-        return super(IPythonRenderer, self).image(src, title, text)
+        return super().image(src, title, text)
 
 
 def markdown2html_mistune(source):

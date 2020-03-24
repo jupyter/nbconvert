@@ -66,4 +66,4 @@ class ScriptExporter(TemplateExporter):
         # Fall back to plain script export
         self.file_extension = langinfo.get('file_extension', '.txt')
         self.output_mimetype = langinfo.get('mimetype', 'text/plain')
-        return super(ScriptExporter, self).from_notebook_node(nb, resources, **kw)
+        return super().from_notebook_node(nb, resources, **kw)

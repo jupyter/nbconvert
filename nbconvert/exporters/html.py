@@ -78,7 +78,7 @@ class HTMLExporter(TemplateExporter):
                 'enabled':True
                 }
             })
-        c.merge(super(HTMLExporter,self).default_config)
+        c.merge(super().default_config)
         return c
 
     @contextfilter
@@ -92,7 +92,7 @@ class HTMLExporter(TemplateExporter):
         return MarkdownWithMath(renderer=renderer).render(source)
 
     def default_filters(self):
-        for pair in super(HTMLExporter, self).default_filters():
+        for pair in super().default_filters():
             yield pair
         yield ('markdown2html', self.markdown2html)
 
@@ -101,7 +101,7 @@ class HTMLExporter(TemplateExporter):
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
         self.register_filter('highlight_code', highlight_code)
-        return super(HTMLExporter, self).from_notebook_node(nb, resources, **kw)
+        return super().from_notebook_node(nb, resources, **kw)
 
     def _init_resources(self, resources):
         def resources_include_css(name):
@@ -139,7 +139,7 @@ class HTMLExporter(TemplateExporter):
             data = data.replace(b'\n', b'').decode('ascii')
             src = 'data:{mime_type};base64,{data}'.format(mime_type=mime_type, data=data)
             return jinja2.Markup(src)
-        resources = super(HTMLExporter, self)._init_resources(resources)
+        resources = super()._init_resources(resources)
         resources['theme'] = self.theme
         resources['include_css'] = resources_include_css
         resources['include_js'] = resources_include_js

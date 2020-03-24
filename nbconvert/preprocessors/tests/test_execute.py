@@ -502,7 +502,7 @@ while True: continue
 
         class WrappedPreProc(ExecutePreprocessor):
             def process_message(self, msg, cell, cell_index):
-                result = super(WrappedPreProc, self).process_message(msg, cell, cell_index)
+                result = super().process_message(msg, cell, cell_index)
                 if result:
                     outputs.append(result)
                 return result

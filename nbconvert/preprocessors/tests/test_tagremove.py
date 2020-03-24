@@ -19,7 +19,7 @@ class TestTagRemove(PreprocessorTestsBase):
         Build a notebook to have metadata tags for cells, output_areas, and
         individual outputs.
         """
-        notebook = super(TestTagRemove, self).build_notebook()
+        notebook = super().build_notebook()
         # Add a few empty cells
         notebook.cells[0].outputs.extend(
             [nbformat.new_output("display_data",

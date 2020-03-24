@@ -24,7 +24,7 @@ class WriterBase(NbConvertBase):
         """
         Constructor
         """
-        super(WriterBase, self).__init__(config=config, **kw)
+        super().__init__(config=config, **kw)
 
 
     def write(self, output, resources, **kw):

@@ -25,11 +25,11 @@ class TestPandoc(TestsBase):
     """Collection of Pandoc tests"""
 
     def __init__(self, *args, **kwargs):
-        super(TestPandoc, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.original_env = os.environ.copy()
 
     def setUp(self):
-        super(TestPandoc, self).setUp()
+        super().setUp()
         pandoc.check_pandoc_version._cached = None
 
     @onlyif_cmds_exist('pandoc')

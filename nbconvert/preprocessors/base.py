@@ -38,7 +38,7 @@ class Preprocessor(NbConvertBase):
             Additional keyword arguments passed to parent
         """
         
-        super(Preprocessor, self).__init__(**kw)
+        super().__init__(**kw)
 
     def __call__(self, nb, resources):
         if self.enabled:
