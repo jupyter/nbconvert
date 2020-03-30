@@ -10,6 +10,7 @@ from __future__ import print_function, absolute_import
 import os
 import uuid
 import json
+import warnings
 
 from jupyter_core.paths import jupyter_path
 from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
@@ -535,3 +536,11 @@ class TemplateExporter(Exporter):
         root_dirs.extend(self.template_path)
         root_dirs.extend(jupyter_path())
         return root_dirs
+
+    def _init_resources(self, resources):
+        resources = super()._init_resources(resources)
+        # inline function to avoid pickle errors
+        def deprecated(msg):
+            warnings.warn(msg, DeprecationWarning)
+        resources['deprecated'] = deprecated
+        return resources
