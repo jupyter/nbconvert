@@ -4,6 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import io
+import pytest
 import re
 
 import nbformat
@@ -33,6 +34,15 @@ class TestRSTExporter(ExportersTestsBase):
         Can a RSTExporter export something?
         """
         (output, resources) = RSTExporter().from_filename(self._get_notebook())
+        assert len(output) > 0
+
+    @onlyif_cmds_exist('pandoc')
+    def test_export_nbformat_template_v5_name(self):
+        """
+        We support the nbconvert v5 filename, but with a deprecation warning.
+        """
+        with pytest.warns(DeprecationWarning):
+            (output, resources) = RSTExporter(template_file='rst.tpl').from_filename(self._get_notebook())
         assert len(output) > 0
 
     @onlyif_cmds_exist('pandoc')
