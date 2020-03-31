@@ -189,7 +189,7 @@ setup_args = dict(
     package_data    = package_data,
     data_files      = get_data_files(),
     cmdclass        = cmdclass,
-    python_requires = '>=3.5',
+    python_requires = '>=3.6',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'https://jupyter.org',
@@ -209,7 +209,6 @@ setup_args = dict(
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
@@ -228,7 +227,7 @@ setup_args['install_requires'] = [
     'pandocfilters>=1.4.1',
     'testpath',
     'defusedxml',
-    'nbclient',
+    'nbclient>=0.2.0',
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
