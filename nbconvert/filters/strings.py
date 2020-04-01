@@ -19,8 +19,8 @@ except ImportError:
     from urllib2 import quote  # Py 2
 
 # defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import cElementTree as ElementTree
-from xml.etree.cElementTree import Element
+from defusedxml import ElementTree
+from xml.etree.ElementTree import Element
 
 from ipython_genutils import py3compat
 

@@ -35,5 +35,5 @@ class RSTExporter(TemplateExporter):
                 'enabled':True
                 },
             })
-        c.merge(super(RSTExporter,self).default_config)
+        c.merge(super().default_config)
         return c

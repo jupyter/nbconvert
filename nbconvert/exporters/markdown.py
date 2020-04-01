@@ -47,5 +47,5 @@ class MarkdownExporter(TemplateExporter):
                 'enabled':True
                 },
         })
-        c.merge(super(MarkdownExporter, self).default_config)
+        c.merge(super().default_config)
         return c

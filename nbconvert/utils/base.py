@@ -26,4 +26,4 @@ class NbConvertBase(LoggingConfigurable):
     ).tag(config=True)
 
     def __init__(self, **kw):
-        super(NbConvertBase, self).__init__(**kw)
+        super().__init__(**kw)

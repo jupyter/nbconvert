@@ -25,7 +25,7 @@ __all__ = [
 class Highlight2HTML(NbConvertBase):
     def __init__(self, pygments_lexer=None, **kwargs):
         self.pygments_lexer = pygments_lexer or 'ipython3'
-        super(Highlight2HTML, self).__init__(**kwargs)
+        super().__init__(**kwargs)
     
     @observe('default_language')
     def _default_language_changed(self, change):
@@ -60,7 +60,7 @@ class Highlight2HTML(NbConvertBase):
 class Highlight2Latex(NbConvertBase):
     def __init__(self, pygments_lexer=None, **kwargs):
         self.pygments_lexer = pygments_lexer or 'ipython3'
-        super(Highlight2Latex, self).__init__(**kwargs)
+        super().__init__(**kwargs)
     
     @observe('default_language')
     def _default_language_changed(self, change):

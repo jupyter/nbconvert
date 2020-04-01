@@ -124,7 +124,7 @@ check_pandoc_version._cached = None
 class PandocMissing(ConversionException):
     """Exception raised when Pandoc is missing."""
     def __init__(self, *args, **kwargs):
-        super(PandocMissing, self).__init__( "Pandoc wasn't found.\n" +
+        super().__init__( "Pandoc wasn't found.\n" +
                                              "Please check that pandoc is installed:\n" +
                                              "http://pandoc.org/installing.html" )
 

@@ -35,7 +35,7 @@ class FilenameExtension(Unicode):
 
     def validate(self, obj, value):
         # cast to proper unicode
-        value = super(FilenameExtension, self).validate(obj, value)
+        value = super().validate(obj, value)
 
         # check that it starts with a dot
         if value and not value.startswith('.'):
@@ -105,7 +105,7 @@ class Exporter(LoggingConfigurable):
         if config:
             with_default_config.merge(config)
 
-        super(Exporter, self).__init__(config=with_default_config, **kw)
+        super().__init__(config=with_default_config, **kw)
 
         self._init_preprocessors()
 

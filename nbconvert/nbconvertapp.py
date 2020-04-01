@@ -43,7 +43,7 @@ class DottedOrNone(DottedObjectName):
 
     def validate(self, obj, value):
         if value is not None and len(value) > 0:
-            return super(DottedOrNone, self).validate(obj, value)
+            return super().validate(obj, value)
         else:
             return value
             
@@ -282,7 +282,7 @@ class NbConvertApp(JupyterApp):
     def initialize(self, argv=None):
         """Initialize application, notebooks, writer, and postprocessor"""
         self.init_syspath()
-        super(NbConvertApp, self).initialize(argv)
+        super().initialize(argv)
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
@@ -337,7 +337,7 @@ class NbConvertApp(JupyterApp):
 
     def start(self):
         """Run start after initialization process has completed"""
-        super(NbConvertApp, self).start()
+        super().start()
         self.convert_notebooks()
 
     def init_single_notebook_resources(self, notebook_filename):

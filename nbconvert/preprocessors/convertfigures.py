@@ -22,7 +22,7 @@ class ConvertFiguresPreprocessor(Preprocessor):
         """
         Public constructor
         """
-        super(ConvertFiguresPreprocessor, self).__init__(**kw)
+        super().__init__(**kw)
 
 
     def convert_figure(self, data_format, data):

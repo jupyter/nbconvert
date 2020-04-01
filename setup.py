@@ -189,7 +189,7 @@ setup_args = dict(
     package_data    = package_data,
     data_files      = get_data_files(),
     cmdclass        = cmdclass,
-    python_requires = '>=3.5',
+    python_requires = '>=3.6',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'https://jupyter.org',
@@ -225,11 +225,12 @@ setup_args['install_requires'] = [
     'pandocfilters>=1.4.1',
     'testpath',
     'defusedxml',
+    'nbclient>=0.2.0',
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
 extra_requirements = {
-    'test': ['pytest', 'pytest-cov', 'ipykernel', jupyter_client_req, 'ipywidgets>=7', 'pebble'],
+    'test': ['pytest', 'pytest-cov', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
     'serve': ['tornado>=4.0'],
     'execute': [jupyter_client_req],
     'docs': ['sphinx>=1.5.1',
