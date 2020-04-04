@@ -179,11 +179,8 @@ class NbConvertApp(JupyterApp):
     examples = Unicode(u"""
         The simplest way to use nbconvert is
         
-        > jupyter nbconvert mynotebook.ipynb
-        
-        which will convert mynotebook.ipynb to the default format (probably HTML).
-        
-        You can specify the export format with `--to`.
+        > jupyter nbconvert mynotebook.ipynb --to html
+
         Options include {formats}.
         
         > jupyter nbconvert --to latex mynotebook.ipynb
@@ -263,7 +260,6 @@ class NbConvertApp(JupyterApp):
 
 
     export_format = Unicode(
-        'html',
         allow_none=False,
         help="""The export format to be used, either one of the built-in formats
         {formats}
@@ -495,15 +491,21 @@ class NbConvertApp(JupyterApp):
                 """
             )
             self.exit(1)
-        
-        # initialize the exporter
-        cls = get_exporter(self.export_format)
-        self.exporter = cls(config=self.config)
 
         # no notebooks to convert!
         if len(self.notebooks) == 0 and not self.from_stdin:
             self.print_help()
             sys.exit(-1)
+
+        if not self.export_format:
+            raise ValueError(
+                "Please specify an output format with '--to <format>'."
+                f"\nThe following formats are available: {get_export_names()}"
+            )
+
+        # initialize the exporter
+        cls = get_exporter(self.export_format)
+        self.exporter = cls(config=self.config)
 
         # convert each notebook
         if not self.from_stdin:
