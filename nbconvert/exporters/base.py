@@ -109,7 +109,7 @@ def get_exporter(name):
             log = get_logger()
             log.error("Error importing %s" % name, exc_info=True)
 
-    raise ValueError('Unknown exporter "%s", did you mean one of: %s?'
+    raise ExporterNameError('Unknown exporter "%s", did you mean one of: %s?'
                      % (name, ', '.join(get_export_names())))
 
 
