@@ -36,6 +36,24 @@ class HTMLExporter(TemplateExporter):
     exclude_anchor_links = Bool(False,
         help="If anchor links should be included or not.").tag(config=True)
 
+    require_js_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js",
+        help="""
+        URL to load require.js from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
+    jquery_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
+        help="""
+        URL to load jQuery from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
     @default('file_extension')
     def _file_extension_default(self):
         return '.html'
@@ -144,4 +162,6 @@ class HTMLExporter(TemplateExporter):
         resources['include_css'] = resources_include_css
         resources['include_js'] = resources_include_js
         resources['include_url'] = resources_include_url
+        resources['require_js_url'] = self.require_js_url
+        resources['jquery_url'] = self.jquery_url
         return resources

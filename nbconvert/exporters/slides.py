@@ -137,24 +137,6 @@ class SlidesExporter(HTMLExporter):
         """
     ).tag(config=True)
 
-    require_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js",
-        help="""
-        URL to load require.js from.
-
-        Defaults to loading from cdnjs.
-        """
-    ).tag(config=True)
-
-    jquery_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
-        help="""
-        URL to load jQuery from.
-
-        Defaults to loading from cdnjs.
-        """
-    ).tag(config=True)
-
     font_awesome_url = Unicode(
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css",
         help="""
