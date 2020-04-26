@@ -38,15 +38,27 @@
 {% endblock stream %}
 
 {% block data_svg %}
+    {% if "filenames" in output.metadata %}
 ![svg]({{ output.metadata.filenames['image/svg+xml'] | path2url }})
+    {% else %}
+![svg](data:image/svg;base64,{{ output.data['image/svg+xml'] }})
+    {% endif %}
 {% endblock data_svg %}
 
 {% block data_png %}
+    {% if "filenames" in output.metadata %}
 ![png]({{ output.metadata.filenames['image/png'] | path2url }})
+    {% else %}
+![png](data:image/png;base64,{{ output.data['image/png'] }})
+    {% endif %}
 {% endblock data_png %}
 
 {% block data_jpg %}
+    {% if "filenames" in output.metadata %}
 ![jpeg]({{ output.metadata.filenames['image/jpeg'] | path2url }})
+    {% else %}
+![jpeg](data:image/jpeg;base64,{{ output.data['image/jpeg'] }})
+    {% endif %}
 {% endblock data_jpg %}
 
 {% block data_latex %}
