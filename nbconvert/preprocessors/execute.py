@@ -4,24 +4,36 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 from nbclient import NotebookClient
+from textwrap import dedent
+from traitlets import Bool
 
 from .base import Preprocessor
 
 
-# We inherit from both classes to allow for traitlets to resolve as they did pre-6.0.
-# This unfortunatley makes for some ugliness around initialization as NotebookClient
-# assumes it's a constructed class with a nb object that we have to hack around.
-class ExecutePreprocessor(Preprocessor, NotebookClient):
+# We inherit from both classes to allow for traitlets to resolve as they did
+# pre-6.0.  This unfortunatley makes for some ugliness around initialization as
+# NotebookClient assumes it's a constructed class with a nb object that we have
+# to hack around.
+class ExecutePreprocessor(Preprocessor):
     """
     Executes all the cells in a notebook
     """
 
-    def __init__(self, **kw):
-        nb = kw.get('nb')
-        Preprocessor.__init__(self, nb=nb, **kw)
-        NotebookClient.__init__(self, nb, **kw)
+    allow_errors = Bool(
+        False,
+        help=dedent(
+            """
+            If `False` (default), when a cell raises an error the
+            execution is stopped and a `CellExecutionError`
+            is raised.
+            If `True`, execution errors are ignored and the execution
+            is continued until the end of the notebook. Output from
+            exceptions is included in the cell output in both cases.
+            """
+        ),
+    ).tag(config=True)
 
-    def preprocess(self, nb, resources=None, km=None):
+    def preprocess(self, nb, resources=None, km=None, timeout=600, **kw):
         """
         Preprocess notebook executing each code cell.
 
@@ -46,11 +58,17 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         resources : dictionary
             Additional resources used in the conversion process.
         """
-        # Copied from NotebookClient init :/
-        self.nb = nb
-        self.km = km
-        if resources:
-            self.resources = resources
-        self.reset_execution_trackers()
-        self.execute()
+        if resources is None:
+            resources = {}
+
+        nb_client = NotebookClient(
+            nb,
+            timeout=timeout,
+            resources=resources,
+            allow_errors=self.allow_errors,
+            **kw
+        )
+
+        nb_client.reset_execution_trackers()
+        nb_client.execute()
         return nb, resources
