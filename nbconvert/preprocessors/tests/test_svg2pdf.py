@@ -91,4 +91,4 @@ class Testsvg2pdf(PreprocessorTestsBase):
 
     def test_inkscape_v1_command(self):
         preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='1.0beta2')
-        self.assertEquals(preprocessor.command, 'fake-inkscape --without-gui --export-file="{to_filename}" "{from_filename}"')
+        self.assertEquals(preprocessor.command, 'fake-inkscape --export-filename="{to_filename}" "{from_filename}"')
