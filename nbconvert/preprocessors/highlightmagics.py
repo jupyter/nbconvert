@@ -32,6 +32,7 @@ class HighlightMagicsPreprocessor(Preprocessor):
             '%%perl': 'perl',
             '%%ruby': 'ruby',
             '%%sh': 'sh',
+            '%%sql': 'sql',
     })
 
     # user defined language extensions
