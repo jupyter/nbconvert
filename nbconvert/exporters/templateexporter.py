@@ -437,7 +437,7 @@ class TemplateExporter(Exporter):
         Create the Jinja templating environment.
         """
         paths = self.get_template_paths()
-        self.log.info('template paths:\n\t%s', '\n\t'.join(paths))
+        self.log.debug('Template paths:\n\t%s', '\n\t'.join(paths))
 
         loaders = self.extra_loaders + [
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
