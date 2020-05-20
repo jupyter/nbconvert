@@ -24,7 +24,6 @@ a.anchor-link {
 
 {% endblock notebook_css %}
 
-
 {%- block body_header -%}
 {% if resources.theme == 'dark' %}
 <body class="jp-Notebook theme-dark">
@@ -32,3 +31,7 @@ a.anchor-link {
 <body class="jp-Notebook theme-light">
 {% endif %}
 {%- endblock body_header -%}
+
+{% block body_footer %}
+</body>
+{% endblock body_footer %}
