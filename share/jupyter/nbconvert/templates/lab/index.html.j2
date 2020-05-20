@@ -26,9 +26,9 @@ a.anchor-link {
 
 {%- block body_header -%}
 {% if resources.theme == 'dark' %}
-<body class="jp-Notebook theme-dark">
+<body class="jp-Notebook" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
 {% else %}
-<body class="jp-Notebook theme-light">
+<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% endif %}
 {%- endblock body_header -%}
 
