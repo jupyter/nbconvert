@@ -255,8 +255,8 @@ class NbConvertApp(JupyterApp):
         if new:
             self.postprocessor_factory = import_item(new)
 
-    ipywidgets_base_url = Unicode("https://unpkg.com/",
-                                  help="URL base for ipywidgets package").tag(config=True)
+    jupyter_widgets_base_url = Unicode("https://unpkg.com/",
+                                       help="URL base for Jupyter widgets").tag(config=True)
 
 
     export_format = Unicode(
@@ -373,7 +373,7 @@ class NbConvertApp(JupyterApp):
 
         resources['output_files_dir'] = output_files_dir
 
-        resources['ipywidgets_base_url'] = self.ipywidgets_base_url
+        resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
 
         return resources
 
