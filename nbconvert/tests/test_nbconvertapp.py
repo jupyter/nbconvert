@@ -16,6 +16,9 @@ from nbconvert.exporters import Exporter
 from traitlets.tests.utils import check_help_all_output
 from testpath import tempdir
 import pytest
+from html5validator import Validator
+
+validator = Validator()
 
 #-----------------------------------------------------------------------------
 # Classes and functions
@@ -99,6 +102,7 @@ class TestNbConvertApp(TestsBase):
                 f.write(test_output)
             self.nbconvert('--log-level 0 notebook2 --to html --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
+            validator.validate(['notebook2.html'])
             with open('notebook2.html') as f:
                 text = f.read()
             assert text == test_output
@@ -113,6 +117,7 @@ class TestNbConvertApp(TestsBase):
                 f.write(test_output)
             self.nbconvert('--log-level 0 notebook2 --to html --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
+            validator.validate(['notebook2.html'])
             with open('notebook2.html') as f:
                 text = f.read()
             assert text == test_output
@@ -161,6 +166,7 @@ class TestNbConvertApp(TestsBase):
                 tex = f.read()
             self.nbconvert('--log-level 0 --to html notebook2')
             assert os.path.isfile('notebook2.html')
+            validator.validate(['notebook2.html'])
             with open('notebook2.html') as f:
                 html = f.read()
         self.assertEqual(tex.count('\r'), tex.count('\r\n'))
@@ -173,6 +179,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to HTML '
                       'notebook2.ipynb --template lab')
             assert os.path.isfile('notebook2.html')
+            validator.validate(['notebook2.html'])
             with open('notebook2.html') as f:
                 assert "data:image/png;base64,b'" not in f.read()
 
@@ -308,12 +315,14 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook1.ipynb"]):
             self.nbconvert('notebook1.ipynb --log-level 0 --no-prompt --to html')
             assert os.path.isfile('notebook1.html')
+            validator.validate(['notebook1.html'])
             with open("notebook1.html",'r') as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
                 assert "Out[" not in text
             self.nbconvert('notebook1.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook1.html')
+            validator.validate(['notebook1.html'])
             with open("notebook1.html",'r') as f:
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
@@ -326,6 +335,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook_tags.ipynb"]):
             self.nbconvert('notebook_tags.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook_tags.html')
+            validator.validate(['notebook_tags.html'])
             with open("notebook_tags.html",'r') as f:
                 text = f.read()
                 assert 'code_cell rendered celltag_mycelltag celltag_mysecondcelltag">' in text
@@ -341,6 +351,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook1.ipynb"]):
             self.nbconvert('notebook1.ipynb --log-level 0 --no-input --to html')
             assert os.path.isfile('notebook1.html')
+            validator.validate(['notebook1.html'])
             with open("notebook1.html",'r') as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
@@ -357,6 +368,7 @@ class TestNbConvertApp(TestsBase):
                         '<span class="p">)</span>') not in text
             self.nbconvert('notebook1.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook1.html')
+            validator.validate(['notebook1.html'])
             with open("notebook1.html",'r') as f:
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
