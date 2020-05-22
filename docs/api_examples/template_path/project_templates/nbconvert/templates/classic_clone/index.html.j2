@@ -20,14 +20,14 @@
 {%- endblock html_head_js_requirejs -%}
 {%- endblock html_head_js -%}
 
-{% block ipywidgets %}
+{% block jupyter_widgets %}
 {%- if "widgets" in nb.metadata -%}
 <script>
 (function() {
   function addWidgetsRenderer() {
     var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
     var scriptElement = document.createElement('script');
-    var widgetRendererSrc = '{{ resources.ipywidgets_base_url }}@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    var widgetRendererSrc = '{{ resources.jupyter_widgets_base_url }}@jupyter-widgets/html-manager@*/dist/embed-amd.js';
     var widgetState;
 
     // Fallback for older version:
@@ -35,7 +35,7 @@
       widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
 
       if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
-        widgetRendererSrc = '{{ resources.ipywidgets_base_url }}jupyter-js-widgets@*/dist/embed.js';
+        widgetRendererSrc = '{{ resources.jupyter_widgets_base_url }}jupyter-js-widgets@*/dist/embed.js';
       }
     } catch(e) {}
 
@@ -47,7 +47,7 @@
 }());
 </script>
 {%- endif -%}
-{% endblock ipywidgets %}
+{% endblock jupyter_widgets %}
 
 {% block extra_css %}
 {% endblock extra_css %}
