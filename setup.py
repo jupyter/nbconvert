@@ -46,15 +46,14 @@ package_data = {
 notebook_css_version = '5.4.0'
 notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
-
-jupyterlab_css_version = '0.1.0'
+jupyterlab_css_version = '2.1.0'
 jupyterlab_css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
 
-jupyterlab_theme_light_version = '0.19.1'
-jupyterlab_theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/static/embed.css" % jupyterlab_theme_light_version
+jupyterlab_theme_light_version = '2.1.2'
+jupyterlab_theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/style/variables.css" % jupyterlab_theme_light_version
 
-jupyterlab_theme_dark_version = '0.19.1'
-jupyterlab_theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/embed.css" % jupyterlab_theme_dark_version
+jupyterlab_theme_dark_version = '2.1.2'
+jupyterlab_theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/style/variables.css" % jupyterlab_theme_dark_version
 
 template_css_urls = {
     'lab': [(jupyterlab_css_url, 'index.css'), (jupyterlab_theme_light_url, 'theme-light.css'), (jupyterlab_theme_dark_url, 'theme-dark.css')],
