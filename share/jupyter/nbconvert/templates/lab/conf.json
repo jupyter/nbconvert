@@ -1,5 +1,5 @@
 {
-    "base_template": "classic",
+    "base_template": "base",
     "mimetypes": {
         "text/html": true
     }
