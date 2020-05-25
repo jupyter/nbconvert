@@ -328,10 +328,8 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook_tags.html')
             with open("notebook_tags.html",'r') as f:
                 text = f.read()
-                assert 'code_cell rendered celltag_mycelltag celltag_mysecondcelltag">' in text
-                assert 'code_cell rendered">' in text    
-                assert 'text_cell rendered celltag_mymarkdowncelltag">' in text
-                assert 'text_cell rendered">' in text    
+                assert 'celltag_mycelltag celltag_mysecondcelltag' in text
+                assert 'celltag_mymarkdowncelltag' in text
             
                 
     def test_no_input(self):
