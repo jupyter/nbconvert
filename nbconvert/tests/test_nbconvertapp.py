@@ -311,13 +311,13 @@ class TestNbConvertApp(TestsBase):
             with open("notebook1.html",'r') as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
-                assert "Out[" not in text
+                assert "Out[6]" not in text
             self.nbconvert('notebook1.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook1.html')
             with open("notebook1.html",'r') as f:
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
-                assert "Out[" in text2
+                assert "Out[6]" in text2
 
     def test_cell_tag_output(self):
         """
@@ -328,10 +328,8 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile('notebook_tags.html')
             with open("notebook_tags.html",'r') as f:
                 text = f.read()
-                assert 'code_cell rendered celltag_mycelltag celltag_mysecondcelltag">' in text
-                assert 'code_cell rendered">' in text    
-                assert 'text_cell rendered celltag_mymarkdowncelltag">' in text
-                assert 'text_cell rendered">' in text    
+                assert 'celltag_mycelltag celltag_mysecondcelltag' in text
+                assert 'celltag_mymarkdowncelltag' in text
             
                 
     def test_no_input(self):
@@ -344,7 +342,7 @@ class TestNbConvertApp(TestsBase):
             with open("notebook1.html",'r') as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
-                assert "Out[" not in text
+                assert "Out[6]" not in text
                 assert ('<span class="n">x</span>'
                         '<span class="p">,</span>'
                         '<span class="n">y</span>'
@@ -360,7 +358,7 @@ class TestNbConvertApp(TestsBase):
             with open("notebook1.html",'r') as f:
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
-                assert "Out[" in text2
+                assert "Out[6]" in text2
                 assert ('<span class="n">x</span>'
                         '<span class="p">,</span>'
                         '<span class="n">y</span>'

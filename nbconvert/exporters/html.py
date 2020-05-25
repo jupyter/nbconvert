@@ -60,7 +60,7 @@ class HTMLExporter(TemplateExporter):
 
     @default('template_name')
     def _template_name_default(self):
-        return 'classic'
+        return 'lab'
 
     @default('template_data_paths')
     def _template_data_paths_default(self):
