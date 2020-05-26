@@ -22,7 +22,7 @@ from shutil import which
 
 # inkscape path for darwin (macOS)
 INKSCAPE_APP = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
-# Recent versions of Inkscpae (v1.0) moved the executable from 
+# Recent versions of Inkscape (v1.0) moved the executable from 
 # Resources/bin/inkscape to MacOS/inkscape
 INKSCAPE_APP_v1 = '/Applications/Inkscape.app/Contents/MacOS/inkscape'
 
@@ -47,7 +47,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         return 'application/pdf'
 
     inkscape_version = Unicode(
-        help="""The version of inkscpae being used.
+        help="""The version of inkscape being used.
 
         This affects how the conversion command is run.
         """
