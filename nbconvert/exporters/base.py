@@ -7,6 +7,7 @@ import warnings
 
 import entrypoints
 
+from traitlets.config import get_config
 from traitlets.log import get_logger
 from traitlets.utils.importstring import import_item
 
@@ -119,4 +120,6 @@ def get_export_names():
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
-    return sorted(entrypoints.get_group_named('nbconvert.exporters'))
+    c = get_config()
+    names = sorted(entrypoints.get_group_named('nbconvert.exporters'))
+    return [e for e in names if get_exporter(e)(config=c).enabled]

@@ -17,7 +17,7 @@ import nbformat
 
 from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
-from traitlets import HasTraits, Unicode, List, TraitError
+from traitlets import Bool, HasTraits, Unicode, List, TraitError
 from traitlets.utils.importstring import import_item
 from ipython_genutils import text, py3compat
 
@@ -51,6 +51,8 @@ class Exporter(LoggingConfigurable):
     NotebookNode object and then return the modified NotebookNode object and
     accompanying resources dict.
     """
+
+    enabled = Bool(True).tag(config=True)
 
     file_extension = FilenameExtension(
         help="Extension of the file that should be written to disk"
