@@ -1,11 +1,11 @@
-{%- macro jupyter_widgets(widgets_cdn_url) -%}
+{%- macro jupyter_widgets(widgets_cdn_url, html_manager_semver_range) -%}
 
 <script>
 (function() {
   function addWidgetsRenderer() {
     var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
     var scriptElement = document.createElement('script');
-    var widgetRendererSrc = '{{ widgets_cdn_url }}@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    var widgetRendererSrc = '{{ widgets_cdn_url }}@jupyter-widgets/html-manager@{{ html_manager_semver_range }}/dist/embed-amd.js';
     var widgetState;
 
     // Fallback for older version:

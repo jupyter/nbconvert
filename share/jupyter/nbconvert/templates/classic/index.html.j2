@@ -22,7 +22,7 @@
 
 {% block jupyter_widgets %}
   {%- if "widgets" in nb.metadata -%}
-    {{ jupyter_widgets(resources.jupyter_widgets_base_url) }}
+    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range) }}
   {%- endif -%}
 {% endblock jupyter_widgets %}
 
