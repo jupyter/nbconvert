@@ -52,7 +52,9 @@ class Exporter(LoggingConfigurable):
     accompanying resources dict.
     """
 
-    enabled = Bool(True).tag(config=True)
+    enabled = Bool(True,
+        help = "Disable this exporter (and any exporters inherited from it)."
+    ).tag(config=True)
 
     file_extension = FilenameExtension(
         help="Extension of the file that should be written to disk"
