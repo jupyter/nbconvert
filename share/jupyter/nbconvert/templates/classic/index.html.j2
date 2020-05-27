@@ -26,13 +26,10 @@
   {%- endif -%}
 {% endblock jupyter_widgets %}
 
-{% block extra_css %}
-{% endblock extra_css %}
-
 {% for css in resources.inlining.css -%}
-    <style type="text/css">
-    {{ css }}
-    </style>
+  <style type="text/css">
+  {{ css }}
+  </style>
 {% endfor %}
 
 {% block notebook_css %}
@@ -71,11 +68,6 @@ div#notebook-container{
 }
 </style>
 {% endblock notebook_css %}
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-{% block custom_css %}
-<link rel="stylesheet" href="custom.css">
-{% endblock custom_css %}
 
 {{ mathjax() }}
 
