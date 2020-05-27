@@ -23,9 +23,6 @@
   {%- endif -%}
 {% endblock jupyter_widgets %}
 
-{% block extra_css %}
-{% endblock extra_css %}
-
 {% for css in resources.inlining.css -%}
     <style type="text/css">
     {{ css }}

@@ -56,7 +56,8 @@ jupyterlab_theme_dark_version = '2.1.2'
 jupyterlab_theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/style/variables.css" % jupyterlab_theme_dark_version
 
 template_css_urls = {
-    'lab': [(jupyterlab_css_url, 'index.css'), (jupyterlab_theme_light_url, 'theme-light.css'), (jupyterlab_theme_dark_url, 'theme-dark.css')],
+    'base': [(jupyterlab_theme_light_url, 'theme-light.css'), (jupyterlab_theme_dark_url, 'theme-dark.css')],
+    'lab': [(jupyterlab_css_url, 'index.css')],
     'classic': [(notebook_css_url, 'style.css')]
 }
 

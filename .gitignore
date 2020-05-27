@@ -36,6 +36,6 @@ docs/source/config_options.rst
 
 # Downloaded theme files
 share/jupyter/nbconvert/templates/lab/static/index.css
-share/jupyter/nbconvert/templates/lab/static/theme-dark.css
-share/jupyter/nbconvert/templates/lab/static/theme-light.css
+share/jupyter/nbconvert/templates/base/static/theme-dark.css
+share/jupyter/nbconvert/templates/base/static/theme-light.css
 
