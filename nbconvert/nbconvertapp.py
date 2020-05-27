@@ -257,7 +257,8 @@ class NbConvertApp(JupyterApp):
 
     jupyter_widgets_base_url = Unicode("https://unpkg.com/",
                                        help="URL base for Jupyter widgets").tag(config=True)
-
+    html_manager_semver_range = Unicode('*',
+                                        help="Semver range for Jupyter widgets HTML manager").tag(config=True)
 
     export_format = Unicode(
         allow_none=False,
@@ -372,8 +373,8 @@ class NbConvertApp(JupyterApp):
                             .format(notebook_name=notebook_name))
 
         resources['output_files_dir'] = output_files_dir
-
         resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
+        resources['html_manager_semver_range'] = self.html_manager_semver_range
 
         return resources
 
