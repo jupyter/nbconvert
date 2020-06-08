@@ -1,15 +1,15 @@
 Customizing Syntax Highlighting
 ===============================
 
-Under the hood, nbconvert uses pygments to highlight code. Both pdf and html exporting support 
+Under the hood, nbconvert uses pygments to highlight code. pdf, webpdf and html exporting support
 changing the highlighting style.
 
 Using Builtin styles
 --------------------
-Pygments has a number of builtin styles available. To use them, we just need to set the style setting 
+Pygments has a number of builtin styles available. To use them, we just need to set the style setting
 in the relevant preprocessor.
 
-To change the html highlighting export with:
+To change html and webpdf highlighting export with:
 
 .. code-block:: bash
 

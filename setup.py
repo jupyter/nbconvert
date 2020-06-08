@@ -225,6 +225,7 @@ setup_args['install_requires'] = [
     'testpath',
     'defusedxml',
     'nbclient>=0.2.0',
+    'pyppeteer'
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
@@ -254,6 +255,7 @@ setup_args['entry_points'] = {
         'slides=nbconvert.exporters:SlidesExporter',
         'latex=nbconvert.exporters:LatexExporter',
         'pdf=nbconvert.exporters:PDFExporter',
+        'webpdf=nbconvert.exporters:WebPDFExporter',
         'markdown=nbconvert.exporters:MarkdownExporter',
         'python=nbconvert.exporters:PythonExporter',
         'rst=nbconvert.exporters:RSTExporter',
