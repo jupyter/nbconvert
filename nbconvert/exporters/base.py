@@ -33,6 +33,9 @@ __all__ = [
 class ExporterNameError(NameError):
     pass
 
+class ExporterDisabledError(ValueError):
+    pass
+
 def export(exporter, nb, **kw):
     """
     Export a notebook object using specific exporter class.
@@ -86,26 +89,38 @@ def export(exporter, nb, **kw):
     return output, resources
 
 
-def get_exporter(name):
+def get_exporter(name, config=get_config()):
     """Given an exporter name or import path, return a class ready to be instantiated
     
-    Raises ValueError if exporter is not found
+    Raises ExporterName if exporter is not found or ExporterDisabledError if not enabled
     """
     
     if name == 'ipynb':
         name = 'notebook'
 
     try:
-        return entrypoints.get_single('nbconvert.exporters', name).load()
+        exporter = entrypoints.get_single('nbconvert.exporters', name).load()
+        if getattr(exporter(config=config), 'enabled', True):
+            return exporter
+        else:
+            raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
     except entrypoints.NoSuchEntryPoint:
         try:
-            return entrypoints.get_single('nbconvert.exporters', name.lower()).load()
+            exporter = entrypoints.get_single('nbconvert.exporters', name.lower()).load()
+            if getattr(exporter(config=config), 'enabled', True):
+                return exporter
+            else:
+                raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
         except entrypoints.NoSuchEntryPoint:
             pass
         
     if '.' in name:
         try:
-            return import_item(name)
+            exporter = import_item(name)
+            if getattr(exporter(config=config), 'enabled', True):
+                return exporter
+            else:
+                raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
         except ImportError:
             log = get_logger()
             log.error("Error importing %s" % name, exc_info=True)
@@ -114,12 +129,19 @@ def get_exporter(name):
                      % (name, ', '.join(get_export_names())))
 
 
-def get_export_names():
+def get_export_names(config=get_config()):
     """Return a list of the currently supported export targets
     
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
-    c = get_config()
-    names = sorted(entrypoints.get_group_named('nbconvert.exporters'))
-    return [e for e in names if get_exporter(e)(config=c).enabled]
+    exporters = sorted(entrypoints.get_group_named('nbconvert.exporters'))
+    enabled_exporters = []
+    for exporter_name in exporters:
+        try:
+            e = get_exporter(exporter_name)(config=config)
+            if e.enabled:
+                enabled_exporters.append(exporter_name)
+        except ExporterDisabledError:
+            pass
+    return enabled_exporters
