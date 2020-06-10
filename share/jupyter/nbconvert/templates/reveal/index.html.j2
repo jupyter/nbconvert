@@ -104,6 +104,11 @@
 {{ super() }}
 {%- endblock html_head_js -%}
 
+
+{% block jupyter_widgets %}
+{{ super() }}
+{% endblock jupyter_widgets %}
+
 <script src="{{resources.reveal.require_js_url}}"></script>
 <script src="{{resources.reveal.jquery_url}}"></script>
 
