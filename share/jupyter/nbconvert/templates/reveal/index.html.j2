@@ -1,4 +1,4 @@
-{%- extends 'classic/index.html.j2' -%}
+{%- extends 'lab/index.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
 
 {% set reveal_url_prefix = resources.reveal.url_prefix | default('https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0', true) %}
@@ -133,12 +133,16 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 <!-- Get Font-awesome from cdn -->
 <link rel="stylesheet" href="{{reveal_fontawsome_url}}">
 
-{{ resources.include_css("static/style.css") }}
 {% for css in resources.inlining.css -%}
-    <style type="text/css">
+  <style type="text/css">
     {{ css }}
-    </style>
+  </style>
 {% endfor %}
+
+{% block notebook_css %}
+{{ super() }}
+{% endblock notebook_css %}
+
 
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
@@ -262,11 +266,6 @@ a.anchor-link {
 
 </head>
 {% endblock header%}
-
-{% block body_header %}
-{% endblock body_header %}
-{% block body_footer %}
-{% endblock body_footer %}
 
 {% block body %}
 {% block pre_slides %}
