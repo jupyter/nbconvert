@@ -89,7 +89,7 @@ WebPDF
 ~~~~~~
 * ``--to webpdf``
 
-  Generates a PDF via puppeteer (chrome web browser). Supports the same
+  Generates a PDF via puppeteer (chromium web browser). Supports the same
   templates as ``--to html``.
 
 .. _convert_revealjs:

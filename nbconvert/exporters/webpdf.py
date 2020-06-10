@@ -4,8 +4,10 @@
 # Distributed under the terms of the Modified BSD License.
 
 import asyncio
-from pyppeteer import launch
 
+from pyppeteer import launch
+from pyppeteer.util import check_chromium
+from traitlets import Bool
 from .html import HTMLExporter
 
 class WebPDFExporter(HTMLExporter):
@@ -16,6 +18,10 @@ class WebPDFExporter(HTMLExporter):
     a pdf.
     """
     export_from_notebook="PDF via Puppeteer"
+
+    allow_chromium_download = Bool(False,
+        help="Whether to allow downloading chromium if no suitable version is found on the system."
+    ).tag(config=True)
 
     def run_puppeteer(self, html):
         """Run puppeteer."""
@@ -32,6 +38,10 @@ class WebPDFExporter(HTMLExporter):
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        if not self.allow_chromium_download and not check_chromium():
+            raise RuntimeError("No suitable chromium executable found on the system. "
+                               "Please use '--allow-chromium-download' to allow downloading one.")
+
         html, resources = super().from_notebook_node(
             nb, resources=resources, **kw
         )

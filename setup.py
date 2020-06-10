@@ -225,7 +225,7 @@ setup_args['install_requires'] = [
     'testpath',
     'defusedxml',
     'nbclient>=0.2.0',
-    'pyppeteer'
+    'pyppeteer>=0.2.2'
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 

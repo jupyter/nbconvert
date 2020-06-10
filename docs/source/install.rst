@@ -20,8 +20,8 @@ a Python distribution which includes nbconvert and the other Jupyter components.
 
 .. important::
 
-    To unlock nbconvert's full capabilities requires Pandoc and TeX
-    (specifically, XeLaTeX). These must be installed separately.
+    To unlock its full capabilities, nbconvert requires Pandoc, TeX
+    (specifically, XeLaTeX) and Chromium. These must be installed separately.
 
 Installing Pandoc
 -----------------
@@ -68,6 +68,16 @@ Because nbconvert depends on packages and fonts included in standard
 TeX distributions, if you do not have a complete installation, you
 may not be able to use nbconvert's standard tooling to convert
 notebooks to PDF.
+
+Installing Chromium
+-------------------
+
+When converting to PDF with ``--to webpdf``, nbconvert uses `Puppeteer <https://pptr.dev>`_, and
+more precisely its Python bindings `pyppeteer <https://github.com/pyppeteer/pyppeteer>`_. pyppeteer
+needs a special version of Chromium, and can automatically download it. Since the download size is
+quite large (around 100 MB), nbconvert prevents it by default. If pyppeteer finds a suitable
+version of Chromium on your system, it will try and use it. Otherwise, please use the
+``--allow-chromium-download`` flag to allow Chromium's download.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
