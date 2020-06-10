@@ -1,6 +1,59 @@
 {%- extends 'classic/index.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
 
+{% set reveal_url_prefix = resources.reveal.url_prefix | default('https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0', true) %}
+{% set reveal_theme = resources.reveal.theme | default('white', true) %}
+{% set reveal_fontawsome_url = resources.reveal.font_awesome_url | default('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css', true) %}
+{% set reveal_transition = resources.reveal.transition | default('slide', true) %}
+{% set reveal_scroll = resources.reveal.scroll | default(false, true) | json_dumps %}
+
+{% for cell in nb.cells %}
+    {# Make sure every cell has a slide_type #}
+    {% set slide_type = cell.metadata.get('slideshow', {}).get('slide_type', '-') %}
+    {% set x = cell.metadata.__setitem__('slide_type', slide_type) %}
+{% endfor %}
+
+{% for cell in nb.cells %}
+    {# Start (display) cells (slides) meant to be shown #}
+    {% if cell.metadata.get('slide_type') not in ['notes', 'skip'] %}
+        {% set x = cell.metadata.__setitem__('slide_type', 'slide') %}
+        {% set x = cell.metadata.__setitem__('slide_start', true) %}
+        {% set x = cell.metadata.__setitem__('subslide_start', true) %}
+        {% break %}
+    {% endif %}
+{% endfor %}
+
+{% set ns = namespace(in_fragment = false) %}
+{% for cell in nb.cells %}
+    {% if loop.index0 > 0 %}
+        {% set previous_cell = nb.cells[loop.index0 - 1]%}
+        {# Get the slide type. If type is subslide or slide, #}
+        {# end the last slide/subslide/fragment as applicable. #}
+        {% if cell.metadata.get('slide_type') in ['slide', 'subslide'] %}
+            {% set x = previous_cell.metadata.__setitem__('fragment_end', ns.in_fragment) %}
+            {% set x = previous_cell.metadata.__setitem__('subslide_end', true) %}
+            {% set x = cell.metadata.__setitem__('subslide_start', true) %}
+            {% set ns.in_fragment = false %}
+            {% if cell.metadata.get('slide_type') == 'slide' %}
+                {% set x = previous_cell.metadata.__setitem__('slide_end', true) %}
+                {% set x = cell.metadata.__setitem__('slide_start', true) %}
+            {% endif %}
+        {% elif cell.metadata.get('slide_type') == 'fragment' %}
+            {% set x = cell.metadata.__setitem__('fragment_start', true) %}
+            {% if ns.in_fragment %}
+                {% set x = previous_cell.metadata.__setitem__('fragment_end', true) %}
+            {% else %}
+                {% set ns.in_fragment = true %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{# The last cell will always be the end of a slide #}
+{% set x = nb.cells[-1].metadata.__setitem__('fragment_end', ns.in_fragment) %}
+{% set x = nb.cells[-1].metadata.__setitem__('subslide_end', true) %}
+{% set x = nb.cells[-1].metadata.__setitem__('slide_end', true) %}
+
 {%- block any_cell scoped -%}
 {%- if cell.metadata.get('slide_start', False) -%}
 <section>
@@ -55,8 +108,8 @@
 <script src="{{resources.reveal.jquery_url}}"></script>
 
 <!-- General and theme style sheets -->
-<link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/reveal.css">
-<link rel="stylesheet" href="{{resources.reveal.url_prefix}}/css/theme/{{resources.reveal.theme}}.css" id="theme">
+<link rel="stylesheet" href="{{ reveal_url_prefix }}/css/reveal.css">
+<link rel="stylesheet" href="{{ reveal_url_prefix }}/css/theme/{{reveal_theme}}.css" id="theme">
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -64,21 +117,21 @@ if( window.location.search.match( /print-pdf/gi ) ) {
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = '{{resources.reveal.url_prefix}}/css/print/pdf.css';
+        link.href = '{{ reveal_url_prefix }}/css/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
 }
 
 </script>
 
 <!--[if lt IE 9]>
-<script src="{{resources.reveal.url_prefix}}/lib/js/html5shiv.js"></script>
+<script src="{{ reveal_url_prefix }}/lib/js/html5shiv.js"></script>
 <![endif]-->
 
 <!-- Loading the mathjax macro -->
 {{ mathjax() }}
 
 <!-- Get Font-awesome from cdn -->
-<link rel="stylesheet" href="{{resources.reveal.font_awesome_url}}">
+<link rel="stylesheet" href="{{reveal_fontawsome_url}}">
 
 {{ resources.include_css("static/style.css") }}
 {% for css in resources.inlining.css -%}
@@ -235,8 +288,8 @@ require(
       waitSeconds: 15
     },
     [
-      "{{resources.reveal.url_prefix}}/lib/js/head.min.js",
-      "{{resources.reveal.url_prefix}}/js/reveal.js"
+      "{{ reveal_url_prefix }}/lib/js/head.min.js",
+      "{{ reveal_url_prefix }}/js/reveal.js"
     ],
 
     function(head, Reveal){
@@ -247,13 +300,13 @@ require(
             progress: true,
             history: true,
 
-            transition: "{{resources.reveal.transition}}",
+            transition: "{{reveal_transition}}",
 
             // Optional libraries used to extend on reveal.js
             dependencies: [
-                { src: "{{resources.reveal.url_prefix}}/lib/js/classList.js",
+                { src: "{{ reveal_url_prefix }}/lib/js/classList.js",
                   condition: function() { return !document.body.classList; } },
-                { src: "{{resources.reveal.url_prefix}}/plugin/notes/notes.js",
+                { src: "{{ reveal_url_prefix }}/plugin/notes/notes.js",
                   async: true,
                   condition: function() { return !!document.body.classList; } }
             ]
@@ -268,7 +321,7 @@ require(
         Reveal.addEventListener('slidechanged', update);
 
         function setScrollingSlide() {
-            var scroll = {{ resources.reveal.scroll | json_dumps }}
+            var scroll = {{ reveal_scroll }}
             if (scroll === true) {
               var h = $('.reveal').height() * 0.95;
               $('section.present').find('section')
