@@ -47,6 +47,10 @@
 {% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 <title>{{nb_title}} slides</title>
 
+{%- block html_head_js -%}
+{{ super() }}
+{%- endblock html_head_js -%}
+
 <script src="{{resources.reveal.require_js_url}}"></script>
 <script src="{{resources.reveal.jquery_url}}"></script>
 
@@ -76,6 +80,7 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 <!-- Get Font-awesome from cdn -->
 <link rel="stylesheet" href="{{resources.reveal.font_awesome_url}}">
 
+{{ resources.include_css("static/style.css") }}
 {% for css in resources.inlining.css -%}
     <style type="text/css">
     {{ css }}
@@ -205,6 +210,10 @@ a.anchor-link {
 </head>
 {% endblock header%}
 
+{% block body_header %}
+{% endblock body_header %}
+{% block body_footer %}
+{% endblock body_footer %}
 
 {% block body %}
 {% block pre_slides %}
