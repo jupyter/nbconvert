@@ -131,6 +131,27 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile('notebook with spaces.pdf')
 
+    def test_webpdf_without_chromium(self):
+        """
+        Generate PDFs if chromium not present?
+        """
+        with self.create_temp_cwd(['notebook2.ipynb']):
+            with pytest.raises(OSError):
+                self.nbconvert('--to webpdf '
+                               '"notebook2"'
+                )
+
+    def test_webpdf_with_chromium(self):
+        """
+        Generate PDFs if chromium allowed to be downloaded?
+        """
+        with self.create_temp_cwd(['notebook2.ipynb']):
+            self.nbconvert('--to webpdf '
+                           '--allow-chromium-download '
+                           '"notebook2"'
+            )
+            assert os.path.isfile('notebook2.pdf')
+
     @onlyif_cmds_exist('pandoc', 'xelatex')
     def test_pdf(self):
         """
