@@ -131,6 +131,7 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile('notebook with spaces.pdf')
 
+    @pytest.mark.order1
     def test_webpdf_without_chromium(self):
         """
         Generate PDFs if chromium not present?
@@ -141,6 +142,7 @@ class TestNbConvertApp(TestsBase):
                                '"notebook2"'
                 )
 
+    @pytest.mark.order2
     def test_webpdf_with_chromium(self):
         """
         Generate PDFs if chromium allowed to be downloaded?
