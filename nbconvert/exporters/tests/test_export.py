@@ -10,9 +10,12 @@ import sys
 
 import nbformat
 import nbconvert.tests
+import pytest
+
+from traitlets.config import Config
 
 from .base import ExportersTestsBase
-from ..base import get_exporter, export, ExporterNameError, get_export_names
+from ..base import get_exporter, export, ExporterNameError, ExporterDisabledError, get_export_names
 from ..exporter import Exporter
 from ..python import PythonExporter
 
@@ -30,6 +33,15 @@ class TestExport(ExportersTestsBase):
             export(exporter, self._get_notebook())
         except ExporterNameError as e:
             pass
+
+
+    def test_export_disabled(self):
+        """
+        Trying to use a disabled exporter should raise ExporterDisbledError
+        """
+        config = Config({'NotebookExporter': {'enabled': False}})
+        with pytest.raises(ExporterDisabledError):
+            get_exporter('notebook', config=config)
 
 
     def test_export_filename(self):
