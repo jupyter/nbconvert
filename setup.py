@@ -230,7 +230,7 @@ setup_args['install_requires'] = [
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
 extra_requirements = {
-    'test': ['pytest', 'pytest-cov', 'pytest-ordering', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
+    'test': ['pytest', 'pytest-cov', 'pytest-dependency', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
     'serve': ['tornado>=4.0'],
     'execute': [jupyter_client_req],
     'docs': ['sphinx>=1.5.1',
