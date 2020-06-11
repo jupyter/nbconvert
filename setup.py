@@ -229,10 +229,17 @@ setup_args['install_requires'] = [
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
+def install_chromium():
+    from pyppeteer.util import check_chromium, download_chromium
+    if not check_chromium():
+        download_chromium()
+    return ''
+
 extra_requirements = {
     'test': ['pytest', 'pytest-cov', 'pytest-dependency', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
     'serve': ['tornado>=4.0'],
     'execute': [jupyter_client_req],
+    'chromium': [install_chromium()],
     'docs': ['sphinx>=1.5.1',
              'sphinx_rtd_theme',
              'nbsphinx>=0.2.12',
