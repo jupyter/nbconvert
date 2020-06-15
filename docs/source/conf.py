@@ -66,6 +66,10 @@ author = 'Jupyter Development Team'
 # ghissue config
 github_project_url = "https://github.com/jupyter/nbconvert"
 
+linkcheck_ignore = [
+    'https://github.com/jupyter/nbconvert/pull/',
+]
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
