@@ -77,11 +77,10 @@ jobs:
           path: build/sphinx/latex/nbconvert.pdf
           destination: nbconvert.pdf
 
-      # TODO: Re-enable once linkcheck stops causing 429's from github
-      # - run:
-      #     name: Checking for broken links
-      #     command: |
-      #       python3 setup.py build_sphinx -b linkcheck
+      - run:
+          name: Checking for broken links
+          command: |
+            python3 setup.py build_sphinx -b linkcheck
 
 workflows:
   version: 2
