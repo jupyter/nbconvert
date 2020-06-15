@@ -34,11 +34,11 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'autogen_config.py')) as
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'nbsphinx',
     'IPython.sphinxext.ipython_console_highlighting',
-    'sphinxcontrib_github_alt',
 ]
 
 
@@ -63,8 +63,7 @@ year = date.today().year
 copyright = '2015-%s, Jupyter Development Team' % year
 author = 'Jupyter Development Team'
 
-# ghissue config
-github_project_url = "https://github.com/jupyter/nbconvert"
+extlinks = {'ghpull': ('https://github.com/jupyter/nbconvert/pull/%s', 'PR #')}
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
