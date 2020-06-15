@@ -5,8 +5,6 @@
 
 import asyncio
 
-from pyppeteer import launch
-from pyppeteer.util import check_chromium
 from traitlets import Bool
 from .html import HTMLExporter
 
@@ -23,11 +21,23 @@ class WebPDFExporter(HTMLExporter):
         help="Whether to allow downloading chromium if no suitable version is found on the system."
     ).tag(config=True)
 
+    def _check_launch_reqs(self):
+        try:
+            from pyppeteer import launch
+            from pyppeteer.util import check_chromium
+        except ModuleNotFoundError as e:
+            raise RuntimeError("Pyppeteer is not installed to support Web PDF conversion. "
+                               "Please install `nbconvert[webpdf]` to enable.") from e
+        if not self.allow_chromium_download and not check_chromium():
+            raise RuntimeError("No suitable chromium executable found on the system. "
+                               "Please use '--allow-chromium-download' to allow downloading one.")
+        return launch
+
     def run_puppeteer(self, html):
         """Run puppeteer."""
 
         async def main():
-            browser = await launch()
+            browser = await self._check_launch_reqs()()
             page = await browser.newPage()
             await page.goto('data:text/html,'+html, waitUntil='networkidle0')
             pdf_data = await page.pdf()
@@ -38,10 +48,7 @@ class WebPDFExporter(HTMLExporter):
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
-        if not self.allow_chromium_download and not check_chromium():
-            raise RuntimeError("No suitable chromium executable found on the system. "
-                               "Please use '--allow-chromium-download' to allow downloading one.")
-
+        self._check_launch_reqs()
         html, resources = super().from_notebook_node(
             nb, resources=resources, **kw
         )

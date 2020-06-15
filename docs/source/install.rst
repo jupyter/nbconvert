@@ -77,7 +77,8 @@ more precisely its Python bindings `pyppeteer <https://github.com/pyppeteer/pypp
 needs a special version of Chromium, and can automatically download it. Since the download size is
 quite large (around 100 MB), nbconvert prevents it by default. If pyppeteer finds a suitable
 version of Chromium on your system, it will try and use it. Otherwise, please use the
-``--allow-chromium-download`` flag to allow Chromium's download.
+``--allow-chromium-download`` flag to allow Chromium's download. Note that installing with
+``nbconvert[webpdf]`` we install a compatible version of pyppeteer for this usecase.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

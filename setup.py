@@ -225,13 +225,20 @@ setup_args['install_requires'] = [
     'testpath',
     'defusedxml',
     'nbclient>=0.2.0',
-    'pyppeteer>=0.2.2'
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
 
 extra_requirements = {
-    'test': ['pytest', 'pytest-cov', 'pytest-dependency', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
+    'test': ['pytest',
+             'pytest-cov',
+             'pytest-dependency',
+             'ipykernel',
+             jupyter_client_req,
+             'ipywidgets>=7',
+             'pyppeteer==0.2.2',
+    ],
     'serve': ['tornado>=4.0'],
+    'webpdf': ['pyppeteer==0.2.2'],
     'execute': [jupyter_client_req],
     'docs': ['sphinx>=1.5.1',
              'sphinx_rtd_theme',
@@ -239,7 +246,7 @@ extra_requirements = {
              'sphinxcontrib_github_alt',
              'ipython',
              jupyter_client_req,
-             ],
+    ],
 }
 
 extra_requirements['all'] = sum(extra_requirements.values(), [])
