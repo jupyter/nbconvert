@@ -1,4 +1,4 @@
-"""Module containing a preprocessor that converts outputs in the notebook from
+"""Module containing a Processor that converts outputs in the notebook from
 one format to another.
 """
 
@@ -15,7 +15,7 @@ from ipython_genutils.py3compat import cast_unicode_py2
 from testpath.tempdir import TemporaryDirectory
 from traitlets import Unicode, default
 
-from .convertfigures import ConvertFiguresPreprocessor
+from .convertfigures import ConvertFiguresProcessor
 
 from shutil import which
 
@@ -33,7 +33,7 @@ if sys.platform == "win32":
         import _winreg as winreg
 
 
-class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
+class SVG2PDFProcessor(ConvertFiguresProcessor):
     """
     Converts all of the outputs in a notebook from SVG to PDF.
     """

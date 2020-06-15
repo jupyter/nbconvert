@@ -104,10 +104,10 @@ class SlidesExporter(HTMLExporter):
 
     @default('reveal_url_prefix')
     def _reveal_url_prefix_default(self):
-        if 'RevealHelpPreprocessor.url_prefix' in self.config:
-            warn("Please update RevealHelpPreprocessor.url_prefix to "
+        if 'RevealHelpProcessor.url_prefix' in self.config:
+            warn("Please update RevealHelpProcessor.url_prefix to "
                  "SlidesExporter.reveal_url_prefix in config files.")
-            return self.config.RevealHelpPreprocessor.url_prefix
+            return self.config.RevealHelpProcessor.url_prefix
         return 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0'
 
     reveal_theme = Unicode('simple',

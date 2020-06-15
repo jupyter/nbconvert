@@ -118,8 +118,8 @@ class TemplateExporter(Exporter):
     """
     Exports notebooks into other file formats.  Uses Jinja 2 templating engine
     to output new formats.  Inherit from this class if you are creating a new
-    template type along with new filters/preprocessors.  If the filters/
-    preprocessors provided by default suffice, there is no need to inherit from
+    template type along with new filters/processors.  If the filters/
+    processors provided by default suffice, there is no need to inherit from
     this class.  Instead, override the template_file and file_extension
     traits via a config file.
 
@@ -158,10 +158,10 @@ class TemplateExporter(Exporter):
     @property
     def default_config(self):
         c = Config({
-            'RegexRemovePreprocessor': {
+            'RegexRemoveProcessor': {
                 'enabled': True
                 },
-            'TagRemovePreprocessor': {
+            'TagRemoveProcessor': {
                 'enabled': True
                 }
             })
@@ -340,7 +340,7 @@ class TemplateExporter(Exporter):
           Notebook node
         resources : dict
           Additional resources that can be accessed read/write by
-          preprocessors and filters.
+          processors and filters.
         """
         nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)

@@ -27,7 +27,7 @@ Exporter base classes
 
     .. automethod:: from_file
 
-    .. automethod:: register_preprocessor
+    .. automethod:: register_processor
 
 .. autoclass:: TemplateExporter
 
@@ -39,7 +39,7 @@ Exporter base classes
 
     .. automethod:: from_file
 
-    .. automethod:: register_preprocessor
+    .. automethod:: register_processor
 
     .. automethod:: register_filter
 

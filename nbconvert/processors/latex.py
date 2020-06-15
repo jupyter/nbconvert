@@ -15,15 +15,15 @@ they are converted.
 
 from __future__ import print_function, absolute_import
 
-from .base import Preprocessor
+from .base import Processor
 from traitlets import Unicode
 
 #-----------------------------------------------------------------------------
 # Classes
 #-----------------------------------------------------------------------------
 
-class LatexPreprocessor(Preprocessor):
-    """Preprocessor for latex destined documents.
+class LatexProcessor(Processor):
+    """Processor for latex destined documents.
     
     Mainly populates the `latex` key in the resources dict,
     adding definitions for pygments highlight styles.
@@ -33,8 +33,8 @@ class LatexPreprocessor(Preprocessor):
             help='Name of the pygments style to use'
     ).tag(config=True)
 
-    def preprocess(self, nb, resources):
-        """Preprocessing to apply on each notebook.
+    def process(self, nb, resources):
+        """Processing to apply on each notebook.
         
         Parameters
         ----------
@@ -42,7 +42,7 @@ class LatexPreprocessor(Preprocessor):
             Notebook being converted
         resources : dictionary
             Additional resources used in the conversion process.  Allows
-            preprocessors to pass variables into the Jinja engine.
+            processors to pass variables into the Jinja engine.
         """
         # Generate Pygments definitions for Latex
         from pygments.formatters import LatexFormatter

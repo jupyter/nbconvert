@@ -39,7 +39,7 @@ package_data = {
         'tests/exporter_entrypoint/*.py',
         'tests/exporter_entrypoint/*/*.*',
         'exporters/tests/files/*.*',
-        'preprocessors/tests/files/*.*',
+        'processors/tests/files/*.*',
     ],
 }
 

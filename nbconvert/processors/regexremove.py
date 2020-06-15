@@ -1,5 +1,5 @@
 """
-Module containing a preprocessor that removes cells if they match
+Module containing a Processor that removes cells if they match
 one or more regular expression.
 """
 
@@ -8,14 +8,14 @@ one or more regular expression.
 
 import re
 from traitlets import List, Unicode
-from .base import Preprocessor
+from .base import Processor
 
 
-class RegexRemovePreprocessor(Preprocessor):
+class RegexRemoveProcessor(Processor):
     """
     Removes cells from a notebook that match one or more regular expression.
 
-    For each cell, the preprocessor checks whether its contents match
+    For each cell, the Processor checks whether its contents match
     the regular expressions in the `patterns` traitlet which is a list
     of unicode strings. If the contents match any of the patterns, the cell
     is removed from the notebook.
@@ -24,7 +24,7 @@ class RegexRemovePreprocessor(Preprocessor):
     modify the patterns traitlet. For example, execute the following command
     to convert a notebook to html and remove cells containing only whitespace::
 
-      jupyter nbconvert --RegexRemovePreprocessor.patterns="['\\s*\\Z']" mynotebook.ipynb
+      jupyter nbconvert --RegexRemoveProcessor.patterns="['\\s*\\Z']" mynotebook.ipynb
 
     The command line argument
     sets the list of patterns to ``'\\s*\\Z'`` which matches an arbitrary number
@@ -55,11 +55,11 @@ class RegexRemovePreprocessor(Preprocessor):
         # Filter out cells that meet the pattern and have no outputs
         return not pattern.match(cell.source)
 
-    def preprocess(self, nb, resources):
+    def process(self, nb, resources):
         """
-        Preprocessing to apply to each notebook. See base.py for details.
+        Processing to apply to each notebook. See base.py for details.
         """
-        # Skip preprocessing if the list of patterns is empty
+        # Skip processing if the list of patterns is empty
         if not self.patterns:
             return nb, resources
 

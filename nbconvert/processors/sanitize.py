@@ -1,5 +1,5 @@
 """
-NBConvert Preprocessor for sanitizing HTML rendering of notebooks.
+NBConvert Processor for sanitizing HTML rendering of notebooks.
 """
 
 from bleach import (
@@ -15,10 +15,10 @@ from traitlets import (
     Set,
     Unicode,
 )
-from .base import Preprocessor
+from .base import Processor
 
 
-class SanitizeHTML(Preprocessor):
+class SanitizeHTML(Processor):
 
     # Bleach config.
     attributes = Any(
@@ -71,7 +71,7 @@ class SanitizeHTML(Preprocessor):
         help="Cell output types to display after escaping with Bleach.",
     )
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def process_cell(self, cell, resources, cell_index):
         """
         Sanitize potentially-dangerous contents of the cell.
 

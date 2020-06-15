@@ -1,4 +1,4 @@
-"""This preprocessor detect cells using a different language through
+"""This Processor detect cells using a different language through
 magic extensions such as `%%R` or `%%octave`. Cell's metadata is marked
 so that the appropriate highlighter can be used in the `highlight`
 filter.
@@ -11,11 +11,11 @@ from __future__ import print_function, absolute_import
 
 import re
 
-from .base import Preprocessor
+from .base import Processor
 from traitlets import Dict
 
 
-class HighlightMagicsPreprocessor(Preprocessor):
+class HighlightMagicsProcessor(Processor):
     """
     Detects and tags code cells that use a different languages than Python.
     """
@@ -77,7 +77,7 @@ class HighlightMagicsPreprocessor(Preprocessor):
         else:
             return None
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def process_cell(self, cell, resources, cell_index):
         """
         Tags cells using a magic extension language
 
@@ -87,7 +87,7 @@ class HighlightMagicsPreprocessor(Preprocessor):
             Notebook cell being processed
         resources : dictionary
             Additional resources used in the conversion process.  Allows
-            preprocessors to pass variables into the Jinja engine.
+            processors to pass variables into the Jinja engine.
         cell_index : int
             Index of the cell being processed (see base.py)
         """

@@ -42,8 +42,8 @@ class ASCIIDocExporter(TemplateExporter):
                                           'text/latex'
                                           ]
             },
-            'ExtractOutputPreprocessor': {'enabled': True},
-            'HighlightMagicsPreprocessor': {
+            'ExtractOutputProcessor': {'enabled': True},
+            'HighlightMagicsProcessor': {
                 'enabled':True
                 },
         })

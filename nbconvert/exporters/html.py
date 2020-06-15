@@ -25,7 +25,7 @@ class HTMLExporter(TemplateExporter):
     """
     Exports a basic HTML document.  This exporter assists with the export of
     HTML.  Inherit from it if you are writing your own HTML template and need
-    custom preprocessors/filters.  If you don't need custom preprocessors/
+    custom processors/filters.  If you don't need custom processors/
     filters, just change the 'template_file' config option.
     """
     export_from_notebook = "HTML"
@@ -89,10 +89,10 @@ class HTMLExporter(TemplateExporter):
                                            'text/plain'
                                           ]
                 },
-            'CSSHTMLHeaderPreprocessor':{
+            'CSSHTMLHeaderProcessor':{
                 'enabled':True
                 },
-            'HighlightMagicsPreprocessor': {
+            'HighlightMagicsProcessor': {
                 'enabled':True
                 }
             })

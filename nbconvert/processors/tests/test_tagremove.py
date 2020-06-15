@@ -1,5 +1,5 @@
 """
-Module with tests for the TagRemovePreprocessor.
+Module with tests for the TagRemoveProcessor.
 """
 
 # Copyright (c) IPython Development Team.
@@ -7,11 +7,11 @@ Module with tests for the TagRemovePreprocessor.
 
 from nbformat import v4 as nbformat
 
-from .base import PreprocessorTestsBase
-from ..tagremove import TagRemovePreprocessor
+from .base import ProcessorTestsBase
+from ..tagremove import TagRemoveProcessor
 
 
-class TestTagRemove(PreprocessorTestsBase):
+class TestTagRemove(ProcessorTestsBase):
     """Contains test functions for tagremove.py"""
 
     def build_notebook(self):
@@ -52,26 +52,26 @@ class TestTagRemove(PreprocessorTestsBase):
 
         return notebook
 
-    def build_preprocessor(self):
-        """Make an instance of a preprocessor"""
-        preprocessor = TagRemovePreprocessor()
-        preprocessor.enabled = True
-        return preprocessor
+    def build_processor(self):
+        """Make an instance of a Processor"""
+        Processor = TagRemoveProcessor()
+        Processor.enabled = True
+        return Processor
 
     def test_constructor(self):
-        """Can a TagRemovePreprocessor be constructed?"""
-        self.build_preprocessor()
+        """Can a TagRemoveProcessor be constructed?"""
+        self.build_processor()
 
     def test_output(self):
-        """Test the output of the TagRemovePreprocessor"""
+        """Test the output of the TagRemoveProcessor"""
         nb = self.build_notebook()
         res = self.build_resources()
-        preprocessor = self.build_preprocessor()
-        preprocessor.remove_cell_tags.add("hide_this_cell")
-        preprocessor.remove_all_outputs_tags.add('hide_all_outputs')
-        preprocessor.remove_single_output_tags.add('hide_one_output')
+        Processor = self.build_processor()
+        Processor.remove_cell_tags.add("hide_this_cell")
+        Processor.remove_all_outputs_tags.add('hide_all_outputs')
+        Processor.remove_single_output_tags.add('hide_one_output')
 
-        nb, res = preprocessor(nb, res)
+        nb, res = Processor(nb, res)
 
         # checks that we can remove entire cells
         self.assertEqual(len(nb.cells), 3)

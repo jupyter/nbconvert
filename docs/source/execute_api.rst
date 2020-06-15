@@ -1,7 +1,11 @@
 Executing notebooks
 ===================
 
-.. module:: nbconvert.preprocessors
+.. module:: nbconvert.processors
+
+**Note:** That notebook execution has moved to a new library, `NBClient <https://nbclient.readthedocs.io/en/latest/>`_.
+We import and preserve the interface for execution as it was in pre-6.0,
+but for more advanced usages and new features you'll want to use nbclient.
 
 Jupyter notebooks are often saved with output cells that have been cleared.
 nbconvert provides a convenient way to execute the input cells of an
@@ -35,11 +39,11 @@ Example
 Let's start with a complete quick example, leaving detailed explanations
 to the following sections.
 
-**Import**: First we import nbconvert and the :class:`ExecutePreprocessor`
+**Import**: First we import nbconvert and the :class:`ExecuteProcessor`
 class::
 
     import nbformat
-    from nbconvert.preprocessors import ExecutePreprocessor
+    from nbconvert.processors import ExecuteProcessor
 
 **Load**: Assuming that ``notebook_filename`` contains the path of a notebook,
 we can load it with::
@@ -49,7 +53,7 @@ we can load it with::
 
 **Configure**: Next, we configure the notebook execution mode::
 
-    ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
+    ep = ExecuteProcessor(timeout=600, kernel_name='python3')
 
 We specified two (optional) arguments ``timeout`` and ``kernel_name``, which
 define respectively the cell execution timeout and the execution kernel.
@@ -58,10 +62,10 @@ define respectively the cell execution timeout and the execution kernel.
     When not specified or when using nbconvert <4.2,
     the default Python kernel is chosen.
 
-**Execute/Run (preprocess)**: To actually run the notebook we call the method
-``preprocess``::
+**Execute/Run (process)**: To actually run the notebook we call the method
+``process``::
 
-    ep.preprocess(nb, {'metadata': {'path': 'notebooks/'}})
+    ep.process(nb, {'metadata': {'path': 'notebooks/'}})
 
 Hopefully, we will not get any errors during the notebook execution
 (see the last section for error handling). Note that ``path`` specifies
@@ -78,7 +82,7 @@ in the file ``executed_notebook.ipynb``.
 Execution arguments (traitlets)
 -------------------------------
 
-The arguments passed to :class:`ExecutePreprocessor` are configuration options
+The arguments passed to :class:`ExecuteProcessor` are configuration options
 called `traitlets <https://traitlets.readthedocs.io/en/stable>`_.
 There are many cool things about traitlets. For example,
 they enforce the input type, and they can be accessed/modified as
@@ -86,7 +90,7 @@ class attributes. Moreover, each traitlet is automatically exposed
 as command-line options. For example, we can pass the timeout from the
 command-line like this::
 
-    jupyter nbconvert --ExecutePreprocessor.timeout=600 --to notebook --execute mynotebook.ipynb
+    jupyter nbconvert --ExecuteProcessor.timeout=600 --to notebook --execute mynotebook.ipynb
 
 Let's now discuss in more detail the two traitlets we used.
 
@@ -132,10 +136,10 @@ Handling errors
 ~~~~~~~~~~~~~~~
 A useful pattern to execute notebooks while handling errors is the following::
 
-    from nbconvert.preprocessors import CellExecutionError
+    from nbconvert.processors import CellExecutionError
 
     try:
-        out = ep.preprocess(nb, {'metadata': {'path': run_path}})
+        out = ep.process(nb, {'metadata': {'path': run_path}})
     except CellExecutionError:
         out = None
         msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
@@ -173,7 +177,7 @@ converting to html.
 We can tell nbconvert to not store the state using the `store_widget_state`
 argument::
 
-    jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
+    jupyter nbconvert --ExecuteProcessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
 
 This widget rendering is not performed against a browser during execution, so
 only widget default states or states manipulated via user code will be

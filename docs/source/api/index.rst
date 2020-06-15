@@ -10,7 +10,7 @@ Contents:
 
    nbconvertapp
    exporters
-   preprocessors
+   processors
    filters
    writers
    postprocessors

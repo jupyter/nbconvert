@@ -13,7 +13,7 @@ from traitlets import Unicode, Union, Type
 from pygments.style import Style
 from jupyterlab_pygments import JupyterStyle
 
-from .base import Preprocessor
+from .base import Processor
 
 try:
     from notebook import DEFAULT_STATIC_FILES_PATH
@@ -21,9 +21,9 @@ except ImportError:
     DEFAULT_STATIC_FILES_PATH = None
 
 
-class CSSHTMLHeaderPreprocessor(Preprocessor):
+class CSSHTMLHeaderProcessor(Processor):
     """
-    Preprocessor used to pre-process notebook for HTML output.  Adds IPython notebook
+    Processor used to pre-process notebook for HTML output.  Adds IPython notebook
     front-end CSS and Pygments CSS to HTML output.
     """
     highlight_class = Unicode('.highlight',
@@ -36,10 +36,10 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
-        Preprocessor.__init__(self, *pargs, **kwargs)
+        Processor.__init__(self, *pargs, **kwargs)
         self._default_css_hash = None
 
-    def preprocess(self, nb, resources):
+    def process(self, nb, resources):
         """Fetch and add CSS to the resource dictionary
 
         Fetch CSS from IPython and Pygments to add at the beginning
@@ -52,7 +52,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
             Notebook being converted
         resources : dictionary
             Additional resources used in the conversion process.  Allows
-            preprocessors to pass variables into the Jinja engine.
+            processors to pass variables into the Jinja engine.
         """
         resources['inlining'] = {}
         resources['inlining']['css'] = self._generate_header(resources)

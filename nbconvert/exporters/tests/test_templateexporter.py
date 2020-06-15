@@ -13,7 +13,7 @@ from jinja2 import DictLoader, TemplateNotFound
 from nbformat import v4
 
 from .base import ExportersTestsBase
-from .cheese import CheesePreprocessor
+from .cheese import CheeseProcessor
 from ..templateexporter import TemplateExporter
 from ..rst import RSTExporter
 from ..html import HTMLExporter
@@ -50,9 +50,9 @@ class TestExporter(ExportersTestsBase):
 
     def test_extract_outputs(self):
         """
-        If the ExtractOutputPreprocessor is enabled, are outputs extracted?
+        If the ExtractOutputProcessor is enabled, are outputs extracted?
         """
-        config = Config({'ExtractOutputPreprocessor': {'enabled': True}})
+        config = Config({'ExtractOutputProcessor': {'enabled': True}})
         exporter = self._make_exporter(config=config)
         (output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
@@ -60,45 +60,45 @@ class TestExporter(ExportersTestsBase):
         assert len(resources['outputs']) > 0
 
 
-    def test_preprocessor_class(self):
+    def test_processor_class(self):
         """
-        Can a preprocessor be added to the preprocessors list by class type?
+        Can a Processor be added to the processors list by class type?
         """
-        config = Config({'Exporter': {'preprocessors': [CheesePreprocessor]}})
+        config = Config({'Exporter': {'processors': [CheeseProcessor]}})
         exporter = self._make_exporter(config=config)
         (output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources['cheese'] == 'real'
 
 
-    def test_preprocessor_instance(self):
+    def test_processor_instance(self):
         """
-        Can a preprocessor be added to the preprocessors list by instance?
+        Can a Processor be added to the processors list by instance?
         """
-        config = Config({'Exporter': {'preprocessors': [CheesePreprocessor()]}})
+        config = Config({'Exporter': {'processors': [CheeseProcessor()]}})
         exporter = self._make_exporter(config=config)
         (output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources['cheese'] == 'real'
 
 
-    def test_preprocessor_dottedobjectname(self):
+    def test_processor_dottedobjectname(self):
         """
-        Can a preprocessor be added to the preprocessors list by dotted object name?
+        Can a Processor be added to the processors list by dotted object name?
         """
-        config = Config({'Exporter': {'preprocessors': ['nbconvert.exporters.tests.cheese.CheesePreprocessor']}})
+        config = Config({'Exporter': {'processors': ['nbconvert.exporters.tests.cheese.CheeseProcessor']}})
         exporter = self._make_exporter(config=config)
         (output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources['cheese'] == 'real'
 
 
-    def test_preprocessor_via_method(self):
+    def test_processor_via_method(self):
         """
-        Can a preprocessor be added via the Exporter convenience method?
+        Can a Processor be added via the Exporter convenience method?
         """
         exporter = self._make_exporter()
-        exporter.register_preprocessor(CheesePreprocessor, enabled=True)
+        exporter.register_processor(CheeseProcessor, enabled=True)
         (output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources['cheese'] == 'real'
@@ -403,7 +403,7 @@ class TestExporter(ExportersTestsBase):
     def test_remove_elements_with_tags(self):
 
         conf = Config({
-            "TagRemovePreprocessor": {
+            "TagRemoveProcessor": {
                 "remove_cell_tags": ["remove_cell"],
                 "remove_all_outputs_tags": ["remove_output"],
                 "remove_input_tags": ["remove_input"]

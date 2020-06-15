@@ -7,19 +7,19 @@ changing the highlighting style.
 Using Builtin styles
 --------------------
 Pygments has a number of builtin styles available. To use them, we just need to set the style setting 
-in the relevant preprocessor.
+in the relevant Processor.
 
 To change the html highlighting export with:
 
 .. code-block:: bash
 
-    jupyter nbconvert --to html notebook.ipynb --CSSHTMLHeaderPreprocessor.style=<name>
+    jupyter nbconvert --to html notebook.ipynb --CSSHTMLHeaderProcessor.style=<name>
 
 To change pdf and latex highlighting export with:
 
 .. code-block:: bash
 
-    jupyter nbconvert --to pdf notebook.ipynb --LatexPreprocessor.style=<name>
+    jupyter nbconvert --to pdf notebook.ipynb --LatexProcessor.style=<name>
 
 where ``<name>`` is the name of the pygments style. Available styles may vary from system to system.
 You can find all available styles with:

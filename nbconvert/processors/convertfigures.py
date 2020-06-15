@@ -1,4 +1,4 @@
-"""Module containing a preprocessor that converts outputs in the notebook from 
+"""Module containing a Processor that converts outputs in the notebook from 
 one format to another.
 """
 
@@ -6,11 +6,11 @@ one format to another.
 # Distributed under the terms of the Modified BSD License.
 
 
-from .base import Preprocessor
+from .base import Processor
 from traitlets import Unicode
 
 
-class ConvertFiguresPreprocessor(Preprocessor):
+class ConvertFiguresProcessor(Processor):
     """
     Converts all of the outputs in a notebook from one format to another.
     """
@@ -29,7 +29,7 @@ class ConvertFiguresPreprocessor(Preprocessor):
         raise NotImplementedError()
 
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def process_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
         

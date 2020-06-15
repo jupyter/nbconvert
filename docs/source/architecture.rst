@@ -47,7 +47,7 @@ Nonetheless, the reason for using nbconvert almost always involves producing som
 We take the in-memory object and write a file appropriate for the output type.
 
 The entirety of heretofore described process can be described as part of an ``Exporter``. 
-``Exporter``\s often involves ``Preprocessor``\s, ``filters``, ``templates`` and ``Writer``\s. 
+``Exporter``\s often involves ``Processor``\s, ``filters``, ``templates`` and ``Writer``\s. 
 These classes and functions are described in greater detail below.
 
 Finally, one can apply a ``Postprocessor`` after the writing has occurred. 
@@ -65,7 +65,7 @@ The primary class in nbconvert is the :class:`.Exporter`.
 Exporters encapsulate the operation of turning a notebook into another format.
 There is one Exporter for each format supported in nbconvert.
 The first thing an Exporter does is load a notebook, usually from a file via :mod:`nbformat`.
-Most of what a typical Exporter does is select and configure preprocessors, filters, and templates.
+Most of what a typical Exporter does is select and configure processors, filters, and templates.
 If you want to convert notebooks to additional formats, a new Exporter is probably what you are looking for.
 
 .. seealso::
@@ -75,21 +75,21 @@ If you want to convert notebooks to additional formats, a new Exporter is probab
 Once the notebook is loaded, it is preprocessed...
 
 
-.. _preprocessors:
+.. _processors:
 
-Preprocessors
+Processors
 -------------
 
-A :class:`.Preprocessor` is an object that transforms the content of the notebook to be exported.
-The result of a preprocessor being applied to a notebook is always a notebook.
+A :class:`.Processor` is an object that transforms the content of the notebook to be exported.
+The result of a processor being applied to a notebook is always a notebook.
 These operations include re-executing the cells, stripping output,
 removing bundled outputs to separate files, etc.
 If you want to add operations that modify a notebook before exporting,
-a preprocessor is the place to start.
+a processor is the place to start.
 
 .. seealso::
 
-    `Custom Preprocessors <nbconvert_library.html#Custom-Preprocessors>`_
+    `Custom Processors <nbconvert_library.html#Custom-Processors>`_
 
 Once a notebook is preprocessed, it's time to convert the notebook into the destination format.
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Module with tests for the execute preprocessor.
+Module with tests for the execute Processor.
 """
 
 # Copyright (c) IPython Development Team.
@@ -10,7 +10,7 @@ import os
 import re
 import nbformat
 
-from ..execute import ExecutePreprocessor
+from ..execute import ExecuteProcessor
 
 
 addr_pat = re.compile(r'0x[0-9a-f]{7,9}')
@@ -53,16 +53,16 @@ def assert_notebooks_equal(expected, actual):
 
 
 def test_basic_execution():
-    preprocessor = ExecutePreprocessor()
+    Processor = ExecuteProcessor()
     fname = os.path.join(os.path.dirname(__file__), 'files', 'HelloWorld.ipynb')
     with open(fname) as f:
         input_nb = nbformat.read(f, 4)
-        output_nb, _ = preprocessor.preprocess(input_nb)
+        output_nb, _ = Processor.process(input_nb)
     assert_notebooks_equal(input_nb, output_nb)
 
 
 def test_populate_language_info():
-    preprocessor = ExecutePreprocessor(kernel_name="python")
+    Processor = ExecuteProcessor(kernel_name="python")
     nb = nbformat.v4.new_notebook()  # Certainly has no language_info.
-    nb, _ = preprocessor.preprocess(nb, resources={})
+    nb, _ = Processor.process(nb, resources={})
     assert 'language_info' in nb.metadata  # See that a basic attribute is filled in

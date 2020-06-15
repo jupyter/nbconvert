@@ -1,12 +1,12 @@
-"""Module containing a preprocessor that removes the outputs from code cells"""
+"""Module containing a Processor that removes the outputs from code cells"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
 from traitlets import Set
-from .base import Preprocessor
+from .base import Processor
 
-class ClearOutputPreprocessor(Preprocessor):
+class ClearOutputProcessor(Processor):
     """
     Removes the output from all code cells in a notebook.
     """
@@ -15,7 +15,7 @@ class ClearOutputPreprocessor(Preprocessor):
         {'collapsed', 'scrolled'}
     ).tag(config=True)
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def process_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell. See base.py for details.
         """

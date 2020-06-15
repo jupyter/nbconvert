@@ -38,8 +38,8 @@ class WriterBase(NbConvertBase):
             converted file.
         resources : dict
             Resources created and filled by the nbconvert conversion process.
-            Includes output from preprocessors, such as the extract figure
-            preprocessor.
+            Includes output from processors, such as the extract figure
+            Processor.
         """
 
         raise NotImplementedError()

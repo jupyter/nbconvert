@@ -1,4 +1,4 @@
-"""Tests for the svg2pdf preprocessor"""
+"""Tests for the svg2pdf Processor"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -6,12 +6,12 @@
 from nbformat import v4 as nbformat
 from unittest.mock import patch, Mock
 
-from .base import PreprocessorTestsBase
-from ..svg2pdf import SVG2PDFPreprocessor
+from .base import ProcessorTestsBase
+from ..svg2pdf import SVG2PDFProcessor
 from ...tests.utils import onlyif_cmds_exist
 
 
-class Testsvg2pdf(PreprocessorTestsBase):
+class Testsvg2pdf(ProcessorTestsBase):
     """Contains test functions for svg2pdf.py"""
 
     simple_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -41,7 +41,7 @@ class Testsvg2pdf(PreprocessorTestsBase):
 
     def build_notebook(self):
         """Build a reveal slides notebook in memory for use with tests.
-        Overrides base in PreprocessorTestsBase"""
+        Overrides base in ProcessorTestsBase"""
 
         outputs = [nbformat.new_output(output_type='display_data',
                                        data={'image/svg+xml':self.simple_svg})
@@ -52,25 +52,25 @@ class Testsvg2pdf(PreprocessorTestsBase):
         return nbformat.new_notebook(cells=cells)
 
 
-    def build_preprocessor(self, **kwargs):
-        """Make an instance of a preprocessor"""
-        preprocessor = SVG2PDFPreprocessor(**kwargs)
-        preprocessor.enabled = True
-        return preprocessor
+    def build_processor(self, **kwargs):
+        """Make an instance of a Processor"""
+        Processor = SVG2PDFProcessor(**kwargs)
+        Processor.enabled = True
+        return Processor
 
 
     def test_constructor(self):
-        """Can a SVG2PDFPreprocessor be constructed?"""
-        self.build_preprocessor()
+        """Can a SVG2PDFProcessor be constructed?"""
+        self.build_processor()
 
 
     @onlyif_cmds_exist('inkscape')
     def test_output(self):
-        """Test the output of the SVG2PDFPreprocessor"""
+        """Test the output of the SVG2PDFProcessor"""
         nb = self.build_notebook()
         res = self.build_resources()
-        preprocessor = self.build_preprocessor()
-        nb, res = preprocessor(nb, res)
+        Processor = self.build_processor()
+        nb, res = Processor(nb, res)
         self.assertIn('application/pdf', nb.cells[0].outputs[0].data)
 
     @patch('subprocess.Popen')
@@ -78,17 +78,17 @@ class Testsvg2pdf(PreprocessorTestsBase):
         mock_popen().communicate.return_value = (b'Inkscape 0.92.3 (2405546, 2018-03-11)', b'')
         mock_popen().returncode = 0
 
-        preprocessor = self.build_preprocessor()
-        self.assertEquals(preprocessor.inkscape_version, '0.92.3')
+        Processor = self.build_processor()
+        self.assertEquals(Processor.inkscape_version, '0.92.3')
 
     def test_inkscape_pre_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape_version='0.92.3')
-        self.assertEquals(preprocessor.command, '0.92.3')
+        Processor = self.build_processor(inkscape_version='0.92.3')
+        self.assertEquals(Processor.command, '0.92.3')
 
     def test_inkscape_pre_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='0.92.3')
-        self.assertEquals(preprocessor.command, 'fake-inkscape --without-gui --export-pdf="{to_filename}" "{from_filename}"')
+        Processor = self.build_processor(inkscape='fake-inkscape', inkscape_version='0.92.3')
+        self.assertEquals(Processor.command, 'fake-inkscape --without-gui --export-pdf="{to_filename}" "{from_filename}"')
 
     def test_inkscape_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='1.0beta2')
-        self.assertEquals(preprocessor.command, 'fake-inkscape --export-filename="{to_filename}" "{from_filename}"')
+        Processor = self.build_processor(inkscape='fake-inkscape', inkscape_version='1.0beta2')
+        self.assertEquals(Processor.command, 'fake-inkscape --export-filename="{to_filename}" "{from_filename}"')

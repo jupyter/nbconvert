@@ -1,15 +1,15 @@
 """
-Module with tests for the clearmetadata preprocessor.
+Module with tests for the clearmetadata Processor.
 """
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from .base import PreprocessorTestsBase
-from ..clearmetadata import ClearMetadataPreprocessor
+from .base import ProcessorTestsBase
+from ..clearmetadata import ClearMetadataProcessor
 
 
-class TestClearMetadata(PreprocessorTestsBase):
+class TestClearMetadata(ProcessorTestsBase):
     """Contains test functions for clearmetadata.py"""
 
     def build_notebook(self):
@@ -22,21 +22,21 @@ class TestClearMetadata(PreprocessorTestsBase):
                                                     ('start_time', '09:31:49')])
         return notebook
 
-    def build_preprocessor(self):
-        """Make an instance of a preprocessor"""
-        preprocessor = ClearMetadataPreprocessor()
-        preprocessor.enabled = True
-        return preprocessor
+    def build_processor(self):
+        """Make an instance of a Processor"""
+        Processor = ClearMetadataProcessor()
+        Processor.enabled = True
+        return Processor
 
     def test_constructor(self):
-        """Can a ClearMetadataPreprocessor be constructed?"""
-        self.build_preprocessor()
+        """Can a ClearMetadataProcessor be constructed?"""
+        self.build_processor()
 
     def test_output(self):
-        """Test the output of the ClearMetadataPreprocessor"""
+        """Test the output of the ClearMetadataProcessor"""
         nb = self.build_notebook()
         res = self.build_resources()
-        preprocessor = self.build_preprocessor()
-        nb, res = preprocessor(nb, res)
+        Processor = self.build_processor()
+        nb, res = Processor(nb, res)
 
         assert not nb.cells[0].metadata 

@@ -1,19 +1,19 @@
-"""Tests for the coalescestreams preprocessor"""
+"""Tests for the coalescestreams Processor"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
 from nbformat import v4 as nbformat
 
-from .base import PreprocessorTestsBase
+from .base import ProcessorTestsBase
 from ..coalescestreams import coalesce_streams
 
 
-class TestCoalesceStreams(PreprocessorTestsBase):
+class TestCoalesceStreams(ProcessorTestsBase):
     """Contains test functions for coalescestreams.py"""
 
     def test_coalesce_streams(self):
-        """coalesce_streams preprocessor output test"""
+        """coalesce_streams Processor output test"""
         nb = self.build_notebook()
         res = self.build_resources()
         nb, res = coalesce_streams(nb, res)
@@ -24,7 +24,7 @@ class TestCoalesceStreams(PreprocessorTestsBase):
         self.assertEqual(outputs[3].text, "ef")
 
     def test_coalesce_sequenced_streams(self):
-        """Can the coalesce streams preprocessor merge a sequence of streams?"""
+        """Can the coalesce streams Processor merge a sequence of streams?"""
         outputs = [nbformat.new_output(output_type="stream", name="stdout", text="0"),
                    nbformat.new_output(output_type="stream", name="stdout", text="1"),
                    nbformat.new_output(output_type="stream", name="stdout", text="2"),

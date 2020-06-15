@@ -26,7 +26,7 @@ from traitlets import (
 from traitlets.utils.importstring import import_item
 
 from .exporters.base import get_export_names, get_exporter
-from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
+from nbconvert import exporters, processors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 from .utils.io import unicode_stdin_stream
@@ -65,11 +65,11 @@ nbconvert_flags = {}
 nbconvert_flags.update(base_flags)
 nbconvert_flags.update({
     'execute' : (
-        {'ExecutePreprocessor' : {'enabled' : True}},
+        {'ExecuteProcessor' : {'enabled' : True}},
         "Execute the notebook prior to export."
         ),
     'allow-errors' : (
-        {'ExecutePreprocessor' : {'allow_errors' : True}},
+        {'ExecuteProcessor' : {'allow_errors' : True}},
         ("Continue notebook execution even if one of the cells throws "
          "an error and include the error message in the cell output "
          "(the default behaviour is to abort conversion). This flag "
@@ -104,7 +104,7 @@ nbconvert_flags.update({
                 'export_format' : 'notebook',
             },
             'FilesWriter' : {'build_directory': ''},
-            'ClearOutputPreprocessor' : {'enabled' : True},
+            'ClearOutputProcessor' : {'enabled' : True},
         },
         """Clear output of current file and save in place, 
         overwriting the existing notebook. """
@@ -145,7 +145,7 @@ class NbConvertApp(JupyterApp):
     @default('classes')
     def _classes_default(self):
         classes = [NbConvertBase]
-        for pkg in (exporters, preprocessors, writers, postprocessors):
+        for pkg in (exporters, processors, writers, postprocessors):
             for name in dir(pkg):
                 cls = getattr(pkg, name)
                 if isinstance(cls, type) and issubclass(cls, Configurable):
@@ -540,10 +540,10 @@ class NbConvertApp(JupyterApp):
         """
         Provides a much improves version of the configuration documentation by
         breaking the configuration options into app, exporter, writer,
-        preprocessor, postprocessor, and other sections.
+        processor, postprocessor, and other sections.
         """
         categories = {category: [c for c in self._classes_inc_parents() if category in c.__name__.lower()]
-                    for category in ['app', 'exporter', 'writer', 'preprocessor', 'postprocessor']}
+                    for category in ['app', 'exporter', 'writer', 'processor', 'postprocessor']}
         accounted_for = {c for category in categories.values() for c in category}
         categories['other']=  [c for c in self._classes_inc_parents() if c not in accounted_for]
 
@@ -555,7 +555,7 @@ class NbConvertApp(JupyterApp):
         sections = ""
         for category in categories:
             sections += header.format(section=category.title())
-            if category in ['exporter','preprocessor','writer']:
+            if category in ['exporter','processor','writer']:
                 sections += ".. image:: _static/{image}_inheritance.png\n\n".format(image=category)
             sections += '\n'.join(c.class_config_rst_doc() for c in categories[category])
 

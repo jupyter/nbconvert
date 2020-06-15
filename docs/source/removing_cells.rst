@@ -1,10 +1,10 @@
 Removing cells, inputs, or outputs
 ==================================
 
-.. module:: nbconvert.preprocessors
+.. module:: nbconvert.processors
 
 When converting Notebooks into other formats, it is possible to
-remove parts of a cell, or entire cells, using preprocessors.
+remove parts of a cell, or entire cells, using processors.
 The notebook will remain unchanged, but the outputs will have
 certain pieces removed. Here are two primary ways to accomplish
 this.
@@ -15,7 +15,7 @@ Removing pieces of cells using cell tags
 The most straightforward way to control which pieces of cells are
 removed is to use **cell tags**. These are single-string snippets of
 metadata that are stored in each cells "tag" field. The
-:class:`TagRemovePreprocessor` can be used 
+:class:`TagRemoveProcessor` can be used 
 to remove inputs, outputs, or entire cells.
 
 For example, here is a configuration that uses a different tag for
@@ -31,22 +31,22 @@ we demonstrate using the nbconvert Python API.
    c = Config()
 
    # Configure our tag removal
-   c.TagRemovePreprocessor.remove_cell_tags = ("remove_cell",)
-   c.TagRemovePreprocessor.remove_all_outputs_tags = ('remove_output',)
-   c.TagRemovePreprocessor.remove_input_tags = ('remove_input',)
+   c.TagRemoveProcessor.remove_cell_tags = ("remove_cell",)
+   c.TagRemoveProcessor.remove_all_outputs_tags = ('remove_output',)
+   c.TagRemoveProcessor.remove_input_tags = ('remove_input',)
 
    # Configure and run out exporter
-   c.HTMLExporter.preprocessors = ["TagRemovePreprocessor"]
+   c.HTMLExporter.processors = ["TagRemoveProcessor"]
    HTMLExporter(config=c).from_filename("path/to/mynotebook.ipynb")
 
 Removing cells using Regular Expressions on cell content
 --------------------------------------------------------
 
 Sometimes you'd rather remove cells based on their _content_ rather
-than their tags. In this case, you can use the :class:`RegexRemovePreprocessor`.
+than their tags. In this case, you can use the :class:`RegexRemoveProcessor`.
 
-You initalize this preprocessor with a single `patterns` configuration, which
-is a list of strings. For each cell, this preprocessor checks whether
+You initalize this Processor with a single `patterns` configuration, which
+is a list of strings. For each cell, this Processor checks whether
 the cell contents match any of the strings provided in `patterns`.
 If the contents match any of the patterns, the cell is removed from the notebook.
 
@@ -55,7 +55,7 @@ and remove cells containing only whitespace:
 
 .. code-block:: bash
 
-    jupyter nbconvert --RegexRemovePreprocessor.patterns="['\s*\Z']" mynotebook.ipynb
+    jupyter nbconvert --RegexRemoveProcessor.patterns="['\s*\Z']" mynotebook.ipynb
 
 The command line argument sets the list of patterns to '\s*\Z' which matches
 an arbitrary number of whitespace characters followed by the end of the string.

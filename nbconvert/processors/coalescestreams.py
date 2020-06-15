@@ -1,4 +1,4 @@
-"""Preprocessor for merging consecutive stream outputs for easier handling."""
+"""Processor for merging consecutive stream outputs for easier handling."""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -7,7 +7,7 @@ import re
 import functools
 from traitlets.log import get_logger
 
-def cell_preprocessor(function):
+def cell_processor(function):
     """
     Wrap a function to be executed on all cells of a notebook
     
@@ -17,14 +17,14 @@ def cell_preprocessor(function):
         Notebook cell being processed
     resources : dictionary
         Additional resources used in the conversion process.  Allows
-        preprocessors to pass variables into the Jinja engine.
+        processors to pass variables into the Jinja engine.
     index : int
         Index of the cell being processed
     """
     @functools.wraps(function)
     def wrappedfunc(nb, resources):
         get_logger().debug(
-                "Applying preprocessor: %s", function.__name__
+                "Applying Processor: %s", function.__name__
             )
         for index, cell in enumerate(nb.cells):
             nb.cells[index], resources = function(cell, resources, index)
@@ -33,7 +33,7 @@ def cell_preprocessor(function):
 
 cr_pat = re.compile(r'.*\r(?=[^\n])')
 
-@cell_preprocessor
+@cell_processor
 def coalesce_streams(cell, resources, index):
     """
     Merge consecutive sequences of stream output into single stream

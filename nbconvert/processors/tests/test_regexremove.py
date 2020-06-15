@@ -1,5 +1,5 @@
 """
-Module with tests for the RegexRemovePreprocessor.
+Module with tests for the RegexRemoveProcessor.
 """
 
 # Copyright (c) IPython Development Team.
@@ -8,11 +8,11 @@ Module with tests for the RegexRemovePreprocessor.
 import re
 from nbformat import v4 as nbformat, from_dict
 
-from .base import PreprocessorTestsBase
-from ..regexremove import RegexRemovePreprocessor
+from .base import ProcessorTestsBase
+from ..regexremove import RegexRemoveProcessor
 
 
-class TestRegexRemove(PreprocessorTestsBase):
+class TestRegexRemove(ProcessorTestsBase):
     """Contains test functions for regexremove.py"""
 
     def build_notebook(self):
@@ -27,18 +27,18 @@ class TestRegexRemove(PreprocessorTestsBase):
 
         return notebook
 
-    def build_preprocessor(self):
-        """Make an instance of a preprocessor"""
-        preprocessor = RegexRemovePreprocessor()
-        preprocessor.enabled = True
-        return preprocessor
+    def build_processor(self):
+        """Make an instance of a Processor"""
+        Processor = RegexRemoveProcessor()
+        Processor.enabled = True
+        return Processor
 
     def test_constructor(self):
-        """Can a RegexRemovePreprocessor be constructed?"""
-        self.build_preprocessor()
+        """Can a RegexRemoveProcessor be constructed?"""
+        self.build_processor()
 
     def test_output(self):
-        """Test the output of the RegexRemovePreprocessor"""
+        """Test the output of the RegexRemoveProcessor"""
         pattern_lookup = {
             'disallow_whitespace': [r'\s*\Z'],
             'disallow_tab_newline': [r'\t\Z', r'\n\Z']
@@ -53,18 +53,18 @@ class TestRegexRemove(PreprocessorTestsBase):
             nb = self.build_notebook()
             res = self.build_resources()
 
-            # Build the preprocessor and extend the list of patterns or use an empty list
-            preprocessor = self.build_preprocessor()
+            # Build the Processor and extend the list of patterns or use an empty list
+            Processor = self.build_processor()
             if method == 'none':
-                preprocessor.patterns = []
+                Processor.patterns = []
             else:
-                preprocessor.patterns.extend(pattern_lookup.get(method, []))
-            nb, res = preprocessor(nb, res)
+                Processor.patterns.extend(pattern_lookup.get(method, []))
+            nb, res = Processor(nb, res)
 
             self.assertEqual(len(nb.cells), expected_cell_count[method])
 
             # Make sure none of the cells match the pattern
-            patterns = list(map(re.compile, preprocessor.patterns))
+            patterns = list(map(re.compile, Processor.patterns))
             for cell in nb.cells:
                 for pattern in patterns:
                     self.assertFalse(pattern.match(cell.source))

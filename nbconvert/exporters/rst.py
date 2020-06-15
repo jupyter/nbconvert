@@ -28,10 +28,10 @@ class RSTExporter(TemplateExporter):
     @property
     def default_config(self):
         c = Config({
-            'ExtractOutputPreprocessor':{
+            'ExtractOutputProcessor':{
                 'enabled':True
                 },
-            'HighlightMagicsPreprocessor': {
+            'HighlightMagicsProcessor': {
                 'enabled':True
                 },
             })

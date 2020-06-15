@@ -1,4 +1,4 @@
-"""Module containing a preprocessor that executes the code cells
+"""Module containing a Processor that executes the code cells
 and updates outputs"""
 
 # Copyright (c) IPython Development Team.
@@ -7,25 +7,25 @@ from nbclient import NotebookClient
 # Backwards compatability for imported name
 from nbclient.exceptions import CellExecutionError
 
-from .base import Preprocessor
+from .base import Processor
 
 
 # We inherit from both classes to allow for traitlets to resolve as they did pre-6.0.
 # This unfortunatley makes for some ugliness around initialization as NotebookClient
 # assumes it's a constructed class with a nb object that we have to hack around.
-class ExecutePreprocessor(Preprocessor, NotebookClient):
+class ExecuteProcessor(Processor, NotebookClient):
     """
     Executes all the cells in a notebook
     """
 
     def __init__(self, **kw):
         nb = kw.get('nb')
-        Preprocessor.__init__(self, nb=nb, **kw)
+        Processor.__init__(self, nb=nb, **kw)
         NotebookClient.__init__(self, nb, **kw)
 
-    def preprocess(self, nb, resources=None, km=None):
+    def process(self, nb, resources=None, km=None):
         """
-        Preprocess notebook executing each code cell.
+        Process notebook executing each code cell.
 
         The input argument `nb` is modified in-place.
 

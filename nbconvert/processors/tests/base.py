@@ -1,4 +1,4 @@
-"""utility functions for preprocessor tests"""
+"""utility functions for Processor tests"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -9,12 +9,12 @@ from ...tests.base import TestsBase
 from ...exporters.exporter import ResourcesDict
 
 
-class PreprocessorTestsBase(TestsBase):
-    """Contains test functions preprocessor tests"""
+class ProcessorTestsBase(TestsBase):
+    """Contains test functions Processor tests"""
 
 
     def build_notebook(self, with_json_outputs=False):
-        """Build a notebook in memory for use with preprocessor tests"""
+        """Build a notebook in memory for use with Processor tests"""
 
         outputs = [
             nbformat.new_output("stream", name="stdout", text="a"),

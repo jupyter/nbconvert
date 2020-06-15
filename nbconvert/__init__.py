@@ -3,6 +3,8 @@
 from ._version import version_info, __version__
 from .exporters import *
 from . import filters
+from . import processors
+# For backwards comaptability
 from . import preprocessors
 from . import postprocessors
 from . import writers

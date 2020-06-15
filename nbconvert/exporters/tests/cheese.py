@@ -1,5 +1,5 @@
 """
-Contains CheesePreprocessor
+Contains CheeseProcessor
 """
 #-----------------------------------------------------------------------------
 # Copyright (c) 2013, the IPython Development Team.
@@ -13,13 +13,13 @@ Contains CheesePreprocessor
 # Imports
 #-----------------------------------------------------------------------------
 
-from ...preprocessors.base import Preprocessor
+from ...processors.base import Processor
 
 #-----------------------------------------------------------------------------
 # Classes
 #-----------------------------------------------------------------------------
 
-class CheesePreprocessor(Preprocessor):
+class CheeseProcessor(Processor):
     """
     Adds a cheese tag to the resources object
     """
@@ -32,9 +32,9 @@ class CheesePreprocessor(Preprocessor):
         super().__init__(**kw)
 
 
-    def preprocess(self, nb, resources):
+    def process(self, nb, resources):
         """
-        Sphinx preprocessing to apply on each notebook.
+        Sphinx processing to apply on each notebook.
         
         Parameters
         ----------
@@ -42,7 +42,7 @@ class CheesePreprocessor(Preprocessor):
             Notebook being converted
         resources : dictionary
             Additional resources used in the conversion process.  Allows
-            preprocessors to pass variables into the Jinja engine.
+            processors to pass variables into the Jinja engine.
         """
         resources['cheese'] = 'real'
         return nb, resources

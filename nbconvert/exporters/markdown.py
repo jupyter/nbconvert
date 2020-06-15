@@ -32,7 +32,7 @@ class MarkdownExporter(TemplateExporter):
     @property
     def default_config(self):
         c = Config({
-            'ExtractOutputPreprocessor': {'enabled': True},
+            'ExtractOutputProcessor': {'enabled': True},
             'NbConvertBase': {
                 'display_data_priority': ['text/html',
                                           'text/markdown',
@@ -43,7 +43,7 @@ class MarkdownExporter(TemplateExporter):
                                           'text/plain'
                                           ]
             },
-            'HighlightMagicsPreprocessor': {
+            'HighlightMagicsProcessor': {
                 'enabled':True
                 },
         })

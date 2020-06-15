@@ -1,5 +1,5 @@
 """
-Module with tests for the csshtmlheader preprocessor
+Module with tests for the csshtmlheader Processor
 """
 
 #-----------------------------------------------------------------------------
@@ -14,34 +14,34 @@ Module with tests for the csshtmlheader preprocessor
 # Imports
 #-----------------------------------------------------------------------------
 
-from .base import PreprocessorTestsBase
-from ..csshtmlheader import CSSHTMLHeaderPreprocessor
+from .base import ProcessorTestsBase
+from ..csshtmlheader import CSSHTMLHeaderProcessor
 
 
 #-----------------------------------------------------------------------------
 # Class
 #-----------------------------------------------------------------------------
 
-class TestCSSHTMLHeader(PreprocessorTestsBase):
+class TestCSSHTMLHeader(ProcessorTestsBase):
     """Contains test functions for csshtmlheader.py"""
 
 
-    def build_preprocessor(self):
-        """Make an instance of a preprocessor"""
-        preprocessor = CSSHTMLHeaderPreprocessor()
-        preprocessor.enabled = True
-        return preprocessor
+    def build_processor(self):
+        """Make an instance of a Processor"""
+        Processor = CSSHTMLHeaderProcessor()
+        Processor.enabled = True
+        return Processor
 
 
     def test_constructor(self):
-        """Can a CSSHTMLHeaderPreprocessor be constructed?"""
-        self.build_preprocessor()
+        """Can a CSSHTMLHeaderProcessor be constructed?"""
+        self.build_processor()
     
 
     def test_output(self):
-        """Test the output of the CSSHTMLHeaderPreprocessor"""
+        """Test the output of the CSSHTMLHeaderProcessor"""
         nb = self.build_notebook()
         res = self.build_resources()
-        preprocessor = self.build_preprocessor()
-        nb, res = preprocessor(nb, res)
+        Processor = self.build_processor()
+        nb, res = Processor(nb, res)
         assert 'css' in res['inlining'] 

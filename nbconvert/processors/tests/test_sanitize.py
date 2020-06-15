@@ -1,35 +1,35 @@
-"""Tests for the HTMLSanitize preprocessor"""
+"""Tests for the HTMLSanitize Processor"""
 
-from .base import PreprocessorTestsBase
+from .base import ProcessorTestsBase
 from ..sanitize import SanitizeHTML
 from nbformat import v4 as nbformat
 
 
-class TestSanitizer(PreprocessorTestsBase):
+class TestSanitizer(ProcessorTestsBase):
     """Contains test functions for sanitize.py"""
 
     maxDiff = None
     
-    def build_preprocessor(self):
-        """Make an instance of a preprocessor"""
-        preprocessor = SanitizeHTML()
-        preprocessor.enabled = True
-        return preprocessor
+    def build_processor(self):
+        """Make an instance of a Processor"""
+        Processor = SanitizeHTML()
+        Processor.enabled = True
+        return Processor
 
-    def preprocess_source(self, cell_type, source, preprocessor):
+    def process_source(self, cell_type, source, Processor):
         nb = self.build_notebook()
         res = self.build_resources()
 
         nb.cells[0].cell_type = cell_type
         nb.cells[0].source = source
 
-        nb, res = preprocessor(nb, res)
+        nb, res = Processor(nb, res)
 
         return nb.cells[0].source
 
     def test_constructor(self):
         """Can a SanitizeHTML be constructed?"""
-        self.build_preprocessor()
+        self.build_processor()
 
     def test_svg_handling(self):
         """
@@ -38,11 +38,11 @@ class TestSanitizer(PreprocessorTestsBase):
         We only allow <img> tags (via markdown syntax) and not all the other ways
         to embed svg: <object>, <embed>, <iframe> nor inline <svg>
         """
-        preprocessor = self.build_preprocessor()
-        preprocessor.strip = True
+        Processor = self.build_processor()
+        Processor.strip = True
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 """
                 ![some image](http://example.com/something.svg)
@@ -58,7 +58,7 @@ class TestSanitizer(PreprocessorTestsBase):
                     <path d="M14 27v-20c0-3.7-3.3-7-7-7s-7 3.3-7 7v41c0 8.2 9.2 17 20 17s20-9.2 20-20c0-13.3-13.4-21.8-26-18zm6 25c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z"/>
                 </svg>
                 """,
-                preprocessor
+                Processor
             ).strip(),
             """
             ![some image](http://example.com/something.svg)
@@ -67,74 +67,74 @@ class TestSanitizer(PreprocessorTestsBase):
 
     def test_tag_whitelist_stripping(self):
         """Test tag whitelisting + stripping out offending tags"""
-        preprocessor = self.build_preprocessor()
-        preprocessor.strip = True
+        Processor = self.build_processor()
+        Processor.strip = True
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 '_A_ <em>few</em> <script>tags</script>',
-                preprocessor
+                Processor
             ),
             '_A_ <em>few</em> tags'
         )
 
     def test_comment_stripping(self):
         """Test HTML comment stripping"""
-        preprocessor = self.build_preprocessor()
+        Processor = self.build_processor()
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 '_A_ <em>few</em> <!-- tags -->',
-                preprocessor
+                Processor
             ),
             '_A_ <em>few</em> '
         )
 
-        preprocessor.strip_comments = False
+        Processor.strip_comments = False
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 '_A_ <em>few</em> <!-- tags -->',
-                preprocessor
+                Processor
             ),
             '_A_ <em>few</em> <!-- tags -->'
         )
 
     def test_attributes_whitelist(self):
         """Test style"""
-        preprocessor = self.build_preprocessor()
+        Processor = self.build_processor()
 
-        preprocessor.attributes['a'] = ['href', 'title']
+        Processor.attributes['a'] = ['href', 'title']
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 '<a href="link" rel="nofollow">Hi</a>',
-                preprocessor
+                Processor
             ),
             '<a href="link">Hi</a>'
         )
 
     def test_style_whitelist(self):
         """Test style"""
-        preprocessor = self.build_preprocessor()
+        Processor = self.build_processor()
 
-        if '*' in preprocessor.attributes:
-            preprocessor.attributes['*'].append('style')
+        if '*' in Processor.attributes:
+            Processor.attributes['*'].append('style')
         else:
-            preprocessor.attributes['*'] = ['style']
-        preprocessor.styles = [
+            Processor.attributes['*'] = ['style']
+        Processor.styles = [
             'color',
         ]
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 '_A_ <em style="color: blue; background-color: pink">'
                 'few</em> <script>tags</script>',
-                preprocessor
+                Processor
             ),
             '_A_ <em style="color: blue;">few</em> '
             '&lt;script&gt;tags&lt;/script&gt;'
@@ -142,20 +142,20 @@ class TestSanitizer(PreprocessorTestsBase):
 
     def test_tag_passthrough(self):
         """Test passing through raw output"""
-        preprocessor = self.build_preprocessor()
+        Processor = self.build_processor()
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'raw',
                 '_A_ <em>few</em> <script>tags</script>',
-                preprocessor
+                Processor
             ),
             '_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;'
         )
 
     def test_output_sanitizing(self):
         """Test that outputs are also sanitized properly"""
-        preprocessor = self.build_preprocessor()
+        Processor = self.build_processor()
         nb = self.build_notebook()
 
         outputs = [
@@ -170,7 +170,7 @@ class TestSanitizer(PreprocessorTestsBase):
         nb.cells[0].outputs = outputs
 
         res = self.build_resources()
-        nb, res = preprocessor(nb, res)
+        nb, res = Processor(nb, res)
 
         expected_output = [
             {
@@ -196,13 +196,13 @@ class TestSanitizer(PreprocessorTestsBase):
 
     def test_tag_whitelist(self):
         """Test tag whitelisting"""
-        preprocessor = self.build_preprocessor()
+        Processor = self.build_processor()
 
         self.assertEqual(
-            self.preprocess_source(
+            self.process_source(
                 'markdown',
                 '_A_ <em>few</em> <script>tags</script>',
-                preprocessor
+                Processor
             ),
             '_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;'
         )

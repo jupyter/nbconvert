@@ -1,4 +1,4 @@
-"""A preprocessor that extracts all of the outputs from the
+"""A Processor that extracts all of the outputs from the
 notebook file.  The extracted outputs are returned in the 'resources' dictionary.
 """
 
@@ -13,7 +13,7 @@ import json
 from mimetypes import guess_extension
 
 from traitlets import Unicode, Set
-from .base import Preprocessor
+from .base import Processor
 
 if sys.version_info < (3,):
     text_type = basestring
@@ -40,7 +40,7 @@ def platform_utf_8_encode(data):
         data = data.encode('utf-8')
     return data
 
-class ExtractOutputPreprocessor(Preprocessor):
+class ExtractOutputProcessor(Processor):
     """
     Extracts all of the outputs from the notebook file.  The extracted
     outputs are returned in the 'resources' dictionary.
@@ -54,7 +54,7 @@ class ExtractOutputPreprocessor(Preprocessor):
         {'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}
     ).tag(config=True)
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def process_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
 
@@ -64,7 +64,7 @@ class ExtractOutputPreprocessor(Preprocessor):
             Notebook cell being processed
         resources : dictionary
             Additional resources used in the conversion process.  Allows
-            preprocessors to pass variables into the Jinja engine.
+            processors to pass variables into the Jinja engine.
         cell_index : int
             Index of the cell being processed (see base.py)
         """

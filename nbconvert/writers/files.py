@@ -73,7 +73,7 @@ class FilesWriter(WriterBase):
 
             # Write all of the extracted resources to the destination directory.
             # NOTE: WE WRITE EVERYTHING AS-IF IT'S BINARY.  THE EXTRACT FIG
-            # PREPROCESSOR SHOULD HANDLE UNIX/WINDOWS LINE ENDINGS...
+            # PROCESSOR SHOULD HANDLE UNIX/WINDOWS LINE ENDINGS...
 
             items = resources.get('outputs', {}).items()
             if items:

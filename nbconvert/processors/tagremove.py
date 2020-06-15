@@ -1,5 +1,5 @@
 """
-Module containing a preprocessor that removes cells if they match
+Module containing a Processor that removes cells if they match
 one or more regular expression.
 """
 
@@ -7,10 +7,10 @@ one or more regular expression.
 # Distributed under the terms of the Modified BSD License.
 
 from traitlets import Set, Unicode
-from . import ClearOutputPreprocessor
+from . import ClearOutputProcessor
 
 
-class TagRemovePreprocessor(ClearOutputPreprocessor):
+class TagRemoveProcessor(ClearOutputProcessor):
     """
     Removes inputs, outputs, or cells from a notebook that
     have tags that designate they are to be removed prior to exporting
@@ -58,11 +58,11 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
         return not self.remove_cell_tags.intersection(
                 cell.get('metadata', {}).get('tags', []))
 
-    def preprocess(self, nb, resources):
+    def process(self, nb, resources):
         """
-        Preprocessing to apply to each notebook. See base.py for details.
+        Processing to apply to each notebook. See base.py for details.
         """
-        # Skip preprocessing if the list of patterns is empty
+        # Skip processing if the list of patterns is empty
         if not any([self.remove_cell_tags,
                     self.remove_all_outputs_tags,
                     self.remove_single_output_tags,
@@ -71,13 +71,13 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
             return nb, resources
 
         # Filter out cells that meet the conditions
-        nb.cells = [self.preprocess_cell(cell, resources, index)[0]
+        nb.cells = [self.process_cell(cell, resources, index)[0]
                     for index, cell in enumerate(nb.cells)
                     if self.check_cell_conditions(cell, resources, index)]
 
         return nb, resources
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def process_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell. See base.py for details.
         """

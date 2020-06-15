@@ -17,7 +17,7 @@ Module with tests for exporter.py
 from traitlets.config import Config
 
 from .base import ExportersTestsBase
-from ...preprocessors.base import Preprocessor
+from ...processors.base import Processor
 from ..exporter import Exporter
 from ..base import get_export_names, ExporterDisabledError
 
@@ -26,12 +26,12 @@ from ..base import get_export_names, ExporterDisabledError
 # Class
 #-----------------------------------------------------------------------------
 
-class PizzaPreprocessor(Preprocessor):
-    """Simple preprocessor that adds a 'pizza' entry to the NotebookNode.  Used 
+class PizzaProcessor(Processor):
+    """Simple Processor that adds a 'pizza' entry to the NotebookNode.  Used 
     to test Exporter.
     """
 
-    def preprocess(self, nb, resources):
+    def process(self, nb, resources):
         nb['pizza'] = 'cheese'
         return nb, resources
 
@@ -52,9 +52,9 @@ class TestExporter(ExportersTestsBase):
         assert isinstance(notebook, dict)
 
 
-    def test_preprocessor(self):
-        """Do preprocessors work?"""
-        config = Config({'Exporter': {'preprocessors': [PizzaPreprocessor()]}})
+    def test_processor(self):
+        """Do processors work?"""
+        config = Config({'Exporter': {'processors': [PizzaProcessor()]}})
         exporter = Exporter(config=config)
         (notebook, resources) = exporter.from_filename(self._get_notebook())
         self.assertEqual(notebook['pizza'], 'cheese')

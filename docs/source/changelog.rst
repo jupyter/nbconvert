@@ -27,7 +27,7 @@ Significant Changes
 RegExRemove applies to all cells
 ++++++++++++++++++++++++++++++++
 
-RegExRemove preprocessor now removes cells regardless of cell outputs. Before this only cells that had outputs were filtered.
+RegExRemove Processor now removes cells regardless of cell outputs. Before this only cells that had outputs were filtered.
 
 Comprehensive notes
 ~~~~~~~~~~~~~~~~~~~
@@ -47,9 +47,9 @@ Fixing Problems
 Testing, Docs, and Builds
 +++++++++++++++++++++++++
 - Added Circle CI builds for documentation :ghpull:`1114`: :ghpull:`1120`:, and :ghpull:`1116`:
-- Fix typo in argument name in docstring (TagRemovePreprocessor) :ghpull:`1103`:
+- Fix typo in argument name in docstring (TagRemoveProcessor) :ghpull:`1103`:
 - Changelog typo fix :ghpull:`1100`:
-- Updated API page for TagRemovePreprocessor and TemplateExporter :ghpull:`1088`:
+- Updated API page for TagRemoveProcessor and TemplateExporter :ghpull:`1088`:
 - Added remove_input_tag traitlet to the docstring :ghpull:`1088`:
 
 5.6
@@ -115,9 +115,9 @@ New Features
 - Make a default global location for custom user templates :ghpull:`1028`:
 - Parallel execution improvements :ghpull:`1018`:, and :ghpull:`1017`:
 - Added ``store_history`` option to ``preprocess_cell`` and ``run_cell`` :ghpull:`1055`:
-- Simplify the function signature for preprocess() :ghpull:`1042`:
+- Simplify the function signature for process() :ghpull:`1042`:
 - Set flag to not always stop kernel execution on errors :ghpull:`1040`:
-- ``setup_preprocessor`` passes kwargs to ``start_new_kernel`` :ghpull:`1021`:
+- ``setup_processor`` passes kwargs to ``start_new_kernel`` :ghpull:`1021`:
 
 Fixing Problems
 +++++++++++++++
@@ -130,7 +130,7 @@ Fixing Problems
 - Fix selection of mimetype when converting to HTML :ghpull:`1036`:
 - Correct a few typos :ghpull:`1029`:
 - Update ``export_from_notebook`` names :ghpull:`1027`:
-- Dedenting html in ExtractOutputPreprocessor :ghpull:`1023`:
+- Dedenting html in ExtractOutputProcessor :ghpull:`1023`:
 - Fix backwards incompatibility with markdown2html :ghpull:`1022`:
 - Fixed html image tagging :ghpull:`1013`:
 - Remove unnecessary css :ghpull:`1010`:
@@ -188,7 +188,7 @@ Now when a notebook executing contains `Jupyter Widgets <https://github.com/jupy
 
 You can tell nbconvert to not store the state using the `store_widget_state` argument::
 
-     jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
+     jupyter nbconvert --ExecuteProcessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
 
 This widget rendering is not performed against a browser during execution, so only widget default states or states manipulated via user code will be calculated during execution. `%%javascript` cells will execute upon notebook rendering, enabling complex interactions to function as expected when viewed by a UI.
 
@@ -196,10 +196,10 @@ If you can't view widget results after execution, you may need to select `Trust 
 
 See :ghpull:`779`, :ghpull:`900`, and :ghpull:`983` for details.
 
-Execute Preprocessor Rework
+Execute Processor Rework
 +++++++++++++++++++++++++++
 
-Based on monkey patching required in `papermill <https://github.com/nteract/papermill/blob/0.19.1/papermill/preprocess.py>`__ the `run_cell` code path in the ExecutePreprocessor was reworked to allow for accessing individual message parses without reimplementing the entire function. Now there is a `processs_message` function which take a ZeroMQ message and applies all of its side-effect updates on the cell/notebook objects before returning the output it generated, if it generated any such output.
+Based on monkey patching required in `papermill <https://github.com/nteract/papermill/blob/0.19.1/papermill/process.py>`__ the `run_cell` code path in the ExecuteProcessor was reworked to allow for accessing individual message parses without reimplementing the entire function. Now there is a `processs_message` function which take a ZeroMQ message and applies all of its side-effect updates on the cell/notebook objects before returning the output it generated, if it generated any such output.
 
 The change required a much more extensive test suite covering cell execution as test coverage on the various, sometimes wonky, code paths made improvements and reworks impossible to prove undamaging. Now changes to kernel message processing has much better coverage, so future additions or changes with specs over time will be easier to add.
 
@@ -225,13 +225,13 @@ Comprehensive notes
 New Features
 ++++++++++++
 - IPyWidget Support :ghpull:`779`, :ghpull:`900`, and :ghpull:`983`
-- A new ClearMetadata Preprocessor is available :ghpull:`805`:
+- A new ClearMetadata Processor is available :ghpull:`805`:
 - Support for pandoc 2 :ghpull:`964`:
 - New, and better, latex template :ghpull:`992`:
 
 Fixing Problems
 +++++++++++++++
-- Refactored execute preprocessor to have a process_message function :ghpull:`905`:
+- Refactored execute Processor to have a process_message function :ghpull:`905`:
 - Fixed OOM kernel failures hanging :ghpull:`959` and :ghpull:`971`:
 - Fixed latex export for svg data in python 3 :ghpull:`985`:
 - Enabled configuration to be shared to exporters from script exporter :ghpull:`993`:
@@ -321,7 +321,7 @@ There were a few new metadata fields which are now respected in nbconvert.
 
 ``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
 
-``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
+``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the ``ExtractOutputProcessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
 
 The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by `nbval <https://github.com/computationalmodelling/nbval>`_ and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
 Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
@@ -333,11 +333,11 @@ See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684
 Configurable kernel managers when executing notebooks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The kernel manager can now be optionally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the keyword argument ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
+The kernel manager can now be optionally passed into the ``ExecuteProcessor.process`` and the ``executenb`` functions as the keyword argument ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
 
 This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the Spark cluster location ahead of time without building a new kernel.
 
-Overall the ExecutePreprocessor has been reworked to make it easier to use. Future releases will continue this trend to make this section of the code more inheritable and reusable by others. We encourage you read the source code for this version if you're interested in the detailed improvements.
+Overall the ExecuteProcessor has been reworked to make it easier to use. Future releases will continue this trend to make this section of the code more inheritable and reusable by others. We encourage you read the source code for this version if you're interested in the detailed improvements.
 
 See :ghpull:`852` for implementation changes.
 
@@ -388,8 +388,8 @@ New Features
 - If set, use ``nb.metadata.authors`` for LaTeX author line :ghpull:`867`
 - Populate language_info metadata when executing :ghpull:`860`
 - Support for ``\mathscr`` :ghpull:`830`
-- Allow the execute preprocessor to make use of an existing kernel :ghpull:`852`
-- Refactor ExecutePreprocessor :ghpull:`816`
+- Allow the execute Processor to make use of an existing kernel :ghpull:`852`
+- Refactor ExecuteProcessor :ghpull:`816`
 - Update widgets CDN for ipywidgets 7 w/fallback :ghpull:`792`
 - Add support for adding custom exporters to the "Download as" menu. :ghpull:`759`
 - Enable ANSI underline and inverse :ghpull:`696`
@@ -498,12 +498,12 @@ Comprehensive notes
 
 - new: configurable ``browser`` in ServePostProcessor :ghpull:`618`
 - new: ``--clear-output`` command line flag to clear output in-place :ghpull:`619`
-- new: remove elements based on tags with ``TagRemovePreprocessor``. :ghpull:`640`, :ghpull:`643`
-- new: CellExecutionError can now be imported from ``nbconvert.preprocessors`` :ghpull:`656`
+- new: remove elements based on tags with ``TagRemoveProcessor``. :ghpull:`640`, :ghpull:`643`
+- new: CellExecutionError can now be imported from ``nbconvert.processors`` :ghpull:`656`
 - new: slides now can enable scrolling and custom transitions :ghpull:`600`
 
 - docs: Release instructions for nbviewer-deploy
-- docs: improved instructions for handling errors using the ``ExecutePreprocessor`` :ghpull:`656`
+- docs: improved instructions for handling errors using the ``ExecuteProcessor`` :ghpull:`656`
 
 - tests: better height/width metadata testing for images in rst & html :ghpull:`601` :ghpull:`602`
 - tests: normalise base64 output data to avoid false positives :ghpull:`650`
@@ -518,7 +518,7 @@ Comprehensive notes
 - nose completely removed & dependency dropped :ghpull:`595` :ghpull:`660`
 - mathjax processing in mistune now only uses inline grammar :ghpull:`611`
 - removeRegex now enabled by default on all TemplateExporters, does not remove cells with outputs :ghpull:`616`
-- validate notebook after applying each preprocessor (allowing additional attributes) :ghpull:`645`
+- validate notebook after applying each Processor (allowing additional attributes) :ghpull:`645`
 - changed COPYING.md to LICENSE for more standard licensing that GitHub knows how to read :ghpull:`654`
 
 5.2.1
@@ -547,14 +547,14 @@ Execute notebooks from a function
 +++++++++++++++++++++++++++++++++
 
 You can now use the executenb function to execute notebooks as though you ran
-the execute preprocessor on the notebooks. It returns the standard notebook and
+the execute Processor on the notebooks. It returns the standard notebook and
 resources options.
 
 Remove cells based on regex pattern
 +++++++++++++++++++++++++++++++++++
 
 This removes cells based on their matching a regex pattern (by default, empty
-cells). This is the RegexRemovePreprocessor.
+cells). This is the RegexRemoveProcessor.
 
 Script exporter entrypoints for nonpython scripts
 +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -567,8 +567,8 @@ that wish to have a language specific exporter can now surface that directly.
 Comprehensive notes
 ~~~~~~~~~~~~~~~~~~~
 
-- new: configurable ExecutePreprocessor.startup_timeout configurable :ghpull:`583`
-- new: RemoveCell preprocessor based on cell content (defaults to empty cell) :ghpull:`575`
+- new: configurable ExecuteProcessor.startup_timeout configurable :ghpull:`583`
+- new: RemoveCell Processor based on cell content (defaults to empty cell) :ghpull:`575`
 - new: function for executing notebooks: `executenb` :ghpull:`573`
 - new: global filtering to remove inputs, outputs, markdown cells (&c.), this works on all templates :ghpull:`554`
 - new: script exporter entrypoint :ghpull:`531`
@@ -586,7 +586,7 @@ Comprehensive notes
 
 - bug fixed: we now respect width and height metadata on jpeg and png mimetype outputs :ghpull:`588`
 - bug fixed: now we respect the `resolve_references` filter in `report.tplx` :ghpull:`577`
-- bug fixed: output metadata now is removed by ClearOutputPreprocessor :ghpull:`569`
+- bug fixed: output metadata now is removed by ClearOutputProcessor :ghpull:`569`
 - bug fixed: display id respected in execute preproessor :ghpull:`563`
 - bug fixed: dynamic defaults for optional jupyter_client import :ghpull:`559`
 - bug fixed: don't self-close non-void HTML tags :ghpull:`548`
@@ -666,7 +666,7 @@ alphabetical order):
 - Use :command:`xelatex` by default for latex export, improving unicode and font support.
 - Use entrypoints internally to access Exporters, allowing for packages to declare custom exporters more easily.
 - New ASCIIDoc Exporter.
-- New preprocessor for sanitised html output.
+- New Processor for sanitised html output.
 - New general ``convert_pandoc`` filter to reduce the need to hard-code lists of filters in templates.
 - Use pytest, nose dependency to be removed.
 - Refactored Exporter code to avoid ambiguity and cyclic dependencies.

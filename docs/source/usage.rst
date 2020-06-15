@@ -226,14 +226,14 @@ Executable script
 
 .. _convert_notebook:
 
-Notebook and preprocessors
+Notebook and processors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 * ``--to notebook``
 
   .. versionadded:: 3.0
 
   This doesn't convert a notebook to a different format *per se*,
-  instead it allows the running of nbconvert preprocessors on a notebook,
+  instead it allows the running of nbconvert processors on a notebook,
   and/or conversion to other notebook formats. For example::
 
       jupyter nbconvert --to notebook --execute mynotebook.ipynb

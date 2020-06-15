@@ -49,19 +49,19 @@ class LatexExporter(TemplateExporter):
             'NbConvertBase': {
                 'display_data_priority' : ['text/latex', 'application/pdf', 'image/png', 'image/jpeg', 'image/svg+xml', 'text/markdown', 'text/plain']
                 },
-             'ExtractOutputPreprocessor': {
+             'ExtractOutputProcessor': {
                     'enabled':True
                  },
-             'SVG2PDFPreprocessor': {
+             'SVG2PDFProcessor': {
                     'enabled':True
                  },
-             'LatexPreprocessor': {
+             'LatexProcessor': {
                     'enabled':True
                  },
-             'SphinxPreprocessor': {
+             'SphinxProcessor': {
                     'enabled':True
                  },
-             'HighlightMagicsPreprocessor': {
+             'HighlightMagicsProcessor': {
                     'enabled':True
                  }
          })

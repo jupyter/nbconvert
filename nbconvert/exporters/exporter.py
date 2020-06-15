@@ -47,7 +47,7 @@ class FilenameExtension(Unicode):
 
 class Exporter(LoggingConfigurable):
     """
-    Class containing methods that sequentially run a list of preprocessors on a
+    Class containing methods that sequentially run a list of processors on a
     NotebookNode object and then return the modified NotebookNode object and
     accompanying resources dict.
     """
@@ -69,27 +69,27 @@ class Exporter(LoggingConfigurable):
     # If so, should be a friendly name to display (and possibly translated).
     export_from_notebook = None
 
-    #Configurability, allows the user to easily add filters and preprocessors.
-    preprocessors = List(
-        help="""List of preprocessors, by name or namespace, to enable."""
+    #Configurability, allows the user to easily add filters and processors.
+    processors = List(
+        help="""List of processors, by name or namespace, to enable."""
     ).tag(config=True)
 
-    _preprocessors = List()
+    _processors = List()
 
-    default_preprocessors = List([
-                                  'nbconvert.preprocessors.TagRemovePreprocessor',
-                                  'nbconvert.preprocessors.RegexRemovePreprocessor',
-                                  'nbconvert.preprocessors.ClearOutputPreprocessor',
-                                  'nbconvert.preprocessors.ExecutePreprocessor',
-                                  'nbconvert.preprocessors.coalesce_streams',
-                                  'nbconvert.preprocessors.SVG2PDFPreprocessor',
-                                  'nbconvert.preprocessors.CSSHTMLHeaderPreprocessor',
-                                  'nbconvert.preprocessors.LatexPreprocessor',
-                                  'nbconvert.preprocessors.HighlightMagicsPreprocessor',
-                                  'nbconvert.preprocessors.ExtractOutputPreprocessor',
-                                  'nbconvert.preprocessors.ClearMetadataPreprocessor',
+    default_processors = List([
+                                  'nbconvert.processors.TagRemoveProcessor',
+                                  'nbconvert.processors.RegexRemoveProcessor',
+                                  'nbconvert.processors.ClearOutputProcessor',
+                                  'nbconvert.processors.ExecuteProcessor',
+                                  'nbconvert.processors.coalesce_streams',
+                                  'nbconvert.processors.SVG2PDFProcessor',
+                                  'nbconvert.processors.CSSHTMLHeaderProcessor',
+                                  'nbconvert.processors.LatexProcessor',
+                                  'nbconvert.processors.HighlightMagicsProcessor',
+                                  'nbconvert.processors.ExtractOutputProcessor',
+                                  'nbconvert.processors.ClearMetadataProcessor',
                               ],
-        help="""List of preprocessors available by default, by name, namespace,
+        help="""List of processors available by default, by name, namespace,
         instance, or type."""
     ).tag(config=True)
 
@@ -111,7 +111,7 @@ class Exporter(LoggingConfigurable):
 
         super().__init__(config=with_default_config, **kw)
 
-        self._init_preprocessors()
+        self._init_processors()
 
 
     @property
@@ -128,7 +128,7 @@ class Exporter(LoggingConfigurable):
           Notebook node (dict-like with attr-access)
         resources : dict
           Additional resources that can be accessed read/write by
-          preprocessors and filters.
+          processors and filters.
         `**kw`
           Ignored
 
@@ -139,8 +139,8 @@ class Exporter(LoggingConfigurable):
         if 'language' in nb['metadata']:
             resources['language'] = nb['metadata']['language'].lower()
 
-        # Preprocess
-        nb_copy, resources = self._preprocess(nb_copy, resources)
+        # Process
+        nb_copy, resources = self._process(nb_copy, resources)
 
         return nb_copy, resources
 
@@ -155,7 +155,7 @@ class Exporter(LoggingConfigurable):
             Full filename of the notebook file to open and convert.
         resources : dict
           Additional resources that can be accessed read/write by
-          preprocessors and filters.
+          processors and filters.
         `**kw`
           Ignored
 
@@ -193,7 +193,7 @@ class Exporter(LoggingConfigurable):
             Notebook file-like object to convert.
         resources : dict
           Additional resources that can be accessed read/write by
-          preprocessors and filters.
+          processors and filters.
         `**kw`
           Ignored
 
@@ -201,71 +201,71 @@ class Exporter(LoggingConfigurable):
         return self.from_notebook_node(nbformat.read(file_stream, as_version=4), resources=resources, **kw)
 
 
-    def register_preprocessor(self, preprocessor, enabled=False):
+    def register_processor(self, Processor, enabled=False):
         """
-        Register a preprocessor.
-        Preprocessors are classes that act upon the notebook before it is
-        passed into the Jinja templating engine.  preprocessors are also
+        Register a Processor.
+        Processor are classes that act upon the notebook before it is
+        passed into the Jinja templating engine.  processors are also
         capable of passing additional information to the Jinja
         templating engine.
 
         Parameters
         ----------
-        preprocessor : :class:`~nbconvert.preprocessors.Preprocessor`
+        Processor : :class:`~nbconvert.processors.Processor`
             A dotted module name, a type, or an instance
         enabled : bool
-            Mark the preprocessor as enabled
+            Mark the Processor as enabled
 
         """
-        if preprocessor is None:
-            raise TypeError('preprocessor must not be None')
-        isclass = isinstance(preprocessor, type)
+        if Processor is None:
+            raise TypeError('Processor must not be None')
+        isclass = isinstance(Processor, type)
         constructed = not isclass
 
-        # Handle preprocessor's registration based on it's type
-        if constructed and isinstance(preprocessor, py3compat.string_types):
-            # Preprocessor is a string, import the namespace and recursively call
-            # this register_preprocessor method
-            preprocessor_cls = import_item(preprocessor)
-            return self.register_preprocessor(preprocessor_cls, enabled)
+        # Handle Processor's registration based on it's type
+        if constructed and isinstance(Processor, py3compat.string_types):
+            # Processor is a string, import the namespace and recursively call
+            # this register_processor method
+            processor_cls = import_item(Processor)
+            return self.register_processor(processor_cls, enabled)
 
-        if constructed and hasattr(preprocessor, '__call__'):
-            # Preprocessor is a function, no need to construct it.
-            # Register and return the preprocessor.
+        if constructed and hasattr(Processor, '__call__'):
+            # Processor is a function, no need to construct it.
+            # Register and return the Processor.
             if enabled:
-                preprocessor.enabled = True
-            self._preprocessors.append(preprocessor)
-            return preprocessor
+                Processor.enabled = True
+            self._processors.append(Processor)
+            return Processor
 
-        elif isclass and issubclass(preprocessor, HasTraits):
-            # Preprocessor is configurable.  Make sure to pass in new default for
+        elif isclass and issubclass(Processor, HasTraits):
+            # Processor is configurable.  Make sure to pass in new default for
             # the enabled flag if one was specified.
-            self.register_preprocessor(preprocessor(parent=self), enabled)
+            self.register_processor(Processor(parent=self), enabled)
 
         elif isclass:
-            # Preprocessor is not configurable, construct it
-            self.register_preprocessor(preprocessor(), enabled)
+            # Processor is not configurable, construct it
+            self.register_processor(Processor(), enabled)
 
         else:
-            # Preprocessor is an instance of something without a __call__
+            # Processor is an instance of something without a __call__
             # attribute.
-            raise TypeError('preprocessor must be callable or an importable constructor, got %r' % preprocessor)
+            raise TypeError('Processor must be callable or an importable constructor, got %r' % Processor)
 
 
-    def _init_preprocessors(self):
+    def _init_processors(self):
         """
-        Register all of the preprocessors needed for this exporter, disabled
+        Register all of the processors needed for this exporter, disabled
         unless specified explicitly.
         """
-        self._preprocessors = []
+        self._processors = []
 
-        # Load default preprocessors (not necessarily enabled by default).
-        for preprocessor in self.default_preprocessors:
-            self.register_preprocessor(preprocessor)
+        # Load default processors (not necessarily enabled by default).
+        for Processor in self.default_processors:
+            self.register_processor(Processor)
 
-        # Load user-specified preprocessors.  Enable by default.
-        for preprocessor in self.preprocessors:
-            self.register_preprocessor(preprocessor, enabled=True)
+        # Load user-specified processors.  Enable by default.
+        for Processor in self.processors:
+            self.register_processor(Processor, enabled=True)
 
 
     def _init_resources(self, resources):
@@ -294,11 +294,11 @@ class Exporter(LoggingConfigurable):
         return resources
 
 
-    def _preprocess(self, nb, resources):
+    def _process(self, nb, resources):
         """
-        Preprocess the notebook before passing it into the Jinja engine.
-        To preprocess the notebook is to successively apply all the
-        enabled preprocessors. Output from each preprocessor is passed
+        Process the notebook before passing it into the Jinja engine.
+        To process the notebook is to successively apply all the
+        enabled processors. Output from each Processor is passed
         along to the next one.
 
         Parameters
@@ -306,23 +306,23 @@ class Exporter(LoggingConfigurable):
         nb : notebook node
             notebook that is being exported.
         resources : a dict of additional resources that
-            can be accessed read/write by preprocessors
+            can be accessed read/write by processors
         """
 
         # Do a copy.deepcopy first,
-        # we are never safe enough with what the preprocessors could do.
+        # we are never safe enough with what the processors could do.
         nbc =  copy.deepcopy(nb)
         resc = copy.deepcopy(resources)
 
-        # Run each preprocessor on the notebook.  Carry the output along
-        # to each preprocessor
-        for preprocessor in self._preprocessors:
-            nbc, resc = preprocessor(nbc, resc)
+        # Run each Processor on the notebook.  Carry the output along
+        # to each Processor
+        for Processor in self._processors:
+            nbc, resc = Processor(nbc, resc)
             try: 
                 nbformat.validate(nbc, relax_add_props=True)
             except nbformat.ValidationError:
-                self.log.error('Notebook is invalid after preprocessor %s',
-                               preprocessor)
+                self.log.error('Notebook is invalid after Processor %s',
+                               Processor)
                 raise
 
         return nbc, resc
