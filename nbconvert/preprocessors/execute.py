@@ -4,6 +4,8 @@ and updates outputs"""
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 from nbclient import NotebookClient
+# Backwards compatability for imported name
+from nbclient.exceptions import CellExecutionError
 
 from .base import Preprocessor
 
