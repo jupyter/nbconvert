@@ -13,4 +13,3 @@ dependencies:
 - entrypoints
 - pip:
     - nbsphinx==0.6.1
-    - sphinxcontrib_github_alt
