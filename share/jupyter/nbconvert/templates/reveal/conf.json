@@ -1,5 +1,5 @@
 {
-    "base_template": "classic",
+    "base_template": "lab",
     "mimetypes": {
         "text/html": true
     }
