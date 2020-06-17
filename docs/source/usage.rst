@@ -89,9 +89,11 @@ WebPDF
 ~~~~~~
 * ``--to webpdf``
 
-  Generates a PDF via puppeteer (chromium web browser). Supports the same
-  templates as ``--to html``. Requires ``pyppeteer`` to be installed via
-  ``nbconvert[webpdf]``.
+  Generates a by first rendering to HTML, rendering the HTML Chromium headless, and
+  exporting to PDF. This exporter supports the same templates as ``--to html``.
+
+  The webpdf exporter requires the ``pyppeteer`` Chromium automation library, which
+  can be installed via ``nbconvert[webpdf]``.
 
 .. _convert_revealjs:
 

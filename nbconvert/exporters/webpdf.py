@@ -1,4 +1,4 @@
-"""Export to PDF via puppeteer"""
+"""Export to PDF via a headless browser"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -12,13 +12,12 @@ class WebPDFExporter(HTMLExporter):
     """Writer designed to write to PDF files.
 
     This inherits from :class:`HTMLExporter`. It creates the HTML using the
-    template machinery, and then runs puppeteer (through pyppeteer) to create
-    a pdf.
+    template machinery, and then run pyppeteer to create a pdf.
     """
-    export_from_notebook="PDF via Puppeteer"
+    export_from_notebook = "PDF via pyppeteer"
 
     allow_chromium_download = Bool(False,
-        help="Whether to allow downloading chromium if no suitable version is found on the system."
+        help="Whether to allow downloading Chromium if no suitable version is found on the system."
     ).tag(config=True)
 
     def _check_launch_reqs(self):
@@ -33,8 +32,8 @@ class WebPDFExporter(HTMLExporter):
                                "Please use '--allow-chromium-download' to allow downloading one.")
         return launch
 
-    def run_puppeteer(self, html):
-        """Run puppeteer."""
+    def run_pyppeteer(self, html):
+        """Run pyppeteer."""
 
         async def main():
             browser = await self._check_launch_reqs()()
@@ -54,7 +53,7 @@ class WebPDFExporter(HTMLExporter):
         )
 
         self.log.info("Building PDF")
-        pdf_data = self.run_puppeteer(html)
+        pdf_data = self.run_pyppeteer(html)
         self.log.info('PDF successfully created')
 
         # convert output extension to pdf

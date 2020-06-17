@@ -12,16 +12,17 @@ Installing nbconvert
 Nbconvert is packaged for both pip and conda, so you can install it with::
 
     pip install nbconvert
+
     # OR
+
     conda install nbconvert
 
-If you're new to Python, we recommend installing `Anaconda <https://www.anaconda.com/distribution/>`_,
-a Python distribution which includes nbconvert and the other Jupyter components.
+The `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ and `Miniforge <https://github.com/conda-forge/miniforge/>`_ distributions both provide a minimal conda installation.
 
 .. important::
 
     To unlock its full capabilities, nbconvert requires Pandoc, TeX
-    (specifically, XeLaTeX) and Chromium. These must be installed separately.
+    (specifically, XeLaTeX) and Pyppeteer. These must be installed separately.
 
 Installing Pandoc
 -----------------
@@ -39,11 +40,8 @@ On other platforms, you can get pandoc from
 Installing TeX
 --------------
 
-For converting to PDF, nbconvert can either use `Puppeteer <https://pptr.dev>`_
-(with ``--to webpdf``) or the TeX document preparation ecosystem (with
-``--to pdf``). In the latter case it produces an intermediate ``.tex`` file
-which is compiled by the XeTeX engine with the LaTeX2e format (via the ``xelatex``
-command) to produce PDF output.
+For converting notebooks to PDF (with ``--to pdf``), nbconvert makes use of LaTeX
+and the XeTeX as the rendering engine.
 
 .. versionadded:: 5.0
 
@@ -72,13 +70,14 @@ notebooks to PDF.
 Installing Chromium
 -------------------
 
-When converting to PDF with ``--to webpdf``, nbconvert uses `Puppeteer <https://pptr.dev>`_, and
-more precisely its Python bindings `pyppeteer <https://github.com/pyppeteer/pyppeteer>`_. pyppeteer
-needs a special version of Chromium, and can automatically download it. Since the download size is
-quite large (around 100 MB), nbconvert prevents it by default. If pyppeteer finds a suitable
-version of Chromium on your system, it will try and use it. Otherwise, please use the
-``--allow-chromium-download`` flag to allow Chromium's download. Note that installing with
-``nbconvert[webpdf]`` we install a compatible version of pyppeteer for this usecase.
+For converting notebooks to PDF with ``--to webpdf``, nbconvert requires the
+`Pyppeteer <https://github.com/pyppeteer/pyppeteer>`_ Chromium automation library.
+
+Pyppeteer makes use of a specific version of Chromium. If it does not find a suitable
+installation of the web browser, it can automatically download it if the ``--allow-chromium-download``
+flag is passed to the command line.
+
+To install a suitable version of pyppeteer, you can pip install ``nbconvert[webpdf]``.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
