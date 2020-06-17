@@ -1,7 +1,7 @@
 Removing cells, inputs, or outputs
 ==================================
 
-.. module:: nbconvert.preprocessors
+.. currentmodule:: nbconvert.preprocessors
 
 When converting Notebooks into other formats, it is possible to
 remove parts of a cell, or entire cells, using preprocessors.
