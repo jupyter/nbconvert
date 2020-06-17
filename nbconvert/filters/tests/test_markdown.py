@@ -182,10 +182,10 @@ class TestMarkdown(TestsBase):
         """
         case = """The entries of \\\\(C\\\\) are given by the exact formula:
 $$
-C_{ik} = \sum_{j=1}^n A_{ij} B_{jk},
+C_{ik} = \\sum_{j=1}^n A_{ij} B_{jk},
 $$
 but you can _implement_ this computation in many ways.
-$\approx 2mnp$ flops are needed for \\\\[ C_{ik} = \sum_{j=1}^n A_{ij} B_{jk} \\\\].
+$\approx 2mnp$ flops are needed for \\\\[ C_{ik} = \\sum_{j=1}^n A_{ij} B_{jk} \\\\].
 Also check empty math blocks work correctly:
 $$$$
 \\\\[\\\\]"""
@@ -205,7 +205,7 @@ With $s_0$ defined as the initial storage content in $t=1$, we have""",
             # https://github.com/jupyter/nbviewer/issues/420
             """$C_{ik}$
 $$
-C_{ik} = \sum_{j=1}
+C_{ik} = \\sum_{j=1}
 $$
 $C_{ik}$""",
             """$m$
