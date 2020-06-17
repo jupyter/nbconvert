@@ -227,6 +227,7 @@ setup_args['install_requires'] = [
     'nbclient>=0.2.0',
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
+pyppeteer_req = 'pyppeteer==0.2.2'
 
 extra_requirements = {
     'test': ['pytest',
@@ -235,10 +236,10 @@ extra_requirements = {
              'ipykernel',
              jupyter_client_req,
              'ipywidgets>=7',
-             'pyppeteer==0.2.2',
+             pyppeteer_req,
     ],
     'serve': ['tornado>=4.0'],
-    'webpdf': ['pyppeteer==0.2.2'],
+    'webpdf': [pyppeteer_req],
     'execute': [jupyter_client_req],
     'docs': ['sphinx>=1.5.1',
              'sphinx_rtd_theme',
