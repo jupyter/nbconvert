@@ -12,5 +12,4 @@ dependencies:
 - tornado
 - entrypoints
 - pip:
-    - git+https://github.com/spatialaudio/nbsphinx.git#egg=nbsphinx
-    - sphinxcontrib_github_alt
+    - nbsphinx>=0.7.1

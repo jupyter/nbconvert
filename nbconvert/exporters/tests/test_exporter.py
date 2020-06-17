@@ -19,6 +19,7 @@ from traitlets.config import Config
 from .base import ExportersTestsBase
 from ...preprocessors.base import Preprocessor
 from ..exporter import Exporter
+from ..base import get_export_names, ExporterDisabledError
 
 
 #-----------------------------------------------------------------------------
@@ -57,3 +58,18 @@ class TestExporter(ExportersTestsBase):
         exporter = Exporter(config=config)
         (notebook, resources) = exporter.from_filename(self._get_notebook())
         self.assertEqual(notebook['pizza'], 'cheese')
+
+    def test_get_export_names_disable(self):
+        """Can we disable a specific importer?"""
+        config = Config({'Exporter': {'enabled': False}})
+        export_names = get_export_names()
+        self.assertFalse('Exporter' in export_names)
+
+    def test_get_export_names_disable(self):
+        """Can we disable all exporters then enable a single one"""
+        config = Config({
+            'Exporter': {'enabled': False}, 
+            'NotebookExporter': {'enabled': True}
+        })
+        export_names = get_export_names(config=config)
+        self.assertEqual(export_names, ['notebook'])

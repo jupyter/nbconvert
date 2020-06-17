@@ -243,7 +243,6 @@ extra_requirements = {
     'docs': ['sphinx>=1.5.1',
              'sphinx_rtd_theme',
              'nbsphinx>=0.2.12',
-             'sphinxcontrib_github_alt',
              'ipython',
              jupyter_client_req,
     ],
