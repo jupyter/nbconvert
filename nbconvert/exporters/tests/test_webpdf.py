@@ -20,7 +20,7 @@ class TestWebPDFExporter(ExportersTestsBase):
         """
         Can a TemplateExporter export something?
         """
-        (output, resources) = WebPDFExporter().from_filename(self._get_notebook())
+        (output, resources) = WebPDFExporter(allow_chromium_download=True).from_filename(self._get_notebook())
         assert len(output) > 0
 
     @patch('pyppeteer.util.check_chromium', return_value=False)
@@ -29,7 +29,7 @@ class TestWebPDFExporter(ExportersTestsBase):
         Generate PDFs if chromium not present?
         """
         with pytest.raises(RuntimeError):
-            WebPDFExporter().from_filename(self._get_notebook())
+            WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
     def test_webpdf_without_pyppeteer(self):
         """
