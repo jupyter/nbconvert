@@ -33,17 +33,17 @@ class TagRemovePreprocessor(Preprocessor):
 
     remove_cell_tags = Set(Unicode(), default_value=[],
             help=("Tags indicating which cells are to be removed,"
-                  "matches tags in `cell.metadata.tags`.")).tag(config=True)
+                  "matches tags in ``cell.metadata.tags``.")).tag(config=True)
     remove_all_outputs_tags = Set(Unicode(), default_value=[],
             help=("Tags indicating cells for which the outputs are to be removed,"
-                  "matches tags in `cell.metadata.tags`.")).tag(config=True)
+                  "matches tags in ``cell.metadata.tags``.")).tag(config=True)
     remove_single_output_tags = Set(Unicode(), default_value=[],
             help=("Tags indicating which individual outputs are to be removed,"
-                  "matches output *i* tags in `cell.outputs[i].metadata.tags`.")
+                  "matches output *i* tags in ``cell.outputs[i].metadata.tags``.")
             ).tag(config=True)
     remove_input_tags = Set(Unicode(), default_value=[],
             help=("Tags indicating cells for which input is to be removed,"
-                  "matches tags in `cell.metadata.tags`.")).tag(config=True)
+                  "matches tags in ``cell.metadata.tags``.")).tag(config=True)
     remove_metadata_fields = Set(
         {'collapsed', 'scrolled'}
     ).tag(config=True)

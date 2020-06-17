@@ -35,7 +35,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         """
         Preprocess notebook executing each code cell.
 
-        The input argument `nb` is modified in-place.
+        The input argument *nb* is modified in-place.
 
         Parameters
         ----------

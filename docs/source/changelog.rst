@@ -89,7 +89,7 @@ Significant Changes
 
 Jupter Client Pin
 +++++++++++++++++
-The ``jupyter_client`` dependency is now pinned to ``>5.3.1``. This is done to support the `Parallel NBConvert` below, and future versions may require interface changes from that version.
+The ``jupyter_client`` dependency is now pinned to ``>5.3.1``. This is done to support the `Parallel NBConvert`_ below, and future versions may require interface changes from that version.
 
 Parallel NBConvert
 ++++++++++++++++++
@@ -186,20 +186,21 @@ IPyWidget Support
 
 Now when a notebook executing contains `Jupyter Widgets <https://github.com/jupyter-widgets/ipywidgets/>`__, the state of all the widgets can be stored in the notebook's metadata. This allows rendering of the live widgets on, for instance nbviewer, or when converting to html.
 
-You can tell nbconvert to not store the state using the `store_widget_state` argument::
+You can tell nbconvert to not store the state using the ``store_widget_state`` argument::
 
      jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
 
-This widget rendering is not performed against a browser during execution, so only widget default states or states manipulated via user code will be calculated during execution. `%%javascript` cells will execute upon notebook rendering, enabling complex interactions to function as expected when viewed by a UI.
+This widget rendering is not performed against a browser during execution, so only widget default states or states manipulated via user code will be calculated during execution. ``%%javascript`` cells will execute upon notebook rendering, enabling complex interactions to function as expected when viewed by a UI.
 
-If you can't view widget results after execution, you may need to select `Trust Notebook` under the `File` menu of the UI in question.
+If you can't view widget results after execution, you may need to select
+:menuselection:`File --> Trust Notebook` in the menu.
 
 See :ghpull:`779`, :ghpull:`900`, and :ghpull:`983` for details.
 
 Execute Preprocessor Rework
 +++++++++++++++++++++++++++
 
-Based on monkey patching required in `papermill <https://github.com/nteract/papermill/blob/0.19.1/papermill/preprocess.py>`__ the `run_cell` code path in the ExecutePreprocessor was reworked to allow for accessing individual message parses without reimplementing the entire function. Now there is a `processs_message` function which take a ZeroMQ message and applies all of its side-effect updates on the cell/notebook objects before returning the output it generated, if it generated any such output.
+Based on monkey patching required in `papermill <https://github.com/nteract/papermill/blob/0.19.1/papermill/preprocess.py>`__ the ``run_cell`` code path in the ExecutePreprocessor was reworked to allow for accessing individual message parses without reimplementing the entire function. Now there is a ``process_message`` function which take a ZeroMQ message and applies all of its side-effect updates on the cell/notebook objects before returning the output it generated, if it generated any such output.
 
 The change required a much more extensive test suite covering cell execution as test coverage on the various, sometimes wonky, code paths made improvements and reworks impossible to prove undamaging. Now changes to kernel message processing has much better coverage, so future additions or changes with specs over time will be easier to add.
 
@@ -321,12 +322,12 @@ There were a few new metadata fields which are now respected in nbconvert.
 
 ``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
 
-``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
+``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the `ExtractOutputPreprocessor`. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
 
 The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by `nbval <https://github.com/computationalmodelling/nbval>`_ and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
 Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
-If an error occurs when it is not explicitly allowed, a ``CellExecutionError`` will be raised.
-If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the ``raises-exception`` cell tags.
+If an error occurs when it is not explicitly allowed, a `CellExecutionError` will be raised.
+If ``force_raise_errors`` is True, `CellExecutionError` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the ``raises-exception`` cell tags.
 
 See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684` for implementation changes.
 
@@ -498,12 +499,12 @@ Comprehensive notes
 
 - new: configurable ``browser`` in ServePostProcessor :ghpull:`618`
 - new: ``--clear-output`` command line flag to clear output in-place :ghpull:`619`
-- new: remove elements based on tags with ``TagRemovePreprocessor``. :ghpull:`640`, :ghpull:`643`
+- new: remove elements based on tags with `TagRemovePreprocessor`. :ghpull:`640`, :ghpull:`643`
 - new: CellExecutionError can now be imported from ``nbconvert.preprocessors`` :ghpull:`656`
 - new: slides now can enable scrolling and custom transitions :ghpull:`600`
 
 - docs: Release instructions for nbviewer-deploy
-- docs: improved instructions for handling errors using the ``ExecutePreprocessor`` :ghpull:`656`
+- docs: improved instructions for handling errors using the `ExecutePreprocessor` :ghpull:`656`
 
 - tests: better height/width metadata testing for images in rst & html :ghpull:`601` :ghpull:`602`
 - tests: normalise base64 output data to avoid false positives :ghpull:`650`
@@ -569,10 +570,10 @@ Comprehensive notes
 
 - new: configurable ExecutePreprocessor.startup_timeout configurable :ghpull:`583`
 - new: RemoveCell preprocessor based on cell content (defaults to empty cell) :ghpull:`575`
-- new: function for executing notebooks: `executenb` :ghpull:`573`
+- new: function for executing notebooks: ``executenb`` :ghpull:`573`
 - new: global filtering to remove inputs, outputs, markdown cells (&c.), this works on all templates :ghpull:`554`
 - new: script exporter entrypoint :ghpull:`531`
-- new: configurable anchor link text (previously ¶) `HTMLExporter.anchor_link_text` :ghpull:`522`
+- new: configurable anchor link text (previously ¶) ``HTMLExporter.anchor_link_text`` :ghpull:`522`
 
 - new: configurable values for slides exporter :ghpull:`542` :ghpull:`558`
 
@@ -585,14 +586,14 @@ Comprehensive notes
 - deprecated nose test features removed :ghpull:`519`
 
 - bug fixed: we now respect width and height metadata on jpeg and png mimetype outputs :ghpull:`588`
-- bug fixed: now we respect the `resolve_references` filter in `report.tplx` :ghpull:`577`
+- bug fixed: now we respect the ``resolve_references`` filter in ``report.tplx`` :ghpull:`577`
 - bug fixed: output metadata now is removed by ClearOutputPreprocessor :ghpull:`569`
 - bug fixed: display id respected in execute preproessor :ghpull:`563`
 - bug fixed: dynamic defaults for optional jupyter_client import :ghpull:`559`
 - bug fixed: don't self-close non-void HTML tags :ghpull:`548`
 - buf fixed: upgrade jupyter_client dependency to 4.2 :ghpull:`539`
 - bug fixed: LaTeX output through md→LaTeX conversion shouldn't be touched :ghpull:`535`
-- bug fixed: now we escape `<` inside math formulas when converting to html :ghpull:`514`
+- bug fixed: now we escape ``<`` inside math formulas when converting to html :ghpull:`514`
 
 Credits
 ~~~~~~~

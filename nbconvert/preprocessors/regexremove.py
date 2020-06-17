@@ -16,7 +16,7 @@ class RegexRemovePreprocessor(Preprocessor):
     Removes cells from a notebook that match one or more regular expression.
 
     For each cell, the preprocessor checks whether its contents match
-    the regular expressions in the `patterns` traitlet which is a list
+    the regular expressions in the ``patterns`` traitlet which is a list
     of unicode strings. If the contents match any of the patterns, the cell
     is removed from the notebook.
 

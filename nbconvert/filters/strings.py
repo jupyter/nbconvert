@@ -146,7 +146,7 @@ markdown_url_pattern = re.compile(r'(!?)\[(?P<caption>.*?)\]\(/?files/(?P<locati
 
 def strip_files_prefix(text):
     """
-    Fix all fake URLs that start with `files/`, stripping out the `files/` prefix.
+    Fix all fake URLs that start with ``files/``, stripping out the ``files/`` prefix.
     Applies to both urls (for html) and relative paths (for markdown paths).
 
     Parameters

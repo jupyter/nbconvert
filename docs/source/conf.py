@@ -101,7 +101,7 @@ exclude_patterns = ['.ipynb_checkpoints', 'example.ipynb']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
-#default_role = None
+default_role = 'any'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #add_function_parentheses = True
@@ -322,4 +322,5 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.6', None),
     'jinja': ('http://jinja.pocoo.org/docs/dev', None),
+    'nbformat': ('https://nbformat.readthedocs.io/en/latest', None),
 }

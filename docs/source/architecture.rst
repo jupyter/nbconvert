@@ -61,7 +61,7 @@ Classes
 Exporters
 ---------
 
-The primary class in nbconvert is the :class:`.Exporter`.
+The primary class in nbconvert is the `Exporter`.
 Exporters encapsulate the operation of turning a notebook into another format.
 There is one Exporter for each format supported in nbconvert.
 The first thing an Exporter does is load a notebook, usually from a file via :mod:`nbformat`.
@@ -80,7 +80,7 @@ Once the notebook is loaded, it is preprocessed...
 Preprocessors
 -------------
 
-A :class:`.Preprocessor` is an object that transforms the content of the notebook to be exported.
+A `Preprocessor` is an object that transforms the content of the notebook to be exported.
 The result of a preprocessor being applied to a notebook is always a notebook.
 These operations include re-executing the cells, stripping output,
 removing bundled outputs to separate files, etc.
@@ -99,7 +99,7 @@ Once a notebook is preprocessed, it's time to convert the notebook into the dest
 Templates and Filters
 ---------------------
 
-Most Exporters in nbconvert are a subclass of :class:`.TemplateExporter`,
+Most Exporters in nbconvert are a subclass of `TemplateExporter`,
 which means they use a `jinja`_ template to render a notebook into the destination format.
 If you want to change how an exported notebook looks in an existing format,
 a custom template is the place to start.
@@ -145,7 +145,7 @@ this is typically where you would stop, take your exported data, and go on your 
 Writers
 -------
 
-A :class:`.Writer` takes care of writing the resulting file(s) where they should end up.
+A *Writer* takes care of writing the resulting file(s) where they should end up.
 There are two basic Writers in nbconvert:
 
 1. stdout - writes the result to stdout (for pipe-style workflows)
@@ -158,8 +158,8 @@ Once the output is written, nbconvert has done its job.
 Postprocessors
 --------------
 
-A :class:`.Postprocessor` is something that runs after everything is exported and written to the filesystem.
-The only postprocessor in nbconvert at this point is the :class:`.ServePostProcessor`,
+A *Postprocessor* is something that runs after everything is exported and written to the filesystem.
+The only postprocessor in nbconvert at this point is the `ServePostProcessor`,
 which is used for serving `reveal.js`_ HTML slideshows.
 
 

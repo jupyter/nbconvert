@@ -18,8 +18,8 @@ format designated by the ``FORMAT`` string as explained below.
 
 Extending the built-in format exporters
 ---------------------------------------
-A few built-in formats are available by default: `html`, `pdf`, `webpdf`,
-`script`, `latex`. Each of these has its own *exporter* with many
+A few built-in formats are available by default: ``html``, ``pdf``, ``webpdf``,
+``script``, ``latex``. Each of these has its own *exporter* with many
 configuration options that can be extended. Having the option to point to a
 different *exporter* allows authors to create their own fully customized
 templates or export formats.
@@ -75,8 +75,8 @@ the command line::
 
   $ jupyter nbconvert --to <full.qualified.name of custom exporter> notebook.ipynb
 
-For example, assuming a library `tcontrib` has a custom exporter name
-`TExporter`, you would convert to this custom format using the following::
+For example, assuming a library ``tcontrib`` has a custom exporter name
+``TExporter``, you would convert to this custom format using the following::
 
    $ jupyter nbconvert --to tcontrib.TExporter notebook.ipynb
 
@@ -101,7 +101,7 @@ for any ``nbconvert`` exporters you can use either the configuration file syntax
 ``c.MyExporter.config_option=value`` or the command line flag form
 ``--MyExporter.config_option=value``.
 
-Writing a custom ``Exporter``
+Writing a custom `Exporter`
 =============================
 
 Under the hood exporters are python classes that expose a certain interface.
@@ -156,7 +156,7 @@ subpackage. But lets see what a minimum example looks like.
 We are going to write an exporter that:
 
   - exports to html, so we will reuse the built-in html exporter
-  - changes the file extension to `.test_ext`
+  - changes the file extension to ``.test_ext``
 
 .. code-block:: python
 
@@ -183,7 +183,7 @@ We are going to write an exporter that:
 
         def _file_extension_default(self):
             """
-            The new file extension is `.test_ext`
+            The new file extension is ``.test_ext``
             """
             return '.test_ext'
 
@@ -191,7 +191,7 @@ We are going to write an exporter that:
         def template_path(self):
             """
             We want to inherit from HTML template, and have template under
-            `./templates/` so append it to the search path. (see next section)
+            ``./templates/`` so append it to the search path. (see next section)
             """
             return super().template_path+[os.path.join(os.path.dirname(__file__), "templates")]
 
@@ -202,7 +202,7 @@ We are going to write an exporter that:
             return 'test_template' # full
 
 
-And the template file, that inherits from the html `full` template and prepend/append text to each markdown cell (see Jinja2 docs for template syntax)::
+And the template file, that inherits from the html ``full`` template and prepend/append text to each markdown cell (see Jinja2 docs for template syntax)::
 
     {% extends "full.tpl" %}
 
