@@ -227,17 +227,26 @@ setup_args['install_requires'] = [
     'nbclient>=0.2.0',
 ]
 jupyter_client_req = 'jupyter_client>=5.3.1'
+pyppeteer_req = 'pyppeteer==0.2.2'
 
 extra_requirements = {
-    'test': ['pytest', 'pytest-cov', 'ipykernel', jupyter_client_req, 'ipywidgets>=7'],
+    'test': ['pytest',
+             'pytest-cov',
+             'pytest-dependency',
+             'ipykernel',
+             jupyter_client_req,
+             'ipywidgets>=7',
+             pyppeteer_req,
+    ],
     'serve': ['tornado>=4.0'],
+    'webpdf': [pyppeteer_req],
     'execute': [jupyter_client_req],
     'docs': ['sphinx>=1.5.1',
              'sphinx_rtd_theme',
              'nbsphinx>=0.2.12',
              'ipython',
              jupyter_client_req,
-             ],
+    ],
 }
 
 extra_requirements['all'] = sum(extra_requirements.values(), [])
@@ -253,6 +262,7 @@ setup_args['entry_points'] = {
         'slides=nbconvert.exporters:SlidesExporter',
         'latex=nbconvert.exporters:LatexExporter',
         'pdf=nbconvert.exporters:PDFExporter',
+        'webpdf=nbconvert.exporters:WebPDFExporter',
         'markdown=nbconvert.exporters:MarkdownExporter',
         'python=nbconvert.exporters:PythonExporter',
         'rst=nbconvert.exporters:RSTExporter',

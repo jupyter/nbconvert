@@ -1,4 +1,4 @@
-from .base import (export, get_exporter, 
+from .base import (export, get_exporter,
                    ExporterNameError, get_export_names)
 from .html import HTMLExporter
 from .slides import SlidesExporter
@@ -8,6 +8,7 @@ from .markdown import MarkdownExporter
 from .asciidoc import ASCIIDocExporter
 from .notebook import NotebookExporter
 from .pdf import PDFExporter
+from .webpdf import WebPDFExporter
 from .python import PythonExporter
 from .rst import RSTExporter
 from .exporter import Exporter, FilenameExtension

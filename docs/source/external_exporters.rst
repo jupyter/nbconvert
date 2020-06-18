@@ -18,7 +18,7 @@ format designated by the ``FORMAT`` string as explained below.
 
 Extending the built-in format exporters
 ---------------------------------------
-A few built-in formats are available by default: `html`, `pdf`,
+A few built-in formats are available by default: `html`, `pdf`, `webpdf`,
 `script`, `latex`. Each of these has its own *exporter* with many
 configuration options that can be extended. Having the option to point to a
 different *exporter* allows authors to create their own fully customized
@@ -127,7 +127,7 @@ We will use the following layout for our package to expose a custom exporter::
         └── templates
             └── test_template.tpl
 
-If you wished to create this same directory structure you could use the following commands 
+If you wished to create this same directory structure you could use the following commands
 when you are at the directory under which you wish to build your ``mypackage`` package:
 
 .. code-block:: bash
@@ -140,11 +140,11 @@ when you are at the directory under which you wish to build your ``mypackage`` p
 
 .. important::
     You should not publish this package without adding content to your ``LICENSE.md`` file.
-    For example, ``nbconvert`` follows the Jupyter Project convention of using a Modified BSD 
+    For example, ``nbconvert`` follows the Jupyter Project convention of using a Modified BSD
     License (also known as New or Revised or 3-Clause BSD).
     For a guide on picking the right license for your use case,
     please see `choose a license <http://choosealicense.com>`_.
-    If you do not specify the license, your code may be `unusable by many open source projects`_. 
+    If you do not specify the license, your code may be `unusable by many open source projects`_.
 
 .. _`unusable by many open source projects`: http://choosealicense.com/no-license/
 

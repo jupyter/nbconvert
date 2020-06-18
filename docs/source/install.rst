@@ -12,16 +12,17 @@ Installing nbconvert
 Nbconvert is packaged for both pip and conda, so you can install it with::
 
     pip install nbconvert
+
     # OR
+
     conda install nbconvert
 
-If you're new to Python, we recommend installing `Anaconda <https://www.anaconda.com/distribution/>`_,
-a Python distribution which includes nbconvert and the other Jupyter components.
+The `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ and `Miniforge <https://github.com/conda-forge/miniforge/>`_ distributions both provide a minimal conda installation.
 
 .. important::
-    
-    To unlock nbconvert's full capabilities requires Pandoc and TeX 
-    (specifically, XeLaTeX). These must be installed separately.
+
+    To unlock its full capabilities, nbconvert requires Pandoc, TeX
+    (specifically, XeLaTeX) and Pyppeteer. These must be installed separately.
 
 Installing Pandoc
 -----------------
@@ -39,22 +40,20 @@ On other platforms, you can get pandoc from
 Installing TeX
 --------------
 
-For converting to PDF, nbconvert uses the TeX document preparation 
-ecosystem. It produces an intermediate ``.tex`` file which is 
-compiled by the XeTeX engine with the LaTeX2e format (via the 
-``xelatex`` command) to produce PDF output. 
+For converting notebooks to PDF (with ``--to pdf``), nbconvert makes use of LaTeX
+and the XeTeX as the rendering engine.
 
 .. versionadded:: 5.0
-    
-    We use XeTeX as the rendering engine rather than pdfTeX (as 
-    in earlier versions). XeTeX can access fonts through native 
-    operating system libraries, it has better support for OpenType 
-    formatted fonts and Unicode characters. 
 
-To install a complete TeX environment (including XeLaTeX and 
-the necessary supporting packages) by hand can be tricky. 
-Fortunately, there are packages that make this much easier. These 
-packages are specific to different operating systems: 
+    We use XeTeX as the rendering engine rather than pdfTeX (as
+    in earlier versions). XeTeX can access fonts through native
+    operating system libraries, it has better support for OpenType
+    formatted fonts and Unicode characters.
+
+To install a complete TeX environment (including XeLaTeX and
+the necessary supporting packages) by hand can be tricky.
+Fortunately, there are packages that make this much easier. These
+packages are specific to different operating systems:
 
 * Linux: `TeX Live <http://tug.org/texlive/>`_
 
@@ -63,10 +62,22 @@ packages are specific to different operating systems:
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
 * Windows: `MikTex <http://www.miktex.org/>`_
 
-Because nbconvert depends on packages and fonts included in standard 
-TeX distributions, if you do not have a complete installation, you 
-may not be able to use nbconvert's standard tooling to convert 
-notebooks to PDF. 
+Because nbconvert depends on packages and fonts included in standard
+TeX distributions, if you do not have a complete installation, you
+may not be able to use nbconvert's standard tooling to convert
+notebooks to PDF.
+
+Installing Chromium
+-------------------
+
+For converting notebooks to PDF with ``--to webpdf``, nbconvert requires the
+`Pyppeteer <https://github.com/pyppeteer/pyppeteer>`_ Chromium automation library.
+
+Pyppeteer makes use of a specific version of Chromium. If it does not find a suitable
+installation of the web browser, it can automatically download it if the ``--allow-chromium-download``
+flag is passed to the command line.
+
+To install a suitable version of pyppeteer, you can pip install ``nbconvert[webpdf]``.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -76,7 +87,7 @@ If you are only able to install a limited TeX environment, there are two main ro
 1. Using TeX by hand
     a. You could convert to ``.tex`` directly; this requires Pandoc.
     b. edit the file to accord with your local environment
-    c. run ``xelatex`` directly. 
+    c. run ``xelatex`` directly.
 2. Custom exporter
-    a. You could write a :ref:`custom exporter <external_exporters>` 
-       that takes your system's limitations into account. 
+    a. You could write a :ref:`custom exporter <external_exporters>`
+       that takes your system's limitations into account.
