@@ -191,7 +191,7 @@ class="unconfined"
 
 {% block data_latex scoped %}
 <div class="jp-RenderedLatex jp-OutputArea-output {{ extra_class }}" data-mime-type="text/latex">
-{{ output.data['text/latex'] }}
+{{ output.data['text/latex'] | e }}
 </div>
 {%- endblock data_latex %}
 
