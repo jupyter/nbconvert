@@ -1,7 +1,7 @@
 Executing notebooks
 ===================
 
-.. module:: nbconvert.preprocessors
+.. currentmodule:: nbconvert.preprocessors
 
 Jupyter notebooks are often saved with output cells that have been cleared.
 nbconvert provides a convenient way to execute the input cells of an

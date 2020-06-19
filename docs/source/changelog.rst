@@ -82,7 +82,7 @@ The following 24 authors and reviewers contributed 224 commits -- Thank you all!
 * Valery M
 * Wayne Witzel
 
-The full list of changes they made can be seen `on GitHub <<https://github.com/jupyter/nbconvert/issues?q=milestone%3A5.6+>`__
+The full list of changes they made can be seen `on GitHub <https://github.com/jupyter/nbconvert/issues?q=milestone%3A5.6+>`__
 
 Significant Changes
 ~~~~~~~~~~~~~~~~~~~

@@ -16,8 +16,6 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
     have tags that designate they are to be removed prior to exporting
     the notebook.
 
-    Traitlets
-    ---------
     remove_cell_tags
         removes cells tagged with these values
 
@@ -31,7 +29,6 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
 
     remove_input_tags
         removes inputs tagged with these values
-
     """
 
     remove_cell_tags = Set(Unicode(), default_value=[],

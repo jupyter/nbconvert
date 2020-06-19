@@ -126,6 +126,13 @@ nbconvert_flags.update({
         """Exclude input cells and output prompts from converted document. 
         This mode is ideal for generating code-free reports."""
         ),
+    'allow-chromium-download' : (
+        {'WebPDFExporter' : {
+            'allow_chromium_download' : True,
+            }
+        },
+        """Whether to allow downloading chromium if no suitable version is found on the system."""
+        ),
 })
 
 

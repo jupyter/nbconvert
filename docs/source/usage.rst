@@ -24,6 +24,7 @@ The currently supported output formats are:
     - :ref:`HTML <convert_html>`,
     - :ref:`LaTeX <convert_latex>`,
     - :ref:`PDF <convert_pdf>`,
+    - :ref:`WebPDF <convert_webpdf>`,
     - :ref:`Reveal.js HTML slideshow <convert_revealjs>`,
     - :ref:`Markdown <convert_markdown>`,
     - :ref:`Ascii <convert_ascii>`,
@@ -58,7 +59,7 @@ LaTeX
 * ``--to latex``
 
   Latex export.  This generates ``NOTEBOOK_NAME.tex`` file,
-  ready for export. 
+  ready for export.
   Images are output as .png files in a folder.
 
   - ``--template article`` (default)
@@ -82,6 +83,18 @@ PDF
 
   Generates a PDF via latex. Supports the same templates as ``--to latex``.
 
+.. _convert_webpdf:
+
+WebPDF
+~~~~~~
+* ``--to webpdf``
+
+  Generates a PDF by first rendering to HTML, rendering the HTML Chromium headless, and
+  exporting to PDF. This exporter supports the same templates as ``--to html``.
+
+  The webpdf exporter requires the ``pyppeteer`` Chromium automation library, which
+  can be installed via ``nbconvert[webpdf]``.
+
 .. _convert_revealjs:
 
 Reveal.js HTML slideshow
@@ -89,10 +102,10 @@ Reveal.js HTML slideshow
 * ``--to slides``
 
   This generates a Reveal.js HTML slideshow.
-  
+
 Running this slideshow requires a copy of reveal.js (version 3.x).
-  
-By default, this will include a script tag in the html that will directly load 
+
+By default, this will include a script tag in the html that will directly load
 reveal.js from a public CDN.
 
 This means that if you include your slides on a webpage, they should work as
@@ -103,19 +116,19 @@ Speaker notes require a local copy of reveal.js. Then, you need to tell
 ``nbconvert`` how to find that local copy.
 
 Timers only work if you already have speaker notes, but also require a local
-https server. You can read more about this in ServePostProcessorExample_. 
+https server. You can read more about this in ServePostProcessorExample_.
 
 To make this clearer, let's look at an example of how to get speaker notes
-working with a local copy of reveal.js: SlidesWithNotesExample_. 
+working with a local copy of reveal.js: SlidesWithNotesExample_.
 
-.. note:: 
+.. note::
 
-  In order to designate a mapping from notebook cells to Reveal.js slides, 
-  from within the Jupyter notebook, select menu item 
-  View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu 
-  on the upper-right of each cell.  From it, one may choose from 
-  "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion, 
-  cells designated as "skip" will not be included, "notes" will be included 
+  In order to designate a mapping from notebook cells to Reveal.js slides,
+  from within the Jupyter notebook, select menu item
+  View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu
+  on the upper-right of each cell.  From it, one may choose from
+  "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion,
+  cells designated as "skip" will not be included, "notes" will be included
   only in presenter notes, etc.
 
 .. _SlidesWithNotesExample:
@@ -126,7 +139,7 @@ Example: creating slides w/ speaker notes
 Let's suppose you have a notebook ``your_talk.ipynb`` that you want to convert
 to slides. For this example, we'll assume that you are working in the same
 directory as the notebook you want to convert (i.e., when you run ``ls .``,
-``your_talk.ipynb`` shows up amongst the list of files). 
+``your_talk.ipynb`` shows up amongst the list of files).
 
 First, we need a copy of reveal.js in the same directory as your slides. One
 way to do this is to use the following commands in your terminal:
@@ -141,12 +154,12 @@ way to do this is to use the following commands in your terminal:
 Then we need to tell nbconvert to point to this local copy. To do that we use
 the ``--reveal-prefix`` command line flag to point to the local copy.
 
-.. code-block:: shell 
+.. code-block:: shell
 
   jupyter nbconvert your_talk.ipynb --to slides --reveal-prefix reveal.js
 
-This will create file ``your_talk.slides.html``, which you should be able to 
-access with ``open your_talk.slides.html``. To access the speaker notes, press 
+This will create file ``your_talk.slides.html``, which you should be able to
+access with ``open your_talk.slides.html``. To access the speaker notes, press
 ``s`` after the slides load and they should open in a new window.
 
 Note: This does not enable slides that run completely offline. While you have a
@@ -165,9 +178,9 @@ reveal.js from a local https server.
 
 Fortunately, ``nbconvert`` makes this fairly straightforward through the use of
 the ``ServePostProcessor``. To activate this server, we append the command line
-flag ``--post serve`` to our call to nbconvert. 
+flag ``--post serve`` to our call to nbconvert.
 
-.. code-block:: shell 
+.. code-block:: shell
 
   jupyter nbconvert your_talk.ipynb --to slides --reveal-prefix reveal.js --post serve
 
@@ -182,7 +195,7 @@ Markdown
 * ``--to markdown``
 
   Simple markdown output.  Markdown cells are unaffected,
-  and code cells indented 4 spaces. 
+  and code cells indented 4 spaces.
   Images are output as .png files in a folder.
 
 .. _convert_ascii:
@@ -191,7 +204,7 @@ Ascii
 ~~~~~~~~
 * ``--to asciidoc``
 
-  Ascii output. 
+  Ascii output.
   Images are output as .png files in a folder.
 
 .. _convert_rst:
@@ -201,7 +214,7 @@ reStructuredText
 * ``--to rst``
 
   Basic reStructuredText output. Useful as a starting point for embedding
-  notebooks in Sphinx docs. 
+  notebooks in Sphinx docs.
   Images are output as .png files in a folder.
 
   .. note::
