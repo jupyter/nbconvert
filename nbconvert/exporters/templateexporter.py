@@ -213,25 +213,20 @@ class TemplateExporter(Exporter):
     #Extension that the template files use.
     template_extension = Unicode().tag(config=True, affects_environment=True)
 
-
     template_data_paths = List(
         jupyter_path('nbconvert','templates'),
         help="Path where templates can be installed too."
     ).tag(affects_environment=True)
 
     #Extension that the template files use.
-    template_extension = Unicode(".tpl").tag(config=True, affects_environment=True)
+    template_extension = Unicode().tag(config=True, affects_environment=True)
+
     @default('template_extension')
     def _template_extension_default(self):
         if self.file_extension:
-            return self.file_extension + ".j2"
+            return self.file_extension + '.j2'
         else:
             return self.file_extension
-
-    @default('template_file')
-    def _template_file_default(self):
-        if self.template_extension:
-            return 'index' + self.template_extension
 
     exclude_input = Bool(False,
         help = "This allows you to exclude code cell inputs from all templates if set to True."
