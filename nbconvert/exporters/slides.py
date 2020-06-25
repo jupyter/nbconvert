@@ -96,12 +96,6 @@ class SlidesExporter(HTMLExporter):
     def _template_extension_default(self):
         return '.html.j2'
 
-    # Register metadata preprocessor
-    #################################
-    def __init__(self, **kw):
-        resources = super().__init__(**kw)
-        self.register_preprocessor(_RevealMetadataPreprocessor, enabled=True)
-
     # Extra resources
     #################################
     reveal_url_prefix = Unicode(
