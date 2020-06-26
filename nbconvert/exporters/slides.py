@@ -9,82 +9,95 @@ from warnings import warn
 from traitlets import Bool, Unicode, default
 
 from .html import HTMLExporter
+from ..preprocessors.base import Preprocessor
 
-def prepare(nb):
-    """Add some convenience metadata on cells for the slide template."""
-    nb = deepcopy(nb)
 
-    for cell in nb.cells:
-        # Make sure every cell has a slide_type
-        cell.metadata.slide_type = cell.metadata.get('slideshow', {}).get('slide_type', '-')
+class _RevealMetadataPreprocessor(Preprocessor):
+    # A custom preprocessor adding convenience metadata to cells
 
-    # Find the first visible cell
-    for index, cell in enumerate(nb.cells):
-        if cell.metadata.slide_type not in {'notes', 'skip'}:
-            cell.metadata.slide_type = 'slide'
-            cell.metadata.slide_start = True
-            cell.metadata.subslide_start = True
-            first_slide_ix = index
-            break
-    else:
-        raise ValueError("All cells are hidden, cannot create slideshow")
+    def preprocess(self, nb, resources=None):
+        nb = deepcopy(nb)
 
-    in_fragment = False
+        for cell in nb.cells:
+            # Make sure every cell has a slide_type
+            cell.metadata.slide_type = cell.metadata.get('slideshow', {}).get('slide_type', '-')
 
-    for index, cell in enumerate(nb.cells[first_slide_ix+1:],
-                                 start=(first_slide_ix+1)):
+        # Find the first visible cell
+        for index, cell in enumerate(nb.cells):
+            if cell.metadata.slide_type not in {'notes', 'skip'}:
+                cell.metadata.slide_type = 'slide'
+                cell.metadata.slide_start = True
+                cell.metadata.subslide_start = True
+                first_slide_ix = index
+                break
+        else:
+            raise ValueError("All cells are hidden, cannot create slideshow")
 
-        previous_cell = nb.cells[index - 1]
+        in_fragment = False
 
-        # Slides are <section> elements in the HTML, subslides (the vertically
-        # stacked slides) are also <section> elements inside the slides,
-        # and fragments are <div>s within subslides. Subslide and fragment
-        # elements can contain content:
-        # <section>
-        #   <section>
-        #     (content)
-        #     <div class="fragment">(content)</div>
-        #   </section>
-        # </section>
+        for index, cell in enumerate(nb.cells[first_slide_ix+1:],
+                                     start=(first_slide_ix+1)):
 
-        # Get the slide type. If type is subslide or slide,
-        # end the last slide/subslide/fragment as applicable.
-        if cell.metadata.slide_type == 'slide':
-            previous_cell.metadata.slide_end = True
-            cell.metadata.slide_start = True
-        if cell.metadata.slide_type in {'subslide', 'slide'}:
-            previous_cell.metadata.fragment_end = in_fragment
-            previous_cell.metadata.subslide_end = True
-            cell.metadata.subslide_start = True
-            in_fragment = False
+            previous_cell = nb.cells[index - 1]
 
-        elif cell.metadata.slide_type == 'fragment':
-            cell.metadata.fragment_start = True
-            if in_fragment:
-                previous_cell.metadata.fragment_end = True
-            else:
-                in_fragment  = True
+            # Slides are <section> elements in the HTML, subslides (the vertically
+            # stacked slides) are also <section> elements inside the slides,
+            # and fragments are <div>s within subslides. Subslide and fragment
+            # elements can contain content:
+            # <section>
+            #   <section>
+            #     (content)
+            #     <div class="fragment">(content)</div>
+            #   </section>
+            # </section>
 
-    # The last cell will always be the end of a slide
-    nb.cells[-1].metadata.fragment_end = in_fragment
-    nb.cells[-1].metadata.subslide_end = True
-    nb.cells[-1].metadata.slide_end = True
+            # Get the slide type. If type is subslide or slide,
+            # end the last slide/subslide/fragment as applicable.
+            if cell.metadata.slide_type == 'slide':
+                previous_cell.metadata.slide_end = True
+                cell.metadata.slide_start = True
+            if cell.metadata.slide_type in {'subslide', 'slide'}:
+                previous_cell.metadata.fragment_end = in_fragment
+                previous_cell.metadata.subslide_end = True
+                cell.metadata.subslide_start = True
+                in_fragment = False
 
-    return nb
+            elif cell.metadata.slide_type == 'fragment':
+                cell.metadata.fragment_start = True
+                if in_fragment:
+                    previous_cell.metadata.fragment_end = True
+                else:
+                    in_fragment  = True
+
+        # The last cell will always be the end of a slide
+        nb.cells[-1].metadata.fragment_end = in_fragment
+        nb.cells[-1].metadata.subslide_end = True
+        nb.cells[-1].metadata.slide_end = True
+
+        return nb, resources
+
 
 class SlidesExporter(HTMLExporter):
     """Exports HTML slides with reveal.js"""
 
+    # Overrides from HTMLExporter
+    #################################
     export_from_notebook = "Reveal.js slides"
 
     @default('template_name')
     def _template_name_default(self):
         return 'reveal'
 
-    template_name = Unicode('reveal',
-            help="Name of the template to use"
-    ).tag(config=True, affects_template=True)
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.slides.html'
 
+    @default('template_extension')
+    def _template_extension_default(self):
+        return '.html.j2'
+
+    # Extra resources
+    #################################
     reveal_url_prefix = Unicode(
         help="""The URL prefix for reveal.js (version 3.x).
         This defaults to the reveal CDN, but can be any url pointing to a copy 
@@ -146,18 +159,8 @@ class SlidesExporter(HTMLExporter):
         """
     ).tag(config=True)
 
-    @default('file_extension')
-    def _file_extension_default(self):
-        return '.slides.html'
-
-    @default('template_extension')
-    def _template_extension_default(self):
-        return '.html.j2'
-
-    output_mimetype = 'text/html'
-
-    def from_notebook_node(self, nb, resources=None, **kw):
-        resources = self._init_resources(resources)
+    def _init_resources(self, resources):
+        resources = super()._init_resources(resources)
         if 'reveal' not in resources:
             resources['reveal'] = {}
         resources['reveal']['url_prefix'] = self.reveal_url_prefix
@@ -167,7 +170,4 @@ class SlidesExporter(HTMLExporter):
         resources['reveal']['require_js_url'] = self.require_js_url
         resources['reveal']['jquery_url'] = self.jquery_url
         resources['reveal']['font_awesome_url'] = self.font_awesome_url
-
-        nb = prepare(nb)
-
-        return super().from_notebook_node(nb, resources=resources, **kw)
+        return resources

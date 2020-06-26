@@ -488,21 +488,20 @@ class TemplateExporter(Exporter):
             except OSError:
                 pass
 
-
         return additional_paths + paths
 
     def get_template_names(self):
-        # finds a list of template name where each successive template name is the base template
+        # finds a list of template names where each successive template name is the base template
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
-        template_name = self.template_name
+        base_template = self.template_name
         merged_conf = {}  # the configuration once all conf files are merged
-        while template_name is not None:
-            template_names.append(template_name)
+        while base_template is not None:
+            template_names.append(base_template)
             conf = {}
             found_at_least_one = False
             for root_dir in root_dirs:
-                template_dir = os.path.join(root_dir, 'nbconvert', 'templates', template_name)
+                template_dir = os.path.join(root_dir, 'nbconvert', 'templates', base_template)
                 if os.path.exists(template_dir):
                     found_at_least_one = True
                 conf_file = os.path.join(template_dir, 'conf.json')
@@ -511,11 +510,14 @@ class TemplateExporter(Exporter):
                         conf = recursive_update(json.load(f), conf)
             if not found_at_least_one:
                 paths = "\n\t".join(root_dirs)
-                raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (template_name, paths))
+                raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (base_template, paths))
             merged_conf = recursive_update(dict(conf), merged_conf)
-            template_name = conf.get('base_template')
+            base_template = conf.get('base_template')
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get('mimetypes', {}).items() if enabled]
+        # TODO: move out of get_template_names
+        for preprocessor in conf.get('preprocessors', []):
+            self.register_preprocessor(preprocessor, enabled=True)
         if self.output_mimetype and self.output_mimetype not in mimetypes:
             supported_mimetypes = '\n\t'.join(mimetypes)
             raise ValueError('Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s' %\

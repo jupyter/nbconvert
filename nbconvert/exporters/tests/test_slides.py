@@ -5,7 +5,7 @@
 
 from nbformat import v4 as nbformat
 from .base import ExportersTestsBase
-from ..slides import SlidesExporter, prepare
+from ..slides import SlidesExporter, _RevealMetadataPreprocessor 
 
 
 class TestSlidesExporter(ExportersTestsBase):
@@ -54,9 +54,10 @@ class TestSlidesExporter(ExportersTestsBase):
 
         return nbformat.new_notebook(cells=cells)
 
-    def test_prepare(self):
+    def test_metadata_preprocessor(self):
+        preprocessor = _RevealMetadataPreprocessor()
         nb = self.build_notebook()
-        nb = prepare(nb)
+        nb, resources = preprocessor.preprocess(nb)
         cells = nb.cells
 
         # Make sure correct metadata tags are available on every cell.
