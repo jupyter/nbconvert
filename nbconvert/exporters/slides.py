@@ -167,7 +167,4 @@ class SlidesExporter(HTMLExporter):
         resources['reveal']['theme'] = self.reveal_theme
         resources['reveal']['transition'] = self.reveal_transition
         resources['reveal']['scroll'] = self.reveal_scroll
-        resources['reveal']['require_js_url'] = self.require_js_url
-        resources['reveal']['jquery_url'] = self.jquery_url
-        resources['reveal']['font_awesome_url'] = self.font_awesome_url
         return resources
