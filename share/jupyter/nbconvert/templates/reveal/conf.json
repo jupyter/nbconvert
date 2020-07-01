@@ -3,7 +3,10 @@
     "mimetypes": {
         "text/html": true
     },
-    "preprocessors": [
-        "nbconvert.exporters.slides._RevealMetadataPreprocessor"
-    ]
+    "preprocessors": {
+        "500-reveal": {
+            "type": "nbconvert.exporters.slides._RevealMetadataPreprocessor",
+            "enabled": true
+        }
+    }
 }
