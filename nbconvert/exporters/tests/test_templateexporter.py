@@ -113,7 +113,7 @@ class TestExporter(ExportersTestsBase):
             config.TemplateExporter.template_file = template
             exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template
-            assert os.path.dirname(template) in exporter.template_path
+            assert os.path.dirname(template) in exporter.template_paths
 
     def test_relative_template_file(self):
         with tempdir.TemporaryWorkingDirectory() as td:
@@ -126,7 +126,7 @@ class TestExporter(ExportersTestsBase):
             config.TemplateExporter.template_file = template
             exporter = self._make_exporter(config=config)
             assert os.path.abspath(exporter.template.filename) == template
-            assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_path]
+            assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_paths]
 
 
     def test_raw_template_attr(self):

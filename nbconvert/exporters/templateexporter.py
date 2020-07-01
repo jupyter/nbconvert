@@ -193,8 +193,8 @@ class TemplateExporter(Exporter):
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
             template_dir, template_file = os.path.split(full_path)
-            if template_dir not in [ os.path.abspath(p) for p in self.template_path ]:
-                self.template_path = [template_dir] + self.template_path
+            if template_dir not in [ os.path.abspath(p) for p in self.template_paths ]:
+                self.template_paths = [template_dir] + self.template_paths
             self.template_file = template_file
 
     @default('template_file')
@@ -208,7 +208,7 @@ class TemplateExporter(Exporter):
             self.template_file = self._last_template_file
         self._invalidate_template_cache()
 
-    template_path = List(['.']).tag(config=True, affects_environment=True)
+    template_paths = List(['.']).tag(config=True, affects_environment=True)
 
     #Extension that the template files use.
     template_extension = Unicode().tag(config=True, affects_environment=True)
@@ -322,7 +322,7 @@ class TemplateExporter(Exporter):
         # as if the name is explicitly specified.
         template_file = self.template_file
         self.log.debug("Attempting to load template %s", template_file)
-        self.log.debug("    template_path: %s", os.pathsep.join(self.template_path))
+        self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
         return self.environment.get_template(template_file)
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -431,7 +431,7 @@ class TemplateExporter(Exporter):
         """
         Create the Jinja templating environment.
         """
-        paths = self.get_template_paths()
+        paths = self.template_paths
         self.log.debug('Template paths:\n\t%s', '\n\t'.join(paths))
 
         loaders = self.extra_loaders + [
@@ -457,9 +457,9 @@ class TemplateExporter(Exporter):
 
         return environment
 
-    def get_template_paths(self, prune=False, root_dirs=None):
-        full_paths = []
-        paths = list(self.template_path)
+    @default('template_paths')
+    def _template_paths(self, prune=True, root_dirs=None):
+        paths = []
         root_dirs = self.get_prefix_root_dirs()
         template_names = self.get_template_names()
         for template_name in template_names:
@@ -530,7 +530,6 @@ class TemplateExporter(Exporter):
         root_dirs = []
         if DEV_MODE:
             root_dirs.append(os.path.abspath(os.path.join(ROOT, '..', '..', 'share', 'jupyter')))
-        root_dirs.extend(self.template_path)
         root_dirs.extend(jupyter_path())
         return root_dirs
 
