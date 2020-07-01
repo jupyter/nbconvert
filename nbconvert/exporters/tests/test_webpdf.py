@@ -6,7 +6,7 @@
 import io
 import pytest
 
-from mock import patch
+from unittest.mock import patch
 
 from .base import ExportersTestsBase
 from ..webpdf import WebPDFExporter
