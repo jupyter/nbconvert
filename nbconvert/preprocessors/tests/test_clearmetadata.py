@@ -14,6 +14,7 @@ class TestClearMetadata(PreprocessorTestsBase):
 
     def build_notebook(self):
         notebook = super().build_notebook()
+        notebook.metadata = {'language': 'python'}
         # Add a test field to the first cell
         if 'metadata' not in notebook.cells[0]:
             notebook.cells[0].metadata = {}
@@ -22,9 +23,9 @@ class TestClearMetadata(PreprocessorTestsBase):
                                                     ('start_time', '09:31:49')])
         return notebook
 
-    def build_preprocessor(self):
+    def build_preprocessor(self, **kwargs):
         """Make an instance of a preprocessor"""
-        preprocessor = ClearMetadataPreprocessor()
+        preprocessor = ClearMetadataPreprocessor(**kwargs)
         preprocessor.enabled = True
         return preprocessor
 
@@ -32,7 +33,7 @@ class TestClearMetadata(PreprocessorTestsBase):
         """Can a ClearMetadataPreprocessor be constructed?"""
         self.build_preprocessor()
 
-    def test_output(self):
+    def test_default_output(self):
         """Test the output of the ClearMetadataPreprocessor"""
         nb = self.build_notebook()
         res = self.build_resources()
@@ -40,3 +41,34 @@ class TestClearMetadata(PreprocessorTestsBase):
         nb, res = preprocessor(nb, res)
 
         assert not nb.cells[0].metadata 
+        assert not nb.metadata 
+
+    def test_cell_only(self):
+        """Test the output of the ClearMetadataPreprocessor"""
+        nb = self.build_notebook()
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor(clear_notebook_metadata=False)
+        nb, res = preprocessor(nb, res)
+
+        assert not nb.cells[0].metadata 
+        assert nb.metadata
+
+    def test_selective_cell_metadata(self):
+        """Test the output of the ClearMetadataPreprocessor"""
+        nb = self.build_notebook()
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor(preserve_metadata_keys=['test_field'])
+        nb, res = preprocessor(nb, res)
+
+        assert nb.cells[0].metadata == { 'test_field': 'test_value' }
+        assert not nb.metadata
+
+    def test_selective_notebook_metadata(self):
+        """Test the output of the ClearMetadataPreprocessor"""
+        nb = self.build_notebook()
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor(preserve_metadata_keys=['language'])
+        nb, res = preprocessor(nb, res)
+
+        assert not nb.cells[0].metadata
+        assert nb.metadata == { 'language': 'python' }
