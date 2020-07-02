@@ -7,10 +7,10 @@ one or more regular expression.
 # Distributed under the terms of the Modified BSD License.
 
 from traitlets import Set, Unicode
-from . import ClearOutputPreprocessor
+from .base import Preprocessor
 
 
-class TagRemovePreprocessor(ClearOutputPreprocessor):
+class TagRemovePreprocessor(Preprocessor):
     """
     Removes inputs, outputs, or cells from a notebook that
     have tags that designate they are to be removed prior to exporting
@@ -44,7 +44,9 @@ class TagRemovePreprocessor(ClearOutputPreprocessor):
     remove_input_tags = Set(Unicode(), default_value=[],
             help=("Tags indicating cells for which input is to be removed,"
                   "matches tags in `cell.metadata.tags`.")).tag(config=True)
-
+    remove_metadata_fields = Set(
+        {'collapsed', 'scrolled'}
+    ).tag(config=True)
 
     def check_cell_conditions(self, cell, resources, index):
         """

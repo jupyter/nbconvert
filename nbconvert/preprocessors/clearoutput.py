@@ -6,6 +6,7 @@
 from traitlets import Set
 from .base import Preprocessor
 
+
 class ClearOutputPreprocessor(Preprocessor):
     """
     Removes the output from all code cells in a notebook.

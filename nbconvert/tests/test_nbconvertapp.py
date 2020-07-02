@@ -6,6 +6,7 @@
 
 import os
 import io
+import nbformat
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
@@ -89,6 +90,20 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to python notebook2')
             assert not os.path.isfile('notebook1.py')
             assert os.path.isfile('notebook2.py')
+
+    def test_clear_output(self):
+        """
+        Can we clear outputs?
+        """
+        with self.create_temp_cwd(['notebook*.ipynb']) as td:
+            self.nbconvert('--clear-output notebook1')
+            assert os.path.isfile('notebook1.ipynb')
+            with open('notebook1.ipynb', encoding='utf8') as f:
+                nb = nbformat.read(f, 4)
+                for cell in nb.cells:
+                    # Skip markdown cells
+                    if 'outputs' in cell:
+                        assert cell.outputs == []
 
     def test_absolute_template_file(self):
         """--template-file '/path/to/template.tpl'"""
