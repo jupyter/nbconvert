@@ -174,7 +174,7 @@ class TestMarkdown(TestsBase):
                 self.assertNotRegex = self.assertNotRegexpMatches
             self.assertNotRegex(math, "&(?![gt;|lt;|amp;])")
             # the result should be able to be unescaped correctly
-            self.assertEquals(case, self._unescape(math))
+            self.assertEqual(case, self._unescape(math))
 
     def test_markdown2html_math_mixed(self):
         """ensure markdown between inline and inline-block math works and
