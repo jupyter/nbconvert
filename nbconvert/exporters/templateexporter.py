@@ -188,15 +188,10 @@ class TemplateExporter(Exporter):
         new = change['new']
         if new == 'default':
             self.template_file = self.default_template
-            return
-        # check if template_file is a file path
-        # rather than a name already on template_path
-        full_path = os.path.abspath(new)
-        if os.path.isfile(full_path):
-            template_dir, template_file = os.path.split(full_path)
-            if template_dir not in [ os.path.abspath(p) for p in self.template_paths ]:
-                self.template_paths = [template_dir] + self.template_paths
-            self.template_file = template_file
+        else:
+            full_path = os.path.abspath(new)
+            if os.path.isfile(full_path):
+                self.template_file = os.path.split(full_path)[-1]
 
     @default('template_file')
     def _template_file_default(self):
@@ -321,10 +316,9 @@ class TemplateExporter(Exporter):
         # First try to load the
         # template by name with extension added, then try loading the template
         # as if the name is explicitly specified.
-        template_file = self.template_file
-        self.log.debug("Attempting to load template %s", template_file)
+        self.log.debug("Attempting to load template %s", self.template_file)
         self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
-        return self.environment.get_template(template_file)
+        return self.environment.get_template(self.template_file)
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """
@@ -497,6 +491,12 @@ class TemplateExporter(Exporter):
         template_names = self.get_template_names()
         for template_name in template_names:
             for root_dir in root_dirs:
+                # Support root_dir/template_name for local template directory patterns
+                path = os.path.join(root_dir, template_name)
+                if not prune or os.path.exists(path):
+                    paths.append(path)
+
+                # Support installed template paths
                 base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
                 path = os.path.join(base_dir, template_name)
                 if not prune or os.path.exists(path):
@@ -521,10 +521,32 @@ class TemplateExporter(Exporter):
             except OSError:
                 pass
 
+        # Need to re-apply template file as a potential path
+        full_path = os.path.abspath(self.template_file)
+        if os.path.isfile(full_path):
+            template_dir, template_file = os.path.split(full_path)
+            if template_dir not in [ os.path.abspath(p) for p in additional_paths + paths ]:
+                additional_paths = [template_dir] + additional_paths
+
         return additional_paths + paths
+
+    def _apply_compatibility_name_to_file(self):
+        warnings.warn(
+            f"5.x style template name passed '{self.template_name}'. Use --template-file or new template directory structures in the future.",
+            DeprecationWarning)
+        self.template_file = self.template_name
+        self.template_name = self._template_name_default()
+        self._invalidate_template_cache()
+        self._invalidate_environment_cache()
+        self._create_environment()
 
     def get_template_names(self):
         # finds a list of template names where each successive template name is the base template
+
+        # If we have a pre-6.0 style template name, assume they meant to set a template file
+        if self.template_name and self.template_name.endswith('.tpl'):
+            self._apply_compatibility_name_to_file()
+
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
         base_template = self.template_name
@@ -537,6 +559,10 @@ class TemplateExporter(Exporter):
                 template_dir = os.path.join(root_dir, 'nbconvert', 'templates', base_template)
                 if os.path.exists(template_dir):
                     found_at_least_one = True
+                else:
+                    template_dir = os.path.join(root_dir, base_template)
+                    if os.path.exists(template_dir):
+                        found_at_least_one = True
                 conf_file = os.path.join(template_dir, 'conf.json')
                 if os.path.exists(conf_file):
                     with open(conf_file) as f:
@@ -557,7 +583,7 @@ class TemplateExporter(Exporter):
     def get_prefix_root_dirs(self):
         # We look at the usual jupyter locations, and for development purposes also
         # relative to the package directory (first entry, meaning with highest precedence)
-        root_dirs = []
+        root_dirs = [os.getcwd()]
         if DEV_MODE:
             root_dirs.append(os.path.abspath(os.path.join(ROOT, '..', '..', 'share', 'jupyter')))
         root_dirs.extend(jupyter_path())

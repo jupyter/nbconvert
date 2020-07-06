@@ -22,6 +22,8 @@ __pycache__
 htmlcov
 .cache
 docs/source/*.tpl
+docs/source/*.j2
+docs/source/mytemplate/*
 docs/source/config_options.rst
 
 # Eclipse pollutes the filesystem
