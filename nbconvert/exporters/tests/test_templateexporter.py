@@ -6,11 +6,13 @@ Module with tests for templateexporter.py
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import json
 
 from traitlets import default
 from traitlets.config import Config
 from jinja2 import DictLoader, TemplateNotFound
 from nbformat import v4
+from unittest.mock import patch
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
@@ -105,7 +107,7 @@ class TestExporter(ExportersTestsBase):
 
     def test_absolute_template_file(self):
         with tempdir.TemporaryDirectory() as td:
-            template = os.path.join(td, 'abstemplate.tpl')
+            template = os.path.join(td, 'abstemplate.ext.j2')
             test_output = 'absolute!'
             with open(template, 'w') as f:
                 f.write(test_output)
@@ -117,17 +119,91 @@ class TestExporter(ExportersTestsBase):
 
     def test_relative_template_file(self):
         with tempdir.TemporaryWorkingDirectory() as td:
-            os.mkdir('relative')
-            template = os.path.abspath(os.path.join(td, 'relative', 'relative_template.tpl'))
-            test_output = 'relative!'
+            with patch('os.getcwd', return_value=os.path.abspath(td)):
+                template = os.path.join('relative', 'relative_template.ext.j2')
+                template_abs = os.path.abspath(os.path.join(td, template))
+                os.mkdir(os.path.dirname(template_abs))
+                test_output = 'relative!'
+                with open(template_abs, 'w') as f:
+                    f.write(test_output)
+                config = Config()
+                config.TemplateExporter.template_file = template
+                exporter = self._make_exporter(config=config)
+                assert os.path.abspath(exporter.template.filename) == template_abs
+                assert os.path.dirname(template_abs) in [os.path.abspath(d) for d in exporter.template_paths]
+
+    def test_absolute_template_file_tpl_compatibility(self):
+        with tempdir.TemporaryDirectory() as td:
+            template = os.path.join(td, 'abstemplate.tpl')
+            test_output = 'absolute!'
             with open(template, 'w') as f:
                 f.write(test_output)
             config = Config()
-            config.TemplateExporter.template_file = template
-            exporter = self._make_exporter(config=config)
-            assert os.path.abspath(exporter.template.filename) == template
-            assert os.path.dirname(template) in [os.path.abspath(d) for d in exporter.template_paths]
+            # We're setting the template_name instead of the template_file
+            config.TemplateExporter.template_name = template
+            with pytest.warns(DeprecationWarning):
+                exporter = self._make_exporter(config=config)
+            assert exporter.template.filename == template
+            assert os.path.dirname(template) in exporter.template_paths
 
+    def test_relative_template_file_tpl_compatibility(self):
+        with tempdir.TemporaryWorkingDirectory() as td:
+            with patch('os.getcwd', return_value=os.path.abspath(td)):
+                template = os.path.join('relative', 'relative_template.tpl')
+                template_abs = os.path.abspath(os.path.join(td, template))
+                os.mkdir(os.path.dirname(template_abs))
+                test_output = 'relative!'
+                with open(template_abs, 'w') as f:
+                    f.write(test_output)
+                config = Config()
+                # We're setting the template_name instead of the template_file
+                config.TemplateExporter.template_name = template
+                with pytest.warns(DeprecationWarning):
+                    exporter = self._make_exporter(config=config)
+                assert os.path.abspath(exporter.template.filename) == template_abs
+                assert os.path.dirname(template_abs) in [os.path.abspath(d) for d in exporter.template_paths]
+
+    def test_absolute_template_dir(self):
+        with tempdir.TemporaryDirectory() as td:
+            template = 'mytemplate'
+            template_file = os.path.join(td, template, 'index.py.j2')
+            template_dir = os.path.dirname(template_file)
+            os.mkdir(template_dir)
+            test_output = 'absolute!'
+            with open(template_file, 'w') as f:
+                f.write(test_output)
+            config = Config()
+            config.TemplateExporter.template_name = template
+            config.TemplateExporter.extra_template_basedirs = [td]
+            exporter = self._make_exporter(config=config)
+            assert exporter.template.filename == template_file
+            assert exporter.template_name == template
+            assert os.path.join(td, template) in exporter.template_paths
+
+    def test_local_template_dir(self):
+        with tempdir.TemporaryWorkingDirectory() as td:
+            with patch('os.getcwd', return_value=os.path.abspath(td)):
+                template = 'mytemplate'
+                template_file = os.path.join(template, 'index.py.j2')
+                template_abs = os.path.abspath(os.path.join(td, template_file))
+                template_conf = os.path.abspath(os.path.join(td, template, 'conf.json'))
+                os.mkdir(os.path.dirname(template_abs))
+                test_output = 'local!'
+                with open(template_abs, 'w') as f:
+                    f.write(test_output)
+                with open(template_conf, 'w') as f:
+                    # Mimic having a superset of accepted mimetypes
+                    f.write(json.dumps(Config(mimetypes={
+                            "text/x-python": True,
+                            "text/html": True,
+                        }
+                    )))
+                config = Config()
+                config.TemplateExporter.template_name = template
+                exporter = self._make_exporter(config=config)
+                assert os.path.abspath(exporter.template.filename) == template_abs
+                assert exporter.template_name == template
+                assert os.path.join(td, template) in exporter.template_paths
 
     def test_raw_template_attr(self):
         """
@@ -418,11 +494,19 @@ class TestExporter(ExportersTestsBase):
         assert "(100,)" not in nb
 
     def _make_exporter(self, config=None):
-        # Create the exporter instance, make sure to set a template name since
-        # the base TemplateExporter doesn't have a template associated with it.
-        exporter = TemplateExporter(config=config)
-        if not exporter.template_file:
-            # give it a default if not specified
-            exporter.template_name = 'python'
-            exporter.template_file = 'index.py.j2'
+        class TestExporter(TemplateExporter):
+            """
+            Exports a Python code file.
+            """
+            @default('file_extension')
+            def _file_extension_default(self):
+                return '.py'
+
+            @default('template_name')
+            def _template_name_default(self):
+                return 'python'
+
+            output_mimetype = 'text/x-python'
+
+        exporter = TestExporter(config=config)
         return exporter

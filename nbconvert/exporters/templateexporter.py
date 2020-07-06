@@ -14,7 +14,7 @@ import warnings
 from pathlib import Path
 
 from jupyter_core.paths import jupyter_path
-from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
+from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
@@ -183,6 +183,21 @@ class TemplateExporter(Exporter):
     _last_template_file = ""
     _raw_template_key = "<memory>"
 
+    @validate('template_name')
+    def _template_name_validate(self, change):
+        template_name = change['value']
+        if template_name and template_name.endswith('.tpl'):
+            warnings.warn(
+                f"5.x style template name passed '{self.template_name}'. Use --template-file or new template directory structures in the future.",
+                DeprecationWarning)
+            directory, self.template_file = os.path.split(self.template_name)
+            if directory:
+                directory, template_name = os.path.split(directory)
+            if directory:
+                if os.path.isabs(directory):
+                    self.extra_template_basedirs = [directory]
+        return template_name
+
     @observe('template_file')
     def _template_file_changed(self, change):
         new = change['new']
@@ -193,10 +208,12 @@ class TemplateExporter(Exporter):
         # rather than a name already on template_path
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
-            template_dir, template_file = os.path.split(full_path)
-            if template_dir not in [ os.path.abspath(p) for p in self.template_paths ]:
-                self.template_paths = [template_dir] + self.template_paths
-            self.template_file = template_file
+            directory, self.template_file = os.path.split(self.template_file)
+            if directory:
+                directory, self.template_name = os.path.split(directory)
+            if directory:
+                if os.path.isabs(directory):
+                    self.extra_template_basedirs = [directory]
 
     @default('template_file')
     def _template_file_default(self):
@@ -210,6 +227,11 @@ class TemplateExporter(Exporter):
         self._invalidate_template_cache()
 
     template_paths = List(['.']).tag(config=True, affects_environment=True)
+    extra_template_basedirs = List().tag(config=True, affects_environment=True)
+
+    @default('extra_template_basedirs')
+    def _default_extra_template_basedirs(self):
+        return [os.getcwd()]
 
     #Extension that the template files use.
     template_extension = Unicode().tag(config=True, affects_environment=True)
@@ -474,7 +496,6 @@ class TemplateExporter(Exporter):
                 preprocessor = preprocessor_cls(**kwargs)
                 self.register_preprocessor(preprocessor)
 
-
     def _get_conf(self):
         conf = {}  # the configuration once all conf files are merged
         for path in map(Path, self.template_paths):
@@ -484,18 +505,16 @@ class TemplateExporter(Exporter):
                     conf = recursive_update(conf, json.load(f))
         return conf
 
-
-    @observe('template_name')
-    def _on_template_name_change(self, change):
-        # since the default template paths depend on the template name, we reset it
-        self.template_paths = self._template_paths()
-
     @default('template_paths')
     def _template_paths(self, prune=True, root_dirs=None):
         paths = []
         root_dirs = self.get_prefix_root_dirs()
         template_names = self.get_template_names()
         for template_name in template_names:
+            for base_dir in self.extra_template_basedirs:
+                path = os.path.join(base_dir, template_name)
+                if not prune or os.path.exists(path):
+                    paths.append(path)
             for root_dir in root_dirs:
                 base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
                 path = os.path.join(base_dir, template_name)
@@ -533,6 +552,14 @@ class TemplateExporter(Exporter):
             template_names.append(base_template)
             conf = {}
             found_at_least_one = False
+            for base_dir in self.extra_template_basedirs:
+                template_dir = os.path.join(base_dir, base_template)
+                if os.path.exists(template_dir):
+                    found_at_least_one = True
+                conf_file = os.path.join(template_dir, 'conf.json')
+                if os.path.exists(conf_file):
+                    with open(conf_file) as f:
+                        conf = recursive_update(json.load(f), conf)
             for root_dir in root_dirs:
                 template_dir = os.path.join(root_dir, 'nbconvert', 'templates', base_template)
                 if os.path.exists(template_dir):
@@ -548,7 +575,7 @@ class TemplateExporter(Exporter):
             base_template = conf.get('base_template')
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get('mimetypes', {}).items() if enabled]
-        if self.output_mimetype and self.output_mimetype not in mimetypes:
+        if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = '\n\t'.join(mimetypes)
             raise ValueError('Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s' %\
                 (self.output_mimetype, self.template_name, supported_mimetypes))
