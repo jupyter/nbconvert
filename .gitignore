@@ -23,6 +23,7 @@ htmlcov
 .cache
 docs/source/*.tpl
 docs/source/*.j2
+docs/source/example.html
 docs/source/mytemplate/*
 docs/source/config_options.rst
 
