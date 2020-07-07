@@ -2,9 +2,8 @@
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
-{% set reveal_url_prefix = resources.reveal.url_prefix | default('https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0', true) %}
+{% set reveal_url_prefix = resources.reveal.url_prefix | default('https://unpkg.com/reveal.js@4.0.2', true) %}
 {% set reveal_theme = resources.reveal.theme | default('white', true) %}
-{% set reveal_fontawsome_url = resources.reveal.font_awesome_url | default('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css', true) %}
 {% set reveal_transition = resources.reveal.transition | default('slide', true) %}
 {% set reveal_scroll = resources.reveal.scroll | default(false, true) | json_dumps %}
 
@@ -39,8 +38,8 @@
 {% endblock jupyter_widgets %}
 
 <!-- General and theme style sheets -->
-<link rel="stylesheet" href="{{ reveal_url_prefix }}/css/reveal.css">
-<link rel="stylesheet" href="{{ reveal_url_prefix }}/css/theme/{{reveal_theme}}.css" id="theme">
+<link rel="stylesheet" href="{{ reveal_url_prefix }}/dist/reveal.css">
+<link rel="stylesheet" href="{{ reveal_url_prefix }}/dist/theme/{{reveal_theme}}.css" id="theme">
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -48,20 +47,12 @@ if( window.location.search.match( /print-pdf/gi ) ) {
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = '{{ reveal_url_prefix }}/css/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
 }
 </script>
 
-<!--[if lt IE 9]>
-<script src="{{ reveal_url_prefix }}/lib/js/html5shiv.js"></script>
-<![endif]-->
-
 <!-- Loading the mathjax macro -->
 {{ mathjax() }}
-
-<!-- Get Font-awesome from cdn -->
-<link rel="stylesheet" href="{{reveal_fontawsome_url}}">
 
 {% for css in resources.inlining.css -%}
   <style type="text/css">
@@ -82,6 +73,9 @@ a.anchor-link {
 }
 .highlight  {
     margin: 0.4em;
+}
+.jp-Notebook {
+    padding: 0;
 }
 </style>
 
@@ -113,12 +107,10 @@ require(
       waitSeconds: 15
     },
     [
-      "{{ reveal_url_prefix }}/lib/js/head.min.js",
-      "{{ reveal_url_prefix }}/js/reveal.js"
+      "{{ reveal_url_prefix }}/dist/reveal.js"
     ],
 
-    function(head, Reveal){
-
+    function(Reveal){
         // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
         Reveal.initialize({
             controls: true,
