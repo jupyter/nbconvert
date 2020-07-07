@@ -1,5 +1,5 @@
 version_info = (6, 0, 0)
-pre_info = 'a3'
+pre_info = 'a4'
 dev_info = ''
 
 def create_valid_version(release_info, epoch=None, pre_input='', dev_input=''):
