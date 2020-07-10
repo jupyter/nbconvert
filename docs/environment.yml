@@ -11,5 +11,6 @@ dependencies:
 - sphinx_rtd_theme
 - tornado
 - entrypoints
+- ipykernel
 - pip:
     - nbsphinx>=0.7.1
