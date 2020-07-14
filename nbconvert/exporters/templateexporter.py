@@ -485,6 +485,11 @@ class TemplateExporter(Exporter):
         return conf
 
 
+    @observe('template_name')
+    def _on_template_name_change(self, change):
+        # since the default template paths depend on the template name, we reset it
+        self.template_paths = self._template_paths()
+
     @default('template_paths')
     def _template_paths(self, prune=True, root_dirs=None):
         paths = []
