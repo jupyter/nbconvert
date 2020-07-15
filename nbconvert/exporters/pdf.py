@@ -90,7 +90,7 @@ class PDFExporter(LatexExporter):
             The name of the file to convert.
         count : int
             How many times to run the command.
-         raise_on_failure: Exception class (default None)
+        raise_on_failure: Exception class (default None)
             If provided, will raise the given exception for if an instead of
             returning False on command failure.
 
