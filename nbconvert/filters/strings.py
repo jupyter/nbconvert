@@ -203,7 +203,6 @@ def ipython2python(code):
 
     Parameters
     ----------
-
     code : str
         IPython code, to be transformed to pure Python
     """

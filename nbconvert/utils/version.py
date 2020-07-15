@@ -22,7 +22,6 @@ def check_version(v, min_v, max_v=None):
         minimal version supported
     max_v : str
         earliest version not supported
-
     Note: If dev/prerelease tags result in TypeError for string-number
     comparison, it is assumed that the check passes and the version dependency
     is satisfied. Users on dev branches are responsible for keeping their own

@@ -111,7 +111,7 @@ class TestLatexExporter(ExportersTestsBase):
     def test_prompt_number_color_ipython(self):
         """
         Does LatexExporter properly format input and output prompts in color?
-        
+
         Uses an in memory latex template to load style_ipython as the cell style.
         """
         my_loader_tplx = DictLoader({'my_template': 

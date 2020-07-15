@@ -29,7 +29,7 @@ class Preprocessor(NbConvertBase):
     def __init__(self, **kw):
         """
         Public constructor
-        
+
         Parameters
         ----------
         config : Config
@@ -51,12 +51,12 @@ class Preprocessor(NbConvertBase):
     def preprocess(self, nb, resources):
         """
         Preprocessing to apply on each notebook.
-        
+
         Must return modified nb, resources.
-        
+
         If you wish to apply your preprocessing to each cell, you might want
         to override preprocess_cell method instead.
-        
+
         Parameters
         ----------
         nb : NotebookNode
@@ -73,7 +73,7 @@ class Preprocessor(NbConvertBase):
         """
         Override if you want to apply some preprocessing to each cell.
         Must return modified cell and resource dictionary.
-        
+
         Parameters
         ----------
         cell : NotebookNode cell

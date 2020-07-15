@@ -10,9 +10,9 @@ from traitlets.log import get_logger
 def cell_preprocessor(function):
     """
     Wrap a function to be executed on all cells of a notebook
-    
+
     The wrapped function should have these parameters:
-    
+
     cell : NotebookNode cell
         Notebook cell being processed
     resources : dictionary
@@ -38,7 +38,7 @@ def coalesce_streams(cell, resources, index):
     """
     Merge consecutive sequences of stream output into single stream
     to prevent extra newlines inserted at flush calls
-    
+
     Parameters
     ----------
     cell : NotebookNode cell

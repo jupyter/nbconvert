@@ -32,7 +32,7 @@ class ConvertFiguresPreprocessor(Preprocessor):
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
-        
+
         See base.py
         """
 
