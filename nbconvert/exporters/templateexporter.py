@@ -332,10 +332,10 @@ class TemplateExporter(Exporter):
         Parameters
         ----------
         nb : :class:`~nbformat.NotebookNode`
-          Notebook node
+            Notebook node
         resources : dict
-          Additional resources that can be accessed read/write by
-          preprocessors and filters.
+            Additional resources that can be accessed read/write by
+            preprocessors and filters.
         """
         nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)

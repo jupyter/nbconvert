@@ -43,16 +43,16 @@ def markdown2latex(source, markup='markdown', extra_args=None):
     Parameters
     ----------
     source : string
-      Input string, assumed to be valid markdown.
+        Input string, assumed to be valid markdown.
     markup : string
-      Markup used by pandoc's reader
-      default : pandoc extended markdown
-      (see http://pandoc.org/README.html#pandocs-markdown)
+        Markup used by pandoc's reader
+        default : pandoc extended markdown
+        (see http://pandoc.org/README.html#pandocs-markdown)
 
     Returns
     -------
     out : string
-      Output as returned by pandoc.
+        Output as returned by pandoc.
     """
     return convert_pandoc(source, markup, 'latex', extra_args=extra_args)
 
@@ -93,11 +93,11 @@ def markdown2rst(source, extra_args=None):
     Parameters
     ----------
     source : string
-      Input string, assumed to be valid markdown.
+        Input string, assumed to be valid markdown.
 
     Returns
     -------
     out : string
-      Output as returned by pandoc.
+        Output as returned by pandoc.
     """
     return convert_pandoc(source, 'markdown', 'rst', extra_args=extra_args)

@@ -2,7 +2,7 @@
 
 def get_metadata(output, key, mimetype=None):
     """Resolve an output metadata key
-    
+
     If mimetype given, resolve at mimetype level first,
     then fallback to top-level.
     Otherwise, just resolve at top-level.

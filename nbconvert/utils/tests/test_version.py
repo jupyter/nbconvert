@@ -2,7 +2,7 @@ from ..version import check_version
 
 def test_check_version():
     """Test the behaviour of check_versionself.
-    
+
     This is mostly used to make sure the pandoc version is appropriate for the library.
     """
     

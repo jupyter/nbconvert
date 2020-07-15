@@ -53,7 +53,7 @@ class FilesWriter(WriterBase):
     def write(self, output, resources, notebook_name=None, **kw):
             """
             Consume and write Jinja output to the file system.  Output directory
-            is set via the 'build_directory' variable of this instance (a 
+            is set via the 'build_directory' variable of this instance (a
             configurable).
 
             See base for more...

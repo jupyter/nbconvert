@@ -351,7 +351,6 @@ class NbConvertApp(JupyterApp):
 
         Returns
         -------
-
         dict
             resources dictionary for a single notebook that MUST include the following keys:
                 - config_dir: the location of the Jupyter config directory
@@ -404,7 +403,6 @@ class NbConvertApp(JupyterApp):
         Returns
         -------
         output
-
         dict
             resources (possibly modified)
         """

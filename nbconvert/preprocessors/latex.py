@@ -35,7 +35,7 @@ class LatexPreprocessor(Preprocessor):
 
     def preprocess(self, nb, resources):
         """Preprocessing to apply on each notebook.
-        
+
         Parameters
         ----------
         nb : NotebookNode

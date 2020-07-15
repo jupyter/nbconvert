@@ -125,12 +125,12 @@ class Exporter(LoggingConfigurable):
         Parameters
         ----------
         nb : :class:`~nbformat.NotebookNode`
-          Notebook node (dict-like with attr-access)
+            Notebook node (dict-like with attr-access)
         resources : dict
-          Additional resources that can be accessed read/write by
-          preprocessors and filters.
+            Additional resources that can be accessed read/write by
+            preprocessors and filters.
         `**kw`
-          Ignored
+            Ignored
 
         """
         nb_copy = copy.deepcopy(nb)
@@ -154,10 +154,10 @@ class Exporter(LoggingConfigurable):
         filename : str
             Full filename of the notebook file to open and convert.
         resources : dict
-          Additional resources that can be accessed read/write by
-          preprocessors and filters.
+            Additional resources that can be accessed read/write by
+            preprocessors and filters.
         `**kw`
-          Ignored
+            Ignored
 
         """
         # Convert full filename string to unicode
@@ -192,10 +192,10 @@ class Exporter(LoggingConfigurable):
         file_stream : file-like object
             Notebook file-like object to convert.
         resources : dict
-          Additional resources that can be accessed read/write by
-          preprocessors and filters.
+            Additional resources that can be accessed read/write by
+            preprocessors and filters.
         `**kw`
-          Ignored
+            Ignored
 
         """
         return self.from_notebook_node(nbformat.read(file_stream, as_version=4), resources=resources, **kw)

@@ -35,7 +35,7 @@ class CheesePreprocessor(Preprocessor):
     def preprocess(self, nb, resources):
         """
         Sphinx preprocessing to apply on each notebook.
-        
+
         Parameters
         ----------
         nb : NotebookNode
