@@ -20,7 +20,12 @@ class _RevealMetadataPreprocessor(Preprocessor):
 
         for cell in nb.cells:
             # Make sure every cell has a slide_type
-            cell.metadata.slide_type = cell.metadata.get('slideshow', {}).get('slide_type', '-')
+            try:
+                slide_type = cell.metadata.get(
+                    'slideshow', {}).get('slide_type', '-')
+            except AttributeError:
+                slide_type = '-'
+            cell.metadata.slide_type = slide_type
 
         # Find the first visible cell
         for index, cell in enumerate(nb.cells):
