@@ -40,7 +40,7 @@ def prepend_to_env_search_path(varname, value, envdict):
 class PDFExporter(LatexExporter):
     """Writer designed to write to PDF files.
 
-    This inherits from :class:`LatexExporter`. It creates a LaTeX file in
+    This inherits from `LatexExporter`. It creates a LaTeX file in
     a temporary directory using the template machinery, and then runs LaTeX
     to create a pdf.
     """

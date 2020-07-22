@@ -15,7 +15,7 @@ Removing pieces of cells using cell tags
 The most straightforward way to control which pieces of cells are
 removed is to use **cell tags**. These are single-string snippets of
 metadata that are stored in each cells "tag" field. The
-:class:`TagRemovePreprocessor` can be used 
+`TagRemovePreprocessor` can be used 
 to remove inputs, outputs, or entire cells.
 
 For example, here is a configuration that uses a different tag for
@@ -43,11 +43,11 @@ Removing cells using Regular Expressions on cell content
 --------------------------------------------------------
 
 Sometimes you'd rather remove cells based on their _content_ rather
-than their tags. In this case, you can use the :class:`RegexRemovePreprocessor`.
+than their tags. In this case, you can use the `RegexRemovePreprocessor`.
 
-You initalize this preprocessor with a single `patterns` configuration, which
+You initalize this preprocessor with a single ``patterns`` configuration, which
 is a list of strings. For each cell, this preprocessor checks whether
-the cell contents match any of the strings provided in `patterns`.
+the cell contents match any of the strings provided in ``patterns``.
 If the contents match any of the patterns, the cell is removed from the notebook.
 
 For example, execute the following command to convert a notebook to html
@@ -57,7 +57,7 @@ and remove cells containing only whitespace:
 
     jupyter nbconvert --RegexRemovePreprocessor.patterns="['\s*\Z']" mynotebook.ipynb
 
-The command line argument sets the list of patterns to '\s*\Z' which matches
+The command line argument sets the list of patterns to ``'\s*\Z'`` which matches
 an arbitrary number of whitespace characters followed by the end of the string.
 
 See https://regex101.com/ for an interactive guide to regular expressions

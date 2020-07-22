@@ -1,3 +1,5 @@
+.. highlight:: none
+
 Using as a command line tool
 ============================
 
@@ -256,7 +258,7 @@ result in :file:`mynotebook.nbconvert.ipynb`. Specifying ``--inplace`` will
 overwrite the input file instead of writing a new file. By default,
 ``nbconvert`` will abort conversion if any exceptions occur during
 execution of a cell. If you specify ``--allow-errors`` (in addition to the
-`--execute`` flag) then conversion will continue and the output from any
+``--execute`` flag) then conversion will continue and the output from any
 exception will be included in the cell output.
 
 The following command::
@@ -301,7 +303,9 @@ Multiple notebooks can be specified from the command line::
   $ jupyter nbconvert notebook*.ipynb
   $ jupyter nbconvert notebook1.ipynb notebook2.ipynb
 
-or via a list in a configuration file, say ``mycfg.py``, containing the text::
+or via a list in a configuration file, say ``mycfg.py``, containing the text:
+
+.. code-block:: python
 
   c = get_config()
   c.NbConvertApp.notebooks = ["notebook1.ipynb", "notebook2.ipynb"]

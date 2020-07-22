@@ -46,10 +46,10 @@ Exporter base classes
 Specialized exporter classes
 ----------------------------
 
-The :class:`~nbconvert.exporters.NotebookExporter` inherits directly from
-:class:`~nbconvert.exporters.Exporter`, while the other exporters listed here
+The `NotebookExporter` inherits directly from
+`Exporter`, while the other exporters listed here
 inherit either directly or indirectly from
-:class:`~nbconvert.exporters.TemplateExporter`.
+`TemplateExporter`.
 
 .. autoclass:: NotebookExporter
 

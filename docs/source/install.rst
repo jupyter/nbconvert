@@ -1,3 +1,5 @@
+.. highlight:: none
+
 Installation
 ============
 
@@ -57,7 +59,9 @@ packages are specific to different operating systems:
 
 * Linux: `TeX Live <http://tug.org/texlive/>`_
 
-  * E.g. on Debian or Ubuntu: ``sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-generic-recommended``
+  * E.g. on Debian or Ubuntu::
+
+        sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-generic-recommended
 
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
 * Windows: `MikTex <http://www.miktex.org/>`_

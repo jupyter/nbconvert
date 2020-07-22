@@ -58,4 +58,6 @@ Executing Notebooks
 .. autoclass:: ExecutePreprocessor
     :members:
 
+.. autoclass:: CellExecutionError
+
 .. autofunction:: coalesce_streams

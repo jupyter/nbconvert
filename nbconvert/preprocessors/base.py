@@ -16,8 +16,8 @@ class Preprocessor(NbConvertBase):
     Any configurable traitlets this class exposed will be configurable in
     profiles using c.SubClassName.attribute = value
 
-    you can overwrite :meth:`preprocess_cell` to apply a transformation
-    independently on each cell or :meth:`preprocess` if you prefer your own
+    You can overwrite `preprocess_cell()` to apply a transformation
+    independently on each cell or `preprocess()` if you prefer your own
     logic. See corresponding docstring for information.
 
     Disabled by default and can be enabled via the config by

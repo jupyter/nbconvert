@@ -25,7 +25,7 @@ from traitlets import Unicode
 class LatexPreprocessor(Preprocessor):
     """Preprocessor for latex destined documents.
     
-    Mainly populates the `latex` key in the resources dict,
+    Mainly populates the ``latex`` key in the resources dict,
     adding definitions for pygments highlight styles.
     """
 

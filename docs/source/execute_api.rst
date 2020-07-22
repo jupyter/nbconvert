@@ -35,7 +35,7 @@ Example
 Let's start with a complete quick example, leaving detailed explanations
 to the following sections.
 
-**Import**: First we import nbconvert and the :class:`ExecutePreprocessor`
+**Import**: First we import nbconvert and the `ExecutePreprocessor`
 class::
 
     import nbformat
@@ -59,7 +59,7 @@ define respectively the cell execution timeout and the execution kernel.
     the default Python kernel is chosen.
 
 **Execute/Run (preprocess)**: To actually run the notebook we call the method
-``preprocess``::
+:meth:`~ExecutePreprocessor.preprocess`::
 
     ep.preprocess(nb, {'metadata': {'path': 'notebooks/'}})
 
@@ -78,7 +78,7 @@ in the file ``executed_notebook.ipynb``.
 Execution arguments (traitlets)
 -------------------------------
 
-The arguments passed to :class:`ExecutePreprocessor` are configuration options
+The arguments passed to `ExecutePreprocessor` are configuration options
 called `traitlets <https://traitlets.readthedocs.io/en/stable>`_.
 There are many cool things about traitlets. For example,
 they enforce the input type, and they can be accessed/modified as
@@ -118,7 +118,7 @@ there are no execution errors. But, what if there are errors?
 Execution until first error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 An error during the notebook execution, by default, will stop the execution
-and raise a ``CellExecutionError``. Conveniently, the source cell causing
+and raise a `CellExecutionError`. Conveniently, the source cell causing
 the error and the original error name and message are also printed.
 After an error, we can still save the notebook as before::
 
@@ -148,7 +148,7 @@ A useful pattern to execute notebooks while handling errors is the following::
 
 This will save the executed notebook regardless of execution errors.
 In case of errors, however, an additional message is printed and the
-``CellExecutionError`` is raised. The message directs the user to
+`CellExecutionError` is raised. The message directs the user to
 the saved notebook for further inspection.
 
 Execute and save all errors
@@ -170,16 +170,16 @@ the state of all the widgets can be stored in the notebook's metadata.
 This allows rendering of the live widgets on for instance nbviewer, or when
 converting to html.
 
-We can tell nbconvert to not store the state using the `store_widget_state`
+We can tell nbconvert to not store the state using the ``store_widget_state``
 argument::
 
     jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
 
 This widget rendering is not performed against a browser during execution, so
 only widget default states or states manipulated via user code will be
-calculated during execution. `%%javascript` cells will execute upon notebook
+calculated during execution. ``%%javascript`` cells will execute upon notebook
 rendering, enabling complex interactions to function as expected when viewed by
 a UI.
 
 If you can't view widget results after execution, you may need to select
-`Trust Notebook` under the `File` menu.
+:menuselection:`File --> Trust Notebook` in the menu.

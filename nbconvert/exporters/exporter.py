@@ -99,7 +99,7 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        config : :class:`~traitlets.config.Config`
+        config : ``traitlets.config.Config``
             User configuration instance.
         `**kw`
             Additional keyword arguments passed to parent __init__
@@ -124,7 +124,7 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        nb : :class:`~nbformat.NotebookNode`
+        nb : `nbformat.NotebookNode`
             Notebook node (dict-like with attr-access)
         resources : dict
             Additional resources that can be accessed read/write by
@@ -211,7 +211,7 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        preprocessor : :class:`~nbconvert.preprocessors.Preprocessor`
+        preprocessor : `Preprocessor`
             A dotted module name, a type, or an instance
         enabled : bool
             Mark the preprocessor as enabled
