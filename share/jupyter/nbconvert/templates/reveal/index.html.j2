@@ -105,6 +105,11 @@ a.anchor-link {
 {% block body_footer %}
 </div>
 </div>
+</body>
+{% endblock body_footer %}
+
+{% block footer %}
+{% block footer_js %}
 <script>
 require(
     {
@@ -159,15 +164,9 @@ require(
 
         // check and set the scrolling slide every time the slide change
         Reveal.addEventListener('slidechanged', setScrollingSlide);
-
     }
-
 );
 </script>
-
-</body>
-{% endblock body_footer %}
-
-{% block footer %}
+{% endblock footer_js %}
 </html>
 {% endblock footer %}
