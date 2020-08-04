@@ -14,7 +14,7 @@ import warnings
 from pathlib import Path
 
 from jupyter_core.paths import jupyter_path
-from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe
+from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from ipython_genutils import py3compat
@@ -183,34 +183,42 @@ class TemplateExporter(Exporter):
     _last_template_file = ""
     _raw_template_key = "<memory>"
 
-    @observe('template_name')
-    def _template_name_changed(self, change):
-        new = change['new']
-        # If we have a pre-6.0 style template name, assume they meant to set a template file
-        if self.template_name and self.template_name.endswith('.tpl'):
+    @validate('template_name')
+    def _template_name_validate(self, change):
+        template_name = change['value']
+        if template_name and template_name.endswith('.tpl'):
             warnings.warn(
                 f"5.x style template name passed '{self.template_name}'. Use --template-file or new template directory structures in the future.",
                 DeprecationWarning)
-            self.template_file = self.template_name
-            self.template_name = self._template_name_default()
-        else:
-            self.template_name = new
+            directory, self.template_file = os.path.split(self.template_name)
+            if directory:
+                directory, template_name = os.path.split(directory)
+            if directory:
+                if os.path.isabs(directory):
+                    self.extra_template_basedirs = [directory]
+        return template_name
 
     @observe('template_file')
     def _template_file_changed(self, change):
         new = change['new']
         if new == 'default':
             self.template_file = self.default_template
-        else:
-            full_path = os.path.abspath(new)
-            if os.path.isfile(full_path):
-                self.template_file = full_path
+            return
+        # check if template_file is a file path
+        # rather than a name already on template_path
+        full_path = os.path.abspath(new)
+        if os.path.isfile(full_path):
+            directory, self.template_file = os.path.split(self.template_file)
+            if directory:
+                directory, self.template_name = os.path.split(directory)
+            if directory:
+                if os.path.isabs(directory):
+                    self.extra_template_basedirs = [directory]
 
     @default('template_file')
     def _template_file_default(self):
         if self.template_extension:
             return 'index' + self.template_extension
-
 
     @observe('raw_template')
     def _raw_template_changed(self, change):
@@ -219,7 +227,11 @@ class TemplateExporter(Exporter):
         self._invalidate_template_cache()
 
     template_paths = List(['.']).tag(config=True, affects_environment=True)
-    template_paths_building = Bool(False)
+    extra_template_basedirs = List().tag(config=True, affects_environment=True)
+
+    @default('extra_template_basedirs')
+    def _default_extra_template_basedirs(self):
+        return [os.getcwd()]
 
     #Extension that the template files use.
     template_extension = Unicode().tag(config=True, affects_environment=True)
@@ -331,15 +343,10 @@ class TemplateExporter(Exporter):
         # First try to load the
         # template by name with extension added, then try loading the template
         # as if the name is explicitly specified.
-        template_file = os.path.split(self.template_file)[-1]
-        self.log.debug("Attempting to load template %s", self.template_file)
+        template_file = self.template_file
+        self.log.debug("Attempting to load template %s", template_file)
         self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
-        try:
-            # Cover the case where the template_file is relative to the root directory
-            return self.environment.get_template(template_file)
-        except TemplateNotFound:
-            # Cover the case where the template_file is relative to the template directory
-            return self.environment.get_template(os.path.join(self.template_name, template_file))
+        return self.environment.get_template(template_file)
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """
@@ -450,10 +457,6 @@ class TemplateExporter(Exporter):
         paths = self.template_paths
         self.log.debug('Template paths:\n\t%s', '\n\t'.join(paths))
 
-        # TODO: Should these be in an init path?
-        self.validate_mime_types()
-        self.register_preprocessors()
-
         loaders = self.extra_loaders + [
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
             DictLoader({self._raw_template_key: self.raw_template})
@@ -502,131 +505,86 @@ class TemplateExporter(Exporter):
                     conf = recursive_update(conf, json.load(f))
         return conf
 
-    def _root_template_paths(self, template_names, prune=True):
+    @default('template_paths')
+    def _template_paths(self, prune=True, root_dirs=None):
+        paths = []
         root_dirs = self.get_prefix_root_dirs()
+        template_names = self.get_template_names()
+        for template_name in template_names:
+            for base_dir in self.extra_template_basedirs:
+                path = os.path.join(base_dir, template_name)
+                if not prune or os.path.exists(path):
+                    paths.append(path)
+            for root_dir in root_dirs:
+                base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
+                path = os.path.join(base_dir, template_name)
+                if not prune or os.path.exists(path):
+                    paths.append(path)
+
         for root_dir in root_dirs:
             # we include root_dir for when we want to be very explicit, e.g.
             # {% extends 'nbconvert/templates/classic/base.html' %}
-            if not prune or os.path.exists(root_dir):
-                yield root_dir
-
-            template_dir = os.path.join(root_dir, 'nbconvert', 'templates')
-            if not prune or os.path.exists(template_dir):
-                yield template_dir
+            paths.append(root_dir)
+            # we include base_dir for when we want to be explicit, but less than root_dir, e.g.
+            # {% extends 'classic/base.html' %}
+            base_dir = os.path.join(root_dir, 'nbconvert', 'templates')
+            paths.append(base_dir)
 
             compatibility_dir = os.path.join(root_dir, 'nbconvert', 'templates', 'compatibility')
-            if not prune or os.path.exists(compatibility_dir):
-                yield compatibility_dir
+            paths.append(compatibility_dir)
 
-            for template_name in template_names:
-                # Support root_dir/template_name for local template directory patterns
-                path = os.path.join(root_dir, template_name)
-                if not prune or os.path.exists(path):
-                    yield path
+        additional_paths = self.template_data_paths
+        for path in additional_paths:
+            try:
+                ensure_dir_exists(path, mode=0o700)
+            except OSError:
+                pass
 
-                # Support installed template paths
-                path = os.path.join(template_dir, template_name)
-                if not prune or os.path.exists(path):
-                    yield path
-
-
-                path = os.path.join(compatibility_dir, template_name)
-                if not prune or os.path.exists(path):
-                    yield path
-
-    @default('template_paths')
-    def _template_paths(self, prune=True, root_dirs=None):
-        # A hack to avoid inifnite recusion since we can't ask if a traitlet was provided or defaulting
-        self.template_paths_building = True
-        try:
-            paths = []
-            root_dirs = root_dirs or self.get_prefix_root_dirs()
-            template_names = self.get_template_names()
-            paths = list(self._root_template_paths(template_names, prune=prune))
-
-            additional_paths = self.template_data_paths
-            for path in additional_paths:
-                try:
-                    ensure_dir_exists(path, mode=0o700)
-                except OSError:
-                    pass
-
-            # Need to re-apply template file as a potential path
-            if self.template_file:
-                full_path = os.path.abspath(self.template_file)
-                if os.path.isfile(full_path):
-                    template_dir = os.path.split(full_path)[0]
-                    if template_dir not in [ os.path.abspath(p) for p in additional_paths + paths ]:
-                        additional_paths = [template_dir] + additional_paths
-            
-            return additional_paths + paths
-        finally:
-            self.template_paths_building = False
-
-    def _recursive_confs(self):
-        # finds a list of template names where each successive template name is the base template
-        base_template = self.template_name
-        # A hack to avoid inifnite recusion since we can't ask if a traitlet was provided or defaulting
-        if not self.template_paths_building:
-            template_paths = self.template_paths
-        else:
-            # Fall back to root template paths
-            template_paths = list(self._root_template_paths([base_template], prune=False))
-        merged_conf = {}  # the configuration once all conf files are merged
-        while base_template is not None:
-            conf = {}
-            found_at_least_one = False
-            for template_path in template_paths:
-                template_dir = os.path.join(template_path, base_template)
-                if os.path.exists(template_dir):
-                    found_at_least_one = True
-                    conf_file = os.path.join(template_dir, 'conf.json')
-                    if os.path.exists(conf_file):
-                        with open(conf_file) as f:
-                            conf = recursive_update(json.load(f), conf)
-                    break
-            if not found_at_least_one:
-                paths = "\n\t".join(template_paths)
-                raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (base_template, paths))
-            yield conf
-            base_template = conf.get('base_template')
-
-    @property
-    def merged_conf(self):
-        merged_conf = {}  # the configuration once all conf files are merged
-        for conf in self._recursive_confs():
-            merged_conf = recursive_update(dict(conf), merged_conf)
-        return merged_conf
+        return additional_paths + paths
 
     def get_template_names(self):
         # finds a list of template names where each successive template name is the base template
-        if not self.template_name:
-            return []
-        template_names = [self.template_name]
-        for conf in self._recursive_confs():
-            if conf.get('base_template'):
-                template_names.append(conf.get('base_template'))
-        return template_names
-
-    def register_preprocessors(self):
-        for preprocessor in self.merged_conf.get('preprocessors', []):
-            self.register_preprocessor(preprocessor, enabled=True)
-
-    def validate_mime_types(self):
-        mimetypes = [
-            mimetype for mimetype, enabled in
-            self.merged_conf.get('mimetypes', {self.output_mimetype: True}).items()
-            if enabled
-        ]
-        if self.output_mimetype and self.output_mimetype not in mimetypes:
+        template_names = []
+        root_dirs = self.get_prefix_root_dirs()
+        base_template = self.template_name
+        merged_conf = {}  # the configuration once all conf files are merged
+        while base_template is not None:
+            template_names.append(base_template)
+            conf = {}
+            found_at_least_one = False
+            for base_dir in self.extra_template_basedirs:
+                template_dir = os.path.join(base_dir, base_template)
+                if os.path.exists(template_dir):
+                    found_at_least_one = True
+                conf_file = os.path.join(template_dir, 'conf.json')
+                if os.path.exists(conf_file):
+                    with open(conf_file) as f:
+                        conf = recursive_update(json.load(f), conf)
+            for root_dir in root_dirs:
+                template_dir = os.path.join(root_dir, 'nbconvert', 'templates', base_template)
+                if os.path.exists(template_dir):
+                    found_at_least_one = True
+                conf_file = os.path.join(template_dir, 'conf.json')
+                if os.path.exists(conf_file):
+                    with open(conf_file) as f:
+                        conf = recursive_update(json.load(f), conf)
+            if not found_at_least_one:
+                paths = "\n\t".join(root_dirs)
+                raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (base_template, paths))
+            merged_conf = recursive_update(dict(conf), merged_conf)
+            base_template = conf.get('base_template')
+        conf = merged_conf
+        mimetypes = [mimetype for mimetype, enabled in conf.get('mimetypes', {}).items() if enabled]
+        if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = '\n\t'.join(mimetypes)
             raise ValueError('Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s' %\
                 (self.output_mimetype, self.template_name, supported_mimetypes))
+        return template_names
 
     def get_prefix_root_dirs(self):
         # We look at the usual jupyter locations, and for development purposes also
         # relative to the package directory (first entry, meaning with highest precedence)
-        root_dirs = [os.getcwd()]
+        root_dirs = []
         if DEV_MODE:
             root_dirs.append(os.path.abspath(os.path.join(ROOT, '..', '..', 'share', 'jupyter')))
         root_dirs.extend(jupyter_path())

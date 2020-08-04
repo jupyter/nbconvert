@@ -174,11 +174,11 @@ class TestExporter(ExportersTestsBase):
                 f.write(test_output)
             config = Config()
             config.TemplateExporter.template_name = template
-            config.TemplateExporter.template_paths = [td]
+            config.TemplateExporter.extra_template_basedirs = [td]
             exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template_file
             assert exporter.template_name == template
-            assert td in exporter.template_paths
+            assert os.path.join(td, template) in exporter.template_paths
 
     def test_local_template_dir(self):
         with tempdir.TemporaryWorkingDirectory() as td:
@@ -203,7 +203,7 @@ class TestExporter(ExportersTestsBase):
                 exporter = self._make_exporter(config=config)
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert exporter.template_name == template
-                assert td in exporter.template_paths
+                assert os.path.join(td, template) in exporter.template_paths
 
     def test_raw_template_attr(self):
         """
