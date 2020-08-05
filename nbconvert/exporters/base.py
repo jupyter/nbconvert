@@ -12,7 +12,6 @@ from traitlets.log import get_logger
 from traitlets.utils.importstring import import_item
 
 from nbformat import NotebookNode
-from ipython_genutils.py3compat import string_types
 
 from .exporter import Exporter
 
@@ -82,7 +81,7 @@ def export(exporter, nb, **kw):
     #Try to convert the notebook using the appropriate conversion function.
     if isinstance(nb, NotebookNode):
         output, resources = exporter_instance.from_notebook_node(nb, resources)
-    elif isinstance(nb, string_types):
+    elif isinstance(nb, (str,)):
         output, resources = exporter_instance.from_filename(nb, resources)
     else:
         output, resources = exporter_instance.from_file(nb, resources)
