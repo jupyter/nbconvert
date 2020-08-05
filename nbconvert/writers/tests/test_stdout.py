@@ -42,8 +42,6 @@ class TestStdout(TestsBase):
         writer = StdoutWriter()
         writer.write(u'a×', {'b': 'c'})
         output = stream.getvalue()
-        if not PY3:
-            output = output.decode('utf-8')
         self.fuzzy_compare(output, u'a×')
 
         # Revert stdout
