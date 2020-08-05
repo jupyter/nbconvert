@@ -7,8 +7,6 @@
 import codecs
 import sys
 
-from ipython_genutils.py3compat import PY3
-
 def unicode_std_stream(stream='stdout'):
     u"""Get a wrapper to write unicode to stdout/stderr as UTF-8.
 
@@ -21,14 +19,12 @@ def unicode_std_stream(stream='stdout'):
     """
     assert stream in ('stdout', 'stderr')
     stream  = getattr(sys, stream)
-    if PY3:
-        try:
-            stream_b = stream.buffer
-        except AttributeError:
-            # sys.stdout has been replaced - use it directly
-            return stream
-    else:
-        stream_b = stream
+
+    try:
+        stream_b = stream.buffer
+    except AttributeError:
+        # sys.stdout has been replaced - use it directly
+        return stream
 
     return codecs.getwriter('utf-8')(stream_b)
 
@@ -42,13 +38,10 @@ def unicode_stdin_stream():
         totreat = unicode_stdin_stream().read()
     """
     stream  = sys.stdin
-    if PY3:
-        try:
-            stream_b = stream.buffer
-        except AttributeError:
-            return stream
-    else:
-        stream_b = stream
+    try:
+        stream_b = stream.buffer
+    except AttributeError:
+        return stream
 
     return codecs.getreader('utf-8')(stream_b)
 
