@@ -30,7 +30,7 @@ relations like 1<2 & 4>5.</p>
 * One <cite data-cite="jdfreder">Jonathan</cite>.
 * Two <cite data-cite="carreau">Matthias</cite>.
 * Three <cite data-cite="ivanov">Paul</cite>.
-""":  """
+""":  r"""
 # My Heading
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ac magna non augue

@@ -115,7 +115,7 @@ class TestLatexExporter(ExportersTestsBase):
         Uses an in memory latex template to load style_ipython as the cell style.
         """
         my_loader_tplx = DictLoader({'my_template': 
-            """
+            r"""
             ((* extends 'style_ipython.tex.j2' *))
 
             ((* block docclass *))

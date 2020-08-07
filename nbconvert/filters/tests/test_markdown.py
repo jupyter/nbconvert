@@ -211,15 +211,15 @@ $C_{ik}$""",
             """$m$
 $$
 C = \begin{pmatrix}
-          0 & 0 & 0 & \cdots & 0 & 0 & -c_0 \\
-          0 & 0 & 0 & \cdots & 0 & 1 & -c_{m-1}
-    \end{pmatrix}
+          0 & 0 & 0 & \\cdots & 0 & 0 & -c_0 \\
+          0 & 0 & 0 & \\cdots & 0 & 1 & -c_{m-1}
+    \\end{pmatrix}
 $$
 $x^m$""",
-            """$r=\overline{1,n}$
+            """$r=\\overline{1,n}$
 $$ {\bf
-b}_{i}^{r}(t)=(1-t)\,{\bf b}_{i}^{r-1}(t)+t\,{\bf b}_{i+1}^{r-1}(t),\:
- i=\overline{0,n-r}, $$
+b}_{i}^{r}(t)=(1-t)\\,{\bf b}_{i}^{r-1}(t)+t\\,{\bf b}_{i+1}^{r-1}(t),\\:
+ i=\\overline{0,n-r}, $$
 i.e. the $i^{th}$"""
         ]
 
