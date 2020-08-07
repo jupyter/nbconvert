@@ -12,6 +12,7 @@ import os
 import copy
 import collections
 import datetime
+import sys
 
 import nbformat
 
@@ -19,7 +20,6 @@ from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
 from traitlets import Bool, HasTraits, Unicode, List, TraitError
 from traitlets.utils.importstring import import_item
-from ipython_genutils import text, py3compat
 
 
 class ResourcesDict(collections.defaultdict):
@@ -160,11 +160,8 @@ class Exporter(LoggingConfigurable):
             Ignored
 
         """
-        # Convert full filename string to unicode
-        # In python 2.7.x if filename comes as unicode string,
-        # just skip converting it.
-        if isinstance(filename, str):
-           filename = py3compat.str_to_unicode(filename)
+        if not isinstance(filename, str):
+            raise TypeError('filename should be a string')
 
         # Pull the metadata from the filesystem.
         if resources is None:
@@ -177,7 +174,12 @@ class Exporter(LoggingConfigurable):
         resources['metadata']['path'] = path
 
         modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
-        resources['metadata']['modified_date'] = modified_date.strftime(text.date_format)
+        # datetime.strftime date format for ipython
+        if sys.platform == 'win32':
+            date_format = "%B %d, %Y"
+        else:
+            date_format = "%B %-d, %Y"
+        resources['metadata']['modified_date'] = modified_date.strftime(date_format)
 
         with io.open(filename, encoding='utf-8') as f:
             return self.from_file(f, resources=resources, **kw)
@@ -223,7 +225,7 @@ class Exporter(LoggingConfigurable):
         constructed = not isclass
 
         # Handle preprocessor's registration based on it's type
-        if constructed and isinstance(preprocessor, py3compat.string_types):
+        if constructed and isinstance(preprocessor, str,):
             # Preprocessor is a string, import the namespace and recursively call
             # this register_preprocessor method
             preprocessor_cls = import_item(preprocessor)
