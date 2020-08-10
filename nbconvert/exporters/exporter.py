@@ -20,6 +20,7 @@ from traitlets.config.configurable import LoggingConfigurable
 from traitlets.config import Config
 from traitlets import Bool, HasTraits, Unicode, List, TraitError
 from traitlets.utils.importstring import import_item
+from typing import Optional
 
 
 class ResourcesDict(collections.defaultdict):
@@ -144,7 +145,7 @@ class Exporter(LoggingConfigurable):
 
         return nb_copy, resources
 
-	def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):
+    def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):
         """
         Convert a notebook from a notebook file.
 
