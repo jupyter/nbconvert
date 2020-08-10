@@ -144,8 +144,7 @@ class Exporter(LoggingConfigurable):
 
         return nb_copy, resources
 
-
-    def from_filename(self, filename, resources=None, **kw):
+	def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):
         """
         Convert a notebook from a notebook file.
 
