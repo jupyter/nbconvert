@@ -13,16 +13,11 @@ import re
 import textwrap
 import warnings
 
-try:
-    from urllib.parse import quote  # Py 3
-except ImportError:
-    from urllib2 import quote  # Py 2
+from urllib.parse import quote
 
 # defusedxml does safe(r) parsing of untrusted XML data
 from defusedxml import ElementTree
 from xml.etree.ElementTree import Element
-
-from ipython_genutils import py3compat
 
 
 __all__ = [
@@ -67,7 +62,7 @@ def html2text(element):
 
     Analog of jQuery's $(element).text()
     """
-    if isinstance(element, py3compat.string_types):
+    if isinstance(element, (str,)):
         try:
             element = ElementTree.fromstring(element)
         except Exception:
@@ -97,7 +92,7 @@ def add_anchor(html, anchor_link_text=u'¶'):
     For use on markdown headings
     """
     try:
-        h = ElementTree.fromstring(py3compat.cast_bytes_py2(html, encoding='utf-8'))
+        h = ElementTree.fromstring(html)
     except Exception:
         # failed to parse, just return it unmodified
         return html
@@ -112,10 +107,7 @@ def add_anchor(html, anchor_link_text=u'¶'):
         a.text = anchor_link_text
     h.append(a)
 
-    # Known issue of Python3.x, ElementTree.tostring() returns a byte string
-    # instead of a text string.  See issue http://bugs.python.org/issue10942
-    # Workaround is to make sure the bytes are casted to a string.
-    return py3compat.decode(ElementTree.tostring(h), 'utf-8')
+    return ElementTree.tostring(h).decode(encoding='utf-8')
 
 
 def add_prompts(code, first='>>> ', cont='... '):
@@ -235,7 +227,6 @@ def path2url(path):
 
 def ascii_only(s):
     """ensure a string is ascii"""
-    s = py3compat.cast_unicode(s)
     return s.encode('ascii', 'replace').decode('ascii')
 
 def prevent_list_blocks(s):
