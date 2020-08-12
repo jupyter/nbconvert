@@ -172,7 +172,7 @@ class PDFExporter(LatexExporter):
         if resources and resources.get('metadata', {}).get('path'):
             self.texinputs = resources['metadata']['path']
         else:
-            self.texinputs = os.getcwdu()
+            self.texinputs = os.getcwd()
 
         self._captured_outputs = []
         with TemporaryWorkingDirectory():
