@@ -160,9 +160,6 @@ class Exporter(LoggingConfigurable):
             Ignored
 
         """
-        if not isinstance(filename, str):
-            raise TypeError('filename should be a string')
-
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
