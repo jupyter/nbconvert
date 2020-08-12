@@ -8,8 +8,6 @@ import re
 from copy import copy
 from functools import partial
 
-from ipython_genutils.py3compat import string_types
-
 from ...tests.utils import onlyif_cmds_exist
 from ...tests.base import TestsBase
 from ..pandoc import convert_pandoc
@@ -244,7 +242,7 @@ i.e. the $i^{th}$"""
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)
-        if isinstance(tokens, string_types):
+        if isinstance(tokens, (str,)):
             self.assertIn(tokens, results)
         else:
             for token in tokens:
