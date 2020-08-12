@@ -7,6 +7,7 @@ import io
 import os
 import glob
 
+from pathlib import Path
 from traitlets import Unicode, observe
 from ipython_genutils.path import link_or_copy, ensure_dir_exists
 from ipython_genutils.py3compat import unicode_type
@@ -118,7 +119,7 @@ class FilesWriter(WriterBase):
                 dest = notebook_name + output_extension
             else:
                 dest = notebook_name
-            dest = os.path.join(build_directory, dest)
+            dest = Path(build_directory) / dest
 
             # Write conversion results.
             self.log.info("Writing %i bytes to %s", len(output), dest)
