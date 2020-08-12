@@ -1,5 +1,5 @@
 import pytest
-from ipython_genutils.py3compat import which
+from shutil import which
 
 def onlyif_cmds_exist(*commands):
     """

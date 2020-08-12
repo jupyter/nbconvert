@@ -16,8 +16,6 @@ from subprocess import Popen, PIPE
 from nbformat import v4, write
 from testpath.tempdir import TemporaryWorkingDirectory
 
-from ipython_genutils.py3compat import string_types, bytes_to_str
-
 
 class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
@@ -148,18 +146,18 @@ class TestsBase(unittest.TestCase):
         """
         cmd = [sys.executable, '-m', 'nbconvert']
         if sys.platform == 'win32':
-            if isinstance(parameters, string_types):
+            if isinstance(parameters, (str,)):
                 cmd = ' '.join(cmd) + ' ' + parameters
             else:
                 cmd = ' '.join(cmd + parameters)
         else:
-            if isinstance(parameters, string_types):
+            if isinstance(parameters, (str,)):
                 parameters = shlex.split(parameters)
             cmd += parameters
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
         stdout, stderr = p.communicate(input=stdin)
         if not (p.returncode == 0 or ignore_return_code):
-            raise OSError(bytes_to_str(stderr))
+            raise OSError(stderr.decode('utf8', 'replace'))
         return stdout.decode('utf8', 'replace'), stderr.decode('utf8', 'replace')
 
 

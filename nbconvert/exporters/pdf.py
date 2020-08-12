@@ -7,9 +7,10 @@ import subprocess
 import os
 import sys
 
-from ipython_genutils.py3compat import which, cast_bytes_py2, getcwd
+import shutil
 from traitlets import Integer, List, Bool, Instance, Unicode, default
 from testpath.tempdir import TemporaryWorkingDirectory
+from typing import Optional
 from .latex import LatexExporter
 
 class LatexFailed(IOError):
@@ -25,7 +26,7 @@ class LatexFailed(IOError):
     
     def __str__(self):
         u = self.__unicode__()
-        return cast_bytes_py2(u)
+        return u
 
 def prepend_to_env_search_path(varname, value, envdict):
     """Add value to the environment variable varname in envdict
@@ -102,16 +103,8 @@ class PDFExporter(LatexExporter):
         """
         command = [c.format(filename=filename) for c in command_list]
 
-        # On windows with python 2.x there is a bug in subprocess.Popen and
-        # unicode commands are not supported
-        if sys.platform == 'win32' and sys.version_info < (3,0):
-            #We must use cp1252 encoding for calling subprocess.Popen
-            #Note that sys.stdin.encoding and encoding.DEFAULT_ENCODING
-            # could be different (cp437 in case of dos console)
-            command = [c.encode('cp1252') for c in command]
-
         # This will throw a clearer error if the command is not found
-        cmd = which(command_list[0])
+        cmd = shutil.which(command_list[0])
         if cmd is None:
             link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
             raise OSError("{formatter} not found on PATH, if you have not installed "
@@ -179,7 +172,7 @@ class PDFExporter(LatexExporter):
         if resources and resources.get('metadata', {}).get('path'):
             self.texinputs = resources['metadata']['path']
         else:
-            self.texinputs = getcwd()
+            self.texinputs = os.getcwdu()
 
         self._captured_outputs = []
         with TemporaryWorkingDirectory():

@@ -9,7 +9,6 @@ import glob
 
 from traitlets import Unicode, observe
 from ipython_genutils.path import link_or_copy, ensure_dir_exists
-from ipython_genutils.py3compat import unicode_type
 
 from .base import WriterBase
 
@@ -122,7 +121,7 @@ class FilesWriter(WriterBase):
 
             # Write conversion results.
             self.log.info("Writing %i bytes to %s", len(output), dest)
-            if isinstance(output, unicode_type):
+            if isinstance(output, str):
                 with io.open(dest, 'w', encoding='utf-8') as f:
                     f.write(output)
             else:
