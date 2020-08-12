@@ -17,7 +17,6 @@ from jupyter_core.paths import jupyter_path
 from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
-from ipython_genutils import py3compat
 from jupyter_core.paths import jupyter_path
 from jupyter_core.utils import ensure_dir_exists
 from jinja2 import (
@@ -397,7 +396,7 @@ class TemplateExporter(Exporter):
         constructed = not isclass
 
         #Handle filter's registration based on it's type
-        if constructed and isinstance(jinja_filter, py3compat.string_types):
+        if constructed and isinstance(jinja_filter, (str,)):
             #filter is a string, import the namespace and recursively call
             #this register_filter method
             filter_cls = import_item(jinja_filter)

@@ -7,8 +7,7 @@
 import re
 from copy import copy
 from functools import partial
-
-from ipython_genutils.py3compat import string_types
+from html import unescape
 
 from ...tests.utils import onlyif_cmds_exist
 from ...tests.base import TestsBase
@@ -69,12 +68,9 @@ class TestMarkdown(TestsBase):
         s = r'$\alpha$ latex math'
         # sometimes pandoc uses $math$, sometimes it uses \(math\)
         expected = re.compile(r'(\$|\\\()\\alpha(\$|\\\)) latex math')
-        try:
-            # py3
-            assertRegex = self.assertRegex
-        except AttributeError:
-            # py2
-            assertRegex = self.assertRegexpMatches
+
+        assertRegex = self.assertRegex
+
         assertRegex(
             convert_pandoc(s, 'markdown_strict+tex_math_dollars', 'latex'),
             expected)
@@ -169,12 +165,9 @@ class TestMarkdown(TestsBase):
             # "&" not followed by "lt;", "gt;", or "amp;".
             self.assertNotIn("<", math)
             self.assertNotIn(">", math)
-            # python 2.7 has assertNotRegexpMatches instead of assertNotRegex
-            if not hasattr(self, 'assertNotRegex'):
-                self.assertNotRegex = self.assertNotRegexpMatches
             self.assertNotRegex(math, "&(?![gt;|lt;|amp;])")
             # the result should be able to be unescaped correctly
-            self.assertEqual(case, self._unescape(math))
+            self.assertEqual(case, unescape(math))
 
     def test_markdown2html_math_mixed(self):
         """ensure markdown between inline and inline-block math works and
@@ -225,7 +218,7 @@ i.e. the $i^{th}$"""
 
         for case in cases:
             s = markdown2html(case)
-            self.assertIn(case, self._unescape(s))
+            self.assertIn(case, unescape(s))
 
     @onlyif_cmds_exist('pandoc')
     def test_markdown2rst(self):
@@ -244,19 +237,8 @@ i.e. the $i^{th}$"""
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)
-        if isinstance(tokens, string_types):
+        if isinstance(tokens, (str,)):
             self.assertIn(tokens, results)
         else:
             for token in tokens:
                 self.assertIn(token, results)
-
-    def _unescape(self, s):
-        # undo cgi.escape() manually
-        # We must be careful here for compatibility
-        # html.unescape() is not availale on python 2.7
-        # For more information, see:
-        # https://wiki.python.org/moin/EscapingHtml
-        s = s.replace("&lt;", "<")
-        s = s.replace("&gt;", ">")
-        s = s.replace("&amp;", "&")
-        return s

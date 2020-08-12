@@ -10,7 +10,7 @@ import re
 from io import TextIOWrapper, BytesIO
 
 from nbconvert.utils.version import check_version
-from ipython_genutils.py3compat import cast_bytes, which
+import shutil
 
 from .exceptions import ConversionException
 
@@ -53,7 +53,7 @@ def pandoc(source, fmt, to, extra_args=None, encoding='utf-8'):
     
     # we can safely continue
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    out, _ = p.communicate(cast_bytes(source, encoding))
+    out, _ = p.communicate(source.encode())
     out = TextIOWrapper(BytesIO(out), encoding, 'replace').read()
     return out.rstrip('\n')
 
@@ -73,7 +73,7 @@ def get_pandoc_version():
     global __version
 
     if __version is None:
-        if not which('pandoc'):
+        if not shutil.which('pandoc'):
             raise PandocMissing()
 
         out = subprocess.check_output(['pandoc', '-v'])
