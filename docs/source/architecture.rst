@@ -168,4 +168,4 @@ which is used for serving `reveal.js`_ HTML slideshows.
 .. _jinja: http://jinja.pocoo.org/
 .. _filter: http://jinja.pocoo.org/docs/dev/templates/#filters
 .. _reveal.js: http://lab.hakim.se/reveal-js
-.. _pandoc: http://pandoc.org/
+.. _pandoc: https://pandoc.org/

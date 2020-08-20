@@ -110,7 +110,7 @@ def check_pandoc_version():
         warnings.warn( "You are using an unsupported version of pandoc (%s).\n" % v +
                        "Your version must be at least (%s) " % _minimal_version +
                        "but less than (%s).\n" % _maximal_version +
-                       "Refer to http://pandoc.org/installing.html.\nContinuing with doubts...",
+                       "Refer to https://pandoc.org/installing.html.\nContinuing with doubts...",
                        RuntimeWarning, stacklevel=2)
     return ok
 
@@ -125,7 +125,7 @@ class PandocMissing(ConversionException):
     def __init__(self, *args, **kwargs):
         super().__init__( "Pandoc wasn't found.\n" +
                                              "Please check that pandoc is installed:\n" +
-                                             "http://pandoc.org/installing.html" )
+                                             "https://pandoc.org/installing.html" )
 
 #-----------------------------------------------------------------------------
 # Internal state management
