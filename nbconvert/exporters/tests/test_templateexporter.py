@@ -132,7 +132,36 @@ class TestExporter(ExportersTestsBase):
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert os.path.dirname(template_abs) in [os.path.abspath(d) for d in exporter.template_paths]
 
-    def test_absolute_template_file_tpl_compatibility(self):
+    def test_absolute_template_file_compatibility(self):
+        with tempdir.TemporaryDirectory() as td:
+            template = os.path.join(td, 'abstemplate.tpl')
+            test_output = 'absolute!'
+            with open(template, 'w') as f:
+                f.write(test_output)
+            config = Config()
+            config.TemplateExporter.template_file = template
+            with pytest.warns(DeprecationWarning):
+                exporter = self._make_exporter(config=config)
+            assert exporter.template.filename == template
+            assert os.path.dirname(template) in exporter.template_paths
+
+    def test_relative_template_file_compatibility(self):
+        with tempdir.TemporaryWorkingDirectory() as td:
+            with patch('os.getcwd', return_value=os.path.abspath(td)):
+                template = os.path.join('relative', 'relative_template.tpl')
+                template_abs = os.path.abspath(os.path.join(td, template))
+                os.mkdir(os.path.dirname(template_abs))
+                test_output = 'relative!'
+                with open(template_abs, 'w') as f:
+                    f.write(test_output)
+                config = Config()
+                config.TemplateExporter.template_file = template
+                with pytest.warns(DeprecationWarning):
+                    exporter = self._make_exporter(config=config)
+                assert os.path.abspath(exporter.template.filename) == template_abs
+                assert os.path.dirname(template_abs) in [os.path.abspath(d) for d in exporter.template_paths]
+
+    def test_absolute_template_name_tpl_compatibility(self):
         with tempdir.TemporaryDirectory() as td:
             template = os.path.join(td, 'abstemplate.tpl')
             test_output = 'absolute!'
@@ -146,7 +175,7 @@ class TestExporter(ExportersTestsBase):
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
 
-    def test_relative_template_file_tpl_compatibility(self):
+    def test_relative_template_name_tpl_compatibility(self):
         with tempdir.TemporaryWorkingDirectory() as td:
             with patch('os.getcwd', return_value=os.path.abspath(td)):
                 template = os.path.join('relative', 'relative_template.tpl')

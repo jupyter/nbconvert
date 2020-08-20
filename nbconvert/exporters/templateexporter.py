@@ -187,7 +187,7 @@ class TemplateExporter(Exporter):
         template_name = change['value']
         if template_name and template_name.endswith('.tpl'):
             warnings.warn(
-                f"5.x style template name passed '{self.template_name}'. Use --template-file or new template directory structures in the future.",
+                f"5.x style template name passed '{self.template_name}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                 DeprecationWarning)
             directory, self.template_file = os.path.split(self.template_name)
             if directory:
@@ -208,6 +208,11 @@ class TemplateExporter(Exporter):
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
             directory, self.template_file = os.path.split(self.template_file)
+            # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
+            if self.template_file.endswith('.tpl'):
+                warnings.warn(
+                    f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
+                    DeprecationWarning)
             if directory:
                 directory, self.template_name = os.path.split(directory)
             if directory:
