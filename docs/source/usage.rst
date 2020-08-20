@@ -280,7 +280,7 @@ Be careful with that, since it will replace the input file.
   nbconvert uses pandoc_ to convert between various markup languages,
   so pandoc is a dependency when converting to latex or reStructuredText.
 
-.. _pandoc: http://pandoc.org/
+.. _pandoc: https://pandoc.org/
 
 The output file created by ``nbconvert`` will have the same base name as
 the notebook and will be placed in the current working directory. Any

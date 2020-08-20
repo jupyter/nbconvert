@@ -30,14 +30,14 @@ Installing Pandoc
 -----------------
 
 For converting markdown to formats other than HTML, nbconvert uses
-`Pandoc <http://pandoc.org>`_ (1.12.1 or later).
+`Pandoc <https://pandoc.org>`_ (1.12.1 or later).
 
 To install pandoc on Linux, you can generally use your package manager::
 
     sudo apt-get install pandoc
 
 On other platforms, you can get pandoc from
-`their website <http://pandoc.org/installing.html>`_.
+`their website <https://pandoc.org/installing.html>`_.
 
 Installing TeX
 --------------
@@ -64,7 +64,7 @@ packages are specific to different operating systems:
         sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-generic-recommended
 
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
-* Windows: `MikTex <http://www.miktex.org/>`_
+* Windows: `MikTex <https://miktex.org/>`_
 
 Because nbconvert depends on packages and fonts included in standard
 TeX distributions, if you do not have a complete installation, you

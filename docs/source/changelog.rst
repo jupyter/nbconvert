@@ -469,7 +469,7 @@ the use of tags for that purpose.
 
 Tags are user-defined strings attached to cells or outputs. They are stored in
 cell or output metadata. For more on tags see the `nbformat docs on cell
-metadata <http://nbformat.readthedocs.io/en/latest/format_description.html#cell-metadata>`__.
+metadata <https://nbformat.readthedocs.io/en/latest/format_description.html#cell-metadata>`__.
 
 **Usage**:
 
