@@ -89,7 +89,7 @@ a preprocessor is the place to start.
 
 .. seealso::
 
-    `Custom Preprocessors <nbconvert_library.html#Custom-Preprocessors>`_
+    `Custom Preprocessors <nbconvert_library.ipynb#Custom-Preprocessors>`_
 
 Once a notebook is preprocessed, it's time to convert the notebook into the destination format.
 
