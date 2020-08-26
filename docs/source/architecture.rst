@@ -24,7 +24,7 @@ Format agnostic operations on cell content that do not violate the nbformat spec
 But often we want to have the notebook's structured content in a different format.
 Importantly, in many cases the structure of the notebook should be reflected in the structure of the output, adapted to the output's format.
 For that purpose, the original JSON structure of the document is crucial scaffolding needed to support this kind of structured output.
-In order to maintain structured, it can be useful to apply our conversion programmatically on the structure itself.
+In order to maintain structure, it can be useful to apply our conversion programmatically on the structure itself.
 To do so, when converting to formats other than the notebook, we use the `jinja`_ templating engine.
 
 The basic unit of structure in a notebook is the cell.
@@ -96,16 +96,42 @@ Once a notebook is preprocessed, it's time to convert the notebook into the dest
 
 .. _templates_and_filters:
 
-Templates and Filters
----------------------
+Templates
+---------
 
-Most Exporters in nbconvert are a subclass of `TemplateExporter`,
-which means they use a `jinja`_ template to render a notebook into the destination format.
-If you want to change how an exported notebook looks in an existing format,
-a custom template is the place to start.
+Most Exporters in nbconvert are a subclass of `TemplateExporter`, which make use of
+`jinja`_ to render a notebook into the destination format.
 
-A jinja template is composed of blocks that look like this
-(taken from nbconvert's default html template):
+Nbconvert templates can be selected from the command line with the ``--template``
+option. For example, to use the ``reveal`` template with the HTML exporter
+
+.. sourcecode:: bash
+
+   jupyter nbconvert <path-to-notebook> --to html --template reveal
+
+.. note::
+
+   Since version 6.0, The HTML exporter defaults to the ``lab`` template which produces
+   a DOM structure corresponding to the notebook component in JupyterLab.
+
+   To produce HTML corresponding to the looks of the classic notebook, one can use the
+   ``classic`` template by passing ``--template classic`` to the command line.
+
+The nbconvet template system has been completely revamped with nbconvert 6.0 to allow
+for greater extensibility. Nbconvert templates can now be installed as third-party packages
+and are automatically picked up by nbconvert.
+
+For more details about how to create custom templates, check out the :doc:`customizing` section
+of the documentation.
+
+Filters
+-------
+
+Filters are Python callables which take something (typically text) as an input, and produce a text output.
+If you want to perform custom transformations of particular outputs, a filter may be the way to go.
+
+The following code snippet is an excert from the main default template of the HTML export. The displayed
+block determines how text output on ``stdout`` is displayed in HTML.
 
 .. sourcecode:: html
 
@@ -117,16 +143,10 @@ A jinja template is composed of blocks that look like this
     </div>
     {%- endblock stream_stdout %}
 
-This block determines how text output on ``stdout`` is displayed in HTML.
-The ``{{- output.text | ansi2html -}}`` bit means
-"Take the output text and pass it through ansi2html, then include the result here."
-In this example, ``ansi2html`` is a `filter`_.
-Filters are a jinja concept; they are Python callables which take something (typically text) as an input, and produce a text output.
-If you want to perform new or more complex transformations of particular outputs,
-a filter may be what you need.
-Typically, filters are pure functions.
-However, if you have a filter that itself requires some configuration,
-it can be an instance of a callable, configurable class.
+In the ``{{- output.text | ansi2html -}}`` bit, we invoke the ``ansi2html`` filter to transform the text output.
+
+Typically, filters are pure functions. However, filters that require  some configuration, may be implemented as
+Configurable classes.
 
 .. seealso::
 
@@ -135,6 +155,7 @@ it can be an instance of a callable, configurable class.
 
 Once it has passed through the template, an Exporter is done with the notebook,
 and returns the file data.
+
 At this point, we have the file data as text or bytes and we can decide where it should end up.
 When you are using nbconvert as a library, as opposed to the command-line application,
 this is typically where you would stop, take your exported data, and go on your way.
@@ -161,7 +182,6 @@ Postprocessors
 A *Postprocessor* is something that runs after everything is exported and written to the filesystem.
 The only postprocessor in nbconvert at this point is the `ServePostProcessor`,
 which is used for serving `reveal.js`_ HTML slideshows.
-
 
 .. links:
 
