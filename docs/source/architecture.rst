@@ -117,7 +117,7 @@ option. For example, to use the ``reveal`` template with the HTML exporter
    To produce HTML corresponding to the looks of the classic notebook, one can use the
    ``classic`` template by passing ``--template classic`` to the command line.
 
-The nbconvet template system has been completely revamped with nbconvert 6.0 to allow
+The nbconvert template system has been completely revamped with nbconvert 6.0 to allow
 for greater extensibility. Nbconvert templates can now be installed as third-party packages
 and are automatically picked up by nbconvert.
 
