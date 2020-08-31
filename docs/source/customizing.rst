@@ -20,10 +20,10 @@ Where are nbconvert templates installed?
 
 Nbconvert templates are *directories* containing resources for nbconvert template
 exporters such as jinja templates and associated assets. They are installed in the
-**data directory** of nbconvert, namely ``<installation prefix>/jupyter/nbconvert``.
+**data directory** of nbconvert, namely ``<installation prefix>/share/jupyter/nbconvert``.
 Nbconvert includes several templates already.
 
-For example, three templates are provided in nbconvert core for the HTML exporter:
+For example, three HTML templates are provided in nbconvert core for the HTML exporter:
 
  - ``lab`` (The default HTML template, which produces the same DOM structure as JupyterLab)
  - ``classic`` (The HTML template styled after the classic notebook)
@@ -83,8 +83,8 @@ template, exports text/html, and enables a preprocessor called "500-reveal".
       }
     }
 
-Inheitance
-~~~~~~~~~~~~
+Inheritance
+~~~~~~~~~~~
 
 Nbconvert walks up the inheritance structure determined by ``conf.json`` and produces an agregated
 configuration, merging the dictionaries of registered preprocessors.
@@ -126,4 +126,3 @@ from the Jupyter data directory.
 For example, in the reveal template, ``index.html.j2`` extends ``base.html.j2`` which is in the same directory, and
 ``base.html.j2`` extends ``lab/base.html.j2``. This approach allows using content that is available in other templates
 or may be overriden in the current template.
-
