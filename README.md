@@ -8,7 +8,6 @@
 [![codecov.io](https://codecov.io/github/jupyter/nbconvert/coverage.svg?branch=master)](https://codecov.io/github/jupyter/nbconvert?branch=master)
 [![CircleCI Docs Status](https://circleci.com/gh/jupyter/nbconvert/tree/master.svg?style=svg)](https://circleci.com/gh/jupyter/nbconvert/tree/master)
 
-
 The **nbconvert** tool, `jupyter nbconvert`, converts notebooks to various other
 formats via [Jinja][] templates. The nbconvert tool allows you to convert an
 `.ipynb` notebook file into various static formats including:
@@ -20,7 +19,6 @@ formats via [Jinja][] templates. The nbconvert tool allows you to convert an
 * Markdown (md)
 * ReStructured Text (rst)
 * executable script
-
 
 ## Usage
 
@@ -40,7 +38,12 @@ Convert Jupyter notebook file, `mynotebook.ipynb`, to HTML using:
 
 This command creates an HTML output file named `mynotebook.html`.
 
+## Python requirement
+
+Nbconvert 6.0 provides limited support for Python 3.6, and support will be dropped with nbconvert 6.1. Limited support means we will test and run CI on Python 3.6.12 or higher. Issues that are found only affecting Python 3.6 are not guaranteed to be fixed. We recommend all users of nbconvert use Python 3.7 and higher.
+
 ## Dev Install
+
 Check if pandoc is installed (``pandoc --version``); if needed, install:
 
 ```
@@ -68,7 +71,6 @@ pip install nbconvert[test]
 py.test --pyargs nbconvert
 ```
 
-
 ## Resources
 
 - [Documentation for Jupyter nbconvert](https://nbconvert.readthedocs.io/en/latest/)
@@ -79,6 +81,5 @@ py.test --pyargs nbconvert
 - [Project Jupyter website](https://jupyter.org)
 - [Documentation for Project Jupyter](https://jupyter.readthedocs.io/en/latest/index.html)
   [[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)]
-
 
 [Jinja]: http://jinja.pocoo.org/
