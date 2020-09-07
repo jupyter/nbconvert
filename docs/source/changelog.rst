@@ -24,17 +24,17 @@ Significant changes
 
 Nbconvert 6.0 is a major release of nbconvert which includes many significant changes.
 
-- Unlike previous versions, nbconvert 6.0 relies on the [nbclient](https://github.com/jupyter/nbclient) package for the execute preprocessor, which allows for asynchronous kernel requests.
+- Unlike previous versions, nbconvert 6.0 relies on the `nbclient <https://github.com/jupyter/nbclient/>`__ package for the execute preprocessor, which allows for asynchronous kernel requests.
 
 - Nbconvert 6.0 includes a new "webpdf" exporter, which renders notebooks in pdf format through a headless web browser, so that complex outputs such as HTML tables, or even widgets are rendered in the same way as with the HTML exporter and a web browser.
 
-- The default template applied when exporting to HTML now produces the same DOM structure as JupyterLab, and is styled using JupyterLab's CSS. The pygments in use theme mimics JupyterLab's codemirror mode with the same CSS variables, so that custom jupyterlab themes could be applied. The classic notebook styling can still be enabled with
+- The default template applied when exporting to HTML now produces the same DOM structure as JupyterLab, and is styled using JupyterLab's CSS. The pygments theme in use mimics JupyterLab's codemirror mode with the same CSS variables, so that custom JupyterLab themes could be applied. The classic notebook styling can still be enabled with
 
 .. code-block:: bash
 
    jupyter nbconvert --to html --template classic
 
-- Nbconvert 6.0 includes a new system for creating custom templates, which can now be installed as packages. A custom "foobar" template is installed in Jupyter's data directory under ``nbconvert/templates`` and has the form of a directory containing all resources. Templates specify their base template as well as other configurations parameters in a ``conf.json`` the root of the template directory.
+- Nbconvert 6.0 includes a new system for creating custom templates, which can now be installed as packages. A custom "foobar" template is installed in Jupyter's data directory under ``nbconvert/templates`` and has the form of a directory containing all resources. Templates specify their base template as well as other configuration parameters in a ``conf.json`` at the root of the template directory.
 
 - The "slideshow" template now makes use of RevealJS version 4. It can now be used with the HTML exporter with
 
@@ -42,7 +42,7 @@ Nbconvert 6.0 is a major release of nbconvert which includes many significant ch
 
    jupyter nbconvert --to html --template reveal
 
-  The ``--to slides`` exporter is still supported for convenience.
+The ``--to slides`` exporter is still supported for convenience.
 
 5.6.1
 -----
