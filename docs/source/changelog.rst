@@ -9,20 +9,54 @@ Changes in nbconvert
 
 The following authors and reviewers contributed the changes for this release -- Thanks you all!
 
-- Philip Austin
-- Maarten Breddels
-- David Brochart
-- Matthias Bussonnier
-- Sylvain Corlay
-- Matthias Geier
-- Tyler Makaro
-- Matthew Seal
-- Jeremy Tuloup
+* Ayaz Salikhov
+* bnables
+* Bo
+* David Brochart
+* David Cortés
+* Eric Wieser
+* Florian Rathgeber
+* Ian Allison
+* James Wilshaw
+* Jeremy Tuloup
+* Joel Ostblom
+* Jon Bannister
+* Jonas Drotleff
+* Josh Devlin
+* Karthikeyan Singaravelan
+* Kerwin.Sun
+* letmerecall
+* Luciano Resende
+* Lumír 'Frenzy' Balhar
+* Maarten A. Breddels
+* Maarten Breddels
+* Marcel Stimberg
+* Matthew Brett
+* Matthew Seal
+* Matthias Bussonnier
+* Matthias Geier
+* Miro Hrončok
+* Phil Austin
+* Praveen Batra
+* Ruben Di Battista
+* Ruby Werman
+* Sang-Yun Oh
+* Sergey Kizunov
+* Sundar
+* Sylvain Corlay
+* telamonian
+* Thomas Kluyver
+* Thomas Ytterdal
+* Tyler Makaro
+* Yu-Cheng (Henry) Huang
+
 
 Significant changes
 ~~~~~~~~~~~~~~~~~~~~
 
 Nbconvert 6.0 is a major release of nbconvert which includes many significant changes.
+
+- Python 2 support was dropped. Currently Python 3.6-3.8 is supported and tested by nbconvert. However, nbconvert 6.0 provides limited support for Python 3.6. nbconvert 6.1 will drop support for Python 3.6. Limited support means we will test and run CI on Python 3.6.12 or higher. Issues that are found only affecting Python 3.6 are not guaranteed to be fixed. We recommend all users of nbconvert use Python 3.7 and higher.
 
 - Unlike previous versions, nbconvert 6.0 relies on the `nbclient <https://github.com/jupyter/nbclient/>`__ package for the execute preprocessor, which allows for asynchronous kernel requests.
 
@@ -43,6 +77,15 @@ Nbconvert 6.0 is a major release of nbconvert which includes many significant ch
    jupyter nbconvert --to html --template reveal
 
 The ``--to slides`` exporter is still supported for convenience.
+
+- Inkscape 1.0 is now supported, which had some breaking changes that prevented 5.x versions of nbconvert from converting documents on some systems that updated.
+
+Remaining changes
+~~~~~~~~~~~~~~~~~
+
+We merged 105 pull requests! Rather than enumerate all of them we'll link to the github page which contains the many smaller impact improvements.
+
+The full list can be seen `on GitHub <https://github.com/jupyter/nbconvert/issues?q=milestone%3A6.0+>`__
 
 5.6.1
 -----
