@@ -9,7 +9,6 @@ Changes in nbconvert
 
 The following authors and reviewers contributed the changes for this release -- Thanks you all!
 
-* admin
 * Ayaz Salikhov
 * bnables
 * Bo
@@ -21,8 +20,6 @@ The following authors and reviewers contributed the changes for this release -- 
 * James Wilshaw
 * Jeremy Tuloup
 * Joel Ostblom
-* joelostblom
-* jon
 * Jon Bannister
 * Jonas Drotleff
 * Josh Devlin
