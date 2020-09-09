@@ -80,11 +80,6 @@ The ``--to slides`` exporter is still supported for convenience.
 
 - Inkscape 1.0 is now supported, which had some breaking changes that prevented 5.x versions of nbconvert from converting documents on some systems that updated.
 
-- Support for ``--to webpdf`` for PDF rendering via a browser client was added as an alternative export to pdf from the standard LaTeX -> PDF conversion path.
-
-For converting notebooks to PDF with ``--to webpdf``, nbconvert requires the `Pyppeteer <https://github.com/pyppeteer/pyppeteer>`_ Chromium automation library. Pyppeteer makes use of a specific version of Chromium. If it does not find a suitable installation of the web browser, it can automatically download it if the ``--allow-chromium-download`` flag is passed to the command line. To install a suitable version of pyppeteer, you can pip install ``nbconvert[webpdf]``.
-
-
 Remaining changes
 ~~~~~~~~~~~~~~~~~
 
