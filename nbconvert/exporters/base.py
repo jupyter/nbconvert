@@ -141,6 +141,6 @@ def get_export_names(config=get_config()):
             e = get_exporter(exporter_name)(config=config)
             if e.enabled:
                 enabled_exporters.append(exporter_name)
-        except ExporterDisabledError:
+        except (ExporterDisabledError, ValueError):
             pass
     return enabled_exporters
