@@ -188,12 +188,14 @@ We are going to write an exporter that:
             return '.test_ext'
 
         @property
-        def template_path(self):
+        def template_paths(self):
             """
             We want to inherit from HTML template, and have template under
             ``./templates/`` so append it to the search path. (see next section)
+
+            Note: nbconvert 6.1 changed ``template_path`` to ``template_paths``
             """
-            return super().template_path+[os.path.join(os.path.dirname(__file__), "templates")]
+            return super().template_paths+[os.path.join(os.path.dirname(__file__), "templates")]
 
         def _template_file_default(self):
             """
