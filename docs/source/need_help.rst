@@ -18,7 +18,6 @@ Documentation
   `PDF <https://media.readthedocs.org/pdf/nbconvert/latest/nbconvert.pdf>`_
 - `nbconvert examples repo on GitHub <https://github.com/jupyter/nbconvert-examples>`_
 - `Documentation for Project Jupyter <https://jupyter.readthedocs.io/en/latest/index.html>`_
-  `PDF <https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf>`_
 
 Jupyter Resources
 -----------------
