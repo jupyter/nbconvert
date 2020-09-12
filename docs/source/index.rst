@@ -65,13 +65,10 @@ batch of notebook files to another format.
    changelog
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Questions? Suggestions?
 
-   Jupyter mailing list <https://groups.google.com/forum/#!forum/jupyter>
-   Jupyter website <https://jupyter.org>
-   Stack Overflow - Jupyter <https://stackoverflow.com/questions/tagged/jupyter>
-   Stack Overflow - Jupyter-notebook <https://stackoverflow.com/questions/tagged/jupyter-notebook>
+   need_help
 
 Indices and tables
 ==================
