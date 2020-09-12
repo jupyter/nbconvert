@@ -85,7 +85,7 @@ def test_preprocess_cell():
     class CellReplacer(ExecutePreprocessor):
         def preprocess_cell(self, cell, resources, index, **kwargs):
             cell.source = "print('Ignored')"
-            super().preprocess_cell(cell, resources, index, **kwargs)
+            return super().preprocess_cell(cell, resources, index, **kwargs)
 
     preprocessor = CellReplacer()
     fname = os.path.join(os.path.dirname(__file__), 'files', 'HelloWorld.ipynb')
