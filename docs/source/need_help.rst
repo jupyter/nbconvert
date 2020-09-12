@@ -4,7 +4,7 @@ Need help?
 Technical Support
 -----------------
 
-- `GitHub Issues and Bug Reports<https://github.com/jupyter/nbconvert/issues>`_: A 
+- `GitHub Issues and Bug Reports <https://github.com/jupyter/nbconvert/issues>`_: A 
   place to report bugs or regressions found for nbconvert
 - `Community Technical Support and Discussion - Jupyter Discourse <https://discourse.jupyter.org/>`_: 
   A place for installation, configuration, and troubleshooting assistance by the Jupyter community.
