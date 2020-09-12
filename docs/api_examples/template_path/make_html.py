@@ -9,7 +9,7 @@ nbfile = "quiz_notebook.ipynb"
 the_ipynb = nbformat.read(nbfile, as_version=4)
 
 c = Config()
-c.TemplateExporter.template_path = ['.', './project_templates']
+c.TemplateExporter.template_paths = ['.', './project_templates']
 for template in ['classic', 'classic_clone']:
     c.HTMLExporter.template_name = template
     html_exporter = HTMLExporter(config=c)
