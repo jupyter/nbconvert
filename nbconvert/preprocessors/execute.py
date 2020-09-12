@@ -66,7 +66,8 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         # This may look wrong, but preprocess acts like an init on execution state and
         # we need to capture it here again to properly reset (traitlet assignments are
         # not passed). The risk is if traitlets apply any side effects for dual init,
-        # but it should be ok. The alternative is to copy the client's init internals
+        # The risk should be manageable, and this approach minimizes side-effects
+        # relative to other alternatives. One alternative but rejected implementation would be to copy the client's init internals
         # which has already gotten out of sync with nbclient 0.5 release.
         NotebookClient.__init__(self, nb, km)
         self._check_assign_resources(resources)
