@@ -71,15 +71,26 @@ pip install nbconvert[test]
 py.test --pyargs nbconvert
 ```
 
-## Resources
+## Documentation
 
 - [Documentation for Jupyter nbconvert](https://nbconvert.readthedocs.io/en/latest/)
   [[PDF](https://media.readthedocs.org/pdf/nbconvert/latest/nbconvert.pdf)]
 - [nbconvert examples on GitHub](https://github.com/jupyter/nbconvert-examples)
-- [Issues](https://github.com/jupyter/nbconvert/issues)
-- [Technical support - Jupyter Google Group](https://groups.google.com/forum/#!forum/jupyter)
-- [Project Jupyter website](https://jupyter.org)
 - [Documentation for Project Jupyter](https://jupyter.readthedocs.io/en/latest/index.html)
   [[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)]
+
+## Technical Support
+
+- [Issues and Bug Reports](https://github.com/jupyter/nbconvert/issues): A place to report
+  bugs or regressions found for nbconvert
+- [Community Technical Support and Discussion - Discourse](https://discourse.jupyter.org/): A place for
+  installation, configuration, and troubleshooting assistannce by the Jupyter community.
+  As a non-profit project and maintainers who are primarily volunteers, we encourage you
+  to ask questions and share your knowledge on Discourse.
+
+## Jupyter Resources
+
+- [Jupyter mailing list](https://groups.google.com/forum/#!forum/jupyter)
+- [Project Jupyter website](https://jupyter.org)
 
 [Jinja]: http://jinja.pocoo.org/
