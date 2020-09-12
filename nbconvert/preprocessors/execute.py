@@ -64,7 +64,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             Additional resources used in the conversion process.
         """
         # Although this solution may look wrong, it considers that preprocess acts like an init on execution state.
-        # we need to capture it here again to properly reset (traitlet assignments are
+        # Therefore, we need to capture it here again to properly reset because traitlet assignments are
         # not passed). The risk is if traitlets apply any side effects for dual init,
         # The risk should be manageable, and this approach minimizes side-effects
         # relative to other alternatives. One alternative but rejected implementation would be to copy the client's init internals
