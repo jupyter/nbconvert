@@ -65,7 +65,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         """
         # Although this solution may look wrong, it considers that preprocess acts like an init on execution state.
         # Therefore, we need to capture it here again to properly reset because traitlet assignments are
-        not passed. There is a risk if traitlets apply any side effects for dual init.
+        # not passed. There is a risk if traitlets apply any side effects for dual init.
         # The risk should be manageable, and this approach minimizes side-effects
         # relative to other alternatives. One alternative but rejected implementation would be to copy the client's init internals
         # which has already gotten out of sync with nbclient 0.5 release.
