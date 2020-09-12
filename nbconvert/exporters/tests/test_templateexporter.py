@@ -175,12 +175,14 @@ class TestExporter(ExportersTestsBase):
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
 
-    def test_relative_template_name_tpl_compatibility(self):
+    # Can't use @pytest.mark.parametrize without removing all self.assert calls in all tests... repeating some here
+    def relative_template_test(self, template):
         with tempdir.TemporaryWorkingDirectory() as td:
             with patch('os.getcwd', return_value=os.path.abspath(td)):
-                template = os.path.join('relative', 'relative_template.tpl')
                 template_abs = os.path.abspath(os.path.join(td, template))
-                os.mkdir(os.path.dirname(template_abs))
+                dirname = os.path.dirname(template_abs)
+                if not os.path.exists(dirname):
+                    os.mkdir(dirname)
                 test_output = 'relative!'
                 with open(template_abs, 'w') as f:
                     f.write(test_output)
@@ -191,6 +193,18 @@ class TestExporter(ExportersTestsBase):
                     exporter = self._make_exporter(config=config)
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert os.path.dirname(template_abs) in [os.path.abspath(d) for d in exporter.template_paths]
+
+    def test_relative_template_name_tpl_compatibility_local(self):
+        self.relative_template_test('relative_template.tpl')
+
+    def test_relative_template_name_tpl_compatibility_nested(self):
+        self.relative_template_test(os.path.join('relative', 'relative_template.tpl'))
+
+    def test_relative_template_name_tpl_compatibility_dot(self):
+        self.relative_template_test(os.path.join('.', 'relative_template.tpl'))
+
+    def test_relative_template_name_tpl_compatibility_dot_nested(self):
+        self.relative_template_test(os.path.join('.', 'relative', 'relative_template.tpl'))
 
     def test_absolute_template_dir(self):
         with tempdir.TemporaryDirectory() as td:
