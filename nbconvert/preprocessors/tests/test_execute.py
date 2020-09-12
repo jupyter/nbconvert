@@ -11,6 +11,8 @@ import re
 import pytest
 import nbformat
 
+from copy import deepcopy
+
 from ..execute import ExecutePreprocessor, executenb
 
 
@@ -58,19 +60,41 @@ def test_basic_execution():
     fname = os.path.join(os.path.dirname(__file__), 'files', 'HelloWorld.ipynb')
     with open(fname) as f:
         input_nb = nbformat.read(f, 4)
-        output_nb, _ = preprocessor.preprocess(input_nb)
+        output_nb, _ = preprocessor.preprocess(deepcopy(input_nb))
     assert_notebooks_equal(input_nb, output_nb)
+
 
 def test_executenb():
     fname = os.path.join(os.path.dirname(__file__), 'files', 'HelloWorld.ipynb')
     with open(fname) as f:
         input_nb = nbformat.read(f, 4)
         with pytest.warns(FutureWarning):
-            output_nb = executenb(input_nb)
+            output_nb = executenb(deepcopy(input_nb))
     assert_notebooks_equal(input_nb, output_nb)
+
 
 def test_populate_language_info():
     preprocessor = ExecutePreprocessor(kernel_name="python")
     nb = nbformat.v4.new_notebook()  # Certainly has no language_info.
-    nb, _ = preprocessor.preprocess(nb, resources={})
+    preprocessor.preprocess(nb, resources={})
+    # Should mutate input
     assert 'language_info' in nb.metadata  # See that a basic attribute is filled in
+
+
+def test_preprocess_cell():
+    class CellReplacer(ExecutePreprocessor):
+        def preprocess_cell(self, cell, resources, index, **kwargs):
+            cell.source = "print('Ignored')"
+            super().preprocess_cell(cell, resources, index, **kwargs)
+
+    preprocessor = CellReplacer()
+    fname = os.path.join(os.path.dirname(__file__), 'files', 'HelloWorld.ipynb')
+    with open(fname) as f:
+        input_nb = nbformat.read(f, 4)
+        output_nb, _ = preprocessor.preprocess(deepcopy(input_nb))
+    expected_nb = deepcopy(input_nb)
+    for cell in expected_nb.cells:
+        cell.source = "print('Ignored')"
+        for output in cell.outputs:
+            output.text = 'Ignored\n'
+    assert_notebooks_equal(expected_nb, output_nb)

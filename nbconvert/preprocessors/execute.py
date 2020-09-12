@@ -3,7 +3,10 @@ and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+from typing import Optional
+from nbformat import NotebookNode
 from nbclient import NotebookClient, execute as _execute
+from nbclient.util import run_sync
 # Backwards compatability for imported name
 from nbclient.exceptions import CellExecutionError
 
@@ -31,6 +34,10 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         Preprocessor.__init__(self, nb=nb, **kw)
         NotebookClient.__init__(self, nb, **kw)
 
+    def _check_assign_resources(self, resources):
+        if resources or not hasattr(self, 'resources'):
+            self.resources = resources
+
     def preprocess(self, nb, resources=None, km=None):
         """
         Preprocess notebook executing each code cell.
@@ -56,11 +63,73 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         resources : dictionary
             Additional resources used in the conversion process.
         """
-        # Copied from NotebookClient init :/
-        self.nb = nb
-        self.km = km
-        if resources:
-            self.resources = resources
-        self.reset_execution_trackers()
+        # This may look wrong, but preprocess acts like an init on execution state and
+        # we need to capture it here again to properly reset (traitlet assignments are
+        # not passed). The risk is if traitlets apply any side effects for dual init,
+        # but it should be ok. The alternative is to copy the client's init internals
+        # which has already gotten out of sync with nbclient 0.5 release.
+        NotebookClient.__init__(self, nb, km)
+        self._check_assign_resources(resources)
         self.execute()
-        return nb, resources
+        return self.nb, self.resources
+
+    async def async_execute_cell(
+            self,
+            cell: NotebookNode,
+            cell_index: int,
+            execution_count: Optional[int] = None,
+            store_history: bool = True) -> NotebookNode:
+        """
+        Executes a single code cell.
+
+        To execute all cells see :meth:`execute`.
+
+        Parameters
+        ----------
+        cell : nbformat.NotebookNode
+            The cell which is currently being processed.
+        cell_index : int
+            The position of the cell within the notebook object.
+        execution_count : int
+            The execution count to be assigned to the cell (default: Use kernel response)
+        store_history : bool
+            Determines if history should be stored in the kernel (default: False).
+            Specific to ipython kernels, which can store command histories.
+
+        Returns
+        -------
+        output : dict
+            The execution output payload (or None for no output).
+
+        Raises
+        ------
+        CellExecutionError
+            If execution failed and should raise an exception, this will be raised
+            with defaults about the failure.
+
+        Returns
+        -------
+        cell : NotebookNode
+            The cell which was just processed.
+        """
+        # Copied and intercepted to allow for custom preprocess_cell contracts to be fullfilled
+        return self.preprocess_cell(cell, self.resources, cell_index, execution_count=execution_count, store_history=store_history)
+
+    def preprocess_cell(self, cell, resources, index, **kwargs):
+        """
+        Override if you want to apply some preprocessing to each cell.
+        Must return modified cell and resource dictionary.
+
+        Parameters
+        ----------
+        cell : NotebookNode cell
+            Notebook cell being processed
+        resources : dictionary
+            Additional resources used in the conversion process.  Allows
+            preprocessors to pass variables into the Jinja engine.
+        index : int
+            Index of the cell being processed
+        """
+        self._check_assign_resources(resources)
+        cell = run_sync(NotebookClient.async_execute_cell)(self, cell, index, **kwargs)
+        return cell, self.resources
