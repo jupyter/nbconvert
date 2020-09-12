@@ -78,7 +78,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             cell: NotebookNode,
             cell_index: int,
             execution_count: Optional[int] = None,
-            store_history: bool = True) -> NotebookNode:
+            store_history: bool = False) -> NotebookNode:
         """
         Executes a single code cell.
 
@@ -113,7 +113,11 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             The cell which was just processed.
         """
         # Copied and intercepted to allow for custom preprocess_cell contracts to be fullfilled
-        return self.preprocess_cell(cell, self.resources, cell_index, execution_count=execution_count, store_history=store_history)
+        self.store_history = store_history
+        cell, resources = self.preprocess_cell(cell, self.resources, cell_index)
+        if execution_count:
+            cell['execution_count'] = execution_count
+        return cell, resources
 
     def preprocess_cell(self, cell, resources, index, **kwargs):
         """
@@ -131,5 +135,5 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             Index of the cell being processed
         """
         self._check_assign_resources(resources)
-        cell = run_sync(NotebookClient.async_execute_cell)(self, cell, index, **kwargs)
+        cell = run_sync(NotebookClient.async_execute_cell)(self, cell, index, store_history=self.store_history)
         return cell, self.resources
