@@ -207,7 +207,7 @@ class TemplateExporter(Exporter):
         # rather than a name already on template_path
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
-            directory, self.template_file = os.path.split(self.template_file)
+            directory, self.template_file = os.path.split(full_path)
             # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
             if self.template_file.endswith('.tpl'):
                 warnings.warn(
