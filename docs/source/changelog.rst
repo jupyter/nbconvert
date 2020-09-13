@@ -71,7 +71,7 @@ The following authors and reviewers contributed the changes for this release -- 
 
 
 Significant changes
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Nbconvert 6.0 is a major release of nbconvert which includes many significant changes.
 
