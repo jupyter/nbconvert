@@ -44,15 +44,18 @@ HTML
 ~~~~
 * ``--to html``
 
-  - ``--template full`` (default)
+  HTML Export. Be aware that if you were using custom copies of the old 5.x
+  template files you need to use ``--template-file path/to/old/file.tpl``
+  in order to use that file in compatibility mode as opposed to other options.
+
+  - ``--template lab`` (default)
 
     A full static HTML render of the notebook.
-    This looks very similar to the interactive view.
+    This looks very similar to the jupyter lab interactive view.
 
-  - ``--template basic``
+  - ``--template classic``
 
-    Simplified HTML, useful for embedding in webpages, blogs, etc.
-    This excludes HTML headers.
+    Simplified HTML, using the classic jupyter look and feel.
 
 .. _convert_latex:
 
