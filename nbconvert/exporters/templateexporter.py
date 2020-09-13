@@ -565,18 +565,37 @@ class TemplateExporter(Exporter):
                 template_dir = os.path.join(base_dir, base_template)
                 if os.path.exists(template_dir):
                     found_at_least_one = True
-                conf_file = os.path.join(template_dir, 'conf.json')
-                if os.path.exists(conf_file):
-                    with open(conf_file) as f:
-                        conf = recursive_update(json.load(f), conf)
-            for root_dir in root_dirs:
-                template_dir = os.path.join(root_dir, 'nbconvert', 'templates', base_template)
-                if os.path.exists(template_dir):
-                    found_at_least_one = True
-                conf_file = os.path.join(template_dir, 'conf.json')
-                if os.path.exists(conf_file):
-                    with open(conf_file) as f:
-                        conf = recursive_update(json.load(f), conf)
+                    conf_file = os.path.join(template_dir, 'conf.json')
+                    if os.path.exists(conf_file):
+                        with open(conf_file) as f:
+                            conf = recursive_update(json.load(f), conf)
+                    break
+            if not found_at_least_one:
+                for root_dir in root_dirs:
+                    template_dir = os.path.join(root_dir, 'nbconvert', 'templates', base_template)
+                    if os.path.exists(template_dir):
+                        found_at_least_one = True
+                        conf_file = os.path.join(template_dir, 'conf.json')
+                        if os.path.exists(conf_file):
+                            with open(conf_file) as f:
+                                conf = recursive_update(json.load(f), conf)
+                        break
+            if not found_at_least_one:
+                for root_dir in root_dirs:
+                    compatibility_name = base_template + '.tpl'
+                    compatibility_path = os.path.join(root_dir, 'nbconvert', 'templates', 'compatibility', compatibility_name)
+                    if os.path.exists(compatibility_path):
+                        found_at_least_one = True
+                        warnings.warn(
+                            f"5.x template name passed '{self.template_name}'. Use 'lab' or 'classic' for new template usage.",
+                            DeprecationWarning)
+                        self.template_file = compatibility_name
+                        # Without these added the templates can't find their transitive extensions
+                        if base_template == 'basic':
+                            template_names.extend(['classic', 'base'])
+                        if base_template == 'full':
+                            template_names.extend(['lab', 'base'])
+                        break
             if not found_at_least_one:
                 paths = "\n\t".join(root_dirs)
                 raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (base_template, paths))
