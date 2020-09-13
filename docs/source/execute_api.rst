@@ -73,7 +73,7 @@ use the following to open it::
         nb = nbformat.read(f, as_version=4)
 
 Configure
-++++++++
++++++++++
 
 Next, we configure the notebook execution mode::
 
