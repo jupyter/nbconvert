@@ -4,6 +4,25 @@
 Changes in nbconvert
 ====================
 
+6.0.2
+-----
+
+Fixing Problems
++++++++++++++++
+- Added windows work-around fix in CLI for async applications :ghpull:`1383`:
+- Fixed pathed template files to behave correctly for local relative paths without a dot :ghpull:`1381`:
+- ExecuteProcessor now properly has a ``preprocess_cell`` function to overwrite :ghpull:`1380`:
+
+Testing, Docs, and Builds
++++++++++++++++++++++++++
+- Updated README and docs with guidance on how to get help with nbconvert :ghpull:`1377`:
+- Fixed documentation that was referencing ``template_path`` instead of ``template_paths`` :ghpull:`1374`:
+
+6.0.1
+-----
+
+A quick patch to fix an issue with get_exporter :ghpull:`1367`:
+
 6.0.0
 -----
 
@@ -59,6 +78,8 @@ Nbconvert 6.0 is a major release of nbconvert which includes many significant ch
 - Python 2 support was dropped. Currently Python 3.6-3.8 is supported and tested by nbconvert. However, nbconvert 6.0 provides limited support for Python 3.6. nbconvert 6.1 will drop support for Python 3.6. Limited support means we will test and run CI on Python 3.6.12 or higher. Issues that are found only affecting Python 3.6 are not guaranteed to be fixed. We recommend all users of nbconvert use Python 3.7 and higher.
 
 - Unlike previous versions, nbconvert 6.0 relies on the `nbclient <https://github.com/jupyter/nbclient/>`__ package for the execute preprocessor, which allows for asynchronous kernel requests.
+
+- ``template_path`` has become ``template_paths``. If referring to a 5.x style ``.tpl`` template use the full path with the ``template_file`` argument to the file. On the command line the pattern is ``--template-file=<path/to/file.tpl>``.
 
 - Nbconvert 6.0 includes a new "webpdf" exporter, which renders notebooks in pdf format through a headless web browser, so that complex outputs such as HTML tables, or even widgets are rendered in the same way as with the HTML exporter and a web browser.
 
