@@ -7,6 +7,11 @@ Changes in nbconvert
 6.0.2
 -----
 
+A patch for a few minor issues raised out of the 6.0 release.
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
 Fixing Problems
 +++++++++++++++
 - Added windows work-around fix in CLI for async applications :ghpull:`1383`:
@@ -23,8 +28,8 @@ Testing, Docs, and Builds
 
 A quick patch to fix an issue with get_exporter :ghpull:`1367`:
 
-6.0.0
------
+6.0
+---
 
 The following authors and reviewers contributed the changes for this release -- Thanks you all!
 
@@ -69,8 +74,7 @@ The following authors and reviewers contributed the changes for this release -- 
 * Tyler Makaro
 * Yu-Cheng (Henry) Huang
 
-
-Significant changes
+Significant Changes
 ~~~~~~~~~~~~~~~~~~~
 
 Nbconvert 6.0 is a major release of nbconvert which includes many significant changes.
