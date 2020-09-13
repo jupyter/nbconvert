@@ -44,8 +44,8 @@ HTML
 ~~~~
 * ``--to html``
 
-  HTML Export. Be aware that if you were using custom copies of the old 5.x
-  template files you need to use ``--template-file path/to/old/file.tpl``
+  HTML Export.  Note on backward compatibility:  Be aware that if you were using custom copies of the old 5.x
+  template files (i.e. ``--template``), you will now need to use ``--template-file path/to/old/file.tpl``
   in order to use that file in compatibility mode as opposed to other options.
 
   - ``--template lab`` (default)
