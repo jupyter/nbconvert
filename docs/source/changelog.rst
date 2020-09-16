@@ -4,6 +4,11 @@
 Changes in nbconvert
 ====================
 
+6.0.3
+-----
+
+Execute preprocessor no longer add illegal execution counts to markdown cells :ghpull:`1396`:
+
 6.0.2
 -----
 
