@@ -121,7 +121,8 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         # Copied and intercepted to allow for custom preprocess_cell contracts to be fullfilled
         self.store_history = store_history
         cell, resources = self.preprocess_cell(cell, self.resources, cell_index)
-        if execution_count:
+        # Apply rules from nbclient for where to apply execution counts
+        if execution_count and cell.cell_type == 'code' and cell.source.strip():
             cell['execution_count'] = execution_count
         return cell, resources
 
