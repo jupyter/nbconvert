@@ -64,6 +64,15 @@ def test_basic_execution():
     assert_notebooks_equal(input_nb, output_nb)
 
 
+def test_mixed_markdown_execution():
+    preprocessor = ExecutePreprocessor()
+    fname = os.path.join(os.path.dirname(__file__), 'files', 'MixedMarkdown.ipynb')
+    with open(fname) as f:
+        input_nb = nbformat.read(f, 4)
+        output_nb, _ = preprocessor.preprocess(deepcopy(input_nb))
+    assert_notebooks_equal(input_nb, output_nb)
+
+
 def test_executenb():
     fname = os.path.join(os.path.dirname(__file__), 'files', 'HelloWorld.ipynb')
     with open(fname) as f:
