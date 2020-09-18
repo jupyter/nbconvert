@@ -13,6 +13,7 @@ from traitlets.config import Config
 from jinja2 import DictLoader, TemplateNotFound
 from nbformat import v4
 from unittest.mock import patch
+from concurrent.futures import ProcessPoolExecutor
 
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
@@ -29,6 +30,20 @@ raw_template = """{%- extends 'index.rst.j2' -%}
 blah
 {%- endblock in_prompt -%}
 """
+
+class SampleExporter(TemplateExporter):
+    """
+    Exports a Python code file.
+    """
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.py'
+
+    @default('template_name')
+    def _template_name_default(self):
+        return 'python'
+
+    output_mimetype = 'text/x-python'
 
 class TestExporter(ExportersTestsBase):
     """Contains test functions for exporter.py"""
@@ -104,6 +119,15 @@ class TestExporter(ExportersTestsBase):
         (output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources['cheese'] == 'real'
+
+    def test_pickle(self):
+        """
+        Can exporters be pickled & called across processes?
+        """
+        exporter = self._make_exporter()
+        executor = ProcessPoolExecutor()
+        (output, resources) = executor.submit(exporter.from_filename, self._get_notebook()).result()
+        assert len(output) > 0
 
     def test_absolute_template_file(self):
         with tempdir.TemporaryDirectory() as td:
@@ -537,19 +561,5 @@ class TestExporter(ExportersTestsBase):
         assert "(100,)" not in nb
 
     def _make_exporter(self, config=None):
-        class TestExporter(TemplateExporter):
-            """
-            Exports a Python code file.
-            """
-            @default('file_extension')
-            def _file_extension_default(self):
-                return '.py'
-
-            @default('template_name')
-            def _template_name_default(self):
-                return 'python'
-
-            output_mimetype = 'text/x-python'
-
-        exporter = TestExporter(config=config)
+        exporter = SampleExporter(config=config)
         return exporter
