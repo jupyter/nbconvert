@@ -38,7 +38,7 @@ class WebPDFExporter(HTMLExporter):
         async def main():
             browser = await self._check_launch_reqs()()
             page = await browser.newPage()
-            await page.goto('data:text/html,'+html, waitUntil='networkidle0')
+            await page.goto('data:text/html,'+html, waitUntil='networkidle2')
             pdf_data = await page.pdf()
             await browser.close()
             return pdf_data
