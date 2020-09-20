@@ -4,6 +4,17 @@
 Changes in nbconvert
 ====================
 
+6.0.4
+-----
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+Fixing Problems
++++++++++++++++
+- The webpdf exporters does not add pagebreaks anymore before reaching the maximum height allowed by Adobe :ghpull:`1402`:
+- Fixes some timeout issues with the webpdf exporter :ghpull:`1400`:
+
 6.0.3
 -----
 
