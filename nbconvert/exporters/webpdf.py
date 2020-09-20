@@ -17,7 +17,7 @@ class WebPDFExporter(HTMLExporter):
     export_from_notebook = "PDF via pyppeteer"
 
     allow_chromium_download = Bool(False,
-        help="Whether to allow downloading Chromium if no suitable version is found on the system."
+        help='Whether to allow downloading Chromium if no suitable version is found on the system.'
     ).tag(config=True)
 
     def _check_launch_reqs(self):
@@ -39,7 +39,32 @@ class WebPDFExporter(HTMLExporter):
             browser = await self._check_launch_reqs()()
             page = await browser.newPage()
             await page.goto('data:text/html,'+html, waitUntil='networkidle2')
-            pdf_data = await page.pdf()
+
+            dimensions = await page.evaluate(
+              """() => {
+                return {
+                  width: document.body.scrollWidth,
+                  height: document.body.scrollHeight,
+                }
+              }"""
+            )
+            width = dimensions['width']
+            height = dimensions['height']
+
+            pdf_data = await page.pdf(
+              {
+                'width': width,
+                # 200 inches is the maximum height for Adobe Acrobat Reader.
+                'height': min(height, 200 * 72),
+                'printBackground': True,
+                'margin': {
+                  'left': '0px',
+                  'right': '0px',
+                  'top': '0px',
+                  'bottom': '0px',
+                 },
+              }
+            )
             await browser.close()
             return pdf_data
 
@@ -52,7 +77,7 @@ class WebPDFExporter(HTMLExporter):
             nb, resources=resources, **kw
         )
 
-        self.log.info("Building PDF")
+        self.log.info('Building PDF')
         pdf_data = self.run_pyppeteer(html)
         self.log.info('PDF successfully created')
 
