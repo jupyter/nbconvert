@@ -7,6 +7,7 @@ import asyncio
 from typing import Optional
 from nbformat import NotebookNode
 from nbclient import NotebookClient, execute as _execute
+from nbclient.util import ensure_async
 # Backwards compatability for imported name
 from nbclient.exceptions import CellExecutionError
 
@@ -125,7 +126,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         """
         # Copied and intercepted to allow for custom preprocess_cell contracts to be fullfilled
         self.store_history = store_history
-        cell, resources = await self.preprocess_cell(cell, self.resources, cell_index)
+        cell, resources = await ensure_async(self.preprocess_cell(cell, self.resources, cell_index))
         # Apply rules from nbclient for where to apply execution counts
         if execution_count and cell.cell_type == 'code' and cell.source.strip():
             cell['execution_count'] = execution_count
