@@ -3,10 +3,10 @@ and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+import asyncio
 from typing import Optional
 from nbformat import NotebookNode
 from nbclient import NotebookClient, execute as _execute
-from nbclient.util import run_sync
 # Backwards compatability for imported name
 from nbclient.exceptions import CellExecutionError
 
@@ -76,7 +76,12 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         """
         NotebookClient.__init__(self, nb, km)
         self._check_assign_resources(resources)
-        self.execute()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        loop.run_until_complete(self.async_execute())
         return self.nb, self.resources
 
     async def async_execute_cell(
@@ -120,13 +125,13 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         """
         # Copied and intercepted to allow for custom preprocess_cell contracts to be fullfilled
         self.store_history = store_history
-        cell, resources = self.preprocess_cell(cell, self.resources, cell_index)
+        cell, resources = await self.preprocess_cell(cell, self.resources, cell_index)
         # Apply rules from nbclient for where to apply execution counts
         if execution_count and cell.cell_type == 'code' and cell.source.strip():
             cell['execution_count'] = execution_count
         return cell, resources
 
-    def preprocess_cell(self, cell, resources, index, **kwargs):
+    async def preprocess_cell(self, cell, resources, index, **kwargs):
         """
         Override if you want to apply some preprocessing to each cell.
         Must return modified cell and resource dictionary.
@@ -142,6 +147,5 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             Index of the cell being processed
         """
         self._check_assign_resources(resources)
-        # Because nbclient is an async library, we need to wrap the parent async call to generate a syncronous version.
-        cell = run_sync(NotebookClient.async_execute_cell)(self, cell, index, store_history=self.store_history)
+        await NotebookClient.async_execute_cell(self, cell, index, store_history=self.store_history)
         return cell, self.resources
