@@ -66,7 +66,7 @@ which is used to indicate
  - preprocessors classes to register in the exporter when using that template.
 
 Inspecting the configuration of the reveal template we see that it inherits from the lab
-template, exports text/html, and enables a preprocessor called "500-reveal".
+template, exports text/html, and enables two preprocessors called "100-pygments" and "500-reveal".
 
 .. code::
 
@@ -76,6 +76,10 @@ template, exports text/html, and enables a preprocessor called "500-reveal".
         "text/html": true
       },
       "preprocessors": {
+        "100-pygments": {
+            "type": "nbconvert.preprocessors.CSSHTMLHeaderPreprocessor",
+            "enabled": true
+        },
         "500-reveal": {
           "type": "nbconvert.exporters.slides._RevealMetadataPreprocessor",
           "enabled": true
