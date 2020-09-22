@@ -43,8 +43,8 @@ class WebPDFExporter(HTMLExporter):
             dimensions = await page.evaluate(
               """() => {
                 return {
-                  width: document.body.scrollWidth,
-                  height: document.body.scrollHeight,
+                  width: document.body.clientWidth,
+                  height: document.body.clientHeight,
                 }
               }"""
             )
