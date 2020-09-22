@@ -38,7 +38,9 @@ class WebPDFExporter(HTMLExporter):
         async def main():
             browser = await self._check_launch_reqs()()
             page = await browser.newPage()
+            await page.waitFor(100)
             await page.goto('data:text/html,'+html, waitUntil='networkidle0')
+            await page.waitFor(100)
 
             dimensions = await page.evaluate(
               """() => {
