@@ -89,9 +89,6 @@ class HTMLExporter(TemplateExporter):
                                            'text/plain'
                                           ]
                 },
-            'CSSHTMLHeaderPreprocessor':{
-                'enabled':True
-                },
             'HighlightMagicsPreprocessor': {
                 'enabled':True
                 }
