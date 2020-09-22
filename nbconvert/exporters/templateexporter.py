@@ -90,6 +90,11 @@ def recursive_update(target, new):
     return target  # return for convenience
 
 
+# define function at the top level to avoid pickle errors
+def deprecated(msg):
+    warnings.warn(msg, DeprecationWarning)
+    
+
 class ExtensionTolerantLoader(BaseLoader):
     """A template loader which optionally adds a given extension when searching.
 
@@ -596,8 +601,5 @@ class TemplateExporter(Exporter):
 
     def _init_resources(self, resources):
         resources = super()._init_resources(resources)
-        # inline function to avoid pickle errors
-        def deprecated(msg):
-            warnings.warn(msg, DeprecationWarning)
         resources['deprecated'] = deprecated
         return resources
