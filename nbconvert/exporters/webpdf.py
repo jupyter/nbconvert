@@ -42,9 +42,10 @@ class WebPDFExporter(HTMLExporter):
 
             dimensions = await page.evaluate(
               """() => {
+                const rect = document.body.getBoundingClientRect();
                 return {
-                  width: document.body.scrollWidth,
-                  height: document.body.scrollHeight,
+                  width: rect.width,
+                  height: rect.height,
                 }
               }"""
             )
@@ -57,12 +58,6 @@ class WebPDFExporter(HTMLExporter):
                 # 200 inches is the maximum height for Adobe Acrobat Reader.
                 'height': min(height, 200 * 72),
                 'printBackground': True,
-                'margin': {
-                  'left': '0px',
-                  'right': '0px',
-                  'top': '0px',
-                  'bottom': '0px',
-                 },
               }
             )
             await browser.close()

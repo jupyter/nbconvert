@@ -47,7 +47,13 @@ a.anchor-link {
 .highlight  {
     margin: 0.4em;
 }
+@media print {
+  body {
+    margin: 0;
+  }
+}
 </style>
+
 {% endblock notebook_css %}
 
 {{ mathjax() }}

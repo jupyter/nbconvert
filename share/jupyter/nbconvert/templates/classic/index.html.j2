@@ -54,6 +54,9 @@ div#notebook-container{
 {%- endif -%}
 
 @media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
