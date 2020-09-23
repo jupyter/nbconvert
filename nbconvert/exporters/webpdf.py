@@ -6,7 +6,10 @@
 import asyncio
 
 from traitlets import Bool
+import concurrent.futures
+
 from .html import HTMLExporter
+
 
 class WebPDFExporter(HTMLExporter):
     """Writer designed to write to PDF files.
@@ -36,7 +39,11 @@ class WebPDFExporter(HTMLExporter):
         """Run pyppeteer."""
 
         async def main():
-            browser = await self._check_launch_reqs()()
+            browser = await self._check_launch_reqs()(
+                handleSIGINT=False,
+                handleSIGTERM=False,
+                handleSIGHUP=False,
+            )
             page = await browser.newPage()
             await page.waitFor(100)
             await page.goto('data:text/html,'+html, waitUntil='networkidle0')
@@ -66,7 +73,8 @@ class WebPDFExporter(HTMLExporter):
             await browser.close()
             return pdf_data
 
-        pdf_data = asyncio.get_event_loop().run_until_complete(main())
+        pool = concurrent.futures.ThreadPoolExecutor()
+        pdf_data = pool.submit(asyncio.run, main()).result()
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
