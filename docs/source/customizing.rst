@@ -100,8 +100,6 @@ although any other resource from the base template can be overriden in the deriv
 For example, inspecting the content of the ``classic`` template located in
 ``share/jupyter/nbconvert/templates/classic``, we find the following content:
 
-Inspecting the content of the ``classic`` template we find the following file structure:
-
 .. code::
 
     share/jupyter/nbconvert/templates/classic

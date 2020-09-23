@@ -42,22 +42,23 @@ class WebPDFExporter(HTMLExporter):
             await page.goto('data:text/html,'+html, waitUntil='networkidle0')
             await page.waitFor(100)
 
+            # Floating point precision errors cause the printed
+            # PDF from spilling over a new page by a pixel fraction.
             dimensions = await page.evaluate(
               """() => {
                 const rect = document.body.getBoundingClientRect();
                 return {
-                  width: rect.width,
-                  height: rect.height,
+                  width: Math.ceil(rect.width) + 1,
+                  height: Math.ceil(rect.height) + 1,
                 }
               }"""
             )
             width = dimensions['width']
             height = dimensions['height']
-
+            # 200 inches is the maximum size for Adobe Acrobat Reader.
             pdf_data = await page.pdf(
               {
-                'width': width,
-                # 200 inches is the maximum height for Adobe Acrobat Reader.
+                'width': min(width, 200 * 72),
                 'height': min(height, 200 * 72),
                 'printBackground': True,
               }
