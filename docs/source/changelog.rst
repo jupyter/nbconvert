@@ -4,6 +4,28 @@
 Changes in nbconvert
 ====================
 
+6.0.6
+-----
+
+Fixing Problems
++++++++++++++++
+
+- Fixed classic template syntax highlighting, and making the `CSSHTMLHeaderPreprocessor` a per-template thing :ghpull:`1411`
+- Fix error when pickling TemplateExporter :ghpull:`1300`
+- Fix issue with WebPDF rendering spilling over the next page because of margins :ghpull:`1413`
+- Add short wait time to render widgets and fonts :ghpull:`1414`
+- Fix issue with WebPDF rendering spilling over the next page by a fraction of a pixel :ghpull:`1415`
+- Fix issue with WebPDF rendering from JupyterLab :ghpull:`1420`
+- Fix lab template CSS styling causing input areas to overflow :ghpull:`1422`
+
+6.0.5
+-----
+
+Fixing Problems
++++++++++++++++
+
+- Iterated on timeout issues with the webpdf exporter :ghpull:`1407`:
+
 6.0.4
 -----
 
@@ -12,6 +34,7 @@ Comprehensive notes
 
 Fixing Problems
 +++++++++++++++
+
 - The webpdf exporters does not add pagebreaks anymore before reaching the maximum height allowed by Adobe :ghpull:`1402`:
 - Fixes some timeout issues with the webpdf exporter :ghpull:`1400`:
 
