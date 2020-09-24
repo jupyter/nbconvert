@@ -1,5 +1,5 @@
-{%- extends 'display_priority.j2' -%}
-{% from 'celltags.j2' import celltags %}
+{%- extends 'base/display_priority.j2' -%}
+{% from 'base/celltags.j2' import celltags %}
 
 {% block codecell %}
 <div class="cell border-box-sizing code_cell rendered{{ celltags(cell) }}">

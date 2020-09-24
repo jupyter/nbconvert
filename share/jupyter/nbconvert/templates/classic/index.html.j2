@@ -1,6 +1,6 @@
-{%- extends 'base.html.j2' -%}
-{% from 'mathjax.html.j2' import mathjax %}
-{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+{%- extends 'classic/base.html.j2' -%}
+{% from 'base/mathjax.html.j2' import mathjax %}
+{% from 'base/jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {%- block header -%}
 <!DOCTYPE html>
@@ -34,7 +34,7 @@
 {% endfor %}
 
 {% block notebook_css %}
-{{ resources.include_css("static/style.css") }}
+{{ resources.include_css("classic/static/style.css") }}
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {

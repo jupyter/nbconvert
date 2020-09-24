@@ -57,6 +57,10 @@ HTML
 
     Simplified HTML, using the classic jupyter look and feel.
 
+  - ``--template basic``
+
+    Base HTML, rendering with minimal structure and styles.
+
 .. _convert_latex:
 
 LaTeX

@@ -1,6 +1,6 @@
-{%- extends 'base.html.j2' -%}
-{% from 'mathjax.html.j2' import mathjax %}
-{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+{%- extends 'reveal/base.html.j2' -%}
+{% from 'base/mathjax.html.j2' import mathjax %}
+{% from 'base/jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {% set reveal_url_prefix = resources.reveal.url_prefix | default('https://unpkg.com/reveal.js@4.0.2', true) %}
 {% set reveal_theme = resources.reveal.theme | default('white', true) %}
@@ -61,11 +61,11 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 {% endfor %}
 
 {% block notebook_css %}
-{{ resources.include_css("static/index.css") }}
+{{ resources.include_css("lab/static/index.css") }}
 {% if resources.theme == 'dark' %}
-    {{ resources.include_css("static/theme-dark.css") }}
+    {{ resources.include_css("lab/static/theme-dark.css") }}
 {% else %}
-    {{ resources.include_css("static/theme-light.css") }}
+    {{ resources.include_css("lab/static/theme-light.css") }}
 {% endif %}
 <style type="text/css">
 a.anchor-link {
@@ -90,7 +90,7 @@ a.anchor-link {
 }
 </style>
 
-{{ resources.include_css("static/custom_reveal.css") }}
+{{ resources.include_css("lab/static/custom_reveal.css") }}
 
 {% endblock notebook_css %}
 {%- endblock html_head -%}

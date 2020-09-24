@@ -590,11 +590,6 @@ class TemplateExporter(Exporter):
                             f"5.x template name passed '{self.template_name}'. Use 'lab' or 'classic' for new template usage.",
                             DeprecationWarning)
                         self.template_file = compatibility_name
-                        # Without these added the templates can't find their transitive extensions
-                        if base_template == 'basic':
-                            template_names.extend(['classic', 'base'])
-                        if base_template == 'full':
-                            template_names.extend(['lab', 'base'])
                         break
             if not found_at_least_one:
                 paths = "\n\t".join(root_dirs)

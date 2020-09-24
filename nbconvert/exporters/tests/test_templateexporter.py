@@ -212,9 +212,6 @@ class TestExporter(ExportersTestsBase):
         assert template_file == template + '.tpl'
         assert template_dir in exporter.template_paths
 
-    def test_absolute_template_name_5x_compatibility_basic(self):
-        self.absolute_template_name_5x_compatibility_test('basic')
-
     def test_absolute_template_name_5x_compatibility_full(self):
         self.absolute_template_name_5x_compatibility_test('full')
 

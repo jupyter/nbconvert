@@ -140,9 +140,9 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = HTMLExporter(template_name='classic', filters=filters).from_notebook_node(nb)
         self.assertTrue("ADDED_TEXT" in output)
 
-    def test_basic_compatibility_name(self):
+    def test_basic_name(self):
         """
-        Can a HTMLExporter export using the 'basic' compatibility template?
+        Can a HTMLExporter export using the 'basic' template?
         """
         (output, resources) = HTMLExporter(template_name='basic').from_filename(self._get_notebook())
         assert len(output) > 0
