@@ -14,8 +14,8 @@ Default output format
 ---------------------
 
 In 5.x versions of nbconvert the default output format was html. In 6.0 the default was removed,
-requiring CLI calls to explicitly set a `--to` argument in order to execute. To mimic original
-5.x behavior one should add `--to=html` to the `jupyer nbconvert` command.
+requiring CLI calls to explicitly set a ``--to`` argument in order to execute. To mimic original
+5.x behavior one should add ``--to=html`` to the ``jupyter nbconvert`` command.
 
 .. _supported_output:
 
