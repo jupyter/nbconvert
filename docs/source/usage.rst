@@ -10,12 +10,12 @@ The command-line syntax to run the ``nbconvert`` script is::
 This will convert the Jupyter notebook file ``notebook.ipynb`` into the output
 format given by the ``FORMAT`` string.
 
-Default output format - HTML
-----------------------------
-The default output format is HTML, for which the ``--to`` argument may be
-omitted::
+Default output format
+---------------------
 
-  $ jupyter nbconvert notebook.ipynb
+In 5.x versions of nbconvert the default output format was html. In 6.0 the default was removed,
+requiring CLI calls to explicitly set a `--to` argument in order to execute. To mimic original
+5.x behavior one should add `--to=html` to the `jupyer nbconvert` command.
 
 .. _supported_output:
 

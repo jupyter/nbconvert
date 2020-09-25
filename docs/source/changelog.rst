@@ -531,6 +531,7 @@ New Features
 Deprecations
 ++++++++++++
 - Drop support for python 3.3 :ghpull:`843`
+- Default conversion method on the CLI was removed (``--to html`` now required)
 
 Fixing Problems
 +++++++++++++++
