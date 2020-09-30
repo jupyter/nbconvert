@@ -272,6 +272,15 @@ class TestExporter(ExportersTestsBase):
                 assert exporter.template_name == template
                 assert os.path.join(td, template) in exporter.template_paths
 
+    def test_local_template_file_extending_lab(self):
+        template_file = os.path.join(self._get_files_path(), 'lablike.html.j2')
+        exporter = HTMLExporter(template_file=template_file, template_name='lab')
+        nb = v4.new_notebook()
+        nb.cells.append(v4.new_code_cell("some_text"))
+        output, resources = exporter.from_notebook_node(nb)
+        assert "UNIQUE" in output
+
+
     def test_raw_template_attr(self):
         """
         Verify that you can assign a in memory template string by overwriting
