@@ -213,16 +213,12 @@ class TemplateExporter(Exporter):
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
             directory, self.template_file = os.path.split(full_path)
+            self.extra_template_paths = [directory] + self.extra_template_paths
             # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
             if self.template_file.endswith('.tpl'):
                 warnings.warn(
                     f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                     DeprecationWarning)
-            if directory:
-                directory, self.template_name = os.path.split(directory)
-            if directory:
-                if os.path.isabs(directory):
-                    self.extra_template_basedirs = [directory]
 
     @default('template_file')
     def _template_file_default(self):
@@ -237,6 +233,7 @@ class TemplateExporter(Exporter):
 
     template_paths = List(['.']).tag(config=True, affects_environment=True)
     extra_template_basedirs = List().tag(config=True, affects_environment=True)
+    extra_template_paths = List([]).tag(config=True, affects_environment=True)
 
     @default('extra_template_basedirs')
     def _default_extra_template_basedirs(self):
@@ -549,7 +546,7 @@ class TemplateExporter(Exporter):
             except OSError:
                 pass
 
-        return additional_paths + paths
+        return self.extra_template_paths + additional_paths + paths
 
     def get_template_names(self):
         # finds a list of template names where each successive template name is the base template
