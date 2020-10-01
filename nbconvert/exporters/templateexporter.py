@@ -303,6 +303,9 @@ class TemplateExporter(Exporter):
         help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
 
+    extra_template_basedirs = List(
+        help="Specify extra directories to search for templates").tag()
+
     @default('raw_mimetypes')
     def _raw_mimetypes_default(self):
         return [self.output_mimetype, '']
