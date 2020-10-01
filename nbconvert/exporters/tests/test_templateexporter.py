@@ -43,8 +43,6 @@ class SampleExporter(TemplateExporter):
     def _template_name_default(self):
         return 'python'
 
-    output_mimetype = 'text/x-python'
-
 class TestExporter(ExportersTestsBase):
     """Contains test functions for exporter.py"""
 
@@ -198,6 +196,25 @@ class TestExporter(ExportersTestsBase):
                 exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
+    
+    # Can't use @pytest.mark.parametrize without removing all self.assert calls in all tests... repeating some here
+    def absolute_template_name_5x_compatibility_test(self, template, mimetype=None):
+        config = Config()
+        # We're setting the template_name instead of the template_file
+        config.TemplateExporter.template_name = template
+        with pytest.warns(DeprecationWarning):
+            exporter = self._make_exporter(config=config)
+        template_dir, template_file = os.path.split(exporter.template.filename)
+        _, compat_dir = os.path.split(template_dir)
+        assert compat_dir == 'compatibility'
+        assert template_file == template + '.tpl'
+        assert template_dir in exporter.template_paths
+
+    def test_absolute_template_name_5x_compatibility_full(self):
+        self.absolute_template_name_5x_compatibility_test('full', 'text/html')
+
+    def test_absolute_template_name_5x_compatibility_display_priority(self):
+        self.absolute_template_name_5x_compatibility_test('display_priority')
 
     # Can't use @pytest.mark.parametrize without removing all self.assert calls in all tests... repeating some here
     def relative_template_test(self, template):
