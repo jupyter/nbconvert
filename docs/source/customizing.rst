@@ -52,6 +52,18 @@ For example, three HTML templates are provided in nbconvert core for the HTML ex
             /home/<username>/.local/share/jupyter/runtime
 
 
+Adding Additional Template Paths
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to add additional paths to be searched, you need to pass ``TemplateExporter.extra_template_basedirs``
+config options indicating the extra directories to search for templates. Be careful not to override
+``TemplateExporter.template_paths`` unless you intend to replace ALL paths and don't want the default
+locations included.
+
+When using the commandline the extra template paths are added by calling
+``--TemplateExporter.extra_template_basedirs=path/you/want/included``.
+
+
 The content of nbconvert templates
 ----------------------------------
 

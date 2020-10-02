@@ -4,6 +4,42 @@
 Changes in nbconvert
 ====================
 
+6.0.7
+-----
+
+Primarly a release addressing template extensions issues reported since 6.0 launched.
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+- Comment typo fix :ghpull:`1425`:
+- Documented updated to default conversion changes from 6.0 :ghpull:`1426`:
+- Allow custom template files outside of the template system to set their base template name :ghpull:`1429`:
+- Restored basic template from 5.x :ghpull:`1431`:
+- Added proper support for backwards compatibility templates :ghpull:`1431`:
+
+6.0.6
+-----
+
+A range of bug fixes for webpdf exports
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+- Removed CSS preprocessor from default proprocessor list (fixes classic rendering) :ghpull:`1411`:
+- Fixed error when pickling TemplateExporter :ghpull:`1399`:
+- Support for fractional height html / webpdf exports :ghpull:`1413`:
+- Added short wait time for fonts and rendering in webpdf :ghpull:`1414`:
+- Updated template documentation
+- Minor fixes to the webpdf exporter :ghpull:`1419`:
+- Fixup use with a running event loop within webpdf :ghpull:`1420`:
+- Prevent overflow in input areas in lab template :ghpull:`1422`:
+
+6.0.5
+-----
+
+- Revert networkidle2 change which caused custom cdn-fetched widgets in webpdf
+
 6.0.4
 -----
 
