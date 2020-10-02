@@ -548,6 +548,14 @@ class TemplateExporter(Exporter):
 
         return self.extra_template_paths + additional_paths + paths
 
+    @classmethod
+    def get_compatibility_base_template_conf(cls, name):
+        # Hard-coded base template confs to use for backwards compatibility for 5.x-only templates
+        if name == 'display_priority':
+            return dict(base_template='base')
+        if name == 'full':
+            return dict(base_template='classic', mimetypes={"text/html": True})
+
     def get_template_names(self):
         # finds a list of template names where each successive template name is the base template
         template_names = []
@@ -575,8 +583,22 @@ class TemplateExporter(Exporter):
                     with open(conf_file) as f:
                         conf = recursive_update(json.load(f), conf)
             if not found_at_least_one:
-                paths = "\n\t".join(root_dirs)
-                raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (base_template, paths))
+                # Check for backwards compatibility template names
+                for root_dir in root_dirs:
+                    compatibility_file = base_template + '.tpl'
+                    compatibility_path = os.path.join(root_dir, 'nbconvert', 'templates', 'compatibility', compatibility_file)
+                    if os.path.exists(compatibility_path):
+                        found_at_least_one = True
+                        warnings.warn(
+                            f"5.x template name passed '{self.template_name}'. Use 'lab' or 'classic' for new template usage.",
+                            DeprecationWarning)
+                        self.template_file = compatibility_file
+                        conf = self.get_compatibility_base_template_conf(base_template)
+                        self.template_name = conf.get('base_template')
+                        break
+                if not found_at_least_one:
+                    paths = "\n\t".join(root_dirs)
+                    raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (base_template, paths))
             merged_conf = recursive_update(dict(conf), merged_conf)
             base_template = conf.get('base_template')
         conf = merged_conf

@@ -37,15 +37,6 @@ class TestRSTExporter(ExportersTestsBase):
         assert len(output) > 0
 
     @onlyif_cmds_exist('pandoc')
-    def test_export_nbformat_template_v5_name(self):
-        """
-        We support the nbconvert v5 filename, but with a deprecation warning.
-        """
-        with pytest.warns(DeprecationWarning):
-            (output, resources) = RSTExporter(template_file='rst.tpl').from_filename(self._get_notebook())
-        assert len(output) > 0
-
-    @onlyif_cmds_exist('pandoc')
     def test_empty_code_cell(self):
         """No empty code cells in rst"""
         nbname = self._get_notebook()
