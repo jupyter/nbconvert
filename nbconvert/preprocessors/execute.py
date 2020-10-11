@@ -6,7 +6,6 @@ and updates outputs"""
 from typing import Optional
 from nbformat import NotebookNode
 from nbclient import NotebookClient, execute as _execute
-from nbclient.util import run_sync
 # Backwards compatability for imported name
 from nbclient.exceptions import CellExecutionError
 
@@ -75,58 +74,19 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             Additional resources used in the conversion process.
         """
         NotebookClient.__init__(self, nb, km)
+        self.reset_execution_trackers()
         self._check_assign_resources(resources)
-        self.execute()
+
+        with self.setup_kernel():
+            info_msg = self.wait_for_reply(self.kc.kernel_info())
+            self.nb.metadata['language_info'] = info_msg['content']['language_info']
+            for index, cell in enumerate(self.nb.cells):
+                self.preprocess_cell(cell, resources, index)
+        self.set_widgets_metadata()
+
         return self.nb, self.resources
 
-    async def async_execute_cell(
-            self,
-            cell: NotebookNode,
-            cell_index: int,
-            execution_count: Optional[int] = None,
-            store_history: bool = False) -> NotebookNode:
-        """
-        Executes a single code cell.
-
-        Overwrites NotebookClient's version of this method to allow for preprocess_cell calls.
-
-        Parameters
-        ----------
-        cell : nbformat.NotebookNode
-            The cell which is currently being processed.
-        cell_index : int
-            The position of the cell within the notebook object.
-        execution_count : int
-            The execution count to be assigned to the cell (default: Use kernel response)
-        store_history : bool
-            Determines if history should be stored in the kernel (default: False).
-            Specific to ipython kernels, which can store command histories.
-
-        Returns
-        -------
-        output : dict
-            The execution output payload (or None for no output).
-
-        Raises
-        ------
-        CellExecutionError
-            If execution failed and should raise an exception, this will be raised
-            with defaults about the failure.
-
-        Returns
-        -------
-        cell : NotebookNode
-            The cell which was just processed.
-        """
-        # Copied and intercepted to allow for custom preprocess_cell contracts to be fullfilled
-        self.store_history = store_history
-        cell, resources = self.preprocess_cell(cell, self.resources, cell_index)
-        # Apply rules from nbclient for where to apply execution counts
-        if execution_count and cell.cell_type == 'code' and cell.source.strip():
-            cell['execution_count'] = execution_count
-        return cell, resources
-
-    def preprocess_cell(self, cell, resources, index, **kwargs):
+    def preprocess_cell(self, cell, resources, index):
         """
         Override if you want to apply some preprocessing to each cell.
         Must return modified cell and resource dictionary.
@@ -142,6 +102,5 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             Index of the cell being processed
         """
         self._check_assign_resources(resources)
-        # Because nbclient is an async library, we need to wrap the parent async call to generate a syncronous version.
-        cell = run_sync(NotebookClient.async_execute_cell)(self, cell, index, store_history=self.store_history)
+        cell = self.execute_cell(cell, index, store_history=True)
         return cell, self.resources
