@@ -483,6 +483,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_output_prompt": False,
                 "exclude_markdown": False,
                 "exclude_code_cell": False,
+                "exclude_output_stdin": True,
             }
         }
         c_no_io = Config(no_io)
@@ -501,6 +502,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_output_prompt": False,
                 "exclude_markdown": False,
                 "exclude_code_cell": True,
+                "exclude_output_stdin": True,
             }
         }
         c_no_code = Config(no_code)
@@ -521,6 +523,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_output_prompt": False,
                 "exclude_markdown": False,
                 "exclude_code_cell": False,
+                "exclude_output_stdin": True,
             }
         }
         c_no_input_prompt = Config(no_input_prompt)
@@ -540,6 +543,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_output_prompt": False,
                 "exclude_markdown": True,
                 "exclude_code_cell": False,
+                "exclude_output_stdin": True,
             }
         }
 
@@ -560,6 +564,7 @@ class TestExporter(ExportersTestsBase):
                 "exclude_output_prompt": True,
                 "exclude_markdown": False,
                 "exclude_code_cell": False,
+                "exclude_output_stdin": True,
             }
         }
         c_no_output_prompt = Config(no_output_prompt)
@@ -568,6 +573,48 @@ class TestExporter(ExportersTestsBase):
 
         assert not resources_no_output_prompt['global_content_filter']['include_output_prompt']
         assert "Out[1]" not in nb_no_output_prompt
+
+    def test_exclude_output_stdin(self):
+        no_output_stdin = {
+            "TemplateExporter":{
+                "exclude_output": False,
+                "exclude_input": False,
+                "exclude_input_prompt": False,
+                "exclude_output_prompt": True,
+                "exclude_markdown": False,
+                "exclude_code_cell": False,
+                "exclude_output_stdin": True,
+            }
+        }
+        c_no_output_stdin = Config(no_output_stdin)
+        exporter_no_output_prompt  = HTMLExporter(config=c_no_output_stdin)
+
+        nb_no_output_stdin, resources_no_output_stdin = exporter_no_output_prompt.from_filename(
+            self._get_notebook('notebook3.ipynb'))
+
+        assert not resources_no_output_stdin['global_content_filter']['include_output_stdin']
+        assert "test input: input value" not in nb_no_output_stdin
+
+    def test_include_output_stdin(self):
+        output_stdin = {
+            "TemplateExporter":{
+                "exclude_output": False,
+                "exclude_input": False,
+                "exclude_input_prompt": False,
+                "exclude_output_prompt": True,
+                "exclude_markdown": False,
+                "exclude_code_cell": False,
+                "exclude_output_stdin": False,
+            }
+        }
+        c_output_stdin = Config(output_stdin)
+        exporter_output_stdin= HTMLExporter(config=c_output_stdin)
+
+        nb_output_stdin, resources_output_stdin = exporter_output_stdin.from_filename(
+            self._get_notebook('notebook3.ipynb'))
+
+        assert resources_output_stdin['global_content_filter']['include_output_stdin']
+        assert "test input: input value" in nb_output_stdin
 
     def test_remove_elements_with_tags(self):
 
