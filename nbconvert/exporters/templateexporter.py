@@ -505,10 +505,13 @@ class TemplateExporter(Exporter):
     def _get_conf(self):
         conf = {}  # the configuration once all conf files are merged
         for path in map(Path, self.template_paths):
-            conf_path = path / 'conf.json'
-            if conf_path.exists():
-                with conf_path.open() as f:
-                    conf = recursive_update(conf, json.load(f))
+            try:
+                conf_path = path / 'conf.json'
+                if conf_path.exists():
+                    with conf_path.open() as f:
+                        conf = recursive_update(conf, json.load(f))
+            except:
+                OK=1
         return conf
 
     @default('template_paths')
