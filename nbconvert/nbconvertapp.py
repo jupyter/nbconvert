@@ -122,6 +122,7 @@ nbconvert_flags.update({
         {'TemplateExporter' : {
             'exclude_output_prompt' : True,
             'exclude_input': True,
+            'exclude_input_prompt': True,
             }
         },
         """Exclude input cells and output prompts from converted document. 
