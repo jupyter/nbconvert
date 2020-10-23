@@ -52,7 +52,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         to other alternatives.
 
         One alternative but rejected implementation would be to copy the client's init internals
-        which has already gotten out of sync with nbclient 0.5 release before nbcovnert 6.0 released.
+        which has already gotten out of sync with nbclient 0.5 release before nbconvert 6.0 released.
 
         Parameters
         ----------
