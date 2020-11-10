@@ -140,8 +140,7 @@ class HTMLExporter(TemplateExporter):
                 # if that fails (for instance a binary file, png or ttf)
                 # we mimic jinja2
                 pieces = split_template_path(name)
-                searchpaths = self.get_template_paths()
-                for searchpath in searchpaths:
+                for searchpath in self.template_paths:
                     filename = os.path.join(searchpath, *pieces)
                     print(filename, os.path.exists(filename))
                     if os.path.exists(filename):
