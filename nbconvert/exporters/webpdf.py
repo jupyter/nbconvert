@@ -5,6 +5,8 @@
 
 import asyncio
 
+import tempfile, os
+
 from traitlets import Bool
 import concurrent.futures
 
@@ -65,6 +67,11 @@ class WebPDFExporter(HTMLExporter):
     def run_pyppeteer(self, html):
         """Run pyppeteer."""
 
+        temp_file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+        temp_filename = temp_file.name
+        with temp_file:
+            temp_file.write(html.encode('utf-8'))
+
         async def main():
             args = ['--no-sandbox'] if self.disable_sandbox else []
             browser = await self._check_launch_reqs()(
@@ -75,7 +82,7 @@ class WebPDFExporter(HTMLExporter):
             )
             page = await browser.newPage()
             await page.waitFor(100)
-            await page.goto('data:text/html,'+html, waitUntil='networkidle0')
+            await page.goto(f'file://{temp_file.name}', waitUntil='networkidle0')
             await page.waitFor(100)
 
             pdf_params = {}
@@ -112,6 +119,7 @@ class WebPDFExporter(HTMLExporter):
             asyncio.set_event_loop(loop)
             return loop.run_until_complete(coro)
         pdf_data = pool.submit(run_coroutine, main()).result()
+        os.unlink(temp_filename)
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
