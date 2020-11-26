@@ -54,6 +54,16 @@ class HTMLExporter(TemplateExporter):
         """
     ).tag(config=True)
 
+    jupyter_widgets_base_url = Unicode(
+        "https://unpkg.com/",
+        help="URL base for Jupyter widgets"
+    ).tag(config=True)
+
+    html_manager_semver_range = Unicode(
+        "*",
+        help="Semver range for Jupyter widgets HTML manager"
+    ).tag(config=True)
+
     @default('file_extension')
     def _file_extension_default(self):
         return '.html'
@@ -161,4 +171,6 @@ class HTMLExporter(TemplateExporter):
         resources['include_url'] = resources_include_url
         resources['require_js_url'] = self.require_js_url
         resources['jquery_url'] = self.jquery_url
+        resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
+        resources['html_manager_semver_range'] = self.html_manager_semver_range
         return resources
