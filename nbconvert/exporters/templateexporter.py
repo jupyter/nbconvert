@@ -546,7 +546,7 @@ class TemplateExporter(Exporter):
             except OSError:
                 pass
 
-        return self.extra_template_paths + additional_paths + paths
+        return paths + self.extra_template_paths + additional_paths
 
     @classmethod
     def get_compatibility_base_template_conf(cls, name):
