@@ -216,7 +216,7 @@ setup_args['install_requires'] = [
     'jinja2>=2.4',
     'pygments>=2.4.1',
     'jupyterlab_pygments',
-    'traitlets>=4.2',
+    'traitlets>=5.0',
     'jupyter_core',
     'nbformat>=4.4',
     'entrypoints>=0.2.2',
