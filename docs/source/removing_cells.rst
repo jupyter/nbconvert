@@ -38,6 +38,12 @@ we demonstrate using the nbconvert Python API.
    # Configure and run out exporter
    c.HTMLExporter.preprocessors = ["TagRemovePreprocessor"]
    HTMLExporter(config=c).from_filename("path/to/mynotebook.ipynb")
+   
+This additional example demonstrates using the CLI to remove cells with a certain cell tag
+
+.. code-block:: sh
+   
+   jupyter nbconver mynotebook.ipynb -TagRemovePreprocessor.remove_cell_tags='{"remove_cell"}'
 
 Removing cells using Regular Expressions on cell content
 --------------------------------------------------------
