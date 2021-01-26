@@ -130,7 +130,7 @@ Filters
 Filters are Python callables which take something (typically text) as an input, and produce a text output.
 If you want to perform custom transformations of particular outputs, a filter may be the way to go.
 
-The following code snippet is an excert from the main default template of the HTML export. The displayed
+The following code snippet is an excerpt from the main default template of the HTML export. The displayed
 block determines how text output on ``stdout`` is displayed in HTML.
 
 .. sourcecode:: html
