@@ -112,7 +112,7 @@ Reveal.js HTML slideshow
 
   This generates a Reveal.js HTML slideshow.
 
-Running this slideshow requires a copy of reveal.js (version 3.x).
+Running this slideshow requires a copy of reveal.js (version 4.x).
 
 By default, this will include a script tag in the html that will directly load
 reveal.js from a public CDN.
