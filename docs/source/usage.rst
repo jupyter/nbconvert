@@ -108,6 +108,17 @@ WebPDF
 
 Reveal.js HTML slideshow
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+  In order to designate a mapping from notebook cells to Reveal.js slides,
+  from within the Jupyter notebook, select menu item
+  View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu
+  on the upper-right of each cell.  From it, one may choose from
+  "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion,
+  cells designated as "skip" will not be included, "notes" will be included
+  only in presenter notes, etc.
+
 * ``--to slides``
 
   This generates a Reveal.js HTML slideshow.
@@ -129,16 +140,6 @@ https server. You can read more about this in ServePostProcessorExample_.
 
 To make this clearer, let's look at an example of how to get speaker notes
 working with a local copy of reveal.js: SlidesWithNotesExample_.
-
-.. note::
-
-  In order to designate a mapping from notebook cells to Reveal.js slides,
-  from within the Jupyter notebook, select menu item
-  View --> Cell Toolbar --> Slideshow. That will reveal a drop-down menu
-  on the upper-right of each cell.  From it, one may choose from
-  "Slide," "Sub-Slide", "Fragment", "Skip", and "Notes."  On conversion,
-  cells designated as "skip" will not be included, "notes" will be included
-  only in presenter notes, etc.
 
 .. _SlidesWithNotesExample:
 
