@@ -12,7 +12,7 @@ import sys
 import subprocess
 
 from testpath.tempdir import TemporaryDirectory
-from traitlets import Unicode, default
+from traitlets import Unicode, default, Union, List
 
 from .convertfigures import ConvertFiguresPreprocessor
 
@@ -62,26 +62,37 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             raise RuntimeError("Unable to find inkscape executable --version")
         return output.decode('utf-8').split(' ')[1]
 
-    command = Unicode(
-        help="""The command to use for converting SVG to PDF
+    # FIXME: Deprecate passing a list here
+    command = Union(
+        [Unicode(), List()],
+        help="""
+        The command to use for converting SVG to PDF
 
-        This string is a template, which will be formatted with the keys
+        This traitlet is a template, which will be formatted with the keys
         to_filename and from_filename.
 
         The conversion call must read the SVG from {from_filename},
         and write a PDF to {to_filename}.
+
+        It could be a List (recommended) or a String. If string, it will
+        be passed to a shell for execution.
         """).tag(config=True)
 
     @default('command')
     def _command_default(self):
-        inkscape_path_string = f'\"{self.inkscape}\"'
         major_version = self.inkscape_version.split('.')[0]
-        export_option = ' --export-filename' if int(major_version) > 0 else ' --export-pdf'
-        gui_option = '' if int(major_version) > 0 else ' --without-gui'
+        command = [self.inkscape]
 
-        return '{inkscape}{gui_option}{export_option}='.format(
-            inkscape=inkscape_path_string, export_option=export_option, gui_option=gui_option
-        ) + '"{to_filename}" "{from_filename}"'
+        if int(major_version) < 1:
+            # --without-gui is only needed for inkscape 0.x
+            command.append('--without-gui')
+            # --export-filename is old name for --export-pdf
+            command.append('--export-filename={to_filename}')
+        else:
+            command.append('--export-pdf={to_filename}')
+
+        command.append('{from_filename}')
+        return command
 
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
     @default('inkscape')
@@ -123,9 +134,18 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
             # Call conversion application
             output_filename = os.path.join(tmpdir, 'figure.pdf')
-            shell = self.command.format(from_filename=input_filename,
-                                   to_filename=output_filename)
-            subprocess.call(shell, shell=True) # Shell=True okay since input is trusted.
+
+            template_vars = {
+                'from_filename': input_filename,
+                'to_filename': output_filename
+            }
+            if isinstance(self.command, list):
+                full_cmd = [s.format(*template_vars) for s in self.command]
+            else:
+                # For backwards compatibility with specifying strings
+                # Okay-ish, since the string is trusted
+                full_cmd = self.command.format(*template_vars)
+            subprocess.call(full_cmd, shell=isinstance(str))
 
             # Read output from drive
             # return value expects a filename
