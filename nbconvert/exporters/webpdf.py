@@ -34,6 +34,22 @@ class WebPDFExporter(HTMLExporter):
         """
     ).tag(config=True)
 
+    disable_sandbox = Bool(
+        False,
+        help="""
+        Disable chromium security sandbox when converting to PDF.
+
+        WARNING: This could cause arbitrary code execution in specific circumstances,
+        where JS in your notebook can execute serverside code! Please use with
+        caution.
+
+        https://github.com/puppeteer/puppeteer/blob/main@%7B2020-12-14T17:22:24Z%7D/docs/troubleshooting.md#setting-up-chrome-linux-sandbox
+        has more information.
+
+        This is required for webpdf to work inside most container environments.
+        """
+    ).tag(config=True)
+
     def _check_launch_reqs(self):
         try:
             from pyppeteer import launch
@@ -50,10 +66,12 @@ class WebPDFExporter(HTMLExporter):
         """Run pyppeteer."""
 
         async def main():
+            args = ['--no-sandbox'] if self.disable_sandbox else []
             browser = await self._check_launch_reqs()(
                 handleSIGINT=False,
                 handleSIGTERM=False,
                 handleSIGHUP=False,
+                args=args
             )
             page = await browser.newPage()
             await page.waitFor(100)
