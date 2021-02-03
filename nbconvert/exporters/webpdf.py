@@ -5,7 +5,7 @@
 
 import asyncio
 
-from traitlets import Bool
+from traitlets import Bool, default
 import concurrent.futures
 
 from .html import HTMLExporter
@@ -33,6 +33,12 @@ class WebPDFExporter(HTMLExporter):
         Set to True to match behavior of LaTeX based PDF generator
         """
     ).tag(config=True)
+
+    output_mimetype = "application/pdf"
+
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.pdf'
 
     def _check_launch_reqs(self):
         try:
