@@ -23,6 +23,17 @@ class WebPDFExporter(HTMLExporter):
         help='Whether to allow downloading Chromium if no suitable version is found on the system.'
     ).tag(config=True)
 
+    paginate = Bool(
+        False,
+        help="""
+        Split generated notebook into multiple pages.
+
+        If False, a PDF with one long page will be generated.
+
+        Set to True to match behavior of LaTeX based PDF generator
+        """
+    ).tag(config=True)
+
     def _check_launch_reqs(self):
         try:
             from pyppeteer import launch
@@ -49,27 +60,29 @@ class WebPDFExporter(HTMLExporter):
             await page.goto('data:text/html,'+html, waitUntil='networkidle0')
             await page.waitFor(100)
 
-            # Floating point precision errors cause the printed
-            # PDF from spilling over a new page by a pixel fraction.
-            dimensions = await page.evaluate(
-              """() => {
-                const rect = document.body.getBoundingClientRect();
-                return {
-                  width: Math.ceil(rect.width) + 1,
-                  height: Math.ceil(rect.height) + 1,
+            pdf_params = {}
+            if not self.paginate:
+                # Floating point precision errors cause the printed
+                # PDF from spilling over a new page by a pixel fraction.
+                dimensions = await page.evaluate(
+                """() => {
+                    const rect = document.body.getBoundingClientRect();
+                    return {
+                    width: Math.ceil(rect.width) + 1,
+                    height: Math.ceil(rect.height) + 1,
+                    }
+                }"""
+                )
+                width = dimensions['width']
+                height = dimensions['height']
+                # 200 inches is the maximum size for Adobe Acrobat Reader.
+                pdf_params = {
+                    'width': min(width, 200 * 72),
+                    'height': min(height, 200 * 72),
+                    'printBackground': True,
                 }
-              }"""
-            )
-            width = dimensions['width']
-            height = dimensions['height']
-            # 200 inches is the maximum size for Adobe Acrobat Reader.
-            pdf_data = await page.pdf(
-              {
-                'width': min(width, 200 * 72),
-                'height': min(height, 200 * 72),
-                'printBackground': True,
-              }
-            )
+            pdf_data = await page.pdf(pdf_params)
+
             await browser.close()
             return pdf_data
 
