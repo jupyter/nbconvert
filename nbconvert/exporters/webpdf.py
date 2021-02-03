@@ -17,7 +17,7 @@ class WebPDFExporter(HTMLExporter):
     This inherits from :class:`HTMLExporter`. It creates the HTML using the
     template machinery, and then run pyppeteer to create a pdf.
     """
-    export_from_notebook = "PDF via pyppeteer"
+    export_from_notebook = "PDF via HTML"
 
     allow_chromium_download = Bool(False,
         help='Whether to allow downloading Chromium if no suitable version is found on the system.'
