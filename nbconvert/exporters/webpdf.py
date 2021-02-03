@@ -24,7 +24,7 @@ class WebPDFExporter(HTMLExporter):
     ).tag(config=True)
 
     paginate = Bool(
-        False,
+        True,
         help="""
         Split generated notebook into multiple pages.
 
