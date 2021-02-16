@@ -67,12 +67,7 @@ class WebPDFExporter(HTMLExporter):
     def run_pyppeteer(self, html):
         """Run pyppeteer."""
 
-        temp_file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
-        temp_filename = temp_file.name
-        with temp_file:
-            temp_file.write(html.encode('utf-8'))
-
-        async def main():
+        async def main(temp_file):
             args = ['--no-sandbox'] if self.disable_sandbox else []
             browser = await self._check_launch_reqs()(
                 handleSIGINT=False,
@@ -112,14 +107,19 @@ class WebPDFExporter(HTMLExporter):
             return pdf_data
 
         pool = concurrent.futures.ThreadPoolExecutor()
-        # TODO: when dropping Python 3.6, use
-        # pdf_data = pool.submit(asyncio.run, main()).result()
-        def run_coroutine(coro):
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            return loop.run_until_complete(coro)
-        pdf_data = pool.submit(run_coroutine, main()).result()
-        os.unlink(temp_filename)
+        temp_file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+        with temp_file:
+            temp_file.write(html.encode('utf-8'))
+        try:
+            # TODO: when dropping Python 3.6, use
+            # pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
+            def run_coroutine(coro):
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                return loop.run_until_complete(coro)
+            pdf_data = pool.submit(run_coroutine, main(temp_file)).result()
+        finally:
+            os.unlink(temp_file.name)
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
