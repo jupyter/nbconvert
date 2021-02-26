@@ -16,6 +16,7 @@ class TestWebPDFExporter(ExportersTestsBase):
 
     exporter_class = WebPDFExporter
 
+    @pytest.mark.network
     def test_export(self):
         """
         Can a TemplateExporter export something?
