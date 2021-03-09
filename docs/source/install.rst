@@ -71,7 +71,7 @@ packages are specific to different operating systems:
 
   * E.g. on Debian or Ubuntu::
 
-        sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-generic-recommended
+        sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-plain-generic
 
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
 * Windows: `MikTex <https://miktex.org/>`_
