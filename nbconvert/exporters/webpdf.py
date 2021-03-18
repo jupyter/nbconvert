@@ -7,7 +7,7 @@ import asyncio
 
 import tempfile, os
 
-from traitlets import Bool
+from traitlets import Bool, default
 import concurrent.futures
 
 from .html import HTMLExporter
@@ -51,6 +51,10 @@ class WebPDFExporter(HTMLExporter):
         This is required for webpdf to work inside most container environments.
         """
     ).tag(config=True)
+
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.pdf'
 
     def _check_launch_reqs(self):
         try:
