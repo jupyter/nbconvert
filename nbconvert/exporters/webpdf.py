@@ -52,6 +52,8 @@ class WebPDFExporter(HTMLExporter):
         """
     ).tag(config=True)
 
+    output_mimetype = "application/pdf"
+
     def _check_launch_reqs(self):
         try:
             from pyppeteer import launch
