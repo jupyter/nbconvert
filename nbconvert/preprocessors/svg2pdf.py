@@ -62,7 +62,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             raise RuntimeError("Unable to find inkscape executable --version")
         return output.decode('utf-8').split(' ')[1]
 
-    # FIXME: Deprecate passing a list here
+    # FIXME: Deprecate passing a string here
     command = Union(
         [Unicode(), List()],
         help="""
@@ -145,7 +145,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
                 full_cmd = self.command.format(*template_vars)
-            subprocess.call(full_cmd, shell=isinstance(str))
+            subprocess.call(full_cmd, shell=isinstance(full_cmd, str))
 
             # Read output from drive
             # return value expects a filename
