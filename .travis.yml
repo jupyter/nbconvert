@@ -32,6 +32,7 @@ install:
     - pip install --upgrade setuptools pip pytest
     - pip install -f travis-wheels/wheelhouse . codecov coverage
     - pip install nbconvert[execute,serve,test]
+    - pip install https://github.com/davidbrochart/jupyter_client/archive/fix_threaded_client.zip --ignore-installed
     - pip install check-manifest
     - python -m ipykernel.kernelspec --user
 script:
