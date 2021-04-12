@@ -73,7 +73,9 @@ div#notebook-container{
 </style>
 {% endblock notebook_css %}
 
+{%- block html_head_js_mathjax -%}
 {{ mathjax() }}
+{%- endblock html_head_js_mathjax -%}
 
 {%- block html_head_css -%}
 {%- endblock html_head_css -%}
