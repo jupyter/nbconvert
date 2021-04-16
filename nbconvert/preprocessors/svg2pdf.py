@@ -79,7 +79,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         export_option = ' --export-filename' if int(major_version) > 0 else ' --export-pdf'
         gui_option = '' if int(major_version) > 0 else ' --without-gui'
 
-        return '{inkscape}{gui_option}{export_option}='.format(
+        return '"{inkscape}"{gui_option}{export_option}='.format(
             inkscape=inkscape_path_string, export_option=export_option, gui_option=gui_option
         ) + '"{to_filename}" "{from_filename}"'
 
