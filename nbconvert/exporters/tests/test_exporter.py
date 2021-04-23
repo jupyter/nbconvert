@@ -97,7 +97,7 @@ class TestExporter(ExportersTestsBase):
             # enabled in the config
             self.assertNotEqual(export_names, ['notebook'])
 
-        # In the abscence of this variable we should revert to
+        # In the absence of this variable we should revert to
         # the normal behavior.
         del os.environ["NBCONVERT_DISABLE_CONFIG_EXPORTERS"]
         export_names = get_export_names(config=config)
