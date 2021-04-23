@@ -188,7 +188,7 @@ setup_args = dict(
     package_data    = package_data,
     data_files      = get_data_files(),
     cmdclass        = cmdclass,
-    python_requires = '>=3.6',
+    python_requires = '>=3.7',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'https://jupyter.org',
