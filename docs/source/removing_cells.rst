@@ -46,7 +46,7 @@ we demonstrate using the nbconvert Python API.
    exporter = HTMLExporter(config=c)
    exporter.register_preprocessor(TagRemovePreprocessor(config=c),True)
 
-   # Configure and run out exporter - returns a tuple - first element with html,
+   # Configure and run our exporter - returns a tuple - first element with html,
    # second with notebook metadata
    output = HTMLExporter(config=c).from_filename("your-notebook-file-path.ipynb")
 
