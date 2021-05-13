@@ -12,5 +12,6 @@ dependencies:
 - tornado
 - entrypoints
 - ipykernel
+- pip
 - pip:
     - nbsphinx>=0.7.1
