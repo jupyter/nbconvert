@@ -5,16 +5,16 @@ Architecture of nbconvert
 =========================
 
 This is a high-level outline of the basic workflow, structures and objects in nbconvert.
-Specifically, this exposition has a two-fold goal: 
-    
-    #. to alert you to the affordances available for customisation or direct contributions 
+Specifically, this exposition has a two-fold goal:
+
+    #. to alert you to the affordances available for customisation or direct contributions
     #. to provide a map of where and when different events occur, which should aid in tracking down bugs.
-    
+
 
 A detailed pipeline exploration
 ===============================
 
-Nbconvert takes in a notebook, which is a JSON object, and operates on that object. 
+Nbconvert takes in a notebook, which is a JSON object, and operates on that object.
 
 This can include operations that take a notebook and return a notebook.
 For example, that operation could be to execute the notebook as though it were a continuous script; if it were executed ``--in-place`` then it would overwrite the current notebook.
@@ -36,21 +36,21 @@ Markdown cells and raw NbConvert cells do not have analogous substructure.
 
 The template's structure then can be seen as a mechanism for selecting content on which to operate.
 Because the template operates on individual cells, this has some upsides and drawbacks.
-One upside is that this allows the template to have access to the individual cell's metadata, which enables intelligently transforming the appropriate content. 
-The transformations occur as a series of replacement rules and filters. 
+One upside is that this allows the template to have access to the individual cell's metadata, which enables intelligently transforming the appropriate content.
+The transformations occur as a series of replacement rules and filters.
 For many purposes these filters take the form of external calls to `pandoc`_, which is a utility for converting between many different document formats.
 One downside is that this makes operations that require global coördination (e.g., cross referencing across cells) somewhat challenging to implement as filters inside templates.
 
-Note that all that we've described is happening in memory. 
+Note that all that we've described is happening in memory.
 This is crucial in order to ensure that this functionality is available when writing files is more challenging.
 Nonetheless, the reason for using nbconvert almost always involves producing some kind of output file.
 We take the in-memory object and write a file appropriate for the output type.
 
-The entirety of heretofore described process can be described as part of an ``Exporter``. 
-``Exporter``\s often involves ``Preprocessor``\s, ``filters``, ``templates`` and ``Writer``\s. 
+The entirety of heretofore described process can be described as part of an ``Exporter``.
+``Exporter``\s often involves ``Preprocessor``\s, ``filters``, ``templates`` and ``Writer``\s.
 These classes and functions are described in greater detail below.
 
-Finally, one can apply a ``Postprocessor`` after the writing has occurred. 
+Finally, one can apply a ``Postprocessor`` after the writing has occurred.
 For example, it is common when converting to slides to start a webserver and open a browser window with the newly created document (``--to slides --post serve``).
 
 Classes
@@ -151,7 +151,7 @@ Configurable classes.
 .. seealso::
 
     - :doc:`customizing`
-    - :ref:`jinja:filters`
+    - `More on Jinja Filters <https://jinja.palletsprojects.com/en/3.0.x/templates/#filters>`_
 
 Once it has passed through the template, an Exporter is done with the notebook,
 and returns the file data.
@@ -186,6 +186,6 @@ which is used for serving `reveal.js`_ HTML slideshows.
 .. links:
 
 .. _jinja: http://jinja.pocoo.org/
-.. _filter: http://jinja.pocoo.org/docs/dev/templates/#filters
+.. _jinja_filter: https://jinja.palletsprojects.com/en/3.0.x/templates/#filters
 .. _reveal.js: http://lab.hakim.se/reveal-js
 .. _pandoc: https://pandoc.org/
