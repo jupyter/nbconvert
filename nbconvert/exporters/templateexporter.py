@@ -545,8 +545,8 @@ class TemplateExporter(Exporter):
                 ensure_dir_exists(path, mode=0o700)
             except OSError:
                 pass
-
-        return self.extra_template_paths + additional_paths + paths
+        
+        return paths + additional_paths + self.extra_template_paths 
 
     @classmethod
     def get_compatibility_base_template_conf(cls, name):
