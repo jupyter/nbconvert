@@ -3,7 +3,7 @@
 Filters
 =======
 
-Filters are for use with the `TemplateExporter` exporter.
+Filters are for use with the `templateexporter.TemplateExporter` exporter.
 They provide a way for you transform notebook contents to a particular format depending
 on the template you are using. For example, when converting to HTML, you would want to
 use the `ansi2html()` function to convert ANSI colors (from
