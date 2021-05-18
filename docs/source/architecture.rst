@@ -151,7 +151,7 @@ Configurable classes.
 .. seealso::
 
     - :doc:`customizing`
-    - `More on Jinja Filters <https://jinja.palletsprojects.com/en/3.0.x/templates/#filters>`_
+    - `More on Jinja Filters`_
 
 Once it has passed through the template, an Exporter is done with the notebook,
 and returns the file data.
@@ -185,7 +185,7 @@ which is used for serving `reveal.js`_ HTML slideshows.
 
 .. links:
 
-.. _jinja: http://jinja.pocoo.org/
-.. _jinja_filter: https://jinja.palletsprojects.com/en/3.0.x/templates/#filters
+.. _jinja: https://jinja.palletsprojects.com/en/3.0.x/
+.. _More on Jinja Filters: https://jinja.palletsprojects.com/en/3.0.x/templates/#filters
 .. _reveal.js: http://lab.hakim.se/reveal-js
 .. _pandoc: https://pandoc.org/
