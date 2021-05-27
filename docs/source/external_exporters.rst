@@ -188,16 +188,14 @@ We are going to write an exporter that:
             return '.test_ext'
 
         @property
-        def template_paths(self):
+        def extra_template_basedirs(self):
             """
             We want to inherit from HTML template, and have template under
             ``./templates/`` so append it to the search path. (see next section)
-
-            Note: nbconvert 6.0 changed ``template_path`` to ``template_paths``
             """
-            return super().template_paths+[os.path.join(os.path.dirname(__file__), "templates")]
+            return super()._default_extra_template_basedirs() + [os.path.join(os.path.dirname(__file__), "templates")]
 
-        def _template_file_default(self):
+        def _template_name_default(self):
             """
             We want to use the new template we ship with our library.
             """
