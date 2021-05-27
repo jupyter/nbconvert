@@ -193,7 +193,8 @@ We are going to write an exporter that:
             We want to inherit from HTML template, and have template under
             ``./templates/`` so append it to the search path. (see next section)
             """
-            return super()._default_extra_template_basedirs() + [os.path.join(os.path.dirname(__file__), "templates")]
+            return super()._default_extra_template_basedirs() +
+                   [os.path.join(os.path.dirname(__file__), "templates")]
 
         def _template_name_default(self):
             """
