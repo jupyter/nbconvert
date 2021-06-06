@@ -46,13 +46,13 @@ package_data = {
 notebook_css_version = '5.4.0'
 notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
-jupyterlab_css_version = '2.1.0'
+jupyterlab_css_version = '3.0.7'
 jupyterlab_css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
 
-jupyterlab_theme_light_version = '2.1.2'
+jupyterlab_theme_light_version = '3.0.7'
 jupyterlab_theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/style/variables.css" % jupyterlab_theme_light_version
 
-jupyterlab_theme_dark_version = '2.1.2'
+jupyterlab_theme_dark_version = '3.0.7'
 jupyterlab_theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/style/variables.css" % jupyterlab_theme_dark_version
 
 template_css_urls = {
@@ -188,7 +188,7 @@ setup_args = dict(
     package_data    = package_data,
     data_files      = get_data_files(),
     cmdclass        = cmdclass,
-    python_requires = '>=3.6',
+    python_requires = '>=3.7',
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'https://jupyter.org',

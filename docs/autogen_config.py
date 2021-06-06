@@ -35,6 +35,10 @@ exporting to HTML.
 CLI Flags and Aliases
 ---------------------
 
+The dynamic loading of exporters can be disabled by setting the environment
+variable ``NBCONVERT_DISABLE_CONFIG_EXPORTERS``. This causes all exporters
+to be loaded regardless of the value of their ``enabled`` attribute.
+
 When using Nbconvert from the command line, a number of aliases and flags are
 defined as shortcuts to configuration options for convience.
 

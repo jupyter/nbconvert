@@ -146,6 +146,7 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile('notebook with spaces.pdf')
 
+    @pytest.mark.network
     def test_webpdf_with_chromium(self):
         """
         Generate PDFs if chromium allowed to be downloaded?
@@ -356,8 +357,8 @@ class TestNbConvertApp(TestsBase):
                 text = f.read()
                 assert 'celltag_mycelltag celltag_mysecondcelltag' in text
                 assert 'celltag_mymarkdowncelltag' in text
-            
-                
+
+
     def test_no_input(self):
         """
         Verify that the html has no input when given --no-input.

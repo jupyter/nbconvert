@@ -5,8 +5,14 @@
 
 import asyncio
 
+<<<<<<< HEAD
 from traitlets import Bool, default
 from jupyter_core.paths import jupyter_path
+=======
+import tempfile, os
+
+from traitlets import Bool
+>>>>>>> fa3ba7440cae2f2a7d3b5c0b4051e683b5576e82
 import concurrent.futures
 
 from .html import HTMLExporter
@@ -18,7 +24,7 @@ class WebPDFExporter(HTMLExporter):
     This inherits from :class:`HTMLExporter`. It creates the HTML using the
     template machinery, and then run pyppeteer to create a pdf.
     """
-    export_from_notebook = "PDF via pyppeteer"
+    export_from_notebook = "PDF via HTML"
 
     allow_chromium_download = Bool(False,
         help='Whether to allow downloading Chromium if no suitable version is found on the system.'
@@ -49,6 +55,22 @@ class WebPDFExporter(HTMLExporter):
     def _template_data_paths_default(self):
         return jupyter_path("nbconvert", "templates", "webpdf")
 
+    disable_sandbox = Bool(
+        False,
+        help="""
+        Disable chromium security sandbox when converting to PDF.
+
+        WARNING: This could cause arbitrary code execution in specific circumstances,
+        where JS in your notebook can execute serverside code! Please use with
+        caution.
+
+        https://github.com/puppeteer/puppeteer/blob/main@%7B2020-12-14T17:22:24Z%7D/docs/troubleshooting.md#setting-up-chrome-linux-sandbox
+        has more information.
+
+        This is required for webpdf to work inside most container environments.
+        """
+    ).tag(config=True)
+
     def _check_launch_reqs(self):
         try:
             from pyppeteer import launch
@@ -64,15 +86,17 @@ class WebPDFExporter(HTMLExporter):
     def run_pyppeteer(self, html):
         """Run pyppeteer."""
 
-        async def main():
+        async def main(temp_file):
+            args = ['--no-sandbox'] if self.disable_sandbox else []
             browser = await self._check_launch_reqs()(
                 handleSIGINT=False,
                 handleSIGTERM=False,
                 handleSIGHUP=False,
+                args=args
             )
             page = await browser.newPage()
             await page.waitFor(100)
-            await page.goto('data:text/html,'+html, waitUntil='networkidle0')
+            await page.goto(f'file://{temp_file.name}', waitUntil='networkidle0')
             await page.waitFor(100)
 
             pdf_params = {}
@@ -102,13 +126,25 @@ class WebPDFExporter(HTMLExporter):
             return pdf_data
 
         pool = concurrent.futures.ThreadPoolExecutor()
-        # TODO: when dropping Python 3.6, use
-        # pdf_data = pool.submit(asyncio.run, main()).result()
-        def run_coroutine(coro):
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            return loop.run_until_complete(coro)
-        pdf_data = pool.submit(run_coroutine, main()).result()
+        # Create a temporary file to pass the HTML code to Chromium:
+        # Unfortunately, tempfile on Windows does not allow for an already open
+        # file to be opened by a separate process. So we must close it first
+        # before calling Chromium. We also specify delete=False to ensure the
+        # file file is not deleted after closing (the default behavior).
+        temp_file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+        with temp_file:
+            temp_file.write(html.encode('utf-8'))
+        try:
+            # TODO: when dropping Python 3.6, use
+            # pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
+            def run_coroutine(coro):
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                return loop.run_until_complete(coro)
+            pdf_data = pool.submit(run_coroutine, main(temp_file)).result()
+        finally:
+            # Ensure the file is deleted even if pypeteer raises an exception
+            os.unlink(temp_file.name)
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
