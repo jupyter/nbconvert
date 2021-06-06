@@ -5,14 +5,10 @@
 
 import asyncio
 
-<<<<<<< HEAD
-from traitlets import Bool, default
-from jupyter_core.paths import jupyter_path
-=======
 import tempfile, os
 
-from traitlets import Bool
->>>>>>> fa3ba7440cae2f2a7d3b5c0b4051e683b5576e82
+from traitlets import Bool, default
+from jupyter_core.paths import jupyter_path
 import concurrent.futures
 
 from .html import HTMLExporter
