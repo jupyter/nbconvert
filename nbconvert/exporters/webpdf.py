@@ -7,7 +7,8 @@ import asyncio
 
 import tempfile, os
 
-from traitlets import Bool
+from traitlets import Bool, default
+from jupyter_core.paths import jupyter_path
 import concurrent.futures
 
 from .html import HTMLExporter
@@ -35,6 +36,20 @@ class WebPDFExporter(HTMLExporter):
         Set to True to match behavior of LaTeX based PDF generator
         """
     ).tag(config=True)
+
+    output_mimetype = "application/pdf"
+
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.pdf'
+
+    @default('template_name')
+    def _template_name_default(self):
+        return 'webpdf'
+
+    @default('template_data_paths')
+    def _template_data_paths_default(self):
+        return jupyter_path("nbconvert", "templates", "webpdf")
 
     disable_sandbox = Bool(
         False,
