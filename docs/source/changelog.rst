@@ -482,7 +482,7 @@ There were a few new metadata fields which are now respected in nbconvert.
 
 ``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
 
-``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the `ExtractOutputPreprocessor`. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
+``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
 
 The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by `nbval <https://github.com/computationalmodelling/nbval>`_ and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
 Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
