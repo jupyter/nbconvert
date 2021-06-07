@@ -58,6 +58,9 @@ consider calling super even if it is a leaf block, we might insert more blocks l
                                                     {%- elif output.name == 'stderr' -%}
                                                         {%- block stream_stderr scoped -%}
                                                         {%- endblock stream_stderr -%}
+                                                    {%- elif output.name == 'stdin' -%}
+                                                        {%- block stream_stdin scoped -%}
+                                                        {%- endblock stream_stdin -%}
                                                     {%- endif -%}
                                                 {%- endblock stream -%}
                                             {%- elif output.output_type == 'display_data' -%}

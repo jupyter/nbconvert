@@ -123,6 +123,16 @@ unknown type  {{ cell.type }}
 </div>
 {%- endblock stream_stderr %}
 
+{% block stream_stdin -%}
+{%- if resources.global_content_filter.include_output_stdin -%}
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stdin">
+<pre>
+{{- output.text | ansi2html -}}
+</pre>
+</div>
+{%- endif %}
+{%- endblock stream_stdin %}
+
 {% block data_svg scoped -%}
 <div class="jp-RenderedSVG jp-OutputArea-output {{ extra_class }}" data-mime-type="image/svg+xml">
 {%- if output.svg_filename %}

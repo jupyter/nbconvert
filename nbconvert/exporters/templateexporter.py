@@ -273,6 +273,10 @@ class TemplateExporter(Exporter):
         help = "This allows you to exclude output prompts from all templates if set to True."
         ).tag(config=True)
 
+    exclude_output_stdin = Bool(True,
+        help = "This allows you to exclude output of stdin stream from lab template if set to True."
+        ).tag(config=True)
+
     exclude_code_cell = Bool(False,
         help = "This allows you to exclude code cells from all templates if set to True."
         ).tag(config=True)
@@ -375,6 +379,7 @@ class TemplateExporter(Exporter):
                 'include_unknown': not self.exclude_unknown,
                 'include_input': not self.exclude_input,
                 'include_output': not self.exclude_output,
+                'include_output_stdin': not self.exclude_output_stdin,
                 'include_input_prompt': not self.exclude_input_prompt,
                 'include_output_prompt': not self.exclude_output_prompt,
                 'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
