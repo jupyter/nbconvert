@@ -42,7 +42,7 @@ def export(exporter, nb, **kw):
 
     Parameters
     ----------
-    exporter : `Exporter` class or instance
+    exporter : ``Exporter`` class or instance
         Class or instance of the exporter that should be used.  If the
         method initializes its own instance of the class, it is ASSUMED that
         the class type provided exposes a constructor (``__init__``) with the same

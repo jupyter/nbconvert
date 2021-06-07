@@ -274,7 +274,7 @@ class NbConvertApp(JupyterApp):
         help="""The export format to be used, either one of the built-in formats
         {formats}
         or a dotted object name that represents the import path for an
-        `Exporter` class""".format(formats=get_export_names())
+        ``Exporter`` class""".format(formats=get_export_names())
     ).tag(config=True)
 
     notebooks = List([], help="""List of notebooks to convert.
