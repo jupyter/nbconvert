@@ -180,7 +180,7 @@ Postprocessors
 --------------
 
 A *Postprocessor* is something that runs after everything is exported and written to the filesystem.
-The only postprocessor in nbconvert at this point is the `ServePostProcessor`,
+The only postprocessor in nbconvert at this point is the ``nbconvert.postprocessors.serve.ServePostProcessor``,
 which is used for serving `reveal.js`_ HTML slideshows.
 
 .. links:
