@@ -118,7 +118,7 @@ there are no execution errors. But, what if there are errors?
 Execution until first error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 An error during the notebook execution, by default, will stop the execution
-and raise a `CellExecutionError`. Conveniently, the source cell causing
+and raise a ``CellExecutionError``. Conveniently, the source cell causing
 the error and the original error name and message are also printed.
 After an error, we can still save the notebook as before::
 
@@ -148,7 +148,7 @@ A useful pattern to execute notebooks while handling errors is the following::
 
 This will save the executed notebook regardless of execution errors.
 In case of errors, however, an additional message is printed and the
-`CellExecutionError` is raised. The message directs the user to
+``CellExecutionError`` is raised. The message directs the user to
 the saved notebook for further inspection.
 
 Execute and save all errors
