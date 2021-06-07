@@ -61,7 +61,7 @@ Classes
 Exporters
 ---------
 
-The primary class in nbconvert is the `Exporter`.
+The primary class in nbconvert is the ``nbconvert.exporters.exporter.Exporter``.
 Exporters encapsulate the operation of turning a notebook into another format.
 There is one Exporter for each format supported in nbconvert.
 The first thing an Exporter does is load a notebook, usually from a file via :mod:`nbformat`.
@@ -99,7 +99,7 @@ Once a notebook is preprocessed, it's time to convert the notebook into the dest
 Templates
 ---------
 
-Most Exporters in nbconvert are a subclass of `TemplateExporter`, which make use of
+Most Exporters in nbconvert are a subclass of ``nbconvert.exporters.templateexporter.TemplateExporter``, which make use of
 `jinja`_ to render a notebook into the destination format.
 
 Nbconvert templates can be selected from the command line with the ``--template``
