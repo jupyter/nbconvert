@@ -499,6 +499,8 @@ class TemplateExporter(Exporter):
                 kwargs = preprocessor.copy()
                 preprocessor_cls = kwargs.pop('type')
                 preprocessor_cls = import_item(preprocessor_cls)
+                if preprocessor_cls.__name__ in self.config:
+                    kwargs.update(self.config[preprocessor_cls.__name__])
                 preprocessor = preprocessor_cls(**kwargs)
                 self.register_preprocessor(preprocessor)
 
