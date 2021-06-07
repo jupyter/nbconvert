@@ -80,7 +80,7 @@ Once the notebook is loaded, it is preprocessed...
 Preprocessors
 -------------
 
-A `Preprocessor` is an object that transforms the content of the notebook to be exported.
+A ``nbconvert.preprocessors.Preprocessor`` is an object that transforms the content of the notebook to be exported.
 The result of a preprocessor being applied to a notebook is always a notebook.
 These operations include re-executing the cells, stripping output,
 removing bundled outputs to separate files, etc.
