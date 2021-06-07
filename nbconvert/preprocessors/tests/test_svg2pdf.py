@@ -87,8 +87,17 @@ class Testsvg2pdf(PreprocessorTestsBase):
 
     def test_inkscape_pre_v1_command(self):
         preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='0.92.3')
-        assert preprocessor.command == '"fake-inkscape" --without-gui --export-pdf="{to_filename}" "{from_filename}"'
+        assert preprocessor.command == [
+            'fake-inkscape',
+            '--without-gui',
+            '--export-filename={to_filename}',
+            '{from_filename}'
+        ]
 
     def test_inkscape_v1_command(self):
         preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='1.0beta2')
-        assert preprocessor.command == '"fake-inkscape" --export-filename="{to_filename}" "{from_filename}"'
+        assert preprocessor.command == [
+            'fake-inkscape',
+            '--export-pdf={to_filename}',
+            '{from_filename}'
+        ]
