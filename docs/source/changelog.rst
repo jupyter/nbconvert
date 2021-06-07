@@ -665,7 +665,7 @@ Comprehensive notes
 - new: slides now can enable scrolling and custom transitions :ghpull:`600`
 
 - docs: Release instructions for nbviewer-deploy
-- docs: improved instructions for handling errors using the `ExecutePreprocessor` :ghpull:`656`
+- docs: improved instructions for handling errors using the ``ExecutePreprocessor`` :ghpull:`656`
 
 - tests: better height/width metadata testing for images in rst & html :ghpull:`601` :ghpull:`602`
 - tests: normalise base64 output data to avoid false positives :ghpull:`650`
