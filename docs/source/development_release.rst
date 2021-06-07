@@ -101,7 +101,7 @@ Create the release
 Release the new version
 -----------------------
 
-Push directly on master, including --tags separately
+Push directly on main, including --tags separately
 
     .. code:: bash
 
