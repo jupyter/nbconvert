@@ -660,7 +660,7 @@ Comprehensive notes
 
 - new: configurable ``browser`` in ServePostProcessor :ghpull:`618`
 - new: ``--clear-output`` command line flag to clear output in-place :ghpull:`619`
-- new: remove elements based on tags with `TagRemovePreprocessor`. :ghpull:`640`, :ghpull:`643`
+- new: remove elements based on tags with ``TagRemovePreprocessor``. :ghpull:`640`, :ghpull:`643`
 - new: CellExecutionError can now be imported from ``nbconvert.preprocessors`` :ghpull:`656`
 - new: slides now can enable scrolling and custom transitions :ghpull:`600`
 
