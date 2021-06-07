@@ -123,16 +123,18 @@ require(
       waitSeconds: 15
     },
     [
-      "{{ reveal_url_prefix }}/dist/reveal.js"
+      "{{ reveal_url_prefix }}/dist/reveal.js",
+      "{{ reveal_url_prefix }}/plugin/notes/notes.js"
     ],
 
-    function(Reveal){
+    function(Reveal, RevealNotes){
         // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
         Reveal.initialize({
             controls: true,
             progress: true,
             history: true,
             transition: "{{reveal_transition}}",
+            plugins: [RevealNotes]
         });
 
         var update = function(event){

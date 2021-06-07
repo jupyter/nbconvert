@@ -3,6 +3,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import os
 import warnings
 
 import entrypoints
@@ -135,6 +136,10 @@ def get_export_names(config=get_config()):
     them as an nbconvert.exporter entrypoint.
     """
     exporters = sorted(entrypoints.get_group_named('nbconvert.exporters'))
+    if os.environ.get("NBCONVERT_DISABLE_CONFIG_EXPORTERS"):
+        get_logger().info("Config exporter loading disabled, no additional exporters will be automatically included.")
+        return exporters
+
     enabled_exporters = []
     for exporter_name in exporters:
         try:

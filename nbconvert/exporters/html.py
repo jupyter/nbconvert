@@ -54,6 +54,16 @@ class HTMLExporter(TemplateExporter):
         """
     ).tag(config=True)
 
+    jupyter_widgets_base_url = Unicode(
+        "https://unpkg.com/",
+        help="URL base for Jupyter widgets"
+    ).tag(config=True)
+
+    html_manager_semver_range = Unicode(
+        "*",
+        help="Semver range for Jupyter widgets HTML manager"
+    ).tag(config=True)
+
     @default('file_extension')
     def _file_extension_default(self):
         return '.html'
@@ -140,8 +150,7 @@ class HTMLExporter(TemplateExporter):
                 # if that fails (for instance a binary file, png or ttf)
                 # we mimic jinja2
                 pieces = split_template_path(name)
-                searchpaths = self.get_template_paths()
-                for searchpath in searchpaths:
+                for searchpath in self.template_paths:
                     filename = os.path.join(searchpath, *pieces)
                     print(filename, os.path.exists(filename))
                     if os.path.exists(filename):
@@ -161,4 +170,6 @@ class HTMLExporter(TemplateExporter):
         resources['include_url'] = resources_include_url
         resources['require_js_url'] = self.require_js_url
         resources['jquery_url'] = self.jquery_url
+        resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
+        resources['html_manager_semver_range'] = self.html_manager_semver_range
         return resources

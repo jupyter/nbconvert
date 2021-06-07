@@ -12,7 +12,7 @@ from .base import TestsBase
 from ..postprocessors import PostProcessorBase
 from ..tests.utils import onlyif_cmds_exist
 from nbconvert import nbconvertapp
-from nbconvert.exporters import Exporter
+from nbconvert.exporters import Exporter, HTMLExporter
 
 from traitlets.tests.utils import check_help_all_output
 from testpath import tempdir
@@ -146,6 +146,7 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile('notebook with spaces.pdf')
 
+    @pytest.mark.network
     def test_webpdf_with_chromium(self):
         """
         Generate PDFs if chromium allowed to be downloaded?
@@ -356,8 +357,8 @@ class TestNbConvertApp(TestsBase):
                 text = f.read()
                 assert 'celltag_mycelltag celltag_mysecondcelltag' in text
                 assert 'celltag_mymarkdowncelltag' in text
-            
-                
+
+
     def test_no_input(self):
         """
         Verify that the html has no input when given --no-input.
@@ -548,3 +549,23 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert(
                 '--log-level 0 notebook4_jpeg.ipynb --to rst')
             assert fig_exists('notebook4_jpeg_files')
+
+    def test_widgets_from_nbconvert(self):
+        """Check jupyter widgets URL"""
+        
+        with self.create_temp_cwd(["Widget_List.ipynb"]):
+            self.nbconvert('Widget_List.ipynb --log-level 0 --to html')
+            assert os.path.isfile('Widget_List.html')
+            with open("Widget_List.html",'r') as f:
+                text = f.read()
+                assert "var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';" in text
+
+    def test_widgets_from_htmlexporter(self):
+        """Check jupyter widgets URL"""
+        with self.create_temp_cwd(["Widget_List.ipynb"]) as tmpdir:
+            with open(os.path.join(tmpdir, 'Widget_List.ipynb')) as f:
+                nb = nbformat.read(f, 4)
+
+            output, _ = HTMLExporter().from_notebook_node(nb)
+            
+            assert "var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';" in output
