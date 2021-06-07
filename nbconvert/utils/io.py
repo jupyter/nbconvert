@@ -45,3 +45,6 @@ def unicode_stdin_stream():
 
     return codecs.getreader('utf-8')(stream_b)
 
+class FormatSafeDict(dict):
+    def __missing__(self, key):
+        return '{' + key + '}'

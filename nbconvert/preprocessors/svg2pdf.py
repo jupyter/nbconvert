@@ -15,6 +15,7 @@ from testpath.tempdir import TemporaryDirectory
 from traitlets import Unicode, default, Union, List
 
 from .convertfigures import ConvertFiguresPreprocessor
+from ..utils.io import FormatSafeDict
 
 from shutil import which
 
@@ -140,7 +141,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                 'to_filename': output_filename
             }
             if isinstance(self.command, list):
-                full_cmd = [s.format(*template_vars) for s in self.command]
+                full_cmd = [s.format_map(FormatSafeDict(**template_vars)) for s in self.command]
             else:
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
