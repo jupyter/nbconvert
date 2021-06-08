@@ -87,10 +87,10 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         if int(major_version) < 1:
             # --without-gui is only needed for inkscape 0.x
             command.append('--without-gui')
-            # --export-filename is old name for --export-pdf
-            command.append('--export-filename={to_filename}')
-        else:
+            # --export-pdf is old name for --export-filename
             command.append('--export-pdf={to_filename}')
+        else:
+            command.append('--export-filename={to_filename}')
 
         command.append('{from_filename}')
         return command
