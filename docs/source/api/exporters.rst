@@ -47,7 +47,7 @@ Specialized exporter classes
 ----------------------------
 
 The `NotebookExporter` inherits directly from
-`Exporter`, while the other exporters listed here
+``Exporter``, while the other exporters listed here
 inherit either directly or indirectly from
 `TemplateExporter`.
 

@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Building HTML
           command: |
-            python3 setup.py build_sphinx -W -b html
+            python3 setup.py build_sphinx -b html
 
       - store_artifacts:
           name: Uploading HTML files
@@ -64,7 +64,7 @@ jobs:
       - run:
           name: Building LaTeX
           command: |
-            python3 setup.py build_sphinx -W -b latex
+            python3 setup.py build_sphinx -b latex
 
       - run:
           name: Building PDF
@@ -80,7 +80,7 @@ jobs:
       - run:
           name: Checking for broken links
           command: |
-            python3 setup.py build_sphinx -W -b linkcheck
+            python3 setup.py build_sphinx -b linkcheck
 
 workflows:
   version: 2

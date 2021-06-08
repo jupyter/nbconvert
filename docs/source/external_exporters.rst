@@ -101,7 +101,7 @@ for any ``nbconvert`` exporters you can use either the configuration file syntax
 ``c.MyExporter.config_option=value`` or the command line flag form
 ``--MyExporter.config_option=value``.
 
-Writing a custom `Exporter`
+Writing a custom ``Exporter``
 =============================
 
 Under the hood exporters are python classes that expose a certain interface.

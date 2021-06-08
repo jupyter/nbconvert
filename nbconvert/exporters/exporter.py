@@ -203,13 +203,13 @@ class Exporter(LoggingConfigurable):
         """
         Register a preprocessor.
         Preprocessors are classes that act upon the notebook before it is
-        passed into the Jinja templating engine.  preprocessors are also
+        passed into the Jinja templating engine. Preprocessors are also
         capable of passing additional information to the Jinja
         templating engine.
 
         Parameters
         ----------
-        preprocessor : `Preprocessor`
+        preprocessor : `nbconvert.preprocessors.Preprocessor`
             A dotted module name, a type, or an instance
         enabled : bool
             Mark the preprocessor as enabled
@@ -316,7 +316,7 @@ class Exporter(LoggingConfigurable):
         # to each preprocessor
         for preprocessor in self._preprocessors:
             nbc, resc = preprocessor(nbc, resc)
-            try: 
+            try:
                 nbformat.validate(nbc, relax_add_props=True)
             except nbformat.ValidationError:
                 self.log.error('Notebook is invalid after preprocessor %s',
