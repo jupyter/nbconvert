@@ -486,7 +486,7 @@ There were a few new metadata fields which are now respected in nbconvert.
 
 The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by `nbval <https://github.com/computationalmodelling/nbval>`_ and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
 Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
-If an error occurs when it is not explicitly allowed, a ``CellExecutionError`` will be raised.
+If an error occurs when it is not explicitly allowed, a 'CellExecutionError' will be raised.
 If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the ``raises-exception`` cell tags.
 
 See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684` for implementation changes.
