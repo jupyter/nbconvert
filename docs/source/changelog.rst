@@ -4,6 +4,92 @@
 Changes in nbconvert
 ====================
 
+6.1.0
+-----
+
+This release is mostly a long list of bug fixes and capability
+additions. Thanks to the many contributors for helping Improve
+nbconvert!
+
+The following 31 authors contributed 81 commits.
+
+* Adolph
+* Alessandro Finamore
+* Angus Hollands
+* Atsuo Ishimoto
+* Bo
+* David Brochart
+* Frédéric Collonval
+* Jeremy Howard
+* Jim Zwartveld
+* José Ignacio Romero
+* Joyce Er
+* joyceerhl
+* Kyle Cutler
+* Leah E. Cole
+* Leah Wasser
+* Matthew Seal
+* Michael Adolph
+* Mohammad Mostafa Farzan
+* Okky Mabruri
+* Pill-GZ
+* ptcane
+* Raniere Silva
+* Ryan Moe
+* Stefan Lang
+* Sylvain Corlay
+* Tobin Jones
+* txoof
+* Yuvi Panda
+
+Significant Changes
+~~~~~~~~~~~~~~~~~~~
+
+* Dropped Python 3.6 and added Python 3.9 :ghpull:`1542`: and :ghpull:`1556`:
+* Convert execute preprocessor wrapper to resemble papermill :ghpull:`1448`:
+
+Comprehensive notes
+~~~~~~~~~~~~~~~~~~~
+
+* Feature: support static widgets in Reveal.js slides :ghpull:`1553`:
+* Feature: add speaker notes to Reveal.js template :ghpull:`1543`:
+* Add correct output mimetype to WebPDF exporter :ghpull:`1534`:
+* Set mimetype for webpdf correctly :ghpull:`1514`:
+* Fix docstring issue and a broken  link :ghpull:`1576`:
+* Add CLI example for removing cell tag syntax :ghpull:`1504`:
+* Include output of stdin stream in lab template :ghpull:`1454`:
+* Don't use a shell to call inkscape :ghpull:`1512`:
+* JupyterLab export as HTML with widgets fails to load widgets :ghpull:`1474`:
+* Move note inside Reveal.js HTML slideshow :ghpull:`1510`:
+* fix issue 1507: broken command line option --CSSHTMLHeaderPreprocessor.style= :ghpull:`1548`:
+* Fix order of template paths :ghpull:`1496`:
+* Changed documentation of external_exporters :ghpull:`1582`:
+* Fix template precedence when using a custom template (#1558) :ghpull:`1577`:
+* add  pip to docs  envt :ghpull:`1571`:
+* Fix CI  By Adding PIP to  conda envt for docs build :ghpull:`1570`:
+* Explicitly install pip in docs environment.yml :ghpull:`1569`:
+* small update to docs hide cell :ghpull:`1567`:
+* Allow child templates to override mathjax :ghpull:`1551`:
+* Allow get_export_names to skip configuration check :ghpull:`1471`:
+* Update docs: Tex Live package on Ubuntu :ghpull:`1555`:
+* Test jupyter_client :ghpull:`1545`:
+* Update jupyterlab css :ghpull:`1539`:
+* Webpdf: Use a temporary file instead of an URL  :ghpull:`1489`:
+* Applied patch for marking network changes :ghpull:`1527`:
+* Change webpdf display name :ghpull:`1515`:
+* Allow disabling pyppeteer sandbox :ghpull:`1516`:
+* Make pagination configurable in webpdf :ghpull:`1513`:
+* Fix Reveal.js version in documentation :ghpull:`1509`:
+* Fix dangling reference to get_template_paths() :ghpull:`1463`:
+* Solved svg2pdf conversion error if Inkscape is installed into the default path on a windows machine :ghpull:`1469`:
+* fix typo :ghpull:`1499`:
+* Update version dependency of traitlets :ghpull:`1498`:
+* Update execute.py :ghpull:`1457`:
+* Fix code output indentation when running nbconvert --no-input :ghpull:`1444`:
+* fix issue (i'd call it a BUG) #1167 :ghpull:`1450`:
+* #1428 add docstring :ghpull:`1433`:
+* Update nbconvert_library.ipynb :ghpull:`1438`:
+
 6.0.7
 -----
 
