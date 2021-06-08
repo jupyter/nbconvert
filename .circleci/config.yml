@@ -80,7 +80,7 @@ jobs:
       - run:
           name: Checking for broken links
           command: |
-            python3 setup.py build_sphinx -W -b linkcheck
+            python3 setup.py build_sphinx -b linkcheck
 
 workflows:
   version: 2

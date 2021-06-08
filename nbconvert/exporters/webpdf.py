@@ -60,7 +60,7 @@ class WebPDFExporter(HTMLExporter):
         where JS in your notebook can execute serverside code! Please use with
         caution.
 
-        https://github.com/puppeteer/puppeteer/blob/main@%7B2020-12-14T17:22:24Z%7D/docs/troubleshooting.md#setting-up-chrome-linux-sandbox
+        ``https://github.com/puppeteer/puppeteer/blob/main@%7B2020-12-14T17:22:24Z%7D/docs/troubleshooting.md#setting-up-chrome-linux-sandbox``
         has more information.
 
         This is required for webpdf to work inside most container environments.
