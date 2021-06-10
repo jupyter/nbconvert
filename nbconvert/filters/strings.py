@@ -83,7 +83,10 @@ def _convert_header_id(header_contents):
 
     For use on markdown headings.
     """
-    return header_contents.replace(' ', '-')
+    # Valid IDs need to be non-empty and contain no space characters, but are otherwise arbitrary.
+    # However, these IDs are also used in URL fragments, which are more restrictive, so we URL
+    # encode any characters that are not valid in URL fragments.
+    return quote(header_contents.replace(' ', '-'), safe="?/:@!$&'()*+,;=")
 
 
 def add_anchor(html, anchor_link_text=u'¶'):
