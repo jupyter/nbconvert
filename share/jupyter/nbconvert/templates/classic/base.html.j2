@@ -127,7 +127,17 @@ unknown type  {{ cell.type }}
 
 {% block data_html scoped -%}
 <div class="output_html rendered_html output_subarea {{ extra_class }}">
+{%- if output.get('metadata', {}).get('text/html', {}).get('isolated') -%}
+<iframe 
+    class="isolated-iframe" 
+    style="height:520px; width:100%; margin:0; padding: 0" 
+    frameborder="0" 
+    scrolling="auto" 
+    src="data:text/html;base64,{{output.data['text/html'] | text_base64}}">
+</iframe>
+{%- else -%}
 {{ output.data['text/html'] }}
+{%- endif -%}
 </div>
 {%- endblock data_html %}
 

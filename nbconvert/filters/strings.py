@@ -12,6 +12,7 @@ import os
 import re
 import textwrap
 import warnings
+import base64
 
 from urllib.parse import quote
 
@@ -35,6 +36,7 @@ __all__ = [
     'ascii_only',
     'prevent_list_blocks',
     'strip_trailing_newline',
+    'text_base64',
 ]
 
 
@@ -249,3 +251,9 @@ def strip_trailing_newline(text):
     if text.endswith('\n'):
         text = text[:-1]
     return text
+
+def text_base64(text):
+    """
+    Encode base64 text
+    """
+    return base64.b64encode(text.encode()).decode()
