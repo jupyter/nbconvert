@@ -28,6 +28,7 @@ The following 31 authors contributed 81 commits.
 * Kyle Cutler
 * Leah E. Cole
 * Leah Wasser
+* Nihiue
 * Matthew Seal
 * Michael Adolph
 * Mohammad Mostafa Farzan
@@ -89,6 +90,7 @@ Comprehensive notes
 * fix issue (i'd call it a BUG) #1167 :ghpull:`1450`:
 * #1428 add docstring :ghpull:`1433`:
 * Update nbconvert_library.ipynb :ghpull:`1438`:
+* Supports isolated iframe when converting to HTML :ghpull:`1593`
 
 6.0.7
 -----
