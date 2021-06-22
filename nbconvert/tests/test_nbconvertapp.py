@@ -114,7 +114,7 @@ class TestNbConvertApp(TestsBase):
                 f.write(test_output)
             self.nbconvert('--log-level 0 notebook2 --to html --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
-            with open('notebook2.html') as f:
+            with open('notebook2.html', 'r', encoding="utf8") as f:
                 text = f.read()
             assert text == test_output
 
@@ -128,7 +128,7 @@ class TestNbConvertApp(TestsBase):
                 f.write(test_output)
             self.nbconvert('--log-level 0 notebook2 --to html --template-file %s' % template)
             assert os.path.isfile('notebook2.html')
-            with open('notebook2.html') as f:
+            with open('notebook2.html', 'r', encoding="utf8") as f:
                 text = f.read()
             assert text == test_output
 
@@ -188,7 +188,7 @@ class TestNbConvertApp(TestsBase):
                 tex = f.read()
             self.nbconvert('--log-level 0 --to html notebook2')
             assert os.path.isfile('notebook2.html')
-            with open('notebook2.html') as f:
+            with open('notebook2.html', 'r', encoding="utf8") as f:
                 html = f.read()
         self.assertEqual(tex.count('\r'), tex.count('\r\n'))
         self.assertEqual(html.count('\r'), html.count('\r\n'))
@@ -200,7 +200,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to HTML '
                       'notebook2.ipynb --template lab')
             assert os.path.isfile('notebook2.html')
-            with open('notebook2.html') as f:
+            with open('notebook2.html', 'r', encoding="utf8") as f:
                 assert "data:image/png;base64,b'" not in f.read()
 
     @onlyif_cmds_exist('pandoc')
@@ -212,7 +212,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to slides '
                       'notebook2.ipynb')
             assert os.path.isfile('notebook2.slides.html')
-            with open('notebook2.slides.html') as f:
+            with open('notebook2.slides.html', 'r', encoding="utf8") as f:
                 assert '/reveal.css' in f.read()
 
     def test_output_ext(self):
@@ -293,6 +293,7 @@ class TestNbConvertApp(TestsBase):
         """
         with self.create_temp_cwd(['hello.py']):
             self.create_empty_notebook(u'empty.ipynb')
+            assert os.path.isfile('hello.py')
             self.nbconvert('empty --to html --NbConvertApp.writer_class=\'hello.HelloWriter\'')
             assert os.path.isfile(u'hello.txt')
 
@@ -335,13 +336,13 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook1.ipynb"]):
             self.nbconvert('notebook1.ipynb --log-level 0 --no-prompt --to html')
             assert os.path.isfile('notebook1.html')
-            with open("notebook1.html",'r') as f:
+            with open("notebook1.html", 'r', encoding="utf8") as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
                 assert "Out[6]" not in text
             self.nbconvert('notebook1.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook1.html')
-            with open("notebook1.html",'r') as f:
+            with open("notebook1.html", 'r', encoding="utf8") as f:
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
                 assert "Out[6]" in text2
@@ -353,7 +354,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook_tags.ipynb"]):
             self.nbconvert('notebook_tags.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook_tags.html')
-            with open("notebook_tags.html",'r') as f:
+            with open("notebook_tags.html", 'r', encoding="utf8") as f:
                 text = f.read()
                 assert 'celltag_mycelltag celltag_mysecondcelltag' in text
                 assert 'celltag_mymarkdowncelltag' in text
@@ -366,7 +367,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["notebook1.ipynb"]):
             self.nbconvert('notebook1.ipynb --log-level 0 --no-input --to html')
             assert os.path.isfile('notebook1.html')
-            with open("notebook1.html",'r') as f:
+            with open("notebook1.html", 'r', encoding="utf8") as f:
                 text = f.read()
                 assert "In&nbsp;[" not in text
                 assert "Out[6]" not in text
@@ -382,7 +383,7 @@ class TestNbConvertApp(TestsBase):
                         '<span class="p">)</span>') not in text
             self.nbconvert('notebook1.ipynb --log-level 0 --to html')
             assert os.path.isfile('notebook1.html')
-            with open("notebook1.html",'r') as f:
+            with open("notebook1.html", 'r', encoding="utf8") as f:
                 text2 = f.read()
                 assert "In&nbsp;[" in text2
                 assert "Out[6]" in text2
@@ -474,7 +475,7 @@ class TestNbConvertApp(TestsBase):
                 notebook = f.read().encode()
                 self.nbconvert('--to markdown --stdin', stdin=notebook)
             assert os.path.isfile("notebook.md") # default name for stdin input
-            with io.open('notebook.md') as f:
+            with io.open('notebook.md', 'r', encoding="utf8") as f:
                 output1 = f.read()
                 assert '```python' not in output1 # shouldn't have language
                 assert "```" in output1 # but should have fenced blocks
@@ -509,7 +510,7 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert('--log-level 0 --to markdown '
                            '"markdown_display_priority.ipynb"')
             assert os.path.isfile('markdown_display_priority.md')
-            with io.open('markdown_display_priority.md') as f:
+            with open('markdown_display_priority.md', 'r', encoding="utf8") as f:
                 markdown_output = f.read()
                 assert ("markdown_display_priority_files/"
                         "markdown_display_priority_0_1.png") in markdown_output
@@ -556,7 +557,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd(["Widget_List.ipynb"]):
             self.nbconvert('Widget_List.ipynb --log-level 0 --to html')
             assert os.path.isfile('Widget_List.html')
-            with open("Widget_List.html",'r') as f:
+            with open("Widget_List.html", 'r', encoding="utf8") as f:
                 text = f.read()
                 assert "var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';" in text
 
