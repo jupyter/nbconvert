@@ -65,6 +65,7 @@ default_filters = {
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
         'strip_trailing_newline': filters.strip_trailing_newline,
+        'text_base64': filters.text_base64,
 }
 
 
