@@ -11,12 +11,7 @@ Installation
 Supported Python versions
 -------------------------
 
-Currently Python 3.6-3.8 is supported and tested by nbconvert.
-
-However, nbconvert 6.0 provides limited support for Python 3.6. nbconvert 6.1 will drop
-support for Python 3.6. Limited support means we will test and run CI on Python 3.6.12
-or higher. Issues that are found only affecting Python 3.6 are not guaranteed to be
-fixed. We recommend all users of nbconvert use Python 3.7 and higher.
+Currently Python 3.7-3.9 is supported and tested by nbconvert.
 
 Installing nbconvert
 --------------------
