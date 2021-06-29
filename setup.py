@@ -258,6 +258,7 @@ setup_args['extras_require'] = extra_requirements
 setup_args['entry_points'] = {
     'console_scripts': [
         'jupyter-nbconvert = nbconvert.nbconvertapp:main',
+        'jupyter-dejavu = nbconvert.dejavuapp:main',
     ],
     "nbconvert.exporters" : [
         'custom=nbconvert.exporters:TemplateExporter',
@@ -271,7 +272,7 @@ setup_args['entry_points'] = {
         'rst=nbconvert.exporters:RSTExporter',
         'notebook=nbconvert.exporters:NotebookExporter',
         'asciidoc=nbconvert.exporters:ASCIIDocExporter',
-        'script=nbconvert.exporters:ScriptExporter']
+        'script=nbconvert.exporters:ScriptExporter'],
 }
 
 if __name__ == '__main__':

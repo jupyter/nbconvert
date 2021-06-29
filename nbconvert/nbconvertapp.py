@@ -27,6 +27,7 @@ from traitlets import (
 from traitlets.utils.importstring import import_item
 
 from .exporters.base import get_export_names, get_exporter
+from .exporters.templateexporter import TemplateExporter
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
@@ -145,7 +146,7 @@ class NbConvertApp(JupyterApp):
     name = 'jupyter-nbconvert'
     aliases = nbconvert_aliases
     flags = nbconvert_flags
-    
+
     @default('log_level')
     def _log_level_default(self):
         return logging.INFO
@@ -565,8 +566,25 @@ class NbConvertApp(JupyterApp):
 
         return sections.replace(' : ',r' \: ')
             
+
+class DejavuApp(NbConvertApp):
+    def __init__(self, **kwargs):
+
+        self.config.TemplateExporter.exclude_input = True
+        self.config.TemplateExporter.exclude_output_prompt = True
+        self.config.TemplateExporter.exclude_input_prompt = True
+        self.config.ExecutePreprocessor.enabled = True
+        self.config.WebPDFExporter.paginate = False
+
+        super().__init__(**kwargs)
+
+    @default('export_format')
+    def default_export_format(self):
+        return 'webpdf'
+
 #-----------------------------------------------------------------------------
 # Main entry point
 #-----------------------------------------------------------------------------
 
 main = launch_new_instance = NbConvertApp.launch_instance
+dejavu_main = DejavuApp.launch_instance
