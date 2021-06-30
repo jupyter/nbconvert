@@ -568,15 +568,14 @@ class NbConvertApp(JupyterApp):
             
 
 class DejavuApp(NbConvertApp):
-    def __init__(self, **kwargs):
-
+    def initialize(self, argv=None):
         self.config.TemplateExporter.exclude_input = True
         self.config.TemplateExporter.exclude_output_prompt = True
         self.config.TemplateExporter.exclude_input_prompt = True
         self.config.ExecutePreprocessor.enabled = True
         self.config.WebPDFExporter.paginate = False
 
-        super().__init__(**kwargs)
+        super().initialize(argv)
 
     @default('export_format')
     def default_export_format(self):
