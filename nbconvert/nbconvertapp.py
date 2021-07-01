@@ -136,6 +136,13 @@ nbconvert_flags.update({
         },
         """Whether to allow downloading chromium if no suitable version is found on the system."""
         ),
+    'show-input' : (
+        {'TemplateExporter' : {
+            'exclude_input': False,
+            }
+        },
+        """Shows code input. This is flag is only useful for dejavu users."""
+        ),
 })
 
 
