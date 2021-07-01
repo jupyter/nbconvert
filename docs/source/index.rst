@@ -37,6 +37,7 @@ batch of notebook files to another format.
    install
    usage
    nbconvert_library
+   dejavu
    latex_citations
    removing_cells
    execute_api
