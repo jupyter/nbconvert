@@ -586,7 +586,7 @@ class DejavuApp(NbConvertApp):
 
     @default('export_format')
     def default_export_format(self):
-        return 'webpdf'
+        return 'html'
 
 #-----------------------------------------------------------------------------
 # Main entry point
