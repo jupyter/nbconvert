@@ -3,10 +3,20 @@
 Dejavu
 ======
 
-Dejavu intends to be a tool to facilitate for Jupyter users to generate static pdf outputs from their notebooks, mimicking the behavior of `voilà <https://github.com/voila-dashboards/voila>`_.
+Dejavu intends to be a tool to facilitate for Jupyter users to generate static outputs from their notebooks, mimicking the behavior of `voilà <https://github.com/voila-dashboards/voila>`_.
 
-Configuring the Notebook
-------------------------
+Running dejavu
+--------------
+
+Dejavu works exactly the same as nbconvert and you can use all command line options that you would with nbconvert. To run a default instance::
+
+    jupyter dejavu notebook.ipynb
+
+In case you want to show code in adition to its output use the flag ``--show-input``.
+
+
+Configuring the Notebook for slides presentations
+-------------------------------------------------
 
 In case the user intends to do a slide presentation out of their Jupyter notebook it's recommended to use the ``reveal`` template. In orders to obtain a better result from it's advised to use the slides metadatas available in the cells:
 
@@ -28,12 +38,3 @@ In case the user intends to do a slide presentation out of their Jupyter noteboo
     * Notes
 
 * Repeat the process for all cells
-
-Running dejavu
---------------
-
-Dejavu works exactly the same as nbconvert and you can use all command line options that you would with nbconvert. To run a default instance::
-
-    jupyter dejavu notebook.ipynb --template reveal
-
-In case you want to show code in adition to its output use the flag ``--show-input``.
