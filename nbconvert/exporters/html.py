@@ -11,7 +11,7 @@ import base64
 from traitlets import default, Unicode, Bool
 from traitlets.config import Config
 from jupyter_core.paths import jupyter_path
-from jinja2 import contextfilter
+from jinja2 import pass_context
 from jinja2.loaders import split_template_path
 import jinja2
 
@@ -106,7 +106,7 @@ class HTMLExporter(TemplateExporter):
         c.merge(super().default_config)
         return c
 
-    @contextfilter
+    @pass_context
     def markdown2html(self, context, source):
         """Markdown to HTML filter respecting the anchor_link_text setting"""
         cell = context.get('cell', {})
