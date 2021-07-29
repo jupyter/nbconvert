@@ -45,6 +45,24 @@ class HTMLExporter(TemplateExporter):
         """
     ).tag(config=True)
 
+    mathjax_tex_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML-full",
+        help="""
+        URL to load Mathjax TeX page from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
+    mathjax_safe_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=Safe",
+        help="""
+        URL to load Mathjax Safe page from.
+
+        Defaults to loading from cdnjs.
+        """
+    ).tag(config=True)
+
     jquery_url = Unicode(
         "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
         help="""
@@ -169,6 +187,8 @@ class HTMLExporter(TemplateExporter):
         resources['include_js'] = resources_include_js
         resources['include_url'] = resources_include_url
         resources['require_js_url'] = self.require_js_url
+        resources['mathjax_tex_url'] = self.require_js_url
+        resources['mathjax_safe_url'] = self.require_js_url
         resources['jquery_url'] = self.jquery_url
         resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
         resources['html_manager_semver_range'] = self.html_manager_semver_range
