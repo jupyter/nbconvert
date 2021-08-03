@@ -187,8 +187,8 @@ class HTMLExporter(TemplateExporter):
         resources['include_js'] = resources_include_js
         resources['include_url'] = resources_include_url
         resources['require_js_url'] = self.require_js_url
-        resources['mathjax_tex_url'] = self.require_js_url
-        resources['mathjax_safe_url'] = self.require_js_url
+        resources['mathjax_tex_url'] = self.mathjax_tex_url
+        resources['mathjax_safe_url'] = self.mathjax_safe_url
         resources['jquery_url'] = self.jquery_url
         resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
         resources['html_manager_semver_range'] = self.html_manager_semver_range
