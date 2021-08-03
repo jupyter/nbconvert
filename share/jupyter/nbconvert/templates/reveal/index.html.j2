@@ -52,7 +52,7 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 </script>
 
 <!-- Loading the mathjax macro -->
-{{ mathjax() }}
+{{ mathjax(resources.mathjax_tex_url, resources.mathjax_safe_url) }}
 
 {% for css in resources.inlining.css -%}
   <style type="text/css">
