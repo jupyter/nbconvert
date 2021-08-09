@@ -45,6 +45,8 @@ html = "nbconvert.exporters:HTMLExporter"
 slides = "nbconvert.exporters:SlidesExporter"
 latex = "nbconvert.exporters:LatexExporter"
 pdf = "nbconvert.exporters:PDFExporter"
+qtpdf = "nbconvert.exporters:QtPDFExporter"
+qtpng = "nbconvert.exporters:QtPNGExporter"
 webpdf = "nbconvert.exporters:WebPDFExporter"
 markdown = "nbconvert.exporters:MarkdownExporter"
 python = "nbconvert.exporters:PythonExporter"
@@ -64,6 +66,8 @@ test = [
     "pyppeteer>=1,<1.1",
 ]
 serve = ["tornado>=6.1"]
+qtpdf = ["pyqtwebengine>=5.15"]
+qtpng = ["pyqtwebengine>=5.15"]
 webpdf = ["pyppeteer>=1,<1.1"]
 docs = [
     "sphinx>=1.5.1",

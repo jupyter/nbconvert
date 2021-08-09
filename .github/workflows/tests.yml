@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           pip install codecov --user
-          pip install -e ".[execute,serve,test]" --user
+          pip install -e ".[execute,serve,qtpdf,qtpng,test]" --user
           python -m ipykernel.kernelspec --user
           # many things installed in --users need this to be in $PATH
           echo "/Users/runner/.local/bin" >> $GITHUB_PATH

@@ -7,6 +7,8 @@ from .markdown import MarkdownExporter
 from .notebook import NotebookExporter
 from .pdf import PDFExporter
 from .python import PythonExporter
+from .qtpdf import QtPDFExporter
+from .qtpng import QtPNGExporter
 from .rst import RSTExporter
 from .script import ScriptExporter
 from .slides import SlidesExporter
