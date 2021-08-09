@@ -650,6 +650,7 @@ class DejavuApp(NbConvertApp):
         self.config.TemplateExporter.exclude_input_prompt = True
         self.config.ExecutePreprocessor.enabled = True
         self.config.WebPDFExporter.paginate = False
+        self.config.QtPDFExporter.paginate = False
 
         super().initialize(argv)
 
