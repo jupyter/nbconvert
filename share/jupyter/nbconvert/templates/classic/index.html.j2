@@ -23,7 +23,7 @@
 
 {% block jupyter_widgets %}
   {%- if "widgets" in nb.metadata -%}
-    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range) }}
+    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range, resources.widgets_url) }}
   {%- endif -%}
 {% endblock jupyter_widgets %}
 
@@ -74,7 +74,7 @@ div#notebook-container{
 {% endblock notebook_css %}
 
 {%- block html_head_js_mathjax -%}
-{{ mathjax() }}
+{{ mathjax(resources.mathjax_tex_url, resources.mathjax_safe_url) }}
 {%- endblock html_head_js_mathjax -%}
 
 {%- block html_head_css -%}
