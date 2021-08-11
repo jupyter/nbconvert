@@ -126,7 +126,7 @@ class WebPDFExporter(HTMLExporter):
         # Unfortunately, tempfile on Windows does not allow for an already open
         # file to be opened by a separate process. So we must close it first
         # before calling Chromium. We also specify delete=False to ensure the
-        # file file is not deleted after closing (the default behavior).
+        # file is not deleted after closing (the default behavior).
         temp_file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
         with temp_file:
             temp_file.write(html.encode('utf-8'))
