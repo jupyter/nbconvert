@@ -1,0 +1,39 @@
+name: Generate Docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  convert_via_pandoc:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: docker://pandoc/latex
+        with:
+          args: "--help" # gets appended to pandoc command
+      - uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+            hashFiles('docs/environment.yml') }}
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: docs/environment.yml
+          miniforge-version: latest
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+      - run: conda list
+      - run: pip install .
+      - run: python setup.py build_sphinx -b html
+      - run: python setup.py build_sphinx -b linkcheck
+
