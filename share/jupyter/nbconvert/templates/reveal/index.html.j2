@@ -51,9 +51,6 @@ if( window.location.search.match( /print-pdf/gi ) ) {
 }
 </script>
 
-<!-- Loading the mathjax macro -->
-{{ mathjax() }}
-
 {% for css in resources.inlining.css -%}
   <style type="text/css">
     {{ css }}
@@ -93,6 +90,14 @@ a.anchor-link {
 {{ resources.include_css("static/custom_reveal.css") }}
 
 {% endblock notebook_css %}
+
+{%- block html_head_js_mathjax -%}
+{{ mathjax() }}
+{%- endblock html_head_js_mathjax -%}
+
+{%- block html_head_css -%}
+{%- endblock html_head_css -%}
+
 {%- endblock html_head -%}
 </head>
 {% endblock header%}
