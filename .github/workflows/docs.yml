@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: pandoc/latex
-    defaults:
-      run:
-        shell: bash -l {0}
     steps:
       - run: /sbin/apk update && /sbin/apk add texlive
       - uses: actions/checkout@v2
