@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  convert_via_pandoc:
+  generate-docs:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -17,23 +17,29 @@ jobs:
         with:
           args: "--help" # gets appended to pandoc command
       - uses: actions/checkout@v2
-      - name: Cache conda
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: Cache pip on Linux
         uses: actions/cache@v2
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
+        if: startsWith(runner.os, 'Linux')
         with:
-          path: ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
-            hashFiles('docs/environment.yml') }}
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          environment-file: docs/environment.yml
-          miniforge-version: latest
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-      - run: conda list
-      - run: pip install .
-      - run: python setup.py build_sphinx -b html
-      - run: python setup.py build_sphinx -b linkcheck
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python }}-${{ hashFiles('setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python }}
+      - run: latexmk -h
+      - name: Install
+        run: pip install -v ".[all]"
+      - name: Build HTML docs
+        run: python setup.py build_sphinx -b html
+      - name: Build PDF docs
+        run: |
+          python setup.py build_sphinx -b latex
+          cd docs
+          make latexpdf
+      - name: Check links
+        run: python setup.py build_sphinx -b linkcheck
 
