@@ -47,10 +47,6 @@ class WebPDFExporter(HTMLExporter):
     def _template_name_default(self):
         return 'webpdf'
 
-    @default('template_data_paths')
-    def _template_data_paths_default(self):
-        return jupyter_path("nbconvert", "templates", "webpdf")
-
     disable_sandbox = Bool(
         False,
         help="""

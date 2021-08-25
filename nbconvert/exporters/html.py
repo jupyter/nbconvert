@@ -72,11 +72,6 @@ class HTMLExporter(TemplateExporter):
     def _template_name_default(self):
         return 'lab'
 
-    @default('template_data_paths')
-    def _template_data_paths_default(self):
-        return jupyter_path("nbconvert", "templates", "html")
-
-
     theme = Unicode('light',
                     help='Template specific theme(e.g. the JupyterLab CSS theme for the lab template)'
     ).tag(config=True)
