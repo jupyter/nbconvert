@@ -9,12 +9,14 @@ on:
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
-    container:
-      image: danteev/texlive:latest
     defaults:
       run:
         shell: bash -l {0}
     steps:
+      - uses: docker://pandoc/latex
+        with:
+          args: "--help" # gets appended to pandoc command
+      - run: apk update && apk add texlive
       - uses: actions/checkout@v2
       - name: Install Python
         uses: actions/setup-python@v2
