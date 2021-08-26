@@ -27,11 +27,6 @@ class LatexExporter(TemplateExporter):
     def _file_extension_default(self):
         return '.tex'
 
-
-    @default('template_data_paths')
-    def _template_data_paths_default(self):
-        return jupyter_path("nbconvert", "templates", "latex")
-
     @default('template_name')
     def _template_name_default(self):
         return 'latex'
