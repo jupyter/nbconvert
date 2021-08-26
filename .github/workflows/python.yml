@@ -1,0 +1,71 @@
+name: Python Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos, windows]
+        python-version: [ '3.7', '3.8', '3.9' ]
+    steps:
+    - name: apt
+      run: |
+        sudo apt-get install texlive-latex-extra         # we need this for all the latex package we use, recommended is not enough
+        sudo apt-get install texlive-generic-recommended # .. and more ...
+        sudo apt-get install latex-xcolor                # ... and more latex packages
+        sudo apt-get install texlive-fonts-recommended   # fonts...
+        sudo apt-get install cm-super                    # more fonts
+        sudo apt-get install texlive-xetex               # latex to pdf converter
+        sudo apt-get install inkscape                    # for svgs in pdf output
+        sudo apt-get install lmodern                     # latex package
+        sudo apt-get install texlive-generic-extra
+    - name: pandoc
+       - wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb && sudo dpkg -i pandoc-2.7-1-amd64.deb
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Install Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: 'x64'
+    - name: Upgrade packaging dependencies
+      run: |
+        pip install --upgrade pip setuptools wheel --user
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        echo "::set-output name=dir::$(pip cache dir)"
+    - name: Cache pip
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+          ${{ runner.os }}-pip-
+    - name: Install the Python dependencies
+      run: |
+        #      pip install -e .[test] codecov
+        pip install --upgrade setuptools pip pytest
+        pip install -f travis-wheels/wheelhouse . codecov coverage
+        pip install nbconvert[execute,serve,test]
+        pip install check-manifest
+        python -m ipykernel.kernelspec --user
+    - name: List installed packages
+      run: |
+        pip freeze
+        pip check
+    - name: Run the Tests
+      run: |
+        check-manifest --ignore "share/**"
+        # cd so we test the install, not the repo
+        cd `mktemp -d`
+        py.test --cov nbconvert -v --pyargs nbconvert
+    - name: Coverage
+      run: |
+        codecov
