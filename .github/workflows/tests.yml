@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install texlive-latex-recommended
+
+          # sudo apt-get install texlive-full
+          # sudo apt-get install texlive-generic-recommended # .. and more ...
+          # sudo apt-get install texlive-latex-extra # we need this for all the latex package we use, recommended is not enough
+          # sudo apt-get install latex-xcolor # ... and more latex packages
+          # sudo apt-get install texlive-fonts-recommended # fonts...
+          # sudo apt-get install cm-super # more fonts
+          # sudo apt-get install texlive-xetex # latex to pdf converter
+          # sudo apt-get install inkscape # for svgs in pdf output
+          # sudo apt-get install lmodern # latex package
+          # sudo apt-get install texlive-generic-extra
+
+          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: Cache pip on Linux
+        uses: actions/cache@v2
+        if: startsWith(runner.os, 'Linux')
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python }}-${{ hashFiles('setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python }}
+
+      - name: Install package dependencies
+        run: |
+          pip install --upgrade setuptools pip pytest
+          pip install -f travis-wheels/wheelhouse . codecov coverage
+          pip install nbconvert[execute,serve,test]
+          pip install check-manifest
+          python -m ipykernel.kernelspec --user
+
+
+
+      - name: Run tests
+        run: |
+          check-manifest --ignore "share/**"
+          # cd so we test the install, not the repo
+          cd `mktemp -d`
+          py.test --cov nbconvert -v --pyargs nbconvert
+
+      - name: Code coverage
+        run: codecov
