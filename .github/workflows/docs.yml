@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: html
-          path: docs/build/sphinx/html
+          path: build/sphinx/html
       - name: Build PDF docs
         run: |
           python setup.py build_sphinx -b latex
@@ -54,6 +54,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: pdf
-          path: build/sphinx/latex/nbconvert.pdf
+          path: docs/build/latex/nbconvert.pdf
       - name: Check links
         run: python setup.py build_sphinx -b linkcheck
