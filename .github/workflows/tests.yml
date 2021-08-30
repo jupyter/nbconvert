@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  generate-docs:
+  run-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-latex-recommended inkscape
+          sudo apt-get install texlive-latex-recommended inkscape texlive-xetex
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
