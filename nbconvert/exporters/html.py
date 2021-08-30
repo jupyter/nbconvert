@@ -11,9 +11,14 @@ import base64
 from traitlets import default, Unicode, Bool
 from traitlets.config import Config
 from jupyter_core.paths import jupyter_path
-from jinja2 import contextfilter
-from jinja2.loaders import split_template_path
 import jinja2
+
+if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
+    from jinja2 import contextfilter
+else:
+    from jinja2 import pass_context as contextfilter
+
+from jinja2.loaders import split_template_path
 
 from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
