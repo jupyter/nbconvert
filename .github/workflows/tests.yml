@@ -15,7 +15,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-latex-recommended
+          sudo apt-get install texlive-latex-recommended inkscape
+          
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
           # sudo apt-get install texlive-full
           # sudo apt-get install texlive-generic-recommended # .. and more ...
@@ -28,7 +31,6 @@ jobs:
           # sudo apt-get install lmodern # latex package
           # sudo apt-get install texlive-generic-extra
 
-          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
       - name: Install Python
         uses: actions/setup-python@v2
         with:
