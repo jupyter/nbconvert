@@ -41,10 +41,20 @@ jobs:
         run: pip install -v ".[all]"
       - name: Build HTML docs
         run: python setup.py build_sphinx -b html
+      - name: Upload HTML
+        uses: actions/upload-artifact@v2
+        with:
+          name: html
+          path: docs/build/sphinx/html
       - name: Build PDF docs
         run: |
           python setup.py build_sphinx -b latex
           cd docs
           make latexpdf
+      - name: Upload PDF
+        uses: actions/upload-artifact@v2
+        with:
+          name: pdf
+          path: build/sphinx/latex/nbconvert.pdf
       - name: Check links
         run: python setup.py build_sphinx -b linkcheck
