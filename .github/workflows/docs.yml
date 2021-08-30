@@ -36,7 +36,6 @@ jobs:
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}
-      - run: latexmk -h
       - name: Install
         run: pip install -v ".[all]"
       - name: Build HTML docs
