@@ -9,6 +9,9 @@ on:
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9' ]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -16,7 +19,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install texlive-latex-recommended inkscape
-          
+
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
@@ -31,19 +34,19 @@ jobs:
           # sudo apt-get install lmodern # latex package
           # sudo apt-get install texlive-generic-extra
 
-      - name: Install Python
+      - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: ${{ matrix.python-version }}
           architecture: 'x64'
       - name: Cache pip on Linux
         uses: actions/cache@v2
         if: startsWith(runner.os, 'Linux')
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python }}-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
           restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python }}
+            ${{ runner.os }}-pip-${{ matrix.python-version }}
 
       - name: Install package dependencies
         run: |
@@ -53,7 +56,10 @@ jobs:
           pip install check-manifest
           python -m ipykernel.kernelspec --user
 
-
+      - name: List installed packages
+        run: |
+          pip freeze
+          pip check
 
       - name: Run tests
         run: |
