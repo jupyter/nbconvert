@@ -1,0 +1,59 @@
+name: Generate Docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9' ]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install texlive-latex-recommended inkscape texlive-xetex latexmk
+
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+
+      - name: Install Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x64'
+      - name: Cache pip on Linux
+        uses: actions/cache@v2
+        if: startsWith(runner.os, 'Linux')
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}
+      - name: Install
+        run: pip install -v ".[all]"
+      - name: Build HTML docs
+        run: python setup.py build_sphinx -b html
+      - name: Upload HTML
+        uses: actions/upload-artifact@v2
+        with:
+          name: html
+          path: build/sphinx/html
+      - name: Build PDF docs
+        run: |
+          python setup.py build_sphinx -b latex
+          cd docs
+          make latexpdf
+      - name: Upload PDF
+        uses: actions/upload-artifact@v2
+        with:
+          name: pdf
+          path: docs/build/latex/nbconvert.pdf
+      - name: Check links
+        run: python setup.py build_sphinx -b linkcheck
