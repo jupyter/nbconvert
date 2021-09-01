@@ -136,6 +136,13 @@ nbconvert_flags.update({
         },
         """Whether to allow downloading chromium if no suitable version is found on the system."""
         ),
+    'disable-chromium-sandbox': (
+        {'WebPDFExporter': {
+            'disable_sandbox': True,
+            }
+        },
+        """Disable chromium security sandbox when converting to PDF.."""
+        ),
     'show-input' : (
         {'TemplateExporter' : {
             'exclude_input': False,
