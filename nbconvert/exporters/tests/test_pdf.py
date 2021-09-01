@@ -6,8 +6,7 @@
 import logging
 import os
 import shutil
-
-from testpath import tempdir
+from tempfile import TemporaryDirectory
 
 from .base import ExportersTestsBase
 from ..pdf import PDFExporter
@@ -31,7 +30,7 @@ class TestPDF(ExportersTestsBase):
     @onlyif_cmds_exist('xelatex', 'pandoc')
     def test_export(self):
         """Smoke test PDFExporter"""
-        with tempdir.TemporaryDirectory() as td:
+        with TemporaryDirectory() as td:
             file_name = os.path.basename(self._get_notebook())
             newpath = os.path.join(td, file_name)
             shutil.copy(self._get_notebook(), newpath)

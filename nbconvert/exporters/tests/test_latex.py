@@ -4,6 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os.path
+from tempfile import TemporaryDirectory
 import textwrap
 import re
 
@@ -14,7 +15,6 @@ from ...tests.utils import onlyif_cmds_exist
 from traitlets.config import Config
 from nbformat import write
 from nbformat import v4
-from testpath.tempdir import TemporaryDirectory
 
 from jinja2 import DictLoader
 
