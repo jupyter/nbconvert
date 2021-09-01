@@ -1,8 +1,7 @@
 
-{%- macro mathjax(mathjax_tex_url, mathjax_safe_url) -%}
+{%- macro mathjax(url) -%}
     <!-- Load mathjax -->
-    <script src="{{ mathjax_tex_url }}"></script>
-    <script src="{{ mathjax_safe_url }}"></script>
+    <script src="{{url}}"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
     init_mathjax = function() {

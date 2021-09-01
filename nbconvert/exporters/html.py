@@ -45,19 +45,10 @@ class HTMLExporter(TemplateExporter):
         """
     ).tag(config=True)
 
-    mathjax_tex_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML-full",
+    mathjax_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML-full,Safe",
         help="""
-        URL to load Mathjax TeX page from.
-
-        Defaults to loading from cdnjs.
-        """
-    ).tag(config=True)
-
-    mathjax_safe_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=Safe",
-        help="""
-        URL to load Mathjax Safe page from.
+        URL to load Mathjax from.
 
         Defaults to loading from cdnjs.
         """
@@ -189,8 +180,7 @@ class HTMLExporter(TemplateExporter):
         resources['include_js'] = resources_include_js
         resources['include_url'] = resources_include_url
         resources['require_js_url'] = self.require_js_url
-        resources['mathjax_tex_url'] = self.mathjax_tex_url
-        resources['mathjax_safe_url'] = self.mathjax_safe_url
+        resources['mathjax_url'] = self.mathjax_url
         resources['jquery_url'] = self.jquery_url
         resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
         resources['widgets_url'] = self.widgets_url
