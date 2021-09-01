@@ -1,15 +1,11 @@
-{%- macro jupyter_widgets(widgets_cdn_url, html_manager_semver_range, widgets_url) -%}
+{%- macro jupyter_widgets(widgets_cdn_url, html_manager_semver_range) -%}
 
 <script>
 (function() {
   function addWidgetsRenderer() {
     var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
     var scriptElement = document.createElement('script');
-    {% if widgets_url %}   
-    var widgetRendererSrc = '{{ widgets_url }}embed-amd.js';
-    {% else %}
     var widgetRendererSrc = '{{ widgets_cdn_url }}@jupyter-widgets/html-manager@{{ html_manager_semver_range }}/dist/embed-amd.js';
-    {%endif %}
     var widgetState;
 
     // Fallback for older version:
@@ -17,11 +13,7 @@
       widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
 
       if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
-        {% if widgets_url %}   
-        var widgetRendererSrc = '{{ widgets_url }}embed.js';
-        {% else %}
-        var widgetRendererSrc = '{{ widgets_cdn_url }}@jupyter-js-widgets@*/dist/embed.js';
-        {%endif %}
+        widgetRendererSrc = '{{ widgets_cdn_url }}jupyter-js-widgets@*/dist/embed.js';
       }
     } catch(e) {}
 
