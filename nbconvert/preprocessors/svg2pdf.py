@@ -10,8 +10,8 @@ import io
 import os
 import sys
 import subprocess
+from tempfile import TemporaryDirectory
 
-from testpath.tempdir import TemporaryDirectory
 from traitlets import Unicode, default, Union, List
 
 from .convertfigures import ConvertFiguresPreprocessor

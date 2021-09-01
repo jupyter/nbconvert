@@ -7,6 +7,7 @@
 import os
 import io
 import nbformat
+from tempfile import TemporaryDirectory
 
 from .base import TestsBase
 from ..postprocessors import PostProcessorBase
@@ -15,7 +16,6 @@ from nbconvert import nbconvertapp
 from nbconvert.exporters import Exporter, HTMLExporter
 
 from traitlets.tests.utils import check_help_all_output
-from testpath import tempdir
 import pytest
 
 #-----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ class TestNbConvertApp(TestsBase):
 
     def test_absolute_template_file(self):
         """--template-file '/path/to/template.tpl'"""
-        with self.create_temp_cwd(['notebook*.ipynb']), tempdir.TemporaryDirectory() as td:
+        with self.create_temp_cwd(['notebook*.ipynb']), TemporaryDirectory() as td:
             template = os.path.join(td, 'mytemplate.tpl')
             test_output = 'success!'
             with open(template, 'w') as f:
@@ -527,7 +527,7 @@ class TestNbConvertApp(TestsBase):
         # check absolute path
         with self.create_temp_cwd(['notebook4_jpeg.ipynb',
                                    'containerized_deployments.jpeg']):
-            output_dir = tempdir.TemporaryDirectory()
+            output_dir = TemporaryDirectory()
             path = os.path.join(output_dir.name, 'files')
             self.nbconvert(
                 '--log-level 0 notebook4_jpeg.ipynb --to rst '
