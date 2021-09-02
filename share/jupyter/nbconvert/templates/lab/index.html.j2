@@ -67,7 +67,7 @@ a.anchor-link {
 {% endblock notebook_css %}
 
 {%- block html_head_js_mathjax -%}
-{{ mathjax() }}
+{{ mathjax(resources.mathjax_url) }}
 {%- endblock html_head_js_mathjax -%}
 
 {%- block html_head_css -%}
