@@ -6,7 +6,7 @@
     var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
     var scriptElement = document.createElement('script');
     {% if widgets_url %}   
-    var widgetRendererSrc = '{{ widgets_url }}embed-amd.js';
+    var widgetRendererSrc = '{{ widgets_url }}';
     {% else %}
     var widgetRendererSrc = '{{ widgets_cdn_url }}@jupyter-widgets/html-manager@{{ html_manager_semver_range }}/dist/embed-amd.js';
     {%endif %}
@@ -18,7 +18,7 @@
 
       if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
         {% if widgets_url %}   
-        var widgetRendererSrc = '{{ widgets_url }}embed.js';
+        var widgetRendererSrc = '{{ widgets_url }}';
         {% else %}
         var widgetRendererSrc = '{{ widgets_cdn_url }}@jupyter-js-widgets@*/dist/embed.js';
         {%endif %}
