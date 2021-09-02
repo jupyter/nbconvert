@@ -59,7 +59,7 @@ class HTMLExporter(TemplateExporter):
         help="URL base for Jupyter widgets"
     ).tag(config=True)
 
-    widgets_url = Unicode("", help="Full URL for Jupyter widgets").tag(config=True)
+    widget_renderer_url = Unicode("", help="Full URL for Jupyter widgets").tag(config=True)
 
     html_manager_semver_range = Unicode(
         "*",
@@ -173,6 +173,6 @@ class HTMLExporter(TemplateExporter):
         resources['require_js_url'] = self.require_js_url
         resources['jquery_url'] = self.jquery_url
         resources['jupyter_widgets_base_url'] = self.jupyter_widgets_base_url
-        resources['widgets_url'] = self.widgets_url
+        resources['widget_renderer_url'] = self.widget_renderer_url
         resources['html_manager_semver_range'] = self.html_manager_semver_range
         return resources
