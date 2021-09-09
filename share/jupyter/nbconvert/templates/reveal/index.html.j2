@@ -39,7 +39,6 @@
 
 <!-- General and theme style sheets -->
 <link rel="stylesheet" href="{{ reveal_url_prefix }}/dist/reveal.css">
-<link rel="stylesheet" href="{{ reveal_url_prefix }}/dist/theme/{{reveal_theme}}.css" id="theme">
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -99,6 +98,10 @@ a.anchor-link {
 {%- endblock html_head_css -%}
 
 {%- endblock html_head -%}
+
+<!-- Reveal Theme -->
+<link rel="stylesheet" href="{{ reveal_url_prefix }}/dist/theme/{{reveal_theme}}.css" id="theme">
+
 </head>
 {% endblock header%}
 
