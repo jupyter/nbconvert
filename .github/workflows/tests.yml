@@ -51,6 +51,8 @@ jobs:
           pip check
 
       - name: Run tests
+        env:
+          PYTHONWARNINGS: default
         run: |
           check-manifest --ignore "share/**"
           # cd so we test the install, not the repo
