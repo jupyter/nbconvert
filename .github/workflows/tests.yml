@@ -18,21 +18,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-latex-recommended inkscape texlive-xetex
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
-
-          # sudo apt-get install texlive-full
-          # sudo apt-get install texlive-generic-recommended # .. and more ...
-          # sudo apt-get install texlive-latex-extra # we need this for all the latex package we use, recommended is not enough
-          # sudo apt-get install latex-xcolor # ... and more latex packages
-          # sudo apt-get install texlive-fonts-recommended # fonts...
-          # sudo apt-get install cm-super # more fonts
-          # sudo apt-get install texlive-xetex # latex to pdf converter
-          # sudo apt-get install inkscape # for svgs in pdf output
-          # sudo apt-get install lmodern # latex package
-          # sudo apt-get install texlive-generic-extra
 
       - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
