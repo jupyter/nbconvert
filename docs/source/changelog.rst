@@ -4,6 +4,17 @@
 Changes in nbconvert
 ====================
 
+6.2.0
+-----
+
+The full list of changes can be seen on the `6.2.0 milestone <https://github.com/jupyter/nbconvert/milestone/21?closed=1>`__
+
+* Add the ability to fully customize ``widget_renderer_url`` :ghpull:`1614`
+* Enable users to customize MathJax URLs :ghpull:`1609`
+* Add CLI configuration for disable-chromium-sandbox :ghpull:`1625`
+* Enables webpdf to be rendered with templates :ghpull:`1601`
+* Adds dejavu :ghpull:`1599`
+
 6.1.0
 -----
 
