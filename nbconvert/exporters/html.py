@@ -51,7 +51,7 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mathjax_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML-full,Safe",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe",
         help="""
         URL to load Mathjax from.
 
