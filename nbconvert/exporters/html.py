@@ -21,6 +21,7 @@ else:
 from jinja2.loaders import split_template_path
 
 from nbconvert.filters.highlight import Highlight2HTML
+from nbconvert.filters.widgetsdatatypefilter import WidgetsDataTypeFilter
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 
 from .templateexporter import TemplateExporter
@@ -98,22 +99,22 @@ class HTMLExporter(TemplateExporter):
     def default_config(self):
         c = Config({
             'NbConvertBase': {
-                'display_data_priority' : ['application/vnd.jupyter.widget-state+json',
-                                           'application/vnd.jupyter.widget-view+json',
-                                           'application/javascript',
-                                           'text/html',
-                                           'text/markdown',
-                                           'image/svg+xml',
-                                           'text/latex',
-                                           'image/png',
-                                           'image/jpeg',
-                                           'text/plain'
-                                          ]
-                },
+                'display_data_priority': [
+                    'application/vnd.jupyter.widget-view+json',
+                    'application/javascript',
+                    'text/html',
+                    'text/markdown',
+                    'image/svg+xml',
+                    'text/latex',
+                    'image/png',
+                    'image/jpeg',
+                    'text/plain'
+                ]
+            },
             'HighlightMagicsPreprocessor': {
-                'enabled':True
-                }
-            })
+                'enabled': True
+            }
+        })
         c.merge(super().default_config)
         return c
 
@@ -136,7 +137,10 @@ class HTMLExporter(TemplateExporter):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
+        filter_data_type = WidgetsDataTypeFilter(notebook_metadata=nb.metadata, parent=self)
+
         self.register_filter('highlight_code', highlight_code)
+        self.register_filter('filter_data_type', filter_data_type)
         return super().from_notebook_node(nb, resources, **kw)
 
     def _init_resources(self, resources):
