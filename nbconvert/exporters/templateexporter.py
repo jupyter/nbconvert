@@ -18,7 +18,6 @@ from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe, va
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
 from jupyter_core.paths import jupyter_path
-from jupyter_core.utils import ensure_dir_exists
 from jinja2 import (
     TemplateNotFound, Environment, ChoiceLoader, FileSystemLoader, BaseLoader,
     DictLoader
@@ -547,12 +546,11 @@ class TemplateExporter(Exporter):
             compatibility_dir = os.path.join(root_dir, 'nbconvert', 'templates', 'compatibility')
             paths.append(compatibility_dir)
 
-        additional_paths = self.template_data_paths
-        for path in additional_paths:
-            try:
-                ensure_dir_exists(path, mode=0o700)
-            except OSError:
-                pass
+        additional_paths = []
+        for path in self.template_data_paths:
+            if not prune or os.path.exists(path):
+                additional_paths.append(path)
+
 
         return paths + self.extra_template_paths + additional_paths
 
