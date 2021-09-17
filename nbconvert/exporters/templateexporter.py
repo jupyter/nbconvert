@@ -546,7 +546,13 @@ class TemplateExporter(Exporter):
             compatibility_dir = os.path.join(root_dir, 'nbconvert', 'templates', 'compatibility')
             paths.append(compatibility_dir)
 
-        return paths + self.extra_template_paths + self.template_data_paths
+        additional_paths = []
+        for path in self.template_data_paths:
+            if not prune or os.path.exists(path):
+                additional_paths.append(path)
+
+
+        return paths + self.extra_template_paths + additional_paths
 
     @classmethod
     def get_compatibility_base_template_conf(cls, name):
