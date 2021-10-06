@@ -210,8 +210,8 @@ class NbConvertApp(JupyterApp):
         > jupyter nbconvert --to latex mynotebook.ipynb
 
         Both HTML and LaTeX support multiple output templates. LaTeX includes
-        'base', 'article' and 'report'.  HTML includes 'basic' and 'full'. You
-        can specify the flavor of the format used.
+        'base', 'article' and 'report'.  HTML includes 'basic', 'lab' and 
+        'classic'. You can specify the flavor of the format used.
 
         > jupyter nbconvert --to html --template lab mynotebook.ipynb
         
