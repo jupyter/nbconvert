@@ -570,3 +570,14 @@ class TestNbConvertApp(TestsBase):
             output, _ = HTMLExporter().from_notebook_node(nb)
             
             assert "var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';" in output
+
+    def test_execute_widgets_from_nbconvert(self):
+        """Check jupyter widgets render"""
+        notebookName = "Unexecuted_widget"
+        with self.create_temp_cwd([f"{notebookName}.ipynb"]):
+            self.nbconvert(
+                f"{notebookName}.ipynb --execute --log-level 0 --to html")
+            assert os.path.isfile(f"{notebookName}.html")
+            with open(f"{notebookName}.html", "r", encoding="utf8") as f:
+                text = f.read()
+                assert "<div class='slider-container'>" in text
