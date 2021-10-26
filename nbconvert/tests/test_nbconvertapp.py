@@ -580,4 +580,19 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile(f"{notebookName}.html")
             with open(f"{notebookName}.html", "r", encoding="utf8") as f:
                 text = f.read()
-                assert "<div class='slider-container'>" in text
+                assert '<script type="application/vnd.jupyter.widget-view+json">' in text
+                assert '<script type="application/vnd.jupyter.widget-state+json">' in text
+
+    def test_execute_multiple_notebooks(self):
+        """Check jupyter widgets render in case of batch convert"""
+        notebookName = "Unexecuted_widget"
+        with self.create_temp_cwd([f"{notebookName}*.ipynb"]):
+            self.nbconvert(
+                "*.ipynb --execute --log-level 0 --to html")
+
+            for name in (notebookName, f"{notebookName}_2"):
+                assert os.path.isfile(f"{name}.html")
+                with open(f"{name}.html", "r", encoding="utf8") as f:
+                    text = f.read()
+                    assert '<script type="application/vnd.jupyter.widget-view+json">' in text
+                    assert '<script type="application/vnd.jupyter.widget-state+json">' in text
