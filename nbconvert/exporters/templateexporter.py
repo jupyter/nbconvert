@@ -64,6 +64,9 @@ default_filters = {
         'get_metadata': filters.get_metadata,
         'convert_pandoc': filters.convert_pandoc,
         'json_dumps': json.dumps,
+        # browsers will parse </script>, closing a script tag early
+        # Since JSON allows escaping forward slash, this will still be parsed by JSON
+        'escape_html_script': lambda x: x.replace('</script>', '<\\/script>'),
         'strip_trailing_newline': filters.strip_trailing_newline,
         'text_base64': filters.text_base64,
 }
