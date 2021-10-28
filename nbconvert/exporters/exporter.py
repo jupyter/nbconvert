@@ -112,7 +112,7 @@ class Exporter(LoggingConfigurable):
         super().__init__(config=with_default_config, **kw)
 
         self._init_preprocessors()
-
+        self._nb_metadata = {}
 
     @property
     def default_config(self):
@@ -141,7 +141,12 @@ class Exporter(LoggingConfigurable):
 
         # Preprocess
         nb_copy, resources = self._preprocess(nb_copy, resources)
-
+        notebook_name = ''
+        if resources is not None:
+            name = resources.get('metadata', {}).get('name', '')
+            path = resources.get('metadata', {}).get('path', '')
+            notebook_name = os.path.join(path, name)
+        self._nb_metadata[notebook_name] = nb_copy.metadata
         return nb_copy, resources
 
     def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):

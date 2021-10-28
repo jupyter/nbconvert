@@ -137,7 +137,8 @@ class HTMLExporter(TemplateExporter):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
-        filter_data_type = WidgetsDataTypeFilter(notebook_metadata=nb.metadata, parent=self)
+
+        filter_data_type = WidgetsDataTypeFilter(notebook_metadata=self._nb_metadata, parent=self, resources=resources)
 
         self.register_filter('highlight_code', highlight_code)
         self.register_filter('filter_data_type', filter_data_type)
@@ -167,7 +168,6 @@ class HTMLExporter(TemplateExporter):
                 pieces = split_template_path(name)
                 for searchpath in self.template_paths:
                     filename = os.path.join(searchpath, *pieces)
-                    print(filename, os.path.exists(filename))
                     if os.path.exists(filename):
                         with open(filename, "rb") as f:
                             data = f.read()

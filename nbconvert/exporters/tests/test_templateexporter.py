@@ -326,6 +326,7 @@ class TestExporter(ExportersTestsBase):
         class AttrExporter(RSTExporter):
 
             def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
                 self.raw_template = raw_template
 
         exporter_init = AttrExporter()

@@ -19,7 +19,7 @@ NbConvertBase.display_data_priority
 #-----------------------------------------------------------------------------
 
 from warnings import warn
-
+import os
 from ..utils.base import NbConvertBase
 
 __all__ = ['WidgetsDataTypeFilter']
@@ -33,13 +33,13 @@ class WidgetsDataTypeFilter(NbConvertBase):
     """ Returns the preferred display format, excluding the widget output if
     there is no widget state available """
 
-    def __init__(self, notebook_metadata=None, **kwargs):
-        metadata = notebook_metadata or {}
-
-        self.widgets_state = (
-            metadata['widgets'][WIDGET_STATE_MIMETYPE]['state'] if
-            metadata.get('widgets') is not None else {}
-        )
+    def __init__(self, notebook_metadata=None, resources=None, **kwargs):
+        self.metadata = notebook_metadata
+        self.notebook_path = ''
+        if resources is not None:
+            name = resources.get('metadata', {}).get('name', '')
+            path = resources.get('metadata', {}).get('path', '')
+            self.notebook_path = os.path.join(path, name)
 
         super().__init__(**kwargs)
 
@@ -51,12 +51,17 @@ class WidgetsDataTypeFilter(NbConvertBase):
         `output` is dict with structure {mimetype-of-element: value-of-element}
 
         """
+        metadata = self.metadata.get(self.notebook_path, {})
+        widgets_state = (
+            metadata['widgets'][WIDGET_STATE_MIMETYPE]['state'] if
+            metadata.get('widgets') is not None else {}
+        )
         for fmt in self.display_data_priority:
             if fmt in output:
                 # If there is no widget state available, we skip this mimetype
                 if (
                     fmt == WIDGET_VIEW_MIMETYPE and
-                    output[WIDGET_VIEW_MIMETYPE]['model_id'] not in self.widgets_state
+                    output[WIDGET_VIEW_MIMETYPE]['model_id'] not in widgets_state
                     ):
                     continue
 
