@@ -155,6 +155,13 @@ class SlidesExporter(HTMLExporter):
         """
     ).tag(config=True)
 
+    reveal_number = Unicode('',
+        help="""
+        slide number format (e.g. 'c/t'). Choose from:
+        'c': current, 't': total, 'h': horizontal, 'v': vertical
+        """
+    ).tag(config=True)
+
     font_awesome_url = Unicode(
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css",
         help="""
@@ -172,4 +179,5 @@ class SlidesExporter(HTMLExporter):
         resources['reveal']['theme'] = self.reveal_theme
         resources['reveal']['transition'] = self.reveal_transition
         resources['reveal']['scroll'] = self.reveal_scroll
+        resources['reveal']['number'] = self.reveal_number
         return resources
