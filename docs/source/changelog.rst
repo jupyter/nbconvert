@@ -4,6 +4,15 @@
 Changes in nbconvert
 ====================
 
+6.3.0
+-----
+
+The full list of changes can be seen on the `6.3.0 milestone <https://github.com/jupyter/nbconvert/milestone/22?closed=1>`__
+
+* Update state filter :ghpull:`1664`
+* Add slide numbering :ghpull:`1654`
+* Fix HTML templates mentioned in help docs :ghpull:`1653`
+
 6.2.0
 -----
 
