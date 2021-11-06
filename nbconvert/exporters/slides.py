@@ -158,7 +158,7 @@ class SlidesExporter(HTMLExporter):
     reveal_number = Unicode('',
         help="""
         slide number format (e.g. 'c/t'). Choose from:
-        'c': current, 't': total, 'h': horzontal, 'v': vertical
+        'c': current, 't': total, 'h': horizontal, 'v': vertical
         """
     ).tag(config=True)
 
