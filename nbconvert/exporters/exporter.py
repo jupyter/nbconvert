@@ -61,6 +61,10 @@ class Exporter(LoggingConfigurable):
         help="Extension of the file that should be written to disk"
     ).tag(config=True)
 
+    optimistic_validation = Bool(False,
+        help = "Reduces the number of validation steps so that it only occurs after all preprocesors have run."
+    ).tag(config=True)
+
     # MIME type of the result file, for HTTP response headers.
     # This is *not* a traitlet, because we want to be able to access it from
     # the class, not just on instances.
@@ -296,6 +300,13 @@ class Exporter(LoggingConfigurable):
         resources['output_extension'] = self.file_extension
         return resources
 
+    def _validate_preprocessor(self, nbc, preprocessor):
+        try:
+            nbformat.validate(nbc, relax_add_props=True)
+        except nbformat.ValidationError:
+            self.log.error('Notebook is invalid after preprocessor %s',
+                               preprocessor)
+            raise 
 
     def _preprocess(self, nb, resources):
         """
@@ -321,11 +332,10 @@ class Exporter(LoggingConfigurable):
         # to each preprocessor
         for preprocessor in self._preprocessors:
             nbc, resc = preprocessor(nbc, resc)
-            try:
-                nbformat.validate(nbc, relax_add_props=True)
-            except nbformat.ValidationError:
-                self.log.error('Notebook is invalid after preprocessor %s',
-                               preprocessor)
-                raise
+            if not self.optimistic_validation:
+                self._validate_preprocessor(nbc, preprocessor)
+
+        if self.optimistic_validation:
+          self._validate_preprocessor(nbc, preprocessor) 
 
         return nbc, resc
