@@ -57,9 +57,24 @@ a.anchor-link {
     overflow: hidden;
 }
 
+/* Output area styling */
+div.jp-OutputArea.jp-Cell-outputArea {
+    width: fit-content;
+    overflow: unset;
+}
+div.jp-OutputArea-child {
+    width: fit-content;
+    display: -webkit-inline-box;
+}
+
 @media print {
   body {
     margin: 0;
+  }
+
+  div.jp-OutputArea-child {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 </style>
