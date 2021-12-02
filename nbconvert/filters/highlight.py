@@ -14,6 +14,7 @@ from nbconvert.utils.base import NbConvertBase
 from warnings import warn
 
 from traitlets import observe
+from traitlets.config import Dict
 
 MULTILINE_OUTPUTS = ['text', 'html', 'svg', 'latex', 'javascript', 'json']
 
@@ -23,10 +24,21 @@ __all__ = [
 ]
 
 class Highlight2HTML(NbConvertBase):
+    extra_formatter_options = Dict(
+        {},
+        help="""
+        Extra set of options to control how code is highlighted.
+
+        Passed through to the pygments' HtmlFormatter class.
+        See available list in https://pygments.org/docs/formatters/#HtmlFormatter
+        """,
+        config=True
+    )
+
     def __init__(self, pygments_lexer=None, **kwargs):
         self.pygments_lexer = pygments_lexer or 'ipython3'
         super().__init__(**kwargs)
-    
+
     @observe('default_language')
     def _default_language_changed(self, change):
         warn('Setting default_language in config is deprecated as of 5.0, '
@@ -53,15 +65,26 @@ class Highlight2HTML(NbConvertBase):
 
         return _pygments_highlight(source if len(source) > 0 else ' ',
                                    # needed to help post processors:
-                                   HtmlFormatter(cssclass=" highlight hl-"+language),
+                                   HtmlFormatter(cssclass=" highlight hl-" + language, **self.extra_formatter_options),
                                    language, metadata)
 
 
 class Highlight2Latex(NbConvertBase):
+    extra_formatter_options = Dict(
+        {},
+        help="""
+        Extra set of options to control how code is highlighted.
+
+        Passed through to the pygments' LatexFormatter class.
+        See available list in https://pygments.org/docs/formatters/#LatexFormatter
+        """,
+        config=True
+    )
+
     def __init__(self, pygments_lexer=None, **kwargs):
         self.pygments_lexer = pygments_lexer or 'ipython3'
         super().__init__(**kwargs)
-    
+
     @observe('default_language')
     def _default_language_changed(self, change):
         warn('Setting default_language in config is deprecated as of 5.0, '
@@ -87,7 +110,7 @@ class Highlight2Latex(NbConvertBase):
         if not language:
             language=self.pygments_lexer
 
-        latex = _pygments_highlight(source, LatexFormatter(), language, metadata)
+        latex = _pygments_highlight(source, LatexFormatter(**self.extra_formatter_options), language, metadata)
         if strip_verbatim:
             latex = latex.replace(r'\begin{Verbatim}[commandchars=\\\{\}]' + '\n', '')
             return latex.replace('\n\\end{Verbatim}\n', '')
