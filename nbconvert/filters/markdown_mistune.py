@@ -162,7 +162,7 @@ class IPythonRenderer(mistune.Renderer):
             name = src[len(attachment_prefix):]
             
             if not name in attachments:
-                nbconvert.InvalidNotebook.new("missing attachment: {}".format(name))
+                raise InvalidNotebook("missing attachment: {}".format(name))
             
             attachment = attachments[name]
             # we choose vector over raster, and lossless over lossy
