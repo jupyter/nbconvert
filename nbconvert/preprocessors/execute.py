@@ -44,7 +44,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         The input argument *nb* is modified in-place.
 
         Note that this function recalls NotebookClient.__init__, which may look wrong.
-        However since the preprocess call acts line an init on exeuction state it's expected.
+        However since the preprocess call acts line an init on execution state it's expected.
         Therefore, we need to capture it here again to properly reset because traitlet 
         assignments are not passed. There is a risk if traitlets apply any side effects for
         dual init.
