@@ -21,7 +21,7 @@ def executenb(*args, **kwargs):
 
 
 # We inherit from both classes to allow for traitlets to resolve as they did pre-6.0.
-# This unfortunatley makes for some ugliness around initialization as NotebookClient
+# This unfortunately makes for some ugliness around initialization as NotebookClient
 # assumes it's a constructed class with a nb object that we have to hack around.
 class ExecutePreprocessor(Preprocessor, NotebookClient):
     """
