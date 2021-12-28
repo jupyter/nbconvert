@@ -36,7 +36,7 @@ jobs:
       - name: Install package dependencies
         run: |
           pip install codecov
-          pip install nbconvert[execute,serve,test]
+          pip install -e ".[execute,serve,test]"
           pip install check-manifest
           python -m ipykernel.kernelspec --user
 
