@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9', '3.10']
+        python-version: [ '3.7', '3.8', '3.9', '3.10', 'pypy-3.7']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -50,14 +50,24 @@ jobs:
           pip freeze
           pip check
 
-      - name: Run tests
+      - name: Run tests with coverage
+        if: ${{ !startsWith(matrix.python-version, 'pypy')
         env:
           PYTHONWARNINGS: default
         run: |
           check-manifest --ignore "share/**"
           # cd so we test the install, not the repo
           cd `mktemp -d`
-          py.test --cov nbconvert -v --pyargs nbconvert
+          pytest --cov nbconvert -v --pyargs nbconvert
+
+      - name: Run tests on pypy
+        if: startsWith(matrix.python-version, 'pypy')
+        env:
+          PYTHONWARNINGS: default
+        run: |
+          # cd so we test the install, not the repo
+          cd `mktemp -d`
+          pytest -v --pyargs nbconvert
 
       - name: Code coverage
         run: codecov
