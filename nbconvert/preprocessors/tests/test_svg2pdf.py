@@ -73,6 +73,7 @@ class Testsvg2pdf(PreprocessorTestsBase):
         nb, res = preprocessor(nb, res)
         self.assertIn('application/pdf', nb.cells[0].outputs[0].data)
 
+    @onlyif_cmds_exist('inkscape')
     @patch('subprocess.Popen')
     def test_inkscape_version_default(self, mock_popen):
         mock_popen().communicate.return_value = (b'Inkscape 0.92.3 (2405546, 2018-03-11)', b'')

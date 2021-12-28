@@ -8,14 +8,24 @@ on:
 
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9' ]
+        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        python-version: [ '3.7', '3.8', '3.9', '3.10', 'pypy-3.7']
+        exclude:
+          - os: "windows-latest"
+            python-version: "pypy-3.7"
+          - os: "macos-latest"
+            python-version: "3.8"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Install dependencies
+      - name: Run base setup actions
+        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
+      - name: Install Linux dependencies
+        if: startsWith(runner.os, 'Linux')
         run: |
           sudo apt-get update
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex
@@ -23,25 +33,10 @@ jobs:
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
-      - name: Install Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: 'x64'
-      - name: Cache pip on Linux
-        uses: actions/cache@v2
-        if: startsWith(runner.os, 'Linux')
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}
-
       - name: Install package dependencies
         run: |
-          pip install --upgrade setuptools pip pytest
-          pip install -f travis-wheels/wheelhouse . codecov coverage
-          pip install nbconvert[execute,serve,test]
+          pip install codecov
+          pip install -e ".[execute,serve,test]"
           pip install check-manifest
           python -m ipykernel.kernelspec --user
 
@@ -50,14 +45,27 @@ jobs:
           pip freeze
           pip check
 
-      - name: Run tests
+      - name: Run tests with coverage
+        if: ${{ !startsWith(matrix.python-version, 'pypy') && !startsWith(runner.os, 'Windows')  }}
         env:
           PYTHONWARNINGS: default
         run: |
           check-manifest --ignore "share/**"
+          # See https://github.com/pyppeteer/pyppeteer/pull/321
+          pip install -U websockets
           # cd so we test the install, not the repo
-          cd `mktemp -d`
-          py.test --cov nbconvert -v --pyargs nbconvert
+          cd $HOME
+          pytest --cov nbconvert -v --pyargs nbconvert
+
+      - name: Run tests on pypy and Windows
+        if: ${{ startsWith(matrix.python-version, 'pypy') || startsWith(runner.os, 'Windows')  }}
+        shell: bash
+        run: |
+          # cd so we test the install, not the repo
+          cd $HOME
+          # See https://github.com/pyppeteer/pyppeteer/pull/321
+          pip install -U websockets
+          pytest -v --pyargs nbconvert
 
       - name: Code coverage
         run: codecov

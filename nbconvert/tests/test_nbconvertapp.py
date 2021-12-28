@@ -287,6 +287,7 @@ class TestNbConvertApp(TestsBase):
                     ' --PDFExporter.verbose=True')
             assert os.path.isfile(u'nb1_análisis.pdf')
 
+    @pytest.mark.skipif(os.name == 'nt', reason='CLI parsing does not work the same on Windows')
     def test_cwd_plugin(self):
         """
         Verify that an extension in the cwd can be imported.
@@ -553,7 +554,7 @@ class TestNbConvertApp(TestsBase):
 
     def test_widgets_from_nbconvert(self):
         """Check jupyter widgets URL"""
-        
+
         with self.create_temp_cwd(["Widget_List.ipynb"]):
             self.nbconvert('Widget_List.ipynb --log-level 0 --to html')
             assert os.path.isfile('Widget_List.html')
@@ -568,7 +569,7 @@ class TestNbConvertApp(TestsBase):
                 nb = nbformat.read(f, 4)
 
             output, _ = HTMLExporter().from_notebook_node(nb)
-            
+
             assert "var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';" in output
 
     def test_execute_widgets_from_nbconvert(self):
