@@ -62,8 +62,6 @@ jobs:
 
       - name: Run tests on pypy
         if: startsWith(matrix.python-version, 'pypy')
-        env:
-          PYTHONWARNINGS: default
         run: |
           # cd so we test the install, not the repo
           cd `mktemp -d`
