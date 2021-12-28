@@ -51,7 +51,7 @@ jobs:
           pip check
 
       - name: Run tests with coverage
-        if: ${{ !startsWith(matrix.python-version, 'pypy')
+        if: ${{ !startsWith(matrix.python-version, 'pypy') }}
         env:
           PYTHONWARNINGS: default
         run: |
