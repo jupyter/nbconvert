@@ -160,7 +160,10 @@ class IPythonRenderer(mistune.Renderer):
         attachment_prefix = 'attachment:'
         if src.startswith(attachment_prefix):
             name = src[len(attachment_prefix):]
-            assert name in attachments, "missing attachment: {}".format(name)
+            
+            if not name in attachments:
+                raise InvalidNotebook("missing attachment: {}".format(name))
+            
             attachment = attachments[name]
             # we choose vector over raster, and lossless over lossy
             preferred_mime_types = ['image/svg+xml', 'image/png', 'image/jpeg']

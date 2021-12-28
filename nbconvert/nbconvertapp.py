@@ -595,6 +595,9 @@ class DejavuApp(NbConvertApp):
     def default_export_format(self):
         return 'html'
 
+class InvalidNotebook(Exception):
+    pass
+
 #-----------------------------------------------------------------------------
 # Main entry point
 #-----------------------------------------------------------------------------
