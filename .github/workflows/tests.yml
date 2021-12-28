@@ -15,9 +15,9 @@ jobs:
         python-version: [ '3.7', '3.8', '3.9', '3.10', 'pypy-3.7']
         exclude:
           - os: "windows-latest"
-            python-version: ["3.7", "pypy-3.7"]
+            python-version: "pypy-3.7"
           - os: "macos-latest"
-            python-version: ["3.8", "3.10"]
+            python-version: "3.8"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
