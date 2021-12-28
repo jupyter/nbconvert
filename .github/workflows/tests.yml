@@ -38,8 +38,6 @@ jobs:
           pip install codecov
           pip install -e ".[execute,serve,test]"
           pip install check-manifest
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
           python -m ipykernel.kernelspec --user
 
       - name: List installed packages
@@ -53,6 +51,8 @@ jobs:
           PYTHONWARNINGS: default
         run: |
           check-manifest --ignore "share/**"
+          # See https://github.com/pyppeteer/pyppeteer/pull/321
+          pip install --force-install -U websockets
           # cd so we test the install, not the repo
           cd $HOME
           pytest --cov nbconvert -v --pyargs nbconvert
@@ -63,6 +63,8 @@ jobs:
         run: |
           # cd so we test the install, not the repo
           cd $HOME
+          # See https://github.com/pyppeteer/pyppeteer/pull/321
+          pip install --force-install -U websockets
           pytest -v --pyargs nbconvert
 
       - name: Code coverage
