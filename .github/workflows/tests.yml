@@ -57,6 +57,7 @@ jobs:
 
       - name: Run tests on pypy and Windows
         if: ${{ startsWith(matrix.python-version, 'pypy') || startsWith(runner.os, 'Windows')  }}
+        shell: bash
         run: |
           # cd so we test the install, not the repo
           cd `mktemp -d`
