@@ -4,6 +4,16 @@
 Changes in nbconvert
 ====================
 
+6.4.0
+-----
+
+The full list of changes can be seen on the `6.4.0 milestone <https://github.com/jupyter/nbconvert/milestone/23?closed=1>`__
+
+* Allow passing extra args to code highlighter :ghpull:`1683`
+* Prevent page breaks in outputs when printing :ghpull:`1679`
+* Add collapsers to template :ghpull:`1689`
+* Optionally speed up validation :ghpull:`1672`
+
 6.3.0
 -----
 
