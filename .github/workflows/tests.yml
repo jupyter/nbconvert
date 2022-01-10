@@ -45,6 +45,9 @@ jobs:
           pip freeze
           pip check
 
+      - name: Check code formatting
+        run: black --check nbconvert
+
       - name: Run tests with coverage
         if: ${{ !startsWith(matrix.python-version, 'pypy') && !startsWith(runner.os, 'Windows')  }}
         env:

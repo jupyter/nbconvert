@@ -6,6 +6,7 @@ and updates outputs"""
 from typing import Optional
 from nbformat import NotebookNode
 from nbclient import NotebookClient, execute as _execute
+
 # Backwards compatability for imported name
 from nbclient.exceptions import CellExecutionError
 
@@ -14,9 +15,12 @@ from .base import Preprocessor
 
 def executenb(*args, **kwargs):
     from warnings import warn
-    warn("The 'nbconvert.preprocessors.execute.executenb' function was moved to nbclient.execute. "
+
+    warn(
+        "The 'nbconvert.preprocessors.execute.executenb' function was moved to nbclient.execute. "
         "We recommend importing that library directly.",
-        FutureWarning)
+        FutureWarning,
+    )
     return _execute(*args, **kwargs)
 
 
@@ -29,12 +33,12 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
     """
 
     def __init__(self, **kw):
-        nb = kw.get('nb')
+        nb = kw.get("nb")
         Preprocessor.__init__(self, nb=nb, **kw)
         NotebookClient.__init__(self, nb, **kw)
 
     def _check_assign_resources(self, resources):
-        if resources or not hasattr(self, 'resources'):
+        if resources or not hasattr(self, "resources"):
             self.resources = resources
 
     def preprocess(self, nb, resources=None, km=None):
@@ -45,7 +49,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
 
         Note that this function recalls NotebookClient.__init__, which may look wrong.
         However since the preprocess call acts line an init on execution state it's expected.
-        Therefore, we need to capture it here again to properly reset because traitlet 
+        Therefore, we need to capture it here again to properly reset because traitlet
         assignments are not passed. There is a risk if traitlets apply any side effects for
         dual init.
         The risk should be manageable, and this approach minimizes side-effects relative
@@ -79,7 +83,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
 
         with self.setup_kernel():
             info_msg = self.wait_for_reply(self.kc.kernel_info())
-            self.nb.metadata['language_info'] = info_msg['content']['language_info']
+            self.nb.metadata["language_info"] = info_msg["content"]["language_info"]
             for index, cell in enumerate(self.nb.cells):
                 self.preprocess_cell(cell, resources, index)
         self.set_widgets_metadata()

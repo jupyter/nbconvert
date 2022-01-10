@@ -14,16 +14,15 @@ from nbformat import v4
 
 class TestHTMLExporter(ExportersTestsBase):
     """Tests for HTMLExporter"""
-    
+
     exporter_class = HTMLExporter
-    should_include_raw = ['html']
+    should_include_raw = ["html"]
 
     def test_constructor(self):
         """
         Can a HTMLExporter be constructed?
         """
         HTMLExporter()
-
 
     def test_export(self):
         """
@@ -32,28 +31,31 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = HTMLExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
-
     def test_export_classic(self):
         """
         Can a HTMLExporter export using the 'classic' template?
         """
-        (output, resources) = HTMLExporter(template_name='classic').from_filename(self._get_notebook())
+        (output, resources) = HTMLExporter(template_name="classic").from_filename(
+            self._get_notebook()
+        )
         assert len(output) > 0
-
 
     def test_export_notebook(self):
         """
         Can a HTMLExporter export using the 'lab' template?
         """
-        (output, resources) = HTMLExporter(template_name='lab').from_filename(self._get_notebook())
+        (output, resources) = HTMLExporter(template_name="lab").from_filename(
+            self._get_notebook()
+        )
         assert len(output) > 0
 
     def test_prompt_number(self):
         """
         Does HTMLExporter properly format input and output prompts?
         """
-        (output, resources) = HTMLExporter(template_name='lab').from_filename(
-            self._get_notebook(nb_name="prompt_numbers.ipynb"))
+        (output, resources) = HTMLExporter(template_name="lab").from_filename(
+            self._get_notebook(nb_name="prompt_numbers.ipynb")
+        )
         in_regex = r"In&nbsp;\[(.*)\]:"
         out_regex = r"Out\[(.*)\]:"
 
@@ -62,21 +64,23 @@ class TestHTMLExporter(ExportersTestsBase):
 
         assert re.findall(in_regex, output) == ins
         assert re.findall(out_regex, output) == outs
-        
+
     def test_prompt_number(self):
         """
         Does HTMLExporter properly format input and output prompts?
         """
         no_prompt_conf = Config(
-            {"TemplateExporter":{
-                "exclude_input_prompt": True,
-                "exclude_output_prompt": True,
+            {
+                "TemplateExporter": {
+                    "exclude_input_prompt": True,
+                    "exclude_output_prompt": True,
                 }
             }
         )
-        exporter = HTMLExporter(config=no_prompt_conf, template_name='lab')
+        exporter = HTMLExporter(config=no_prompt_conf, template_name="lab")
         (output, resources) = exporter.from_filename(
-            self._get_notebook(nb_name="prompt_numbers.ipynb"))
+            self._get_notebook(nb_name="prompt_numbers.ipynb")
+        )
         in_regex = r"In&nbsp;\[(.*)\]:"
         out_regex = r"Out\[(.*)\]:"
 
@@ -87,44 +91,50 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         Does HTMLExporter with the 'classic' template treat pngs with width/height metadata correctly?
         """
-        (output, resources) = HTMLExporter(template_name='classic').from_filename(
-            self._get_notebook(nb_name="pngmetadata.ipynb"))
+        (output, resources) = HTMLExporter(template_name="classic").from_filename(
+            self._get_notebook(nb_name="pngmetadata.ipynb")
+        )
         check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
         result = check_for_png.search(output)
         attr_string = result.group(1)
-        assert 'width' in attr_string
-        assert 'height' in attr_string
+        assert "width" in attr_string
+        assert "height" in attr_string
 
     def test_javascript_output(self):
         nb = v4.new_notebook(
             cells=[
                 v4.new_code_cell(
-                    outputs=[v4.new_output(
-                        output_type='display_data',
-                        data={
-                            'application/javascript': "javascript_output();"
-                        }
-                    )]
+                    outputs=[
+                        v4.new_output(
+                            output_type="display_data",
+                            data={"application/javascript": "javascript_output();"},
+                        )
+                    ]
                 )
             ]
         )
-        (output, resources) = HTMLExporter(template_name='classic').from_notebook_node(nb)
-        self.assertIn('javascript_output', output)
+        (output, resources) = HTMLExporter(template_name="classic").from_notebook_node(
+            nb
+        )
+        self.assertIn("javascript_output", output)
 
     def test_attachments(self):
-        (output, resources) = HTMLExporter(template_name='classic').from_file(
-            self._get_notebook(nb_name='attachment.ipynb')
+        (output, resources) = HTMLExporter(template_name="classic").from_file(
+            self._get_notebook(nb_name="attachment.ipynb")
         )
         check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
         result = check_for_png.search(output)
-        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64,iVBOR'))
+        self.assertTrue(
+            result.group(0).strip().startswith('<img src="data:image/png;base64,iVBOR')
+        )
         self.assertTrue(result.group(1).strip().startswith('alt="image.png"'))
 
         check_for_data = re.compile(r'<img src="(?P<url>[^"]*?)"')
         results = check_for_data.findall(output)
-        assert results[0] != results[1], 'attachments only need to be unique within a cell'
-        assert 'image/svg' in results[1], 'second image should use svg'
-
+        assert (
+            results[0] != results[1]
+        ), "attachments only need to be unique within a cell"
+        assert "image/svg" in results[1], "second image should use svg"
 
     def test_custom_filter_highlight_code(self):
         # Overwriting filters takes place at: Exporter.from_notebook_node
@@ -134,15 +144,17 @@ class TestHTMLExporter(ExportersTestsBase):
         def custom_highlight_code(source, language="python", metadata=None):
             return source + " ADDED_TEXT"
 
-        filters = {
-            "highlight_code": custom_highlight_code
-        }
-        (output, resources) = HTMLExporter(template_name='classic', filters=filters).from_notebook_node(nb)
+        filters = {"highlight_code": custom_highlight_code}
+        (output, resources) = HTMLExporter(
+            template_name="classic", filters=filters
+        ).from_notebook_node(nb)
         self.assertTrue("ADDED_TEXT" in output)
 
     def test_basic_name(self):
         """
         Can a HTMLExporter export using the 'basic' template?
         """
-        (output, resources) = HTMLExporter(template_name='basic').from_filename(self._get_notebook())
+        (output, resources) = HTMLExporter(template_name="basic").from_filename(
+            self._get_notebook()
+        )
         assert len(output) > 0

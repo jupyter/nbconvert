@@ -7,7 +7,8 @@
 import codecs
 import sys
 
-def unicode_std_stream(stream='stdout'):
+
+def unicode_std_stream(stream="stdout"):
     u"""Get a wrapper to write unicode to stdout/stderr as UTF-8.
 
     This ignores environment variables and default encodings, to reliably write
@@ -17,8 +18,8 @@ def unicode_std_stream(stream='stdout'):
 
         unicode_std_stream().write(u'ł@e¶ŧ←')
     """
-    assert stream in ('stdout', 'stderr')
-    stream  = getattr(sys, stream)
+    assert stream in ("stdout", "stderr")
+    stream = getattr(sys, stream)
 
     try:
         stream_b = stream.buffer
@@ -26,7 +27,8 @@ def unicode_std_stream(stream='stdout'):
         # sys.stdout has been replaced - use it directly
         return stream
 
-    return codecs.getwriter('utf-8')(stream_b)
+    return codecs.getwriter("utf-8")(stream_b)
+
 
 def unicode_stdin_stream():
     u"""Get a wrapper to read unicode from stdin as UTF-8.
@@ -37,14 +39,15 @@ def unicode_stdin_stream():
 
         totreat = unicode_stdin_stream().read()
     """
-    stream  = sys.stdin
+    stream = sys.stdin
     try:
         stream_b = stream.buffer
     except AttributeError:
         return stream
 
-    return codecs.getreader('utf-8')(stream_b)
+    return codecs.getreader("utf-8")(stream_b)
+
 
 class FormatSafeDict(dict):
     def __missing__(self, key):
-        return '{' + key + '}'
+        return "{" + key + "}"

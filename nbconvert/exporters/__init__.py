@@ -1,5 +1,4 @@
-from .base import (export, get_exporter,
-                   ExporterNameError, get_export_names)
+from .base import export, get_exporter, ExporterNameError, get_export_names
 from .html import HTMLExporter
 from .slides import SlidesExporter
 from .templateexporter import TemplateExporter

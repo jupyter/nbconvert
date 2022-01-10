@@ -11,7 +11,7 @@ class TestPythonExporter(ExportersTestsBase):
     """Tests for PythonExporter"""
 
     exporter_class = PythonExporter
-    should_include_raw = ['python']
+    should_include_raw = ["python"]
 
     def test_constructor(self):
         """Can a PythonExporter be constructed?"""

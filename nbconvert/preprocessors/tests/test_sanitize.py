@@ -9,7 +9,7 @@ class TestSanitizer(PreprocessorTestsBase):
     """Contains test functions for sanitize.py"""
 
     maxDiff = None
-    
+
     def build_preprocessor(self):
         """Make an instance of a preprocessor"""
         preprocessor = SanitizeHTML()
@@ -43,7 +43,7 @@ class TestSanitizer(PreprocessorTestsBase):
 
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
+                "markdown",
                 """
                 ![some image](http://example.com/something.svg)
 
@@ -58,7 +58,7 @@ class TestSanitizer(PreprocessorTestsBase):
                     <path d="M14 27v-20c0-3.7-3.3-7-7-7s-7 3.3-7 7v41c0 8.2 9.2 17 20 17s20-9.2 20-20c0-13.3-13.4-21.8-26-18zm6 25c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z"/>
                 </svg>
                 """,
-                preprocessor
+                preprocessor,
             ).strip(),
             """
             ![some image](http://example.com/something.svg)
@@ -72,11 +72,9 @@ class TestSanitizer(PreprocessorTestsBase):
 
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
-                '_A_ <em>few</em> <script>tags</script>',
-                preprocessor
+                "markdown", "_A_ <em>few</em> <script>tags</script>", preprocessor
             ),
-            '_A_ <em>few</em> tags'
+            "_A_ <em>few</em> tags",
         )
 
     def test_comment_stripping(self):
@@ -85,59 +83,53 @@ class TestSanitizer(PreprocessorTestsBase):
 
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
-                '_A_ <em>few</em> <!-- tags -->',
-                preprocessor
+                "markdown", "_A_ <em>few</em> <!-- tags -->", preprocessor
             ),
-            '_A_ <em>few</em> '
+            "_A_ <em>few</em> ",
         )
 
         preprocessor.strip_comments = False
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
-                '_A_ <em>few</em> <!-- tags -->',
-                preprocessor
+                "markdown", "_A_ <em>few</em> <!-- tags -->", preprocessor
             ),
-            '_A_ <em>few</em> <!-- tags -->'
+            "_A_ <em>few</em> <!-- tags -->",
         )
 
     def test_attributes_whitelist(self):
         """Test style"""
         preprocessor = self.build_preprocessor()
 
-        preprocessor.attributes['a'] = ['href', 'title']
+        preprocessor.attributes["a"] = ["href", "title"]
 
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
-                '<a href="link" rel="nofollow">Hi</a>',
-                preprocessor
+                "markdown", '<a href="link" rel="nofollow">Hi</a>', preprocessor
             ),
-            '<a href="link">Hi</a>'
+            '<a href="link">Hi</a>',
         )
 
     def test_style_whitelist(self):
         """Test style"""
         preprocessor = self.build_preprocessor()
 
-        if '*' in preprocessor.attributes:
-            preprocessor.attributes['*'].append('style')
+        if "*" in preprocessor.attributes:
+            preprocessor.attributes["*"].append("style")
         else:
-            preprocessor.attributes['*'] = ['style']
+            preprocessor.attributes["*"] = ["style"]
         preprocessor.styles = [
-            'color',
+            "color",
         ]
 
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
+                "markdown",
                 '_A_ <em style="color: blue; background-color: pink">'
-                'few</em> <script>tags</script>',
-                preprocessor
+                "few</em> <script>tags</script>",
+                preprocessor,
             ),
             '_A_ <em style="color: blue;">few</em> '
-            '&lt;script&gt;tags&lt;/script&gt;'
+            "&lt;script&gt;tags&lt;/script&gt;",
         )
 
     def test_tag_passthrough(self):
@@ -146,11 +138,9 @@ class TestSanitizer(PreprocessorTestsBase):
 
         self.assertEqual(
             self.preprocess_source(
-                'raw',
-                '_A_ <em>few</em> <script>tags</script>',
-                preprocessor
+                "raw", "_A_ <em>few</em> <script>tags</script>", preprocessor
             ),
-            '_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;'
+            "_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;",
         )
 
     def test_output_sanitizing(self):
@@ -159,13 +149,18 @@ class TestSanitizer(PreprocessorTestsBase):
         nb = self.build_notebook()
 
         outputs = [
-            nbformat.new_output("display_data", data={
-                'text/plain': 'b',
-                'text/html': '<script>more evil</script>',
-                'text/css': '<style> * {display:none}</style>'
-                }),
-            nbformat.new_output('stream', name='stdout', text="wat"),
-            nbformat.new_output('stream', name='stdout', text="<script>Evil tag</script>")
+            nbformat.new_output(
+                "display_data",
+                data={
+                    "text/plain": "b",
+                    "text/html": "<script>more evil</script>",
+                    "text/css": "<style> * {display:none}</style>",
+                },
+            ),
+            nbformat.new_output("stream", name="stdout", text="wat"),
+            nbformat.new_output(
+                "stream", name="stdout", text="<script>Evil tag</script>"
+            ),
         ]
         nb.cells[0].outputs = outputs
 
@@ -174,23 +169,19 @@ class TestSanitizer(PreprocessorTestsBase):
 
         expected_output = [
             {
-                'data': {
-                    'text/html': '&lt;script&gt;more evil&lt;/script&gt;',
-                    'text/plain': 'b'
+                "data": {
+                    "text/html": "&lt;script&gt;more evil&lt;/script&gt;",
+                    "text/plain": "b",
                 },
-                'metadata': {},
-                'output_type': 'display_data',
+                "metadata": {},
+                "output_type": "display_data",
             },
+            {"name": "stdout", "output_type": "stream", "text": "wat"},
             {
-                'name': 'stdout',
-                'output_type': 'stream',
-                'text': 'wat'
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "<script>Evil tag</script>",
             },
-            {
-                'name': 'stdout',
-                'output_type':
-                'stream', 'text': '<script>Evil tag</script>'
-            }
         ]
         self.assertEqual(nb.cells[0].outputs, expected_output)
 
@@ -200,9 +191,7 @@ class TestSanitizer(PreprocessorTestsBase):
 
         self.assertEqual(
             self.preprocess_source(
-                'markdown',
-                '_A_ <em>few</em> <script>tags</script>',
-                preprocessor
+                "markdown", "_A_ <em>few</em> <script>tags</script>", preprocessor
             ),
-            '_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;'
+            "_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;",
         )

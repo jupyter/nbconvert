@@ -231,6 +231,7 @@ pyppeteer_req = 'pyppeteer>=1,<1.1'
 
 extra_requirements = {
     'test': [
+        'black',
         'pytest',
         'pytest-cov',
         'pytest-dependency',

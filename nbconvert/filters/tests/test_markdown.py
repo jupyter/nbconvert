@@ -20,84 +20,92 @@ from jinja2 import Environment
 class TestMarkdown(TestsBase):
 
     tests = [
-        '*test',
-        '**test',
-        '*test*',
-        '_test_',
-        '__test__',
-        '__*test*__',
-        '**test**',
-        '#test',
-        '##test',
-        'test\n----',
-        'test [link](https://google.com/)',
+        "*test",
+        "**test",
+        "*test*",
+        "_test_",
+        "__test__",
+        "__*test*__",
+        "**test**",
+        "#test",
+        "##test",
+        "test\n----",
+        "test [link](https://google.com/)",
     ]
 
     tokens = [
-        '*test',
-        '**test',
-        'test',
-        'test',
-        'test',
-        'test',
-        'test',
-        'test',
-        'test',
-        'test',
-        ('test', 'https://google.com/'),
+        "*test",
+        "**test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        ("test", "https://google.com/"),
     ]
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_markdown2latex(self):
         """markdown2latex test"""
         for index, test in enumerate(self.tests):
             self._try_markdown(
-                partial(
-                    convert_pandoc, from_format='markdown', to_format='latex'),
-                test, self.tokens[index])
+                partial(convert_pandoc, from_format="markdown", to_format="latex"),
+                test,
+                self.tokens[index],
+            )
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_markdown2latex_markup(self):
         """markdown2latex with markup kwarg test"""
         # This string should be passed through unaltered with pandoc's
         # markdown_strict reader
-        s = '1) arabic number with parenthesis'
-        self.assertEqual(convert_pandoc(s, 'markdown_strict', 'latex'), s)
+        s = "1) arabic number with parenthesis"
+        self.assertEqual(convert_pandoc(s, "markdown_strict", "latex"), s)
         # This string should be passed through unaltered with pandoc's
         # markdown_strict+tex_math_dollars reader
-        s = r'$\alpha$ latex math'
+        s = r"$\alpha$ latex math"
         # sometimes pandoc uses $math$, sometimes it uses \(math\)
-        expected = re.compile(r'(\$|\\\()\\alpha(\$|\\\)) latex math')
+        expected = re.compile(r"(\$|\\\()\\alpha(\$|\\\)) latex math")
 
         assertRegex = self.assertRegex
 
         assertRegex(
-            convert_pandoc(s, 'markdown_strict+tex_math_dollars', 'latex'),
-            expected)
+            convert_pandoc(s, "markdown_strict+tex_math_dollars", "latex"), expected
+        )
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_pandoc_extra_args(self):
         # pass --no-wrap
-        s = '\n'.join([
-            "#latex {{long_line | md2l(['--wrap=none'])}}",
-            "#rst {{long_line | md2r(['--columns', '5'])}}",
-        ])
-        long_line = ' '.join(['long'] * 30)
+        s = "\n".join(
+            [
+                "#latex {{long_line | md2l(['--wrap=none'])}}",
+                "#rst {{long_line | md2r(['--columns', '5'])}}",
+            ]
+        )
+        long_line = " ".join(["long"] * 30)
         env = Environment()
-        env.filters.update({
-            'md2l': lambda code, extra_args: convert_pandoc(
-                code, from_format='markdown', to_format='latex',
-                extra_args=extra_args),
-            'md2r': lambda code, extra_args: convert_pandoc(
-                code, from_format='markdown', to_format='rst',
-                extra_args=extra_args),
-        })
+        env.filters.update(
+            {
+                "md2l": lambda code, extra_args: convert_pandoc(
+                    code,
+                    from_format="markdown",
+                    to_format="latex",
+                    extra_args=extra_args,
+                ),
+                "md2r": lambda code, extra_args: convert_pandoc(
+                    code, from_format="markdown", to_format="rst", extra_args=extra_args
+                ),
+            }
+        )
         tpl = env.from_string(s)
         rendered = tpl.render(long_line=long_line)
-        _, latex, rst = rendered.split('#')
+        _, latex, rst = rendered.split("#")
 
-        self.assertEqual(latex.strip(), 'latex %s' % long_line)
-        self.assertEqual(rst.strip(), 'rst %s' % long_line.replace(' ', '\n'))
+        self.assertEqual(latex.strip(), "latex %s" % long_line)
+        self.assertEqual(rst.strip(), "rst %s" % long_line.replace(" ", "\n"))
 
     def test_markdown2html(self):
         """markdown2html test"""
@@ -105,26 +113,36 @@ class TestMarkdown(TestsBase):
             self._try_markdown(markdown2html, test, self.tokens[index])
 
     def test_markdown2html_heading_anchors(self):
-        for md, tokens in [('# test', ('<h1', '>test', 'id="test"',
-                                       u'&#182;</a>', "anchor-link")),
-                           ('###test head space',
-                            ('<h3', '>test head space', 'id="test-head-space"',
-                             u'&#182;</a>', "anchor-link"))]:
+        for md, tokens in [
+            ("# test", ("<h1", ">test", 'id="test"', u"&#182;</a>", "anchor-link")),
+            (
+                "###test head space",
+                (
+                    "<h3",
+                    ">test head space",
+                    'id="test-head-space"',
+                    u"&#182;</a>",
+                    "anchor-link",
+                ),
+            ),
+        ]:
             self._try_markdown(markdown2html, md, tokens)
 
     def test_markdown2html_math(self):
         # Mathematical expressions not containing <, >, &
         # should be passed through unaltered
         # all the "<", ">", "&" must be escaped correctly
-        cases = [(
-            "\\begin{equation*}\n" +
-            ("\\left( \\sum_{k=1}^n a_k b_k \\right)^2 "
-             "\\leq \\left( \\sum_{k=1}^n a_k^2 \\right) "
-             "\\left( \\sum_{k=1}^n b_k^2 \\right)\n") +
-            "\\end{equation*}"),
-            ("$$\n"
-             "a = 1 *3* 5\n"
-             "$$"),
+        cases = [
+            (
+                "\\begin{equation*}\n"
+                + (
+                    "\\left( \\sum_{k=1}^n a_k b_k \\right)^2 "
+                    "\\leq \\left( \\sum_{k=1}^n a_k^2 \\right) "
+                    "\\left( \\sum_{k=1}^n b_k^2 \\right)\n"
+                )
+                + "\\end{equation*}"
+            ),
+            ("$$\n" "a = 1 *3* 5\n" "$$"),
             "$ a = 1 *3* 5 $",
             "$s_i = s_{i}\n$",
             "$a<b&b<lt$",
@@ -133,24 +151,23 @@ class TestMarkdown(TestsBase):
             "$$a<b&b<lt$$",
             "$$a<b&lt;b>a;a-b<0$$",
             "$$<k'>$$",
-            ("$$x\n"
-             "=\n"
-             "2$$"),
-            ("$$\n"
-             "b =  \\left[\n"
-             "P\\left(\\right)\n"
-             "- (l_1\\leftrightarrow l_2\n)"
-             "\\right]\n"
-             "$$"),
-            ("\\begin{equation*}\n"
-             "x = 2 *55* 7\n"
-             "\\end{equation*}"),
+            ("$$x\n" "=\n" "2$$"),
+            (
+                "$$\n"
+                "b =  \\left[\n"
+                "P\\left(\\right)\n"
+                "- (l_1\\leftrightarrow l_2\n)"
+                "\\right]\n"
+                "$$"
+            ),
+            ("\\begin{equation*}\n" "x = 2 *55* 7\n" "\\end{equation*}"),
             """$
 \\begin{tabular}{ l c r }
   1 & 2 & 3 \\
   4 & 5 & 6 \\
   7 & 8 & 9 \\
-\\end{tabular}$"""]
+\\end{tabular}$""",
+        ]
 
         for case in cases:
             result = markdown2html(case)
@@ -159,7 +176,9 @@ class TestMarkdown(TestsBase):
             if search_result is None:
                 search_result = re.search(
                     "\\\\begin\\{equation.*\\}.*\\\\end\\{equation.*\\}",
-                    result, re.DOTALL)
+                    result,
+                    re.DOTALL,
+                )
             math = search_result.group(0)
             # the resulting math part can not contain "<", ">" or
             # "&" not followed by "lt;", "gt;", or "amp;".
@@ -182,9 +201,13 @@ $\approx 2mnp$ flops are needed for \\\\[ C_{ik} = \\sum_{j=1}^n A_{ij} B_{jk} \
 Also check empty math blocks work correctly:
 $$$$
 \\\\[\\\\]"""
-        output_check = (case.replace("_implement_", "<em>implement</em>")
-                            .replace("\\\\(", "$").replace("\\\\)", "$")
-                            .replace("\\\\[", "$$").replace("\\\\]", "$$"))
+        output_check = (
+            case.replace("_implement_", "<em>implement</em>")
+            .replace("\\\\(", "$")
+            .replace("\\\\)", "$")
+            .replace("\\\\[", "$$")
+            .replace("\\\\]", "$$")
+        )
         # these replacements are needed because we use $ and $$ in our html output
         self._try_markdown(markdown2html, case, output_check)
 
@@ -213,27 +236,28 @@ $x^m$""",
 $$ {\bf
 b}_{i}^{r}(t)=(1-t)\\,{\bf b}_{i}^{r-1}(t)+t\\,{\bf b}_{i+1}^{r-1}(t),\\:
  i=\\overline{0,n-r}, $$
-i.e. the $i^{th}$"""
+i.e. the $i^{th}$""",
         ]
 
         for case in cases:
             s = markdown2html(case)
             self.assertIn(case, unescape(s))
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_markdown2rst(self):
         """markdown2rst test"""
 
-        #Modify token array for rst, escape asterisk
+        # Modify token array for rst, escape asterisk
         tokens = copy(self.tokens)
-        tokens[0] = r'\*test'
-        tokens[1] = r'\**test'
+        tokens[0] = r"\*test"
+        tokens[1] = r"\**test"
 
         for index, test in enumerate(self.tests):
             self._try_markdown(
-                partial(
-                    convert_pandoc, from_format='markdown', to_format='rst'),
-                test, tokens[index])
+                partial(convert_pandoc, from_format="markdown", to_format="rst"),
+                test,
+                tokens[index],
+            )
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)

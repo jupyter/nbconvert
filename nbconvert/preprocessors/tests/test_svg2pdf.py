@@ -43,14 +43,15 @@ class Testsvg2pdf(PreprocessorTestsBase):
         """Build a reveal slides notebook in memory for use with tests.
         Overrides base in PreprocessorTestsBase"""
 
-        outputs = [nbformat.new_output(output_type='display_data',
-                                       data={'image/svg+xml':self.simple_svg})
-                  ]
+        outputs = [
+            nbformat.new_output(
+                output_type="display_data", data={"image/svg+xml": self.simple_svg}
+            )
+        ]
 
-        cells=[nbformat.new_code_cell(source="", execution_count=1, outputs=outputs)]
+        cells = [nbformat.new_code_cell(source="", execution_count=1, outputs=outputs)]
 
         return nbformat.new_notebook(cells=cells)
-
 
     def build_preprocessor(self, **kwargs):
         """Make an instance of a preprocessor"""
@@ -58,47 +59,52 @@ class Testsvg2pdf(PreprocessorTestsBase):
         preprocessor.enabled = True
         return preprocessor
 
-
     def test_constructor(self):
         """Can a SVG2PDFPreprocessor be constructed?"""
         self.build_preprocessor()
 
-
-    @onlyif_cmds_exist('inkscape')
+    @onlyif_cmds_exist("inkscape")
     def test_output(self):
         """Test the output of the SVG2PDFPreprocessor"""
         nb = self.build_notebook()
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
         nb, res = preprocessor(nb, res)
-        self.assertIn('application/pdf', nb.cells[0].outputs[0].data)
+        self.assertIn("application/pdf", nb.cells[0].outputs[0].data)
 
-    @onlyif_cmds_exist('inkscape')
-    @patch('subprocess.Popen')
+    @onlyif_cmds_exist("inkscape")
+    @patch("subprocess.Popen")
     def test_inkscape_version_default(self, mock_popen):
-        mock_popen().communicate.return_value = (b'Inkscape 0.92.3 (2405546, 2018-03-11)', b'')
+        mock_popen().communicate.return_value = (
+            b"Inkscape 0.92.3 (2405546, 2018-03-11)",
+            b"",
+        )
         mock_popen().returncode = 0
 
         preprocessor = self.build_preprocessor()
-        assert preprocessor.inkscape_version == '0.92.3'
+        assert preprocessor.inkscape_version == "0.92.3"
 
     def test_inkscape_pre_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape_version='0.92.3')
-        assert preprocessor.command == '0.92.3'
+        preprocessor = self.build_preprocessor(inkscape_version="0.92.3")
+        assert preprocessor.command == "0.92.3"
 
     def test_inkscape_pre_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='0.92.3')
+        preprocessor = self.build_preprocessor(
+            inkscape="fake-inkscape", inkscape_version="0.92.3"
+        )
         assert preprocessor.command == [
-            'fake-inkscape',
-            '--without-gui',
-            '--export-pdf={to_filename}',
-            '{from_filename}'
+            "fake-inkscape",
+            "--without-gui",
+            "--export-pdf={to_filename}",
+            "{from_filename}",
         ]
 
     def test_inkscape_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape='fake-inkscape', inkscape_version='1.0beta2')
+        preprocessor = self.build_preprocessor(
+            inkscape="fake-inkscape", inkscape_version="1.0beta2"
+        )
         assert preprocessor.command == [
-            'fake-inkscape',
-            '--export-filename={to_filename}',
-            '{from_filename}'
+            "fake-inkscape",
+            "--export-filename={to_filename}",
+            "{from_filename}",
         ]

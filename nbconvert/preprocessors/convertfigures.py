@@ -15,8 +15,8 @@ class ConvertFiguresPreprocessor(Preprocessor):
     Converts all of the outputs in a notebook from one format to another.
     """
 
-    from_format = Unicode(help='Format the converter accepts').tag(config=True)
-    to_format = Unicode(help='Format the converter writes').tag(config=True)
+    from_format = Unicode(help="Format the converter accepts").tag(config=True)
+    to_format = Unicode(help="Format the converter writes").tag(config=True)
 
     def __init__(self, **kw):
         """
@@ -24,10 +24,8 @@ class ConvertFiguresPreprocessor(Preprocessor):
         """
         super().__init__(**kw)
 
-
     def convert_figure(self, data_format, data):
         raise NotImplementedError()
-
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
@@ -37,12 +35,15 @@ class ConvertFiguresPreprocessor(Preprocessor):
         """
 
         # Loop through all of the datatypes of the outputs in the cell.
-        for output in cell.get('outputs', []):
-            if output.output_type in {'execute_result', 'display_data'} \
-                    and self.from_format in output.data \
-                    and self.to_format not in output.data:
+        for output in cell.get("outputs", []):
+            if (
+                output.output_type in {"execute_result", "display_data"}
+                and self.from_format in output.data
+                and self.to_format not in output.data
+            ):
 
                 output.data[self.to_format] = self.convert_figure(
-                            self.from_format, output.data[self.from_format])
+                    self.from_format, output.data[self.from_format]
+                )
 
         return cell, resources

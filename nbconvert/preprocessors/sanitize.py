@@ -36,12 +36,12 @@ class SanitizeHTML(Preprocessor):
         Unicode(),
         config=True,
         default_value=ALLOWED_STYLES,
-        help="Allowed CSS styles if <style> tag is whitelisted"
+        help="Allowed CSS styles if <style> tag is whitelisted",
     )
     strip = Bool(
         config=True,
         default_value=False,
-        help="If True, remove unsafe markup entirely instead of escaping"
+        help="If True, remove unsafe markup entirely instead of escaping",
     )
     strip_comments = Bool(
         config=True,
@@ -53,20 +53,20 @@ class SanitizeHTML(Preprocessor):
     safe_output_keys = Set(
         config=True,
         default_value={
-            'metadata',  # Not a mimetype per-se, but expected and safe.
-            'text/plain',
-            'text/latex',
-            'application/json',
-            'image/png',
-            'image/jpeg',
+            "metadata",  # Not a mimetype per-se, but expected and safe.
+            "text/plain",
+            "text/latex",
+            "application/json",
+            "image/png",
+            "image/jpeg",
         },
         help="Cell output mimetypes to render without modification",
     )
     sanitized_output_types = Set(
         config=True,
         default_value={
-            'text/html',
-            'text/markdown',
+            "text/html",
+            "text/markdown",
         },
         help="Cell output types to display after escaping with Bleach.",
     )
@@ -83,16 +83,16 @@ class SanitizeHTML(Preprocessor):
           code:
             Sanitize outputs that could result in code execution
         """
-        if cell.cell_type == 'raw':
+        if cell.cell_type == "raw":
             # Sanitize all raw cells anyway.
             # Only ones with the text/html mimetype should be emitted
             # but erring on the side of safety maybe.
             cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
-        elif cell.cell_type == 'markdown':
+        elif cell.cell_type == "markdown":
             cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
-        elif cell.cell_type == 'code':
+        elif cell.cell_type == "code":
             cell.outputs = self.sanitize_code_outputs(cell.outputs)
             return cell, resources
 
@@ -105,7 +105,7 @@ class SanitizeHTML(Preprocessor):
         """
         for output in outputs:
             # These are always ascii, so nothing to escape.
-            if output['output_type'] in ('stream', 'error'):
+            if output["output_type"] in ("stream", "error"):
                 continue
             data = output.data
             to_remove = []

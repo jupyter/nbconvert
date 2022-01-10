@@ -49,8 +49,7 @@ class RegexRemovePreprocessor(Preprocessor):
         # Compile all the patterns into one: each pattern is first wrapped
         # by a non-capturing group to ensure the correct order of precedence
         # and the patterns are joined with a logical or
-        pattern = re.compile('|'.join('(?:%s)' % pattern
-                             for pattern in self.patterns))
+        pattern = re.compile("|".join("(?:%s)" % pattern for pattern in self.patterns))
 
         # Filter out cells that meet the pattern and have no outputs
         return not pattern.match(cell.source)

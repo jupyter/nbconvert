@@ -16,12 +16,10 @@ from warnings import warn
 from traitlets import observe
 from traitlets.config import Dict
 
-MULTILINE_OUTPUTS = ['text', 'html', 'svg', 'latex', 'javascript', 'json']
+MULTILINE_OUTPUTS = ["text", "html", "svg", "latex", "javascript", "json"]
 
-__all__ = [
-    'Highlight2HTML',
-    'Highlight2Latex'
-]
+__all__ = ["Highlight2HTML", "Highlight2Latex"]
+
 
 class Highlight2HTML(NbConvertBase):
     extra_formatter_options = Dict(
@@ -32,18 +30,20 @@ class Highlight2HTML(NbConvertBase):
         Passed through to the pygments' HtmlFormatter class.
         See available list in https://pygments.org/docs/formatters/#HtmlFormatter
         """,
-        config=True
+        config=True,
     )
 
     def __init__(self, pygments_lexer=None, **kwargs):
-        self.pygments_lexer = pygments_lexer or 'ipython3'
+        self.pygments_lexer = pygments_lexer or "ipython3"
         super().__init__(**kwargs)
 
-    @observe('default_language')
+    @observe("default_language")
     def _default_language_changed(self, change):
-        warn('Setting default_language in config is deprecated as of 5.0, '
-             'please use language_info metadata instead.')
-        self.pygments_lexer = change['new']
+        warn(
+            "Setting default_language in config is deprecated as of 5.0, "
+            "please use language_info metadata instead."
+        )
+        self.pygments_lexer = change["new"]
 
     def __call__(self, source, language=None, metadata=None):
         """
@@ -61,12 +61,17 @@ class Highlight2HTML(NbConvertBase):
         from pygments.formatters import HtmlFormatter
 
         if not language:
-            language=self.pygments_lexer
+            language = self.pygments_lexer
 
-        return _pygments_highlight(source if len(source) > 0 else ' ',
-                                   # needed to help post processors:
-                                   HtmlFormatter(cssclass=" highlight hl-" + language, **self.extra_formatter_options),
-                                   language, metadata)
+        return _pygments_highlight(
+            source if len(source) > 0 else " ",
+            # needed to help post processors:
+            HtmlFormatter(
+                cssclass=" highlight hl-" + language, **self.extra_formatter_options
+            ),
+            language,
+            metadata,
+        )
 
 
 class Highlight2Latex(NbConvertBase):
@@ -78,18 +83,20 @@ class Highlight2Latex(NbConvertBase):
         Passed through to the pygments' LatexFormatter class.
         See available list in https://pygments.org/docs/formatters/#LatexFormatter
         """,
-        config=True
+        config=True,
     )
 
     def __init__(self, pygments_lexer=None, **kwargs):
-        self.pygments_lexer = pygments_lexer or 'ipython3'
+        self.pygments_lexer = pygments_lexer or "ipython3"
         super().__init__(**kwargs)
 
-    @observe('default_language')
+    @observe("default_language")
     def _default_language_changed(self, change):
-        warn('Setting default_language in config is deprecated as of 5.0, '
-             'please use language_info metadata instead.')
-        self.pygments_lexer = change['new']
+        warn(
+            "Setting default_language in config is deprecated as of 5.0, "
+            "please use language_info metadata instead."
+        )
+        self.pygments_lexer = change["new"]
 
     def __call__(self, source, language=None, metadata=None, strip_verbatim=False):
         """
@@ -107,19 +114,21 @@ class Highlight2Latex(NbConvertBase):
             remove the Verbatim environment that pygments provides by default
         """
         from pygments.formatters import LatexFormatter
-        if not language:
-            language=self.pygments_lexer
 
-        latex = _pygments_highlight(source, LatexFormatter(**self.extra_formatter_options), language, metadata)
+        if not language:
+            language = self.pygments_lexer
+
+        latex = _pygments_highlight(
+            source, LatexFormatter(**self.extra_formatter_options), language, metadata
+        )
         if strip_verbatim:
-            latex = latex.replace(r'\begin{Verbatim}[commandchars=\\\{\}]' + '\n', '')
-            return latex.replace('\n\\end{Verbatim}\n', '')
+            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")
+            return latex.replace("\n\\end{Verbatim}\n", "")
         else:
             return latex
 
 
-
-def _pygments_highlight(source, output_formatter, language='ipython', metadata=None):
+def _pygments_highlight(source, output_formatter, language="ipython", metadata=None):
     """
     Return a syntax-highlighted version of the input source
 
@@ -139,27 +148,25 @@ def _pygments_highlight(source, output_formatter, language='ipython', metadata=N
 
     # If the cell uses a magic extension language,
     # use the magic language instead.
-    if language.startswith('ipython') \
-        and metadata \
-        and 'magics_language' in metadata:
+    if language.startswith("ipython") and metadata and "magics_language" in metadata:
 
-        language = metadata['magics_language']
+        language = metadata["magics_language"]
 
     lexer = None
-    if language == 'ipython2':
+    if language == "ipython2":
         try:
             from IPython.lib.lexers import IPythonLexer
         except ImportError:
             warn("IPython lexer unavailable, falling back on Python")
-            language = 'python'
+            language = "python"
         else:
             lexer = IPythonLexer()
-    elif language == 'ipython3':
+    elif language == "ipython3":
         try:
             from IPython.lib.lexers import IPython3Lexer
         except ImportError:
             warn("IPython3 lexer unavailable, falling back on Python 3")
-            language = 'python3'
+            language = "python3"
         else:
             lexer = IPython3Lexer()
 
@@ -169,7 +176,7 @@ def _pygments_highlight(source, output_formatter, language='ipython', metadata=N
         except ClassNotFound:
             warn("No lexer found for language %r. Treating as plain text." % language)
             from pygments.lexers.special import TextLexer
-            lexer = TextLexer()
 
+            lexer = TextLexer()
 
     return highlight(source, lexer, output_formatter)

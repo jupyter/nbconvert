@@ -13,9 +13,10 @@ from ..pdf import PDFExporter
 from ...tests.utils import onlyif_cmds_exist
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Class
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 class TestPDF(ExportersTestsBase):
     """Test PDF export"""
@@ -26,15 +27,16 @@ class TestPDF(ExportersTestsBase):
         """Can a PDFExporter be constructed?"""
         self.exporter_class()
 
-
-    @onlyif_cmds_exist('xelatex', 'pandoc')
+    @onlyif_cmds_exist("xelatex", "pandoc")
     def test_export(self):
         """Smoke test PDFExporter"""
         with TemporaryDirectory() as td:
             file_name = os.path.basename(self._get_notebook())
             newpath = os.path.join(td, file_name)
             shutil.copy(self._get_notebook(), newpath)
-            (output, resources) = self.exporter_class(latex_count=1).from_filename(newpath)
+            (output, resources) = self.exporter_class(latex_count=1).from_filename(
+                newpath
+            )
             self.assertIsInstance(output, bytes)
             assert len(output) > 0
             # all temporary file should be cleaned up

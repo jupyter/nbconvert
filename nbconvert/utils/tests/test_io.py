@@ -13,10 +13,11 @@ from ..io import unicode_std_stream
 
 from io import StringIO
 
+
 def test_UnicodeStdStream():
     # Test wrapping a bytes-level stdout
     stdoutb = stdlib_io.BytesIO()
-    stdout = stdlib_io.TextIOWrapper(stdoutb, encoding='ascii')
+    stdout = stdlib_io.TextIOWrapper(stdoutb, encoding="ascii")
 
     orig_stdout = sys.stdout
     sys.stdout = stdout
@@ -24,11 +25,12 @@ def test_UnicodeStdStream():
         sample = u"@łe¶ŧ←"
         unicode_std_stream().write(sample)
 
-        output = stdoutb.getvalue().decode('utf-8')
+        output = stdoutb.getvalue().decode("utf-8")
         assert output == sample
         assert not stdout.closed
     finally:
         sys.stdout = orig_stdout
+
 
 def test_UnicodeStdStream_nowrap():
     # If we replace stdout with a StringIO, it shouldn't get wrapped.
