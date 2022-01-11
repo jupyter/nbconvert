@@ -37,8 +37,10 @@
 {{ resources.include_css("static/index.css") }}
 {% if resources.theme == 'dark' %}
     {{ resources.include_css("static/theme-dark.css") }}
-{% else %}
+{% elif resources.theme == 'light'  %}
     {{ resources.include_css("static/theme-light.css") }}
+{% else %}
+    {{ resources.include_lab_theme(resources.theme) }}
 {% endif %}
 <style type="text/css">
 /* Misc */
