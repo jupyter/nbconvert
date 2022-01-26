@@ -227,7 +227,7 @@ setup_args['install_requires'] = [
     'nbclient>=0.5.0,<0.6.0'
 ]
 
-pyppeteer_req = 'pyppeteer==0.2.6'
+pyppeteer_req = 'pyppeteer>=1,<1.1'
 
 extra_requirements = {
     'test': [
