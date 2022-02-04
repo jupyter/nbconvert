@@ -26,8 +26,8 @@ from traitlets import (
 
 from traitlets.utils.importstring import import_item
 
+from .filters.markdown_mistune import InvalidNotebook  # noqa For backward compatibility
 from .exporters.base import get_export_names, get_exporter
-from .exporters.templateexporter import TemplateExporter
 from nbconvert import exporters, preprocessors, writers, postprocessors, __version__
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
@@ -149,7 +149,14 @@ nbconvert_flags.update({
             'exclude_input': False,
             }
         },
-        """Shows code input. This is flag is only useful for dejavu users."""
+        """Shows code input. This flag is only useful for dejavu users."""
+        ),
+    'embed-images' : (
+        {'HTMLExporter' : {
+            'embed_images': True,
+            }
+        },
+        """Embed the images as base64 dataurls in the output. This flag is only useful for the HTML/WebPDF/Slides exports."""
         ),
 })
 
@@ -596,8 +603,6 @@ class DejavuApp(NbConvertApp):
     def default_export_format(self):
         return 'html'
 
-class InvalidNotebook(Exception):
-    pass
 
 #-----------------------------------------------------------------------------
 # Main entry point
