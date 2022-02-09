@@ -67,6 +67,10 @@ HTML
 
     Base HTML, rendering with minimal structure and styles.
 
+  - ``--embed-images``
+
+    If this option is provided, embed images as base64 urls in the resulting HTML file.
+
 .. _convert_latex:
 
 LaTeX

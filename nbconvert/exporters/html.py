@@ -148,6 +148,9 @@ class HTMLExporter(TemplateExporter):
         help="Template specific theme(e.g. the name of a JupyterLab CSS theme distributed as prebuilt extension for the lab template)"
     ).tag(config=True)
 
+    embed_images = Bool(False,
+        help="Whether or not to embed images as base64 in markdown cells.").tag(config=True)
+
     output_mimetype = 'text/html'
 
     @property
@@ -178,9 +181,16 @@ class HTMLExporter(TemplateExporter):
         """Markdown to HTML filter respecting the anchor_link_text setting"""
         cell = context.get('cell', {})
         attachments = cell.get('attachments', {})
-        renderer = IPythonRenderer(escape=False, attachments=attachments,
-                                   anchor_link_text=self.anchor_link_text,
-                                   exclude_anchor_links=self.exclude_anchor_links)
+        path = context.get('resources', {}).get('metadata', {}).get('path', '')
+
+        renderer = IPythonRenderer(
+            escape=False,
+            attachments=attachments,
+            embed_images=self.embed_images,
+            path=path,
+            anchor_link_text=self.anchor_link_text,
+            exclude_anchor_links=self.exclude_anchor_links
+        )
         return MarkdownWithMath(renderer=renderer).render(source)
 
     def default_filters(self):

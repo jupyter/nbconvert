@@ -8,6 +8,9 @@ Used from markdown.py
 
 from __future__ import print_function
 
+import base64
+import os
+import mimetypes
 import re
 from functools import partial
 
@@ -26,6 +29,10 @@ from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
+
+
+class InvalidNotebook(Exception):
+    pass
 
 
 class MathBlockGrammar(mistune.BlockGrammar):
@@ -158,12 +165,15 @@ class IPythonRenderer(mistune.Renderer):
         """
         attachments = self.options.get('attachments', {})
         attachment_prefix = 'attachment:'
+        embed_images = self.options.get('embed_images', False)
+        path = self.options.get('path', '')
+
         if src.startswith(attachment_prefix):
             name = src[len(attachment_prefix):]
-            
-            if not name in attachments:
+
+            if name not in attachments:
                 raise InvalidNotebook("missing attachment: {}".format(name))
-            
+
             attachment = attachments[name]
             # we choose vector over raster, and lossless over lossy
             preferred_mime_types = ['image/svg+xml', 'image/png', 'image/jpeg']
@@ -175,6 +185,18 @@ class IPythonRenderer(mistune.Renderer):
             mime_type = preferred_mime_type
             data = attachment[mime_type]
             src = 'data:' + mime_type + ';base64,' + data
+
+        elif embed_images:
+            image_path = os.path.join(path, src)
+            if os.path.exists(image_path):
+                with open(image_path, 'rb') as fobj:
+                    mime_type = mimetypes.guess_type(image_path)[0]
+
+                    base64_data = base64.b64encode(fobj.read())
+                    base64_data = base64_data.replace(b'\n', b'').decode('ascii')
+
+                    src = 'data:{};base64,{}'.format(mime_type, base64_data)
+
         return super().image(src, title, text)
 
 
