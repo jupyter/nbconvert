@@ -87,11 +87,12 @@ class WebPDFExporter(HTMLExporter):
                 args=args
             )
             page = await browser.newPage()
+            await page.emulateMedia('screen')
             await page.waitFor(100)
             await page.goto(f'file://{temp_file.name}', waitUntil='networkidle0')
             await page.waitFor(100)
 
-            pdf_params = {}
+            pdf_params = {'printBackground': True}
             if not self.paginate:
                 # Floating point precision errors cause the printed
                 # PDF from spilling over a new page by a pixel fraction.
@@ -107,11 +108,10 @@ class WebPDFExporter(HTMLExporter):
                 width = dimensions['width']
                 height = dimensions['height']
                 # 200 inches is the maximum size for Adobe Acrobat Reader.
-                pdf_params = {
+                pdf_params.update({
                     'width': min(width, 200 * 72),
                     'height': min(height, 200 * 72),
-                    'printBackground': True,
-                }
+                })
             pdf_data = await page.pdf(pdf_params)
 
             await browser.close()
@@ -154,3 +154,4 @@ class WebPDFExporter(HTMLExporter):
         resources['output_extension'] = '.pdf'
 
         return pdf_data, resources
+
