@@ -224,6 +224,7 @@ setup_args['install_requires'] = [
     'pandocfilters>=1.4.1',
     'testpath',
     'defusedxml',
+    'beautifulsoup4',
     'nbclient>=0.5.0,<0.6.0'
 ]
 

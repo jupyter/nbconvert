@@ -572,6 +572,32 @@ class TestNbConvertApp(TestsBase):
 
             assert "var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';" in output
 
+    def test_not_embedding_images_htmlexporter(self):
+        """Check that the HTMLExporter does not embed images by default"""
+
+        with self.create_temp_cwd(["notebook5_embed_images.ipynb",
+                                   "containerized_deployments.jpeg"]):
+            self.nbconvert('notebook5_embed_images --log-level 0 --to html')
+            assert os.path.isfile('notebook5_embed_images.html')
+            with open("notebook5_embed_images.html", 'r', encoding="utf8") as f:
+                text = f.read()
+                assert "./containerized_deployments.jpeg" in text
+                assert "src='./containerized_deployments.jpeg'" in text
+                assert text.count("data:image/jpeg;base64") == 0
+
+    def test_embedding_images_htmlexporter(self):
+        """Check that the HTMLExporter embeds images if needed"""
+
+        with self.create_temp_cwd(["notebook5_embed_images.ipynb",
+                                   "containerized_deployments.jpeg"]):
+            self.nbconvert('notebook5_embed_images --log-level 0 --to html --embed-images')
+            assert os.path.isfile('notebook5_embed_images.html')
+            with open("notebook5_embed_images.html", 'r', encoding="utf8") as f:
+                text = f.read()
+                assert "./containerized_deployments.jpeg" not in text
+                assert "src='./containerized_deployments.jpeg'" not in text
+                assert text.count("data:image/jpeg;base64") == 3
+
     def test_execute_widgets_from_nbconvert(self):
         """Check jupyter widgets render"""
         notebookName = "Unexecuted_widget"

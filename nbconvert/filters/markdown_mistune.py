@@ -21,6 +21,8 @@ except ImportError:
     # Python 2
     from cgi import escape as html_escape
 
+import bs4
+
 import mistune
 
 from pygments import highlight
@@ -135,6 +137,22 @@ class IPythonRenderer(mistune.Renderer):
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
 
+    def block_html(self, html):
+        embed_images = self.options.get('embed_images', False)
+
+        if embed_images:
+            html = self._html_embed_images(html)
+
+        return super().block_html(html)
+
+    def inline_html(self, html):
+        embed_images = self.options.get('embed_images', False)
+
+        if embed_images:
+            html = self._html_embed_images(html)
+
+        return super().inline_html(html)
+
     def header(self, text, level, raw=None):
         html = super().header(text, level, raw=raw)
         if self.options.get("exclude_anchor_links"):
@@ -166,7 +184,6 @@ class IPythonRenderer(mistune.Renderer):
         attachments = self.options.get('attachments', {})
         attachment_prefix = 'attachment:'
         embed_images = self.options.get('embed_images', False)
-        path = self.options.get('path', '')
 
         if src.startswith(attachment_prefix):
             name = src[len(attachment_prefix):]
@@ -187,17 +204,48 @@ class IPythonRenderer(mistune.Renderer):
             src = 'data:' + mime_type + ';base64,' + data
 
         elif embed_images:
-            image_path = os.path.join(path, src)
-            if os.path.exists(image_path):
-                with open(image_path, 'rb') as fobj:
-                    mime_type = mimetypes.guess_type(image_path)[0]
+            base64_url = self._src_to_base64(src)
 
-                    base64_data = base64.b64encode(fobj.read())
-                    base64_data = base64_data.replace(b'\n', b'').decode('ascii')
-
-                    src = 'data:{};base64,{}'.format(mime_type, base64_data)
+            if base64_url is not None:
+                src = base64_url
 
         return super().image(src, title, text)
+
+    def _src_to_base64(self, src):
+        """Turn the source file into a base64 url.
+
+        :param src: source link of the file.
+        :return: the base64 url or None if the file was not found.
+        """
+        path = self.options.get('path', '')
+        src_path = os.path.join(path, src)
+
+        if not os.path.exists(src_path):
+            return None
+
+        with open(src_path, 'rb') as fobj:
+            mime_type = mimetypes.guess_type(src_path)[0]
+
+            base64_data = base64.b64encode(fobj.read())
+            base64_data = base64_data.replace(b'\n', b'').decode('ascii')
+
+            return 'data:{};base64,{}'.format(mime_type, base64_data)
+
+    def _html_embed_images(self, html):
+        parsed_html = bs4.BeautifulSoup(html, features="html.parser")
+        imgs = parsed_html.find_all('img')
+
+        # Replace img tags's sources by base64 dataurls
+        for img in imgs:
+            if 'src' not in img.attrs:
+                continue
+
+            base64_url = self._src_to_base64(img.attrs['src'])
+
+            if base64_url is not None:
+                img.attrs['src'] = base64_url
+
+        return str(parsed_html)
 
 
 def markdown2html_mistune(source):
