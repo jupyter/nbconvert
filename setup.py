@@ -222,7 +222,6 @@ setup_args['install_requires'] = [
     'entrypoints>=0.2.2',
     'bleach',
     'pandocfilters>=1.4.1',
-    'testpath',
     'defusedxml',
     'nbclient>=0.5.0,<0.6.0'
 ]

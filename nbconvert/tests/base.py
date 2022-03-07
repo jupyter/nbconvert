@@ -3,6 +3,7 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import contextlib
 import io
 import os
 import glob
@@ -12,9 +13,11 @@ import sys
 import unittest
 import nbconvert
 from subprocess import Popen, PIPE
+from tempfile import TemporaryDirectory
 
 from nbformat import v4, write
-from testpath.tempdir import TemporaryWorkingDirectory
+
+from ..utils import _contextlib_chdir
 
 
 class TestsBase(unittest.TestCase):
@@ -86,15 +89,12 @@ class TestsBase(unittest.TestCase):
             text = text.replace(search, replacement)
         return text
 
+    @contextlib.contextmanager
     def create_temp_cwd(self, copy_filenames=None):
-        temp_dir = TemporaryWorkingDirectory()
-
-        #Copy the files if requested.
-        if copy_filenames is not None:
-            self.copy_files_to(copy_filenames, dest=temp_dir.name)
-
-        #Return directory handler
-        return temp_dir
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
+            if copy_filenames is not None:  # Copy the files if requested.
+                self.copy_files_to(copy_filenames, dest=td)
+            yield td  # Return directory handler
 
     @classmethod
     def merge_dicts(cls, *dict_args):
