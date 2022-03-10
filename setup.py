@@ -224,7 +224,8 @@ setup_args['install_requires'] = [
     'pandocfilters>=1.4.1',
     'testpath',
     'defusedxml',
-    'nbclient>=0.5.0,<0.6.0'
+    'nbclient>=0.5.0,<0.6.0',
+    'ipython_genutils',
 ]
 
 pyppeteer_req = 'pyppeteer>=1,<1.1'
