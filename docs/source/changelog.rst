@@ -4,6 +4,10 @@
 Changes in nbconvert
 ====================
 
+6.4.4
+-----
+* HTMLExporter: Respect the embed_images flag for HTML blocks :ghpull:`1721`
+
 6.4.3
 -----
 * Remove ipython genutils :ghpull:`1727`
