@@ -15,9 +15,9 @@ import os
 import glob
 import asyncio
 from textwrap import fill, dedent
-from ipython_genutils.text import indent
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
+from nbconvert.utils.text import indent
 from traitlets.config import catch_config_error, Configurable
 from traitlets import (
     Unicode, List, Instance, DottedObjectName, Type, Bool,
