@@ -8,8 +8,10 @@ import os
 import glob
 
 from pathlib import Path
+
+from nbconvert.utils.io import ensure_dir_exists, link_or_copy
 from traitlets import Unicode, observe
-from ipython_genutils.path import link_or_copy, ensure_dir_exists
+
 
 from .base import WriterBase
 
