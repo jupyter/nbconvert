@@ -4,6 +4,27 @@
 Changes in nbconvert
 ====================
 
+6.4.3
+-----
+* Remove ipython genutils :ghpull:`1727`
+* Add section to customizing showing how to use template inheritance :ghpull:`1719`
+
+6.4.2
+-----
+* Adding theme support for WebPDF exporter :ghpull:`1718`
+* Add option to embed_images in Markdown cells :ghpull:`1717`
+* HTMLExporter: Add theme alias and docs :ghpull:`1716`
+* Add basic support for federated labextensions themes :ghpull:`1703`
+* Always hide the collapser element :ghpull:`1712) 
+* Raise pyppeteer requirement to >=1,<1.1 :ghpull:`1711`
+
+6.4.1
+-----
+* Handle needs_background cell metadata :ghpull:`1704`
+* Fix styling regression :ghpull:`1708`
+* Fix DOM structure of markdown cells in lab template :ghpull:`1709`
+* CodeMirror style bleed fix :ghpull:`1710`
+
 6.4.0
 -----
 
