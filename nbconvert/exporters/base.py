@@ -4,7 +4,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
-import warnings
 
 import entrypoints
 

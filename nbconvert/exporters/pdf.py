@@ -10,7 +10,6 @@ import sys
 import shutil
 from traitlets import Integer, List, Bool, Instance, Unicode, default
 from testpath.tempdir import TemporaryWorkingDirectory
-from typing import Optional
 from .latex import LatexExporter
 
 class LatexFailed(IOError):
