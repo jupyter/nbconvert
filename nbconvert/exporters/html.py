@@ -262,7 +262,7 @@ class HTMLExporter(TemplateExporter):
                             data = f.read()
                             break
                 else:
-                    raise ValueError("No file %r found in %r" % (name, searchpaths))
+                    raise ValueError("No file %r found in %r" % (name, searchpath))
             data = base64.b64encode(data)
             data = data.replace(b'\n', b'').decode('ascii')
             src = 'data:{mime_type};base64,{data}'.format(mime_type=mime_type, data=data)

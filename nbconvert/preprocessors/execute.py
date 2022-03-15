@@ -3,7 +3,6 @@ and updates outputs"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-from typing import Optional
 from nbformat import NotebookNode
 from nbclient import NotebookClient, execute as _execute
 # Backwards compatability for imported name
@@ -37,7 +36,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         if resources or not hasattr(self, 'resources'):
             self.resources = resources
 
-    def preprocess(self, nb, resources=None, km=None):
+    def preprocess(self, nb: NotebookNode, resources=None, km=None):
         """
         Preprocess notebook executing each code cell.
 

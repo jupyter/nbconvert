@@ -32,7 +32,6 @@ from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
 
-
 class InvalidNotebook(Exception):
     pass
 

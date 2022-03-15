@@ -10,7 +10,7 @@ import json
 
 from traitlets import default
 from traitlets.config import Config
-from jinja2 import DictLoader, TemplateNotFound
+from jinja2 import TemplateNotFound
 from nbformat import v4
 from unittest.mock import patch
 from concurrent.futures import ProcessPoolExecutor

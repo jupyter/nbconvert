@@ -15,11 +15,6 @@ from mimetypes import guess_extension
 from traitlets import Unicode, Set
 from .base import Preprocessor
 
-if sys.version_info < (3,):
-    text_type = basestring
-else:
-    text_type = str
-
 
 def guess_extension_without_jpe(mimetype):
     """
@@ -34,7 +29,7 @@ def guess_extension_without_jpe(mimetype):
     return ext
 
 def platform_utf_8_encode(data):
-    if isinstance(data, text_type):
+    if isinstance(data, str):
         if sys.platform == 'win32':
             data = data.replace('\n', '\r\n')
         data = data.encode('utf-8')
@@ -95,14 +90,14 @@ class ExtractOutputPreprocessor(Preprocessor):
                         # data is b64-encoded as text (str, unicode),
                         # we want the original bytes
                         data = a2b_base64(data)
-                    elif mime_type == 'application/json' or not isinstance(data, text_type):
+                    elif mime_type == "application/json" or not isinstance(data, str):
                         # Data is either JSON-like and was parsed into a Python
                         # object according to the spec, or data is for sure
                         # JSON. In the latter case we want to go extra sure that
                         # we enclose a scalar string value into extra quotes by
                         # serializing it properly.
-                        if isinstance(data, bytes) and not isinstance(data, text_type):
-                            # In python 3 we need to guess the encoding in this
+                        if isinstance(data, bytes):
+                            # We need to guess the encoding in this
                             # instance. Some modules that return raw data like
                             # svg can leave the data in byte form instead of str
                             data = data.decode('utf-8')

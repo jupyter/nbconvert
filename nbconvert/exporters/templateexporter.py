@@ -13,7 +13,6 @@ import json
 import warnings
 from pathlib import Path
 
-from jupyter_core.paths import jupyter_path
 from traitlets import HasTraits, Unicode, List, Dict, Bool, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
