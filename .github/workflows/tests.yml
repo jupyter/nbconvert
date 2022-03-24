@@ -34,11 +34,14 @@ jobs:
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
       - name: Install package dependencies
+        shell: bash
         run: |
-          pip install codecov
-          pip install -e ".[execute,serve,test]"
+          pip install codecov --user
+          pip install -e ".[execute,serve,test]" --user
           pip install check-manifest
           python -m ipykernel.kernelspec --user
+          # many things installed in --users need this to be in $PATH
+          echo "/Users/runner/.local/bin" >> $GITHUB_PATH
 
       - name: List installed packages
         run: |
@@ -47,12 +50,13 @@ jobs:
 
       - name: Run tests with coverage
         if: ${{ !startsWith(matrix.python-version, 'pypy') && !startsWith(runner.os, 'Windows')  }}
+        shell: bash
         env:
           PYTHONWARNINGS: default
         run: |
           check-manifest --ignore "share/**"
           # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
+          pip install -U websockets --user
           # cd so we test the install, not the repo
           cd $HOME
           pytest --cov nbconvert -v --pyargs nbconvert
@@ -61,10 +65,11 @@ jobs:
         if: ${{ startsWith(matrix.python-version, 'pypy') || startsWith(runner.os, 'Windows')  }}
         shell: bash
         run: |
+          
           # cd so we test the install, not the repo
           cd $HOME
           # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
+          pip install -U websockets --user
           pytest -v --pyargs nbconvert
 
       - name: Code coverage
