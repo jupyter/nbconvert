@@ -212,6 +212,7 @@ setup_args = dict(
 )
 
 setup_args['install_requires'] = [
+    'markupsafe<3',
     'mistune>=0.8.1,<2',
     'jinja2>=2.4',
     'pygments>=2.4.1',
