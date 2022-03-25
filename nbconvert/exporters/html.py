@@ -13,6 +13,7 @@ from pathlib import Path
 from traitlets import default, Unicode, Bool
 from traitlets.config import Config
 from jupyter_core.paths import jupyter_path
+from markupsafe import Markup
 import jinja2
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
@@ -213,7 +214,7 @@ class HTMLExporter(TemplateExporter):
         def resources_include_css(name):
             env = self.environment
             code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])
-            return jinja2.Markup(code)
+            return Markup(code)
 
         def resources_include_lab_theme(name):
             # Try to find the theme with the given name, looking through the labextensions
@@ -237,12 +238,12 @@ class HTMLExporter(TemplateExporter):
                         data = data.replace(local_url, 'url(data:{};base64,{})'.format(mime_type, base64_data))
 
             code = """<style type="text/css">\n%s</style>""" % data
-            return jinja2.Markup(code)
+            return Markup(code)
 
         def resources_include_js(name):
             env = self.environment
             code = """<script>\n%s</script>""" % (env.loader.get_source(env, name)[0])
-            return jinja2.Markup(code)
+            return Markup(code)
 
         def resources_include_url(name):
             env = self.environment
@@ -266,7 +267,7 @@ class HTMLExporter(TemplateExporter):
             data = base64.b64encode(data)
             data = data.replace(b'\n', b'').decode('ascii')
             src = 'data:{mime_type};base64,{data}'.format(mime_type=mime_type, data=data)
-            return jinja2.Markup(src)
+            return Markup(src)
 
         resources = super()._init_resources(resources)
         resources['theme'] = self.theme
