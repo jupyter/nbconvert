@@ -225,7 +225,8 @@ setup_args['install_requires'] = [
     'testpath',
     'defusedxml',
     'beautifulsoup4',
-    'nbclient>=0.5.0,<0.6.0'
+    'nbclient>=0.5.0,<0.6.0',
+    'MarkupSafe>=2.0'
 ]
 
 pyppeteer_req = 'pyppeteer>=1,<1.1'

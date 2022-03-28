@@ -4,7 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
-import jinja2
+import markupsafe
 
 __all__ = [
     'strip_ansi',
@@ -57,7 +57,7 @@ def ansi2html(text):
         Text containing ANSI colors to convert to HTML
 
     """
-    text = jinja2.utils.escape(text)
+    text = markupsafe.escape(text)
     return _ansi2anything(text, _htmlconverter)
 
 
