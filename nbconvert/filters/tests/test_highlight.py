@@ -16,8 +16,6 @@ Module with tests for Highlight
 
 import xml
 
-from traitlets.config import Config
-
 from ...tests.base import TestsBase
 from ..highlight import Highlight2HTML, Highlight2Latex
 

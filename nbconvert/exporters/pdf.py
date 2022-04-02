@@ -8,7 +8,6 @@ import shutil
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
-from typing import Optional
 
 from traitlets import Bool, Instance, Integer, List, Unicode, default
 
@@ -128,7 +127,7 @@ class PDFExporter(LatexExporter):
 
         with open(os.devnull, "rb") as null:
             stdout = subprocess.PIPE if not self.verbose else None
-            for index in range(count):
+            for _ in range(count):
                 p = subprocess.Popen(
                     command,
                     stdout=stdout,

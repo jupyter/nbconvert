@@ -95,7 +95,7 @@ class ServePostProcessor(PostProcessorBase):
         if self.open_in_browser:
             try:
                 browser = webbrowser.get(self.browser or None)
-                b = lambda: browser.open(url, new=2)
+                b = lambda: browser.open(url, new=2)  # noqa
                 threading.Thread(target=b).start()
             except webbrowser.Error as e:
                 self.log.warning("No web browser found: %s." % e)

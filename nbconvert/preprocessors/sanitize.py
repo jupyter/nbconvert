@@ -26,7 +26,7 @@ class SanitizeHTML(Preprocessor):
         Unicode(),
         config=True,
         default_value=ALLOWED_STYLES,
-        help="Allowed CSS styles if <style> tag is whitelisted",
+        help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(
         config=True,

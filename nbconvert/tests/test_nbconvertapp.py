@@ -3,7 +3,6 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import io
 import os
 from tempfile import TemporaryDirectory
 
@@ -11,8 +10,7 @@ import nbformat
 import pytest
 from traitlets.tests.utils import check_help_all_output
 
-from nbconvert import nbconvertapp
-from nbconvert.exporters import Exporter, HTMLExporter
+from nbconvert.exporters import HTMLExporter
 
 from ..postprocessors import PostProcessorBase
 from ..tests.utils import onlyif_cmds_exist
@@ -155,7 +153,7 @@ class TestNbConvertApp(TestsBase):
         Generate PDFs if chromium allowed to be downloaded?
         """
         with self.create_temp_cwd(["notebook2.ipynb"]):
-            self.nbconvert("--to webpdf " "--allow-chromium-download " '"notebook2"')
+            self.nbconvert('--to webpdf --allow-chromium-download "notebook2"')
             assert os.path.isfile("notebook2.pdf")
 
     @onlyif_cmds_exist("pandoc", "xelatex")
@@ -176,8 +174,7 @@ class TestNbConvertApp(TestsBase):
         """Do post processors work?"""
         with self.create_temp_cwd(["notebook1.ipynb"]):
             out, err = self.nbconvert(
-                "--log-level 0 --to python notebook1 "
-                "--post nbconvert.tests.test_nbconvertapp.DummyPost"
+                "--log-level 0 --to python notebook1 --post nbconvert.tests.test_nbconvertapp.DummyPost"
             )
             self.assertIn("Dummy:notebook1.py", out)
 
@@ -200,7 +197,7 @@ class TestNbConvertApp(TestsBase):
     def test_png_base64_html_ok(self):
         """Is embedded png data well formed in HTML?"""
         with self.create_temp_cwd(["notebook2.ipynb"]):
-            self.nbconvert("--log-level 0 --to HTML " "notebook2.ipynb --template lab")
+            self.nbconvert("--log-level 0 --to HTML notebook2.ipynb --template lab")
             assert os.path.isfile("notebook2.html")
             with open("notebook2.html", encoding="utf8") as f:
                 assert "data:image/png;base64,b'" not in f.read()
@@ -211,7 +208,7 @@ class TestNbConvertApp(TestsBase):
         Do export templates work?
         """
         with self.create_temp_cwd(["notebook2.ipynb"]):
-            self.nbconvert("--log-level 0 --to slides " "notebook2.ipynb")
+            self.nbconvert("--log-level 0 --to slides notebook2.ipynb")
             assert os.path.isfile("notebook2.slides.html")
             with open("notebook2.slides.html", encoding="utf8") as f:
                 assert "/reveal.css" in f.read()
@@ -219,10 +216,10 @@ class TestNbConvertApp(TestsBase):
     def test_output_ext(self):
         """test --output=outputfile[.ext]"""
         with self.create_temp_cwd(["notebook1.ipynb"]):
-            self.nbconvert("--log-level 0 --to python " "notebook1.ipynb --output nb.py")
+            self.nbconvert("--log-level 0 --to python notebook1.ipynb --output nb.py")
             assert os.path.exists("nb.py")
 
-            self.nbconvert("--log-level 0 --to python " "notebook1.ipynb --output nb2")
+            self.nbconvert("--log-level 0 --to python notebook1.ipynb --output nb2")
             assert os.path.exists("nb2.py")
 
     def test_glob_explicit(self):
@@ -230,7 +227,7 @@ class TestNbConvertApp(TestsBase):
         Can a search pattern be used along with matching explicit notebook names?
         """
         with self.create_temp_cwd(["notebook*.ipynb"]):
-            self.nbconvert("--log-level 0 --to python " "*.ipynb notebook1.ipynb notebook2.ipynb")
+            self.nbconvert("--log-level 0 --to python *.ipynb notebook1.ipynb notebook2.ipynb")
             assert os.path.isfile("notebook1.py")
             assert os.path.isfile("notebook2.py")
 
@@ -239,7 +236,7 @@ class TestNbConvertApp(TestsBase):
         Can explicit notebook names be used and then a matching search pattern?
         """
         with self.create_temp_cwd(["notebook*.ipynb"]):
-            self.nbconvert("--log-level 0 --to=python " "notebook1.ipynb notebook2.ipynb *.ipynb")
+            self.nbconvert("--log-level 0 --to=python notebook1.ipynb notebook2.ipynb *.ipynb")
             assert os.path.isfile("notebook1.py")
             assert os.path.isfile("notebook2.py")
 
@@ -313,7 +310,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd():
             self.create_empty_notebook("empty.ipynb")
             os.mkdir("output")
-            self.nbconvert("empty.ipynb --to notebook " "--FilesWriter.build_directory=output")
+            self.nbconvert("empty.ipynb --to notebook --FilesWriter.build_directory=output")
             assert os.path.isfile("output/empty.ipynb")
 
     def test_inplace(self):
@@ -515,12 +512,12 @@ class TestNbConvertApp(TestsBase):
         even if an (unsupported) PDF is present.
         """
         with self.create_temp_cwd(["markdown_display_priority.ipynb"]):
-            self.nbconvert("--log-level 0 --to markdown " '"markdown_display_priority.ipynb"')
+            self.nbconvert('--log-level 0 --to markdown "markdown_display_priority.ipynb"')
             assert os.path.isfile("markdown_display_priority.md")
             with open("markdown_display_priority.md", encoding="utf8") as f:
                 markdown_output = f.read()
                 assert (
-                    "markdown_display_priority_files/" "markdown_display_priority_0_1.png"
+                    "markdown_display_priority_files/markdown_display_priority_0_1.png"
                 ) in markdown_output
 
     @onlyif_cmds_exist("pandoc")

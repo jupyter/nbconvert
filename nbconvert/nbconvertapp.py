@@ -391,7 +391,7 @@ class NbConvertApp(JupyterApp):
                 self.log.warning("pattern %r matched no files", pattern)
 
             for filename in globbed_files:
-                if not filename in filenames:
+                if filename not in filenames:
                     filenames.append(filename)
         self.notebooks = filenames
 

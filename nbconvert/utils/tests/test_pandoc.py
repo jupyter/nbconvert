@@ -12,8 +12,6 @@
 import os
 import warnings
 
-import pytest
-
 from nbconvert.tests.base import TestsBase
 
 from ...tests.utils import onlyif_cmds_exist

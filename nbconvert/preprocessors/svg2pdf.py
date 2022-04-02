@@ -6,7 +6,6 @@ one format to another.
 # Distributed under the terms of the Modified BSD License.
 
 import base64
-import io
 import os
 import subprocess
 import sys

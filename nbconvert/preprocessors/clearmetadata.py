@@ -15,15 +15,11 @@ class ClearMetadataPreprocessor(Preprocessor):
 
     clear_cell_metadata = Bool(
         True,
-        help=(
-            "Flag to choose if cell metadata is to be cleared " "in addition to notebook metadata."
-        ),
+        help=("Flag to choose if cell metadata is to be cleared in addition to notebook metadata."),
     ).tag(config=True)
     clear_notebook_metadata = Bool(
         True,
-        help=(
-            "Flag to choose if notebook metadata is to be cleared " "in addition to cell metadata."
-        ),
+        help=("Flag to choose if notebook metadata is to be cleared in addition to cell metadata."),
     ).tag(config=True)
     preserve_nb_metadata_mask = Set(
         [("language_info", "name")],

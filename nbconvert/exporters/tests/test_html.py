@@ -51,22 +51,6 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         Does HTMLExporter properly format input and output prompts?
         """
-        (output, resources) = HTMLExporter(template_name="lab").from_filename(
-            self._get_notebook(nb_name="prompt_numbers.ipynb")
-        )
-        in_regex = r"In&nbsp;\[(.*)\]:"
-        out_regex = r"Out\[(.*)\]:"
-
-        ins = ["2", "10", "&nbsp;", "&nbsp;", "0"]
-        outs = ["10"]
-
-        assert re.findall(in_regex, output) == ins
-        assert re.findall(out_regex, output) == outs
-
-    def test_prompt_number(self):
-        """
-        Does HTMLExporter properly format input and output prompts?
-        """
         no_prompt_conf = Config(
             {
                 "TemplateExporter": {

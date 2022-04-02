@@ -4,7 +4,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 import glob
-import io
 import os
 from pathlib import Path
 

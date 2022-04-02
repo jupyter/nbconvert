@@ -66,8 +66,8 @@ class TestSanitizer(PreprocessorTestsBase):
             """.strip(),
         )
 
-    def test_tag_whitelist_stripping(self):
-        """Test tag whitelisting + stripping out offending tags"""
+    def test_tag_allowlist_stripping(self):
+        """Test tag allowlisting + stripping out offending tags"""
         preprocessor = self.build_preprocessor()
         preprocessor.strip = True
 
@@ -93,7 +93,7 @@ class TestSanitizer(PreprocessorTestsBase):
             "_A_ <em>few</em> <!-- tags -->",
         )
 
-    def test_attributes_whitelist(self):
+    def test_attributes_allowlist(self):
         """Test style"""
         preprocessor = self.build_preprocessor()
 
@@ -106,7 +106,7 @@ class TestSanitizer(PreprocessorTestsBase):
             '<a href="link">Hi</a>',
         )
 
-    def test_style_whitelist(self):
+    def test_style_allowlist(self):
         """Test style"""
         preprocessor = self.build_preprocessor()
 
@@ -125,7 +125,7 @@ class TestSanitizer(PreprocessorTestsBase):
                 "few</em> <script>tags</script>",
                 preprocessor,
             ),
-            '_A_ <em style="color: blue;">few</em> ' "&lt;script&gt;tags&lt;/script&gt;",
+            '_A_ <em style="color: blue;">few</em> &lt;script&gt;tags&lt;/script&gt;',
         )
 
     def test_tag_passthrough(self):
@@ -170,8 +170,8 @@ class TestSanitizer(PreprocessorTestsBase):
         ]
         self.assertEqual(nb.cells[0].outputs, expected_output)
 
-    def test_tag_whitelist(self):
-        """Test tag whitelisting"""
+    def test_tag_allowlist(self):
+        """Test tag allowlisting"""
         preprocessor = self.build_preprocessor()
 
         self.assertEqual(
