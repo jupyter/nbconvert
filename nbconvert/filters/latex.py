@@ -14,7 +14,6 @@ Module of useful filters for processing Latex within Jinja latex templates.
 # Imports
 #-----------------------------------------------------------------------------
 import re
-from nbconvert.utils.pandoc import pandoc
 
 #-----------------------------------------------------------------------------
 # Globals and constants

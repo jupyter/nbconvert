@@ -8,7 +8,6 @@ import asyncio
 import tempfile, os
 
 from traitlets import Bool, default
-from jupyter_core.paths import jupyter_path
 import concurrent.futures
 
 from .html import HTMLExporter

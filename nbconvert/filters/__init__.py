@@ -8,4 +8,4 @@ from .strings import *
 from .metadata import *
 from .pandoc import *
 
-from ipython_genutils.text import indent
+from nbconvert.utils.text import indent

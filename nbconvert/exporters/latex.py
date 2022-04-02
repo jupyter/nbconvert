@@ -3,11 +3,9 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import os
 
-from traitlets import Unicode, default
+from traitlets import default
 from traitlets.config import Config
-from jupyter_core.paths import jupyter_path
 
 from nbconvert.filters.highlight import Highlight2Latex
 from nbconvert.filters.filter_links import resolve_references
