@@ -15,6 +15,7 @@ exclude .readthedocs.yml
 exclude codecov.yml
 exclude .pre-commit-config.yaml
 exclude .git-blame-ignore-revs
+exclude .prettierignore
 
 # Examples
 graft examples
