@@ -18,7 +18,10 @@ In case you want to show code in adition to its output use the flag ``--show-inp
 Configuring the Notebook for slides presentations
 -------------------------------------------------
 
-In case the user intends to do a slide presentation out of their Jupyter notebook it's recommended to use the ``reveal`` template. In orders to obtain a better result from it's advised to use the slides metadatas available in the cells:
+In case the user intends to do a slide presentation out of their Jupyter
+notebook it's recommended to use the ``reveal`` template. In orders to obtain a
+better result from it's advised to use the slides metadatas available in the
+cells:
 
 
 * In the notebook, select a cell and click on the "Property Inspector menu"

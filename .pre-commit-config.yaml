@@ -1,0 +1,69 @@
+ci:
+  skip: [check-jsonschema]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+  #     - id: end-of-file-fixer
+  #     - id: check-case-conflict
+  #     - id: check-executables-have-shebangs
+  #     - id: requirements-txt-fixer
+      - id: check-added-large-files
+  #     - id: check-case-conflict
+  #     - id: check-toml
+  #     - id: check-yaml
+  #     - id: debug-statements
+  #     - id: forbid-new-submodules
+  #     - id: check-builtin-literals
+  #     - id: trailing-whitespace
+
+  # - repo: https://github.com/psf/black
+  #   rev: 22.3.0
+  #   hooks:
+  #     - id: black
+  #       args: ["--line-length", "100"]
+
+  # - repo: https://github.com/PyCQA/isort
+  #   rev: 5.10.1
+  #   hooks:
+  #     - id: isort
+  #       files: \.py$
+  #       args: [--profile=black]
+
+  # - repo: https://github.com/pre-commit/mirrors-prettier
+  #   rev: v2.6.1
+  #   hooks:
+  #     - id: prettier
+
+  # - repo: https://github.com/asottile/pyupgrade
+  #   rev: v2.31.1
+  #   hooks:
+  #     - id: pyupgrade
+  #       args: [--py37-plus]
+
+  - repo: https://github.com/PyCQA/doc8
+    rev: 0.11.0
+    hooks:
+      - id: doc8
+        args: [--max-line-length=200]
+
+  # - repo: https://github.com/pycqa/flake8
+  #   rev: 4.0.1
+  #   hooks:
+  #     - id: flake8
+  #       additional_dependencies:
+  #         [
+  #           "flake8-bugbear==20.1.4",
+  #           "flake8-logging-format==0.6.0",
+  #           "flake8-implicit-str-concat==0.2.0",
+  #         ]
+
+  - repo: https://github.com/sirosen/check-jsonschema
+    rev: 0.14.1
+    hooks:
+      - id: check-jsonschema
+        name: "Check GitHub Workflows"
+        files: ^\.github/workflows/
+        types: [yaml]
+        args: ["--schemafile", "https://json.schemastore.org/github-workflow"]

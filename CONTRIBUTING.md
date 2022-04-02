@@ -4,7 +4,7 @@ We follow the
 [Jupyter Contribution Workflow](https://jupyter.readthedocs.io/en/latest/contributing/content-contributor.html)
 and the [IPython Contributing Guide](https://github.com/ipython/ipython/blob/master/CONTRIBUTING.md).
 
-# Testing
+## Testing
 
 In order to test all the features of nbconvert you need to have `pandoc` and
 `TexLive` installed. 
@@ -14,7 +14,7 @@ run all of the tests and to test all of the features.
 
 If you only want to run some of the tests run `pip install -e '.[test]'`.
 
-# Documentation
+## Documentation
 
 NbConvert includes a substantial amount of both user and API documentation. 
 
@@ -31,6 +31,38 @@ the standard dependencies. You can get all of the dependencies by running `pip i
 '.[all]'` and if you want only those needed to run the docs you can access them with `pip install -e '.[docs]'`.
 
 Full build instructions can be found at [docs/README.md](docs/README.md).
+
+
+## Code Styling
+`nbconvert` has adopted automatic code formatting so you shouldn't
+need to worry too much about your code style.
+As long as your code is valid,
+the pre-commit hook should take care of how it should look.
+`pre-commit` and its associated hooks will automatically be installed when
+you run `pip install -e ".[test]"`
+
+To install `pre-commit` manually, run the following:
+
+```bash
+pip install pre-commit
+pre-commit install
+````
+
+You can invoke the pre-commit hook by hand at any time with:
+
+```bash
+pre-commit run
+````
+
+which should run any autoformatting on your code
+and tell you about any errors it couldn't fix automatically.
+You may also install [black integration](https://github.com/psf/black#editor-integration)
+into your text editor to format code automatically.
+
+If you have already committed files before setting up the pre-commit
+hook with `pre-commit install`, you can fix everything up using
+`pre-commit run --all-files`. You need to make the fixing commit
+yourself after that.
 
 # Releasing
 
