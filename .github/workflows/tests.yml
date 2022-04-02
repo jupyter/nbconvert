@@ -31,7 +31,7 @@ jobs:
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
-          wget https://github.com/jgm/pandoc/releases/download/2.17.1.1/pandoc-2.17.1.1-amd64.deb && sudo dpkg -i pandoc-2.17.1.1-amd64.deb
+          wget https://github.com/jgm/pandoc/releases/download/2.17.1.1/pandoc-2.17.1.1-1-amd64.deb && sudo dpkg -i pandoc-2.17.1.1-1-amd64.deb
 
       - name: Install package dependencies
         shell: bash
