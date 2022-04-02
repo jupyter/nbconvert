@@ -45,7 +45,7 @@ def export(exporter, nb, **kw):
         method initializes its own instance of the class, it is ASSUMED that
         the class type provided exposes a constructor (``__init__``) with the same
         signature as the base Exporter class.
-    nb : `nbformat.NotebookNode`
+    nb : :class:`~nbformat.NotebookNode`
         The notebook to export.
     config : config (optional, keyword arg)
         User configuration instance.

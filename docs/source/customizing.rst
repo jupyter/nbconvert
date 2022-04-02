@@ -4,7 +4,7 @@ Creating Custom Templates for nbconvert
 Selecting a template
 --------------------
 
-Most exporters in nbconvert are subclasses of `TemplateExporter`, and make use of
+Most exporters in nbconvert are subclasses of ``TemplateExporter``, and make use of
 jinja to render notebooks into the destination format.
 
 Alternative nbconvert templates can be selected by name from the command line with the

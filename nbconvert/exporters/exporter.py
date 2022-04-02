@@ -127,7 +127,7 @@ class Exporter(LoggingConfigurable):
 
         Parameters
         ----------
-        nb : `nbformat.NotebookNode`
+        nb : :class:`~nbformat.NotebookNode`
             Notebook node (dict-like with attr-access)
         resources : dict
             Additional resources that can be accessed read/write by

@@ -21,7 +21,7 @@ exclude .prettierignore
 graft examples
 
 # docs subdirs we want to skip
-prune docs/build
+prune docs/_build
 prune docs/gh-pages
 prune docs/dist
 
