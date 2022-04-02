@@ -5,6 +5,7 @@ include .mailmap
 include MANIFEST.in
 include nbconvert/templates/skeleton/Makefile
 include nbconvert/tests/README.md
+include pyproject.toml
 
 # Documentation
 graft docs
