@@ -7,7 +7,6 @@ Module with tests for the RegexRemovePreprocessor.
 
 import re
 
-from nbformat import from_dict
 from nbformat import v4 as nbformat
 
 from ..regexremove import RegexRemovePreprocessor

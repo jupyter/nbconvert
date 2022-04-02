@@ -5,14 +5,11 @@
 # Distributed under the terms of the Modified BSD License.
 
 import hashlib
-import io
 import os
 
 from jupyterlab_pygments import JupyterStyle
 from pygments.style import Style
 from traitlets import Type, Unicode, Union
-
-import nbconvert.resources
 
 from .base import Preprocessor
 

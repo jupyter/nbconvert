@@ -5,7 +5,6 @@
 
 import contextlib
 import glob
-import io
 import os
 import shlex
 import shutil

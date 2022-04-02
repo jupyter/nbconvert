@@ -425,7 +425,7 @@ class TemplateExporter(Exporter):
             filter_cls = import_item(jinja_filter)
             return self._register_filter(environ, name, filter_cls)
 
-        if constructed and hasattr(jinja_filter, "__call__"):
+        if constructed and hasattr(jinja_filter, "__call__"):  # noqa
             # filter is a function, no need to construct it.
             environ.filters[name] = jinja_filter
             return jinja_filter
@@ -510,7 +510,7 @@ class TemplateExporter(Exporter):
         #  * We rely on recursive_update, which can only merge dicts, lists will be overwritten
         #  * We can use the key with numerical prefixing to guarantee ordering (/etc/*.d/XY-file style)
         #  * We can disable preprocessors by overwriting the value with None
-        for key, preprocessor in sorted(preprocessors.items(), key=lambda x: x[0]):
+        for _, preprocessor in sorted(preprocessors.items(), key=lambda x: x[0]):
             if preprocessor is not None:
                 kwargs = preprocessor.copy()
                 preprocessor_cls = kwargs.pop("type")

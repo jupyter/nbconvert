@@ -3,7 +3,6 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import logging
 import os
 import shutil
 from tempfile import TemporaryDirectory

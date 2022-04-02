@@ -121,7 +121,7 @@ class Highlight2Latex(NbConvertBase):
             source, LatexFormatter(**self.extra_formatter_options), language, metadata
         )
         if strip_verbatim:
-            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")
+            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")  # noqa
             return latex.replace("\n\\end{Verbatim}\n", "")
         else:
             return latex

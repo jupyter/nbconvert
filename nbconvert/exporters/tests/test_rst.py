@@ -3,11 +3,9 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import io
 import re
 
 import nbformat
-import pytest
 from nbformat import v4
 
 from ...tests.utils import onlyif_cmds_exist

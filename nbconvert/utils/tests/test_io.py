@@ -7,8 +7,6 @@ import io as stdlib_io
 import sys
 from io import StringIO
 
-import pytest
-
 from ..io import unicode_std_stream
 
 
