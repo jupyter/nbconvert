@@ -151,8 +151,8 @@ class TestStrings(TestsBase):
     def test_ipython2python(self):
         """ipython2python test"""
         #TODO: More tests
-        results = ipython2python(u'%%pylab\nprint("Hello-World")').replace("u'", "'")
-        self.fuzzy_compare(results, u"get_ipython().run_cell_magic('pylab', '', 'print(\"Hello-World\")')", 
+        results = ipython2python('%%pylab\nprint("Hello-World")').replace("u'", "'")
+        self.fuzzy_compare(results.replace(r'\n', ''), "get_ipython().run_cell_magic('pylab', '', 'print(\"Hello-World\")')",
             ignore_spaces=True, ignore_newlines=True)
     
     def test_posix_path(self):

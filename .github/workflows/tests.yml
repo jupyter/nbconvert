@@ -4,7 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run-tests:
@@ -12,12 +15,15 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        python-version: [ '3.7', '3.8', '3.9', '3.10', 'pypy-3.7']
-        exclude:
+        python-version: ['3.7', '3.10']
+        include:
           - os: "windows-latest"
-            python-version: "pypy-3.7"
-          - os: "macos-latest"
             python-version: "3.8"
+          - os: "macos-latest"
+            python-version: "3.9"
+          - os: "ubuntu-latest"
+            python-version: "pypy-3.8"
+      fail-fast: false
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -31,7 +37,7 @@ jobs:
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
-          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+          wget https://github.com/jgm/pandoc/releases/download/2.17.1.1/pandoc-2.17.1.1-1-amd64.deb && sudo dpkg -i pandoc-2.17.1.1-1-amd64.deb
 
       - name: Install package dependencies
         shell: bash
@@ -48,29 +54,24 @@ jobs:
           pip freeze
           pip check
 
+      - name: Check Manifest
+        run: check-manifest --ignore "share/**"
+
       - name: Run tests with coverage
         if: ${{ !startsWith(matrix.python-version, 'pypy') && !startsWith(runner.os, 'Windows')  }}
         shell: bash
-        env:
-          PYTHONWARNINGS: default
         run: |
-          check-manifest --ignore "share/**"
           # See https://github.com/pyppeteer/pyppeteer/pull/321
           pip install -U websockets --user
-          # cd so we test the install, not the repo
-          cd $HOME
-          pytest --cov nbconvert -v --pyargs nbconvert
+          python -m pytest --cov nbconvert -vv
 
       - name: Run tests on pypy and Windows
         if: ${{ startsWith(matrix.python-version, 'pypy') || startsWith(runner.os, 'Windows')  }}
         shell: bash
         run: |
-          
-          # cd so we test the install, not the repo
-          cd $HOME
           # See https://github.com/pyppeteer/pyppeteer/pull/321
           pip install -U websockets --user
-          pytest -v --pyargs nbconvert
+          python -m pytest -vv
 
       - name: Code coverage
         run: codecov

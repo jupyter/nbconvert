@@ -33,7 +33,7 @@ def resolve_one_reference(key, val, fmt, meta):
             # pandoc automatically makes labels for headings.
             label = m.group(1).lower()
             label = re.sub(r'[^\w-]+', '', label) # Strip HTML entities
-            text = re.sub(r'_', '\_', text) # Escape underscores in display text
+            text = re.sub(r'_', r'\_', text) # Escape underscores in display text
             return RawInline('tex', r'\hyperref[{label}]{{{text}}}'.format(label=label, text=text))
 
     # Other elements will be returned unchanged.

@@ -204,7 +204,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
-        from IPython.core.inputsplitter import IPythonInputSplitter
+        from IPython.core.inputtransformer2 import TransformerManager
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."
@@ -212,7 +212,7 @@ def ipython2python(code):
         )
         return code
     else:
-        isp = IPythonInputSplitter(line_input_checker=False)
+        isp = TransformerManager()
         return isp.transform_cell(code)
 
 def posix_path(path):

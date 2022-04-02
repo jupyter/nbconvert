@@ -14,6 +14,7 @@ import warnings
 
 from ...tests.utils import onlyif_cmds_exist
 
+import pytest
 from nbconvert.tests.base import TestsBase
 from .. import pandoc
 
@@ -59,6 +60,7 @@ class TestPandoc(TestsBase):
 
         pandoc._minimal_version = "120.0"
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
             # call it twice to verify the cached value is used
             assert not pandoc.check_pandoc_version()
             assert not pandoc.check_pandoc_version()
