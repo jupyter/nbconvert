@@ -19,7 +19,9 @@ Nbconvert takes in a notebook, which is a JSON object, and operates on that obje
 This can include operations that take a notebook and return a notebook.
 For example, that operation could be to execute the notebook as though it were a continuous script; if it were executed ``--in-place`` then it would overwrite the current notebook.
 Or it could be that we wish to systematically alter the notebook, for example by clearing all output cells.
-Format agnostic operations on cell content that do not violate the nbformat spec can be interpreted as a notebook to notebook conversion step; such operations can be performed as part of the preprocessing step.
+Format agnostic operations on cell content that do not violate the nbformat
+spec can be interpreted as a notebook to notebook conversion step; such
+operations can be performed as part of the preprocessing step.
 
 But often we want to have the notebook's structured content in a different format.
 Importantly, in many cases the structure of the notebook should be reflected in the structure of the output, adapted to the output's format.

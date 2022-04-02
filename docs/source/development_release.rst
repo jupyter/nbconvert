@@ -120,4 +120,6 @@ If all went well, change the ``notebook/_version.py`` back by adding the
 Email googlegroup with update letter
 ------------------------------------
 
-Make sure to email jupyter@googlegroups.com with the subject line of "[ANN] NBConvert $VERSION -- ..." and include at least the significant changes, contributors, and individual PR notes (if not many significant changes).
+Make sure to email jupyter@googlegroups.com with the subject line of
+"[ANN] NBConvert $VERSION -- ..." and include at least the significant changes,
+contributors, and individual PR notes (if not many significant changes).

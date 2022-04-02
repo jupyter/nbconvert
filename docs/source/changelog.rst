@@ -19,7 +19,7 @@ Changes in nbconvert
 * Add option to embed_images in Markdown cells :ghpull:`1717`
 * HTMLExporter: Add theme alias and docs :ghpull:`1716`
 * Add basic support for federated labextensions themes :ghpull:`1703`
-* Always hide the collapser element :ghpull:`1712) 
+* Always hide the collapser element :ghpull:`1712`
 * Raise pyppeteer requirement to >=1,<1.1 :ghpull:`1711`
 
 6.4.1
@@ -274,23 +274,43 @@ Significant Changes
 
 Nbconvert 6.0 is a major release of nbconvert which includes many significant changes.
 
-- Python 2 support was dropped. Currently Python 3.6-3.8 is supported and tested by nbconvert. However, nbconvert 6.0 provides limited support for Python 3.6. nbconvert 6.1 will drop support for Python 3.6. Limited support means we will test and run CI on Python 3.6.12 or higher. Issues that are found only affecting Python 3.6 are not guaranteed to be fixed. We recommend all users of nbconvert use Python 3.7 and higher.
+- Python 2 support was dropped. Currently Python 3.6-3.8 is supported and
+  tested by nbconvert. However, nbconvert 6.0 provides limited support for Python
+  3.6. nbconvert 6.1 will drop support for Python 3.6. Limited support means we
+  will test and run CI on Python 3.6.12 or higher. Issues that are found only
+  affecting Python 3.6 are not guaranteed to be fixed. We recommend all users of
+  nbconvert use Python 3.7 and higher.
 
 - Unlike previous versions, nbconvert 6.0 relies on the `nbclient <https://github.com/jupyter/nbclient/>`__ package for the execute preprocessor, which allows for asynchronous kernel requests.
 
-- ``template_path`` has become ``template_paths``. If referring to a 5.x style ``.tpl`` template use the full path with the ``template_file`` argument to the file. On the command line the pattern is ``--template-file=<path/to/file.tpl>``.
+- ``template_path`` has become ``template_paths``. If referring to a 5.x style
+  ``.tpl`` template use the full path with the ``template_file`` argument to the
+  file. On the command line the pattern is ``--template-file=<path/to/file.tpl>``.
 
-- Nbconvert 6.0 includes a new "webpdf" exporter, which renders notebooks in pdf format through a headless web browser, so that complex outputs such as HTML tables, or even widgets are rendered in the same way as with the HTML exporter and a web browser.
+- Nbconvert 6.0 includes a new "webpdf" exporter, which renders notebooks in
+  pdf format through a headless web browser, so that complex outputs such as HTML
+  tables, or even widgets are rendered in the same way as with the HTML exporter
+  and a web browser.
 
-- The default template applied when exporting to HTML now produces the same DOM structure as JupyterLab, and is styled using JupyterLab's CSS. The pygments theme in use mimics JupyterLab's codemirror mode with the same CSS variables, so that custom JupyterLab themes could be applied. The classic notebook styling can still be enabled with
+- The default template applied when exporting to HTML now produces the same DOM
+  structure as JupyterLab, and is styled using JupyterLab's CSS. The pygments
+  theme in use mimics JupyterLab's codemirror mode with the same CSS variables,
+  so that custom JupyterLab themes could be applied. The classic notebook
+  styling can still be enabled with
 
 .. code-block:: bash
 
    jupyter nbconvert --to html --template classic
 
-- Nbconvert 6.0 includes a new system for creating custom templates, which can now be installed as packages. A custom "foobar" template is installed in Jupyter's data directory under ``nbconvert/templates`` and has the form of a directory containing all resources. Templates specify their base template as well as other configuration parameters in a ``conf.json`` at the root of the template directory.
+- Nbconvert 6.0 includes a new system for creating custom templates, which can
+  now be installed as packages. A custom "foobar" template is installed in
+  Jupyter's data directory under ``nbconvert/templates`` and has the form of a
+  directory containing all resources. Templates specify their base template as
+  well as other configuration parameters in a ``conf.json`` at the root of the
+  template directory.
 
-- The "slideshow" template now makes use of RevealJS version 4. It can now be used with the HTML exporter with
+- The "slideshow" template now makes use of RevealJS version 4. It can now be
+  used with the HTML exporter with
 
 .. code-block:: bash
 
@@ -396,17 +416,34 @@ The ``jupyter_client`` dependency is now pinned to ``>5.3.1``. This is done to s
 
 Parallel NBConvert
 ++++++++++++++++++
-NBConvert ``--execute`` can now be run in parallel via threads, multiprocessing, or async patterns! This means you can now parallelize nbconvert via a bash loop, or a python concurrency pattern and it should be able to execute those notebooks in parallel.
+NBConvert ``--execute`` can now be run in parallel via threads,
+multiprocessing, or async patterns! This means you can now parallelize
+nbconvert via a bash loop, or a python concurrency pattern and it should be
+able to execute those notebooks in parallel.
 
-Kernels have varying support for safe concurrent execution. The ipython kernel (ipykernel version 1.5.2 and higher) should be safe to run concurrently using Python 3. However, the Python 2 ipykernel does not always provide safe concurrent execution and sometimes fails with a socket bind exception. Unlike ipykernel which is maintained by the project, other community-maintained kernels may have varying support for concurrent execution, and these kernels were not tested heavily.
+Kernels have varying support for safe concurrent execution. The ipython kernel
+(ipykernel version 1.5.2 and higher) should be safe to run concurrently using
+Python 3. However, the Python 2 ipykernel does not always provide safe
+concurrent execution and sometimes fails with a socket bind exception. Unlike
+ipykernel which is maintained by the project, other community-maintained
+kernels may have varying support for concurrent execution, and these kernels
+were not tested heavily.
 
 Issues for nbconvert can be viewed here: :ghpull:`1018`:, and :ghpull:`1017`:
 
-.. note: We'll keep an eye for issues related to this new capability and try to quickly patch any discovered issues post release. The improvement required touching three projects with separate releases, so if you do find an issue try upgrading dependencies and listing your dependencies for your environment when reporting.
+.. note: We'll keep an eye for issues related to this new capability and try to
+  quickly patch any discovered issues post release. The improvement required
+  touching three projects with separate releases, so if you do find an issue try
+  upgrading dependencies and listing your dependencies for your environment when
+  reporting.
 
 Execute Loop Rewrite
 ++++++++++++++++++++
-This release completely rewrote the execution loop responsible for monitoring kernel messages until cell execution is completed. This removes an error where kernel messages could be dropped if too many were posted too quickly. Furthermore, the change means that messages are not buffered. Now, messages can be logged immediately rather than waiting for the cell to terminate.
+This release completely rewrote the execution loop responsible for monitoring
+kernel messages until cell execution is completed. This removes an error where
+kernel messages could be dropped if too many were posted too quickly.
+Furthermore, the change means that messages are not buffered. Now, messages can
+be logged immediately rather than waiting for the cell to terminate.
 
 See :ghpull:`994`: for exact code changes if you're curious.
 
@@ -493,7 +530,11 @@ You can tell nbconvert to not store the state using the ``store_widget_state`` a
 
      jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
 
-This widget rendering is not performed against a browser during execution, so only widget default states or states manipulated via user code will be calculated during execution. ``%%javascript`` cells will execute upon notebook rendering, enabling complex interactions to function as expected when viewed by a UI.
+This widget rendering is not performed against a browser during execution, so
+only widget default states or states manipulated via user code will be
+calculated during execution. ``%%javascript`` cells will execute upon notebook
+rendering, enabling complex interactions to function as expected when viewed by
+a UI.
 
 If you can't view widget results after execution, you may need to select
 :menuselection:`File --> Trust Notebook` in the menu.
@@ -505,21 +546,33 @@ Execute Preprocessor Rework
 
 Based on monkey patching required in `papermill <https://github.com/nteract/papermill/blob/0.19.1/papermill/preprocess.py>`__ the ``run_cell`` code path in the ExecutePreprocessor was reworked to allow for accessing individual message parses without reimplementing the entire function. Now there is a ``process_message`` function which take a ZeroMQ message and applies all of its side-effect updates on the cell/notebook objects before returning the output it generated, if it generated any such output.
 
-The change required a much more extensive test suite covering cell execution as test coverage on the various, sometimes wonky, code paths made improvements and reworks impossible to prove undamaging. Now changes to kernel message processing has much better coverage, so future additions or changes with specs over time will be easier to add.
+The change required a much more extensive test suite covering cell execution as
+test coverage on the various, sometimes wonky, code paths made improvements and
+reworks impossible to prove undamaging. Now changes to kernel message
+processing has much better coverage, so future additions or changes with specs
+over time will be easier to add.
 
 See :ghpull:`905` and :ghpull:`982` for details
 
 Out Of Memory Kernel Failure Catches
 ++++++++++++++++++++++++++++++++++++
 
-When running out of memory on a machine, if the kernel process was killed by the operating system it would result in a timeout error at best and hang indefinitely at worst. Now regardless of timeout configuration, if the underlying kernel process dies before emitting any messages to the effect an exception will be raised notifying the consumer of the lost kernel within a few seconds.
+When running out of memory on a machine, if the kernel process was killed by
+the operating system it would result in a timeout error at best and hang
+indefinitely at worst. Now regardless of timeout configuration, if the
+underlying kernel process dies before emitting any messages to the effect an
+exception will be raised notifying the consumer of the lost kernel within a few
+seconds.
 
 See :ghpull:`959`, :ghpull:`971`, and :ghpull:`998` for details
 
 Latex / PDF Template Improvements
 +++++++++++++++++++++++++++++++++
 
-The latex template was long overdue for improvements. The default template had a rewrite which makes exports for latex and pdf look a lot better. Code cells in particular render much better with line breaks and styling the more closely matches notebook browser rendering. Thanks t-makaro for the efforts here!
+The latex template was long overdue for improvements. The default template had
+a rewrite which makes exports for latex and pdf look a lot better. Code cells
+in particular render much better with line breaks and styling the more closely
+matches notebook browser rendering. Thanks t-makaro for the efforts here!
 
 See :ghpull:`992` for details
 
@@ -625,30 +678,50 @@ There were a few new metadata fields which are now respected in nbconvert.
 
 ``nb.metadata.title`` will be respected ahead of ``nb.metadata.name`` for title assignment. This better matches with the notebook format.
 
-``nb.metadata.filename`` will override the default ``output_filename_template`` when extracting notebook resources in the ``ExtractOutputPreprocessor``. The attribute is helpful for when you want to consistently fix to a particular output filename, especially when you need to set image filenames for your exports.
+``nb.metadata.filename`` will override the default ``output_filename_template``
+when extracting notebook resources in the ``ExtractOutputPreprocessor``. The
+attribute is helpful for when you want to consistently fix to a particular
+output filename, especially when you need to set image filenames for your
+exports.
 
 The ``raises-exception`` cell tag (``nb.cells[].metadata.tags[raises-exception]``) allows for cell exceptions to not halt execution. The tag is respected in the same way by `nbval <https://github.com/computationalmodelling/nbval>`_ and other notebook interfaces. ``nb.metadata.allow_errors`` will apply this rule for all cells. This feature is toggleable with the ``force_raise_errors`` configuration option.
-Errors from executing the notebook can be allowed with a ``raises-exception`` tag on a single cell, or the ``allow_errors`` configurable option for all cells. An allowed error will be recorded in notebook output, and execution will continue.
+Errors from executing the notebook can be allowed with a ``raises-exception``
+tag on a single cell, or the ``allow_errors`` configurable option for all
+cells. An allowed error will be recorded in notebook output, and execution will
+continue.
 If an error occurs when it is not explicitly allowed, a 'CellExecutionError' will be raised.
-If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for any error that occurs while executing the notebook. This overrides both the ``allow_errors`` option and the ``raises-exception`` cell tags.
+If ``force_raise_errors`` is True, ``CellExecutionError`` will be raised for
+any error that occurs while executing the notebook. This overrides both the
+``allow_errors`` option and the ``raises-exception`` cell tags.
 
 See :ghpull:`867`, :ghpull:`703`, :ghpull:`685`, :ghpull:`672`, and :ghpull:`684` for implementation changes.
 
 Configurable kernel managers when executing notebooks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The kernel manager can now be optionally passed into the ``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the keyword argument ``km``. This means that the kernel can be configured as desired before beginning preprocessing.
+The kernel manager can now be optionally passed into the
+``ExecutePreprocessor.preprocess`` and the ``executenb`` functions as the
+keyword argument ``km``. This means that the kernel can be configured as
+desired before beginning preprocessing.
 
-This is useful for executing in a context where the kernel has external dependencies that need to be set to non-default values. An example of this might be a Spark kernel where you wish to configure the Spark cluster location ahead of time without building a new kernel.
+This is useful for executing in a context where the kernel has external
+dependencies that need to be set to non-default values. An example of this
+might be a Spark kernel where you wish to configure the Spark cluster location
+ahead of time without building a new kernel.
 
-Overall the ExecutePreprocessor has been reworked to make it easier to use. Future releases will continue this trend to make this section of the code more inheritable and reusable by others. We encourage you read the source code for this version if you're interested in the detailed improvements.
+Overall the ExecutePreprocessor has been reworked to make it easier to use.
+Future releases will continue this trend to make this section of the code more
+inheritable and reusable by others. We encourage you read the source code for
+this version if you're interested in the detailed improvements.
 
 See :ghpull:`852` for implementation changes.
 
 Surfacing exporters in front-ends
 +++++++++++++++++++++++++++++++++
 
-Exporters are now exposed for front-ends to consume, including classic notebook. As an example, this means that latex exporter will be made available for latex 'text/latex' media type from the Download As interface.
+Exporters are now exposed for front-ends to consume, including classic
+notebook. As an example, this means that latex exporter will be made available
+for latex 'text/latex' media type from the Download As interface.
 
 See :ghpull:`759` and :ghpull:`864` for implementation changes.
 

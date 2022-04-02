@@ -57,7 +57,7 @@ we demonstrate using the nbconvert Python API.
 This additional example demonstrates using the CLI to remove cells with a certain cell tag
 
 .. code-block:: sh
-   
+
    jupyter nbconvert mynotebook.ipynb -TagRemovePreprocessor.remove_cell_tags='{"remove_cell"}'
 
 Removing cells using Regular Expressions on cell content

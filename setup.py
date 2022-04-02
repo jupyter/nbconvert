@@ -238,6 +238,7 @@ extra_requirements = {
         'pytest-dependency',
         'ipykernel',
         'ipywidgets>=7',
+        "pre-commit",
         pyppeteer_req,
     ],
     'serve': [
