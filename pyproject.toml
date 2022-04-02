@@ -15,8 +15,11 @@ filterwarnings = [
     "ignore:Passing a schema to Validator.iter_errors is deprecated:DeprecationWarning",
     # https://github.com/pyppeteer/pyppeteer/issues/342
     "ignore:remove loop argument:DeprecationWarning:websockets",
+    # https://github.com/mhammond/pywin32/issues/1802
+    "ignore:getargs: The 'u' format is deprecated:DeprecationWarning",
     # From jupyter_client
     "ignore:unclosed <socket.socket:ResourceWarning",
     "ignore:unclosed event loop:ResourceWarning",
     "ignore:There is no current event loop:DeprecationWarning",
+
 ]
