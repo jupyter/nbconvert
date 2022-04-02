@@ -48,29 +48,24 @@ jobs:
           pip freeze
           pip check
 
+      - name: Check Manifest
+        run: check-manifest --ignore "share/**"
+
       - name: Run tests with coverage
         if: ${{ !startsWith(matrix.python-version, 'pypy') && !startsWith(runner.os, 'Windows')  }}
         shell: bash
-        env:
-          PYTHONWARNINGS: default
         run: |
-          check-manifest --ignore "share/**"
           # See https://github.com/pyppeteer/pyppeteer/pull/321
           pip install -U websockets --user
-          # cd so we test the install, not the repo
-          cd $HOME
-          pytest --cov nbconvert -v --pyargs nbconvert
+          python -m pytest --cov nbconvert -vv
 
       - name: Run tests on pypy and Windows
         if: ${{ startsWith(matrix.python-version, 'pypy') || startsWith(runner.os, 'Windows')  }}
         shell: bash
         run: |
-          
-          # cd so we test the install, not the repo
-          cd $HOME
           # See https://github.com/pyppeteer/pyppeteer/pull/321
           pip install -U websockets --user
-          pytest -v --pyargs nbconvert
+          python -m pytest -vv
 
       - name: Code coverage
         run: codecov
