@@ -19,7 +19,7 @@ from unittest.mock import patch
 from traitlets.config import Config
 
 from ...preprocessors.base import Preprocessor
-from ..base import ExporterDisabledError, get_export_names
+from ..base import get_export_names
 from ..exporter import Exporter
 from .base import ExportersTestsBase
 
@@ -58,7 +58,7 @@ class TestExporter(ExportersTestsBase):
         (notebook, resources) = exporter.from_filename(self._get_notebook())
         self.assertEqual(notebook["pizza"], "cheese")
 
-    def test_get_export_names_disable(self):
+    def test_get_export_names_disable_specific(self):
         """Can we disable a specific importer?"""
         config = Config({"Exporter": {"enabled": False}})
         export_names = get_export_names()

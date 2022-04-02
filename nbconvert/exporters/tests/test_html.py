@@ -63,7 +63,7 @@ class TestHTMLExporter(ExportersTestsBase):
         assert re.findall(in_regex, output) == ins
         assert re.findall(out_regex, output) == outs
 
-    def test_prompt_number(self):
+    def test_prompt_number_config(self):
         """
         Does HTMLExporter properly format input and output prompts?
         """

@@ -87,11 +87,12 @@ def export(exporter, nb, **kw):
     return output, resources
 
 
-def get_exporter(name, config=get_config()):
+def get_exporter(name, config=None):
     """Given an exporter name or import path, return a class ready to be instantiated
 
     Raises ExporterName if exporter is not found or ExporterDisabledError if not enabled
     """
+    config = config or get_config()
 
     if name == "ipynb":
         name = "notebook"
@@ -130,12 +131,13 @@ def get_exporter(name, config=get_config()):
     )
 
 
-def get_export_names(config=get_config()):
+def get_export_names(config=None):
     """Return a list of the currently supported export targets
 
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
+    config = config or get_config()
     exporters = sorted(entrypoints.get_group_named("nbconvert.exporters"))
     if os.environ.get("NBCONVERT_DISABLE_CONFIG_EXPORTERS"):
         get_logger().info(

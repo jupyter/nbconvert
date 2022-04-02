@@ -3,7 +3,7 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from nbformat import v4 as nbformat
 
@@ -84,7 +84,7 @@ class Testsvg2pdf(PreprocessorTestsBase):
         preprocessor = self.build_preprocessor(inkscape_version="0.92.3")
         assert preprocessor.command == "0.92.3"
 
-    def test_inkscape_pre_v1_command(self):
+    def test_inkscape_pre_v1_command_fake(self):
         preprocessor = self.build_preprocessor(inkscape="fake-inkscape", inkscape_version="0.92.3")
         assert preprocessor.command == [
             "fake-inkscape",

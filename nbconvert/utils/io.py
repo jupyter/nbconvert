@@ -103,7 +103,7 @@ def link_or_copy(src, dst):
         new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"
         try:
             link_or_copy(src, new_dst)
-        except:
+        except Exception:
             try:
                 os.remove(new_dst)
             except OSError:

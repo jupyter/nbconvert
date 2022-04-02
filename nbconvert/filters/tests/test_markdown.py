@@ -122,15 +122,9 @@ class TestMarkdown(TestsBase):
         # all the "<", ">", "&" must be escaped correctly
         cases = [
             (
-                "\\begin{equation*}\n"
-                + (
-                    "\\left( \\sum_{k=1}^n a_k b_k \\right)^2 "
-                    "\\leq \\left( \\sum_{k=1}^n a_k^2 \\right) "
-                    "\\left( \\sum_{k=1}^n b_k^2 \\right)\n"
-                )
-                + "\\end{equation*}"
+                "\\begin{equation*}\n\\left( \\sum_{k=1}^n a_k b_k \\right)^2 \\leq \\left( \\sum_{k=1}^n a_k^2 \\right) \\left( \\sum_{k=1}^n b_k^2 \\right)\n\\end{equation*}"
             ),
-            ("$$\n" "a = 1 *3* 5\n" "$$"),
+            ("$$\na = 1 *3* 5\n$$"),
             "$ a = 1 *3* 5 $",
             "$s_i = s_{i}\n$",
             "$a<b&b<lt$",
@@ -139,7 +133,7 @@ class TestMarkdown(TestsBase):
             "$$a<b&b<lt$$",
             "$$a<b&lt;b>a;a-b<0$$",
             "$$<k'>$$",
-            ("$$x\n" "=\n" "2$$"),
+            ("$$x\n=\n2$$"),
             (
                 "$$\n"
                 "b =  \\left[\n"
@@ -148,7 +142,7 @@ class TestMarkdown(TestsBase):
                 "\\right]\n"
                 "$$"
             ),
-            ("\\begin{equation*}\n" "x = 2 *55* 7\n" "\\end{equation*}"),
+            ("\\begin{equation*}\nx = 2 *55* 7\n\\end{equation*}"),
             """$
 \\begin{tabular}{ l c r }
   1 & 2 & 3 \\

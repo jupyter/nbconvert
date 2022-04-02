@@ -125,7 +125,7 @@ class TestSanitizer(PreprocessorTestsBase):
                 "few</em> <script>tags</script>",
                 preprocessor,
             ),
-            '_A_ <em style="color: blue;">few</em> ' "&lt;script&gt;tags&lt;/script&gt;",
+            '_A_ <em style="color: blue;">few</em> &lt;script&gt;tags&lt;/script&gt;',
         )
 
     def test_tag_passthrough(self):

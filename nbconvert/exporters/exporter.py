@@ -9,7 +9,6 @@ see templateexporter.py.
 import collections
 import copy
 import datetime
-import io
 import os
 import sys
 from typing import Optional
@@ -171,7 +170,7 @@ class Exporter(LoggingConfigurable):
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
-        if not "metadata" in resources or resources["metadata"] == "":
+        if "metadata" not in resources or resources["metadata"] == "":
             resources["metadata"] = ResourcesDict()
         path, basename = os.path.split(filename)
         notebook_name = os.path.splitext(basename)[0]
@@ -239,7 +238,7 @@ class Exporter(LoggingConfigurable):
             preprocessor_cls = import_item(preprocessor)
             return self.register_preprocessor(preprocessor_cls, enabled)
 
-        if constructed and hasattr(preprocessor, "__call__"):
+        if constructed and callable(preprocessor):
             # Preprocessor is a function, no need to construct it.
             # Register and return the preprocessor.
             if enabled:

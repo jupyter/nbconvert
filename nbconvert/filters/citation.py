@@ -78,7 +78,7 @@ class CitationParser(HTMLParser):
         # Compute startposition in source
         lin, offset = self.getpos()
         pos = 0
-        for i in range(lin - 1):
+        for _ in range(lin - 1):
             pos = self.data.find("\n", pos) + 1
         return pos + offset
 

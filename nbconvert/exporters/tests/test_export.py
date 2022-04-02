@@ -36,7 +36,7 @@ class TestExport(ExportersTestsBase):
         try:
             exporter = get_exporter("not_a_name")
             export(exporter, self._get_notebook())
-        except ExporterNameError as e:
+        except ExporterNameError:
             pass
 
     def test_export_disabled(self):
