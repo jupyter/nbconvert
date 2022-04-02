@@ -425,7 +425,7 @@ class TemplateExporter(Exporter):
             filter_cls = import_item(jinja_filter)
             return self._register_filter(environ, name, filter_cls)
 
-        if constructed and callable(jinja_filter):
+        if constructed and hasattr(jinja_filter, "__call__"):  # noqa
             # filter is a function, no need to construct it.
             environ.filters[name] = jinja_filter
             return jinja_filter

@@ -238,7 +238,7 @@ class Exporter(LoggingConfigurable):
             preprocessor_cls = import_item(preprocessor)
             return self.register_preprocessor(preprocessor_cls, enabled)
 
-        if constructed and callable(preprocessor):
+        if constructed and hasattr(preprocessor, "__call__"):  # noqa
             # Preprocessor is a function, no need to construct it.
             # Register and return the preprocessor.
             if enabled:
