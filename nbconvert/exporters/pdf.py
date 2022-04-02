@@ -6,11 +6,13 @@
 import subprocess
 import os
 import sys
+from tempfile import TemporaryDirectory
 
 import shutil
 from traitlets import Integer, List, Bool, Instance, Unicode, default
-from testpath.tempdir import TemporaryWorkingDirectory
+from typing import Optional
 from .latex import LatexExporter
+from ..utils import _contextlib_chdir
 
 class LatexFailed(IOError):
     """Exception for failed latex run
@@ -174,7 +176,7 @@ class PDFExporter(LatexExporter):
             self.texinputs = os.getcwd()
 
         self._captured_outputs = []
-        with TemporaryWorkingDirectory():
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
             notebook_name = 'notebook'
             resources['output_extension'] = '.tex'
             tex_file = self.writer.write(latex, resources, notebook_name=notebook_name)
