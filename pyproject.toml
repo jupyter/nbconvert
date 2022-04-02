@@ -16,7 +16,7 @@ filterwarnings = [
     # https://github.com/pyppeteer/pyppeteer/issues/342
     "ignore:remove loop argument:DeprecationWarning:websockets",
     # https://github.com/mhammond/pywin32/issues/1802
-    "ignore:getargs: The .* format is deprecated:DeprecationWarning",
+    "ignore:getargs.*format is deprecated:DeprecationWarning",
     # From jupyter_client
     "ignore:unclosed <socket.socket:ResourceWarning",
     "ignore:unclosed event loop:ResourceWarning",
