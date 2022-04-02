@@ -4,33 +4,30 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
+
 import markupsafe
 
-__all__ = [
-    'strip_ansi',
-    'ansi2html',
-    'ansi2latex'
-]
+__all__ = ["strip_ansi", "ansi2html", "ansi2latex"]
 
-_ANSI_RE = re.compile('\x1b\\[(.*?)([@-~])')
+_ANSI_RE = re.compile("\x1b\\[(.*?)([@-~])")
 
 _ANSI_COLORS = (
-    'ansi-black',
-    'ansi-red',
-    'ansi-green',
-    'ansi-yellow',
-    'ansi-blue',
-    'ansi-magenta',
-    'ansi-cyan',
-    'ansi-white',
-    'ansi-black-intense',
-    'ansi-red-intense',
-    'ansi-green-intense',
-    'ansi-yellow-intense',
-    'ansi-blue-intense',
-    'ansi-magenta-intense',
-    'ansi-cyan-intense',
-    'ansi-white-intense',
+    "ansi-black",
+    "ansi-red",
+    "ansi-green",
+    "ansi-yellow",
+    "ansi-blue",
+    "ansi-magenta",
+    "ansi-cyan",
+    "ansi-white",
+    "ansi-black-intense",
+    "ansi-red-intense",
+    "ansi-green-intense",
+    "ansi-yellow-intense",
+    "ansi-blue-intense",
+    "ansi-magenta-intense",
+    "ansi-cyan-intense",
+    "ansi-white-intense",
 )
 
 
@@ -44,7 +41,7 @@ def strip_ansi(source):
         Source to remove the ANSI from
 
     """
-    return _ANSI_RE.sub('', source)
+    return _ANSI_RE.sub("", source)
 
 
 def ansi2html(text):
@@ -80,7 +77,7 @@ def _htmlconverter(fg, bg, bold, underline, inverse):
 
     """
     if (fg, bg, bold, underline, inverse) == (None, None, False, False, False):
-        return '', ''
+        return "", ""
 
     classes = []
     styles = []
@@ -89,32 +86,32 @@ def _htmlconverter(fg, bg, bold, underline, inverse):
         fg, bg = bg, fg
 
     if isinstance(fg, int):
-        classes.append(_ANSI_COLORS[fg] + '-fg')
+        classes.append(_ANSI_COLORS[fg] + "-fg")
     elif fg:
-        styles.append('color: rgb({},{},{})'.format(*fg))
+        styles.append("color: rgb({},{},{})".format(*fg))
     elif inverse:
-        classes.append('ansi-default-inverse-fg')
+        classes.append("ansi-default-inverse-fg")
 
     if isinstance(bg, int):
-        classes.append(_ANSI_COLORS[bg] + '-bg')
+        classes.append(_ANSI_COLORS[bg] + "-bg")
     elif bg:
-        styles.append('background-color: rgb({},{},{})'.format(*bg))
+        styles.append("background-color: rgb({},{},{})".format(*bg))
     elif inverse:
-        classes.append('ansi-default-inverse-bg')
+        classes.append("ansi-default-inverse-bg")
 
     if bold:
-        classes.append('ansi-bold')
+        classes.append("ansi-bold")
 
     if underline:
-        classes.append('ansi-underline')
+        classes.append("ansi-underline")
 
-    starttag = '<span'
+    starttag = "<span"
     if classes:
-        starttag += ' class="' + ' '.join(classes) + '"'
+        starttag += ' class="' + " ".join(classes) + '"'
     if styles:
-        starttag += ' style="' + '; '.join(styles) + '"'
-    starttag += '>'
-    return starttag, '</span>'
+        starttag += ' style="' + "; ".join(styles) + '"'
+    starttag += ">"
+    return starttag, "</span>"
 
 
 def _latexconverter(fg, bg, bold, underline, inverse):
@@ -123,47 +120,47 @@ def _latexconverter(fg, bg, bold, underline, inverse):
 
     """
     if (fg, bg, bold, underline, inverse) == (None, None, False, False, False):
-        return '', ''
+        return "", ""
 
-    starttag, endtag = '', ''
+    starttag, endtag = "", ""
 
     if inverse:
         fg, bg = bg, fg
 
     if isinstance(fg, int):
-        starttag += r'\textcolor{' + _ANSI_COLORS[fg] + '}{'
-        endtag = '}' + endtag
+        starttag += r"\textcolor{" + _ANSI_COLORS[fg] + "}{"
+        endtag = "}" + endtag
     elif fg:
         # See http://tex.stackexchange.com/a/291102/13684
-        starttag += r'\def\tcRGB{\textcolor[RGB]}\expandafter'
-        starttag += r'\tcRGB\expandafter{\detokenize{%s,%s,%s}}{' % fg
-        endtag = '}' + endtag
+        starttag += r"\def\tcRGB{\textcolor[RGB]}\expandafter"
+        starttag += r"\tcRGB\expandafter{\detokenize{%s,%s,%s}}{" % fg
+        endtag = "}" + endtag
     elif inverse:
-        starttag += r'\textcolor{ansi-default-inverse-fg}{'
-        endtag = '}' + endtag
+        starttag += r"\textcolor{ansi-default-inverse-fg}{"
+        endtag = "}" + endtag
 
     if isinstance(bg, int):
-        starttag += r'\setlength{\fboxsep}{0pt}'
-        starttag += r'\colorbox{' + _ANSI_COLORS[bg] + '}{'
-        endtag = r'\strut}' + endtag
+        starttag += r"\setlength{\fboxsep}{0pt}"
+        starttag += r"\colorbox{" + _ANSI_COLORS[bg] + "}{"
+        endtag = r"\strut}" + endtag
     elif bg:
-        starttag += r'\setlength{\fboxsep}{0pt}'
+        starttag += r"\setlength{\fboxsep}{0pt}"
         # See http://tex.stackexchange.com/a/291102/13684
-        starttag += r'\def\cbRGB{\colorbox[RGB]}\expandafter'
-        starttag += r'\cbRGB\expandafter{\detokenize{%s,%s,%s}}{' % bg
-        endtag = r'\strut}' + endtag
+        starttag += r"\def\cbRGB{\colorbox[RGB]}\expandafter"
+        starttag += r"\cbRGB\expandafter{\detokenize{%s,%s,%s}}{" % bg
+        endtag = r"\strut}" + endtag
     elif inverse:
-        starttag += r'\setlength{\fboxsep}{0pt}'
-        starttag += r'\colorbox{ansi-default-inverse-bg}{'
-        endtag = r'\strut}' + endtag
+        starttag += r"\setlength{\fboxsep}{0pt}"
+        starttag += r"\colorbox{ansi-default-inverse-bg}{"
+        endtag = r"\strut}" + endtag
 
     if bold:
-        starttag += r'\textbf{'
-        endtag = '}' + endtag
+        starttag += r"\textbf{"
+        endtag = "}" + endtag
 
     if underline:
-        starttag += r'\underline{'
-        endtag = '}' + endtag
+        starttag += r"\underline{"
+        endtag = "}" + endtag
 
     return starttag, endtag
 
@@ -192,23 +189,22 @@ def _ansi2anything(text, converter):
     while text:
         m = _ANSI_RE.search(text)
         if m:
-            if m.group(2) == 'm':
+            if m.group(2) == "m":
                 try:
                     # Empty code is same as code 0
-                    numbers = [int(n) if n else 0
-                               for n in m.group(1).split(';')]
+                    numbers = [int(n) if n else 0 for n in m.group(1).split(";")]
                 except ValueError:
                     pass  # Invalid color specification
             else:
                 pass  # Not a color code
-            chunk, text = text[:m.start()], text[m.end():]
+            chunk, text = text[: m.start()], text[m.end() :]
         else:
-            chunk, text = text, ''
+            chunk, text = text, ""
 
         if chunk:
             starttag, endtag = converter(
-                fg + 8 if bold and fg in range(8) else fg,
-                bg, bold, underline, inverse)
+                fg + 8 if bold and fg in range(8) else fg, bg, bold, underline, inverse
+            )
             out.append(starttag)
             out.append(chunk)
             out.append(endtag)
@@ -258,7 +254,7 @@ def _ansi2anything(text, converter):
                 bg = n - 100 + 8
             else:
                 pass  # Unknown codes are ignored
-    return ''.join(out)
+    return "".join(out)
 
 
 def _get_extended_color(numbers):

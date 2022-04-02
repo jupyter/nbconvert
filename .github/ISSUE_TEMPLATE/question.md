@@ -1,7 +1,7 @@
 ---
 name: Question
 about: If you need some help
-labels: question 
+labels: question
 ---
 
 If you have a question, you can file an issue here or

@@ -1,5 +1,7 @@
-import pytest
 from shutil import which
+
+import pytest
+
 
 def onlyif_cmds_exist(*commands):
     """
@@ -7,6 +9,7 @@ def onlyif_cmds_exist(*commands):
     """
     for cmd in commands:
         if not which(cmd):
-            return pytest.mark.skip("This test runs only if command '{0}' "
-                        "is installed".format(cmd))
+            return pytest.mark.skip(
+                "This test runs only if command '{}' " "is installed".format(cmd)
+            )
     return lambda f: f

@@ -1,5 +1,4 @@
-README FIRST
-============
+# README FIRST
 
 Please do not add new templates for nbconvert here.
 

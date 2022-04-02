@@ -5,11 +5,13 @@
 
 import json
 
-from .base import ExportersTestsBase
-from ..notebook import NotebookExporter
-
 from nbformat import validate
+
 from nbconvert.tests.base import assert_big_text_equal
+
+from ..notebook import NotebookExporter
+from .base import ExportersTestsBase
+
 
 class TestNotebookExporter(ExportersTestsBase):
     """Contains test functions for notebook.py"""
@@ -36,4 +38,4 @@ class TestNotebookExporter(ExportersTestsBase):
         exporter = self.exporter_class(nbformat_version=2)
         (output, resources) = exporter.from_filename(self._get_notebook())
         nb = json.loads(output)
-        self.assertEqual(nb['nbformat'], 2)
+        self.assertEqual(nb["nbformat"], 2)

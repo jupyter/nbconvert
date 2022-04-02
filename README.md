@@ -1,4 +1,5 @@
 # nbconvert
+
 ### Jupyter Notebook Conversion
 
 [![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)
@@ -12,18 +13,18 @@ The **nbconvert** tool, `jupyter nbconvert`, converts notebooks to various other
 formats via [Jinja][] templates. The nbconvert tool allows you to convert an
 `.ipynb` notebook file into various static formats including:
 
-* HTML
-* LaTeX
-* PDF
-* Reveal JS
-* Markdown (md)
-* ReStructured Text (rst)
-* executable script
+- HTML
+- LaTeX
+- PDF
+- Reveal JS
+- Markdown (md)
+- ReStructured Text (rst)
+- executable script
 
 ## Usage
 
-From the command line, use nbconvert to convert a Jupyter notebook (*input*) to a
-a different format (*output*). The basic command structure is:
+From the command line, use nbconvert to convert a Jupyter notebook (_input_) to a
+a different format (_output_). The basic command structure is:
 
     $ jupyter nbconvert --to <output format> <input notebook>
 
@@ -40,7 +41,7 @@ This command creates an HTML output file named `mynotebook.html`.
 
 ## Dev Install
 
-Check if pandoc is installed (``pandoc --version``); if needed, install:
+Check if pandoc is installed (`pandoc --version`); if needed, install:
 
 ```
 sudo apt-get install pandoc
@@ -89,4 +90,4 @@ py.test --pyargs nbconvert
 - [Jupyter mailing list](https://groups.google.com/forum/#!forum/jupyter)
 - [Project Jupyter website](https://jupyter.org)
 
-[Jinja]: http://jinja.pocoo.org/
+[jinja]: http://jinja.pocoo.org/

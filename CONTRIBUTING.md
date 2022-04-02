@@ -7,33 +7,31 @@ and the [IPython Contributing Guide](https://github.com/ipython/ipython/blob/mas
 ## Testing
 
 In order to test all the features of nbconvert you need to have `pandoc` and
-`TexLive` installed. 
+`TexLive` installed.
 
 In your environment `pip install -e '.[all]'` will be needed to be able to
-run all of the tests and to test all of the features. 
+run all of the tests and to test all of the features.
 
 If you only want to run some of the tests run `pip install -e '.[test]'`.
 
 ## Documentation
 
-NbConvert includes a substantial amount of both user and API documentation. 
+NbConvert includes a substantial amount of both user and API documentation.
 
-We use sphinx to build the API documentation. 
+We use sphinx to build the API documentation.
 
-Much of the user documentation is written in Jupyter Notebooks and converted on the fly with nbsphinx. 
-
+Much of the user documentation is written in Jupyter Notebooks and converted on the fly with nbsphinx.
 
 To build nbconvert's documentation you need to have `pandoc` and
-`TexLive` installed. 
+`TexLive` installed.
 
 If you want to build the docs you will need to install the docs dependencies in addition to
-the standard dependencies. You can get all of the dependencies by running `pip install -e
-'.[all]'` and if you want only those needed to run the docs you can access them with `pip install -e '.[docs]'`.
+the standard dependencies. You can get all of the dependencies by running `pip install -e '.[all]'` and if you want only those needed to run the docs you can access them with `pip install -e '.[docs]'`.
 
 Full build instructions can be found at [docs/README.md](docs/README.md).
 
-
 ## Code Styling
+
 `nbconvert` has adopted automatic code formatting so you shouldn't
 need to worry too much about your code style.
 As long as your code is valid,
@@ -46,13 +44,13 @@ To install `pre-commit` manually, run the following:
 ```bash
 pip install pre-commit
 pre-commit install
-````
+```
 
 You can invoke the pre-commit hook by hand at any time with:
 
 ```bash
 pre-commit run
-````
+```
 
 which should run any autoformatting on your code
 and tell you about any errors it couldn't fix automatically.
@@ -67,7 +65,7 @@ yourself after that.
 # Releasing
 
 If you are going to release a version of `nbconvert` you should also be capable
-of testing it and building the docs. 
+of testing it and building the docs.
 
 Please follow the instructions in [Testing](#testing) and [Documentation](#documentation) if
 you are unfamiliar with how to do so.

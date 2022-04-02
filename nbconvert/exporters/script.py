@@ -4,10 +4,10 @@
 # Distributed under the terms of the Modified BSD License.
 
 import entrypoints
-from .templateexporter import TemplateExporter
-
 from traitlets import Dict, default
+
 from .base import get_exporter
+from .templateexporter import TemplateExporter
 
 
 class ScriptExporter(TemplateExporter):
@@ -16,13 +16,13 @@ class ScriptExporter(TemplateExporter):
     _lang_exporters = Dict()
     export_from_notebook = "Script"
 
-    @default('template_file')
+    @default("template_file")
     def _template_file_default(self):
-        return 'script.j2'
+        return "script.j2"
 
-    @default('template_name')
+    @default("template_name")
     def _template_name_default(self):
-        return 'script'
+        return "script"
 
     def _get_language_exporter(self, lang_name):
         """Find an exporter for the language name from notebook metadata.
@@ -32,8 +32,7 @@ class ScriptExporter(TemplateExporter):
         """
         if lang_name not in self._lang_exporters:
             try:
-                Exporter = entrypoints.get_single(
-                    'nbconvert.exporters.script', lang_name).load()
+                Exporter = entrypoints.get_single("nbconvert.exporters.script", lang_name).load()
             except entrypoints.NoSuchEntryPoint:
                 self._lang_exporters[lang_name] = None
             else:
@@ -42,11 +41,11 @@ class ScriptExporter(TemplateExporter):
         return self._lang_exporters[lang_name]
 
     def from_notebook_node(self, nb, resources=None, **kw):
-        langinfo = nb.metadata.get('language_info', {})
+        langinfo = nb.metadata.get("language_info", {})
 
         # delegate to custom exporter, if specified
-        exporter_name = langinfo.get('nbconvert_exporter')
-        if exporter_name and exporter_name != 'script':
+        exporter_name = langinfo.get("nbconvert_exporter")
+        if exporter_name and exporter_name != "script":
             self.log.debug("Loading script exporter: %s", exporter_name)
             if exporter_name not in self._exporters:
                 Exporter = get_exporter(exporter_name)
@@ -56,7 +55,7 @@ class ScriptExporter(TemplateExporter):
             return exporter.from_notebook_node(nb, resources, **kw)
 
         # Look up a script exporter for this notebook's language
-        lang_name = langinfo.get('name')
+        lang_name = langinfo.get("name")
         if lang_name:
             self.log.debug("Using script exporter for language: %s", lang_name)
             exporter = self._get_language_exporter(lang_name)
@@ -64,6 +63,6 @@ class ScriptExporter(TemplateExporter):
                 return exporter.from_notebook_node(nb, resources, **kw)
 
         # Fall back to plain script export
-        self.file_extension = langinfo.get('file_extension', '.txt')
-        self.output_mimetype = langinfo.get('mimetype', 'text/plain')
+        self.file_extension = langinfo.get("file_extension", ".txt")
+        self.output_mimetype = langinfo.get("mimetype", "text/plain")
         return super().from_notebook_node(nb, resources, **kw)

@@ -1,4 +1,3 @@
-# coding: utf-8
 """io-related utilities"""
 
 # Copyright (c) Jupyter Development Team.
@@ -11,8 +10,9 @@ import random
 import shutil
 import sys
 
-def unicode_std_stream(stream='stdout'):
-    u"""Get a wrapper to write unicode to stdout/stderr as UTF-8.
+
+def unicode_std_stream(stream="stdout"):
+    """Get a wrapper to write unicode to stdout/stderr as UTF-8.
 
     This ignores environment variables and default encodings, to reliably write
     unicode to stdout or stderr.
@@ -21,8 +21,8 @@ def unicode_std_stream(stream='stdout'):
 
         unicode_std_stream().write(u'ł@e¶ŧ←')
     """
-    assert stream in ('stdout', 'stderr')
-    stream  = getattr(sys, stream)
+    assert stream in ("stdout", "stderr")
+    stream = getattr(sys, stream)
 
     try:
         stream_b = stream.buffer
@@ -30,10 +30,11 @@ def unicode_std_stream(stream='stdout'):
         # sys.stdout has been replaced - use it directly
         return stream
 
-    return codecs.getwriter('utf-8')(stream_b)
+    return codecs.getwriter("utf-8")(stream_b)
+
 
 def unicode_stdin_stream():
-    u"""Get a wrapper to read unicode from stdin as UTF-8.
+    """Get a wrapper to read unicode from stdin as UTF-8.
 
     This ignores environment variables and default encodings, to reliably read unicode from stdin.
 
@@ -41,17 +42,18 @@ def unicode_stdin_stream():
 
         totreat = unicode_stdin_stream().read()
     """
-    stream  = sys.stdin
+    stream = sys.stdin
     try:
         stream_b = stream.buffer
     except AttributeError:
         return stream
 
-    return codecs.getreader('utf-8')(stream_b)
+    return codecs.getreader("utf-8")(stream_b)
+
 
 class FormatSafeDict(dict):
     def __missing__(self, key):
-        return '{' + key + '}'
+        return "{" + key + "}"
 
 
 try:
@@ -98,7 +100,7 @@ def link_or_copy(src, dst):
             # anyway, we get duplicate files - see http://bugs.python.org/issue21876
             return
 
-        new_dst = dst + "-temp-%04X" %(random.randint(1, 16**4), )
+        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"
         try:
             link_or_copy(src, new_dst)
         except:
@@ -129,4 +131,4 @@ def ensure_dir_exists(path, mode=0o755):
             if e.errno != errno.EEXIST:
                 raise
     elif not os.path.isdir(path):
-        raise IOError("%r exists but is not a directory" % path)
+        raise OSError("%r exists but is not a directory" % path)

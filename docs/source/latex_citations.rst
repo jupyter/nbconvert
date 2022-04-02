@@ -13,4 +13,3 @@ the nbconvert-examples_ repository.
 
 .. _nbconvert-examples: https://github.com/jupyter/nbconvert-examples
 .. _citations example: https://nbviewer.jupyter.org/github/jupyter/nbconvert-examples/blob/master/citations/Tutorial.ipynb
-

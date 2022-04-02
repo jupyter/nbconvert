@@ -14,12 +14,13 @@ class PythonExporter(TemplateExporter):
     Note that the file produced will have a shebang of '#!/usr/bin/env python'
     regardless of the actual python version used in the notebook.
     """
-    @default('file_extension')
+
+    @default("file_extension")
     def _file_extension_default(self):
-        return '.py'
+        return ".py"
 
-    @default('template_name')
+    @default("template_name")
     def _template_name_default(self):
-        return 'python'
+        return "python"
 
-    output_mimetype = 'text/x-python'
+    output_mimetype = "text/x-python"
