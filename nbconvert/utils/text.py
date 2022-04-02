@@ -29,13 +29,13 @@ def indent(instr, nspaces=4, ntabs=0, flatten=False):
     """
     if instr is None:
         return
-    ind = '\t' * ntabs + ' ' * nspaces
+    ind = "\t" * ntabs + " " * nspaces
     if flatten:
-        pat = re.compile(r'^\s*', re.MULTILINE)
+        pat = re.compile(r"^\s*", re.MULTILINE)
     else:
-        pat = re.compile(r'^', re.MULTILINE)
+        pat = re.compile(r"^", re.MULTILINE)
     outstr = re.sub(pat, ind, instr)
     if outstr.endswith(os.linesep + ind):
-        return outstr[:-len(ind)]
+        return outstr[: -len(ind)]
     else:
         return outstr

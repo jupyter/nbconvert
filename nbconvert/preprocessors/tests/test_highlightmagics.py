@@ -1,12 +1,11 @@
 """Tests for the HighlightMagics preprocessor"""
 
-from .base import PreprocessorTestsBase
 from ..highlightmagics import HighlightMagicsPreprocessor
+from .base import PreprocessorTestsBase
 
 
 class TestHighlightMagics(PreprocessorTestsBase):
     """Contains test functions for highlightmagics.py"""
-
 
     def build_preprocessor(self):
         """Make an instance of a preprocessor"""
@@ -23,7 +22,9 @@ class TestHighlightMagics(PreprocessorTestsBase):
         nb = self.build_notebook()
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
-        nb.cells[0].source = """%%R -i x,y -o XYcoef
+        nb.cells[
+            0
+        ].source = """%%R -i x,y -o XYcoef
             lm.fit <- lm(y~x)
             par(mfrow=c(2,2))
             print(summary(lm.fit))
@@ -32,19 +33,21 @@ class TestHighlightMagics(PreprocessorTestsBase):
 
         nb, res = preprocessor(nb, res)
 
-        assert('magics_language' in nb.cells[0]['metadata'])
+        assert "magics_language" in nb.cells[0]["metadata"]
 
-        self.assertEqual(nb.cells[0]['metadata']['magics_language'], 'r')
+        self.assertEqual(nb.cells[0]["metadata"]["magics_language"], "r")
 
     def test_no_false_positive(self):
         """Test that HighlightMagicsPreprocessor does not tag false positives"""
         nb = self.build_notebook()
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
-        nb.cells[0].source = """# this should not be detected
+        nb.cells[
+            0
+        ].source = """# this should not be detected
                 print(\"""
                 %%R -i x, y
                 \""")"""
         nb, res = preprocessor(nb, res)
 
-        assert('magics_language' not in nb.cells[0]['metadata'])
+        assert "magics_language" not in nb.cells[0]["metadata"]

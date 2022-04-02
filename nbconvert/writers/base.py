@@ -12,20 +12,20 @@ from ..utils.base import NbConvertBase
 
 class WriterBase(NbConvertBase):
     """Consumes output from nbconvert export...() methods and writes to a
-    useful location. """
+    useful location."""
 
-
-    files = List([], help="""
-        List of the files that the notebook references.  Files will be 
-        included with written output.""").tag(config=True)
-
+    files = List(
+        [],
+        help="""
+        List of the files that the notebook references.  Files will be
+        included with written output.""",
+    ).tag(config=True)
 
     def __init__(self, config=None, **kw):
         """
         Constructor
         """
         super().__init__(config=config, **kw)
-
 
     def write(self, output, resources, **kw):
         """

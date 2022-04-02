@@ -8,6 +8,7 @@ jupyter_nbconvert_config.py.
 
 """
 import os.path
+
 from nbconvert.nbconvertapp import NbConvertApp
 
 header = """\
@@ -48,9 +49,9 @@ try:
     indir = os.path.dirname(__file__)
 except NameError:
     indir = os.path.dirname(os.getcwd())
-destination = os.path.join(indir, 'source/config_options.rst')
+destination = os.path.join(indir, "source/config_options.rst")
 
-with open(destination, 'w') as f:
+with open(destination, "w") as f:
     app = NbConvertApp()
     f.write(header)
     f.write(app.document_flag_help())

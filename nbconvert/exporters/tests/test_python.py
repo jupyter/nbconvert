@@ -3,15 +3,15 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from .base import ExportersTestsBase
 from ..python import PythonExporter
+from .base import ExportersTestsBase
 
 
 class TestPythonExporter(ExportersTestsBase):
     """Tests for PythonExporter"""
 
     exporter_class = PythonExporter
-    should_include_raw = ['python']
+    should_include_raw = ["python"]
 
     def test_constructor(self):
         """Can a PythonExporter be constructed?"""

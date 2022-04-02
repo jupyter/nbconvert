@@ -5,14 +5,15 @@ notebook file.  The extracted outputs are returned in the 'resources' dictionary
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from textwrap import dedent
-from binascii import a2b_base64
-import sys
-import os
 import json
+import os
+import sys
+from binascii import a2b_base64
 from mimetypes import guess_extension
+from textwrap import dedent
 
-from traitlets import Unicode, Set
+from traitlets import Set, Unicode
+
 from .base import Preprocessor
 
 
@@ -24,16 +25,18 @@ def guess_extension_without_jpe(mimetype):
     as mimetypes.guess_extension
     """
     ext = guess_extension(mimetype)
-    if ext==".jpe":
-        ext=".jpeg"
+    if ext == ".jpe":
+        ext = ".jpeg"
     return ext
+
 
 def platform_utf_8_encode(data):
     if isinstance(data, str):
-        if sys.platform == 'win32':
-            data = data.replace('\n', '\r\n')
-        data = data.encode('utf-8')
+        if sys.platform == "win32":
+            data = data.replace("\n", "\r\n")
+        data = data.encode("utf-8")
     return data
+
 
 class ExtractOutputPreprocessor(Preprocessor):
     """
@@ -41,13 +44,13 @@ class ExtractOutputPreprocessor(Preprocessor):
     outputs are returned in the 'resources' dictionary.
     """
 
-    output_filename_template = Unicode(
-        "{unique_key}_{cell_index}_{index}{extension}"
-    ).tag(config=True)
+    output_filename_template = Unicode("{unique_key}_{cell_index}_{index}{extension}").tag(
+        config=True
+    )
 
-    extract_output_types = Set(
-        {'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}
-    ).tag(config=True)
+    extract_output_types = Set({"image/png", "image/jpeg", "image/svg+xml", "application/pdf"}).tag(
+        config=True
+    )
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
@@ -64,29 +67,29 @@ class ExtractOutputPreprocessor(Preprocessor):
             Index of the cell being processed (see base.py)
         """
 
-        #Get the unique key from the resource dict if it exists.  If it does not
-        #exist, use 'output' as the default.  Also, get files directory if it
-        #has been specified
-        unique_key = resources.get('unique_key', 'output')
-        output_files_dir = resources.get('output_files_dir', None)
+        # Get the unique key from the resource dict if it exists.  If it does not
+        # exist, use 'output' as the default.  Also, get files directory if it
+        # has been specified
+        unique_key = resources.get("unique_key", "output")
+        output_files_dir = resources.get("output_files_dir", None)
 
-        #Make sure outputs key exists
-        if not isinstance(resources['outputs'], dict):
-            resources['outputs'] = {}
+        # Make sure outputs key exists
+        if not isinstance(resources["outputs"], dict):
+            resources["outputs"] = {}
 
-        #Loop through all of the outputs in the cell
-        for index, out in enumerate(cell.get('outputs', [])):
-            if out.output_type not in {'display_data', 'execute_result'}:
+        # Loop through all of the outputs in the cell
+        for index, out in enumerate(cell.get("outputs", [])):
+            if out.output_type not in {"display_data", "execute_result"}:
                 continue
-            if 'text/html' in out.data:
-                out['data']['text/html'] = dedent(out['data']['text/html'])
-            #Get the output in data formats that the template needs extracted
+            if "text/html" in out.data:
+                out["data"]["text/html"] = dedent(out["data"]["text/html"])
+            # Get the output in data formats that the template needs extracted
             for mime_type in self.extract_output_types:
                 if mime_type in out.data:
                     data = out.data[mime_type]
 
                     # Binary files are base64-encoded, SVG is already XML
-                    if mime_type in {'image/png', 'image/jpeg', 'application/pdf'}:
+                    if mime_type in {"image/png", "image/jpeg", "application/pdf"}:
                         # data is b64-encoded as text (str, unicode),
                         # we want the original bytes
                         data = a2b_base64(data)
@@ -100,7 +103,7 @@ class ExtractOutputPreprocessor(Preprocessor):
                             # We need to guess the encoding in this
                             # instance. Some modules that return raw data like
                             # svg can leave the data in byte form instead of str
-                            data = data.decode('utf-8')
+                            data = data.decode("utf-8")
                         data = platform_utf_8_encode(json.dumps(data))
                     else:
                         # All other text_type data will fall into this path
@@ -108,17 +111,15 @@ class ExtractOutputPreprocessor(Preprocessor):
 
                     ext = guess_extension_without_jpe(mime_type)
                     if ext is None:
-                        ext = '.' + mime_type.rsplit('/')[-1]
-                    if out.metadata.get('filename', ''):
-                        filename = out.metadata['filename']
+                        ext = "." + mime_type.rsplit("/")[-1]
+                    if out.metadata.get("filename", ""):
+                        filename = out.metadata["filename"]
                         if not filename.endswith(ext):
-                            filename+=ext
+                            filename += ext
                     else:
                         filename = self.output_filename_template.format(
-                                    unique_key=unique_key,
-                                    cell_index=cell_index,
-                                    index=index,
-                                    extension=ext)
+                            unique_key=unique_key, cell_index=cell_index, index=index, extension=ext
+                        )
 
                     # On the cell, make the figure available via
                     #   cell.outputs[i].metadata.filenames['mime/type']
@@ -126,10 +127,10 @@ class ExtractOutputPreprocessor(Preprocessor):
                     #   cell.outputs[i].data['mime/type'] contains the data
                     if output_files_dir is not None:
                         filename = os.path.join(output_files_dir, filename)
-                    out.metadata.setdefault('filenames', {})
-                    out.metadata['filenames'][mime_type] = filename
+                    out.metadata.setdefault("filenames", {})
+                    out.metadata["filenames"][mime_type] = filename
 
-                    if filename in resources['outputs']:
+                    if filename in resources["outputs"]:
                         raise ValueError(
                             "Your outputs have filename metadata associated "
                             "with them. Nbconvert saves these outputs to "
@@ -139,9 +140,9 @@ class ExtractOutputPreprocessor(Preprocessor):
                             "associated with more than one output. The second "
                             "output associated with this filename is in cell "
                             "{}.".format(filename, cell_index)
-                            )
-                    #In the resources, make the figure available via
+                        )
+                    # In the resources, make the figure available via
                     #   resources['outputs']['filename'] = data
-                    resources['outputs'][filename] = data
+                    resources["outputs"][filename] = data
 
         return cell, resources

@@ -3,12 +3,13 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from ..utils.base import NbConvertBase
 from traitlets import Bool
+
+from ..utils.base import NbConvertBase
 
 
 class Preprocessor(NbConvertBase):
-    """ A configurable preprocessor
+    """A configurable preprocessor
 
     Inherit from this class if you wish to have configurability for your
     preprocessor.
@@ -23,7 +24,7 @@ class Preprocessor(NbConvertBase):
     Disabled by default and can be enabled via the config by
         'c.YourPreprocessorName.enabled = True'
     """
-    
+
     enabled = Bool(False).tag(config=True)
 
     def __init__(self, **kw):
@@ -37,13 +38,12 @@ class Preprocessor(NbConvertBase):
         `**kw`
             Additional keyword arguments passed to parent
         """
-        
+
         super().__init__(**kw)
 
     def __call__(self, nb, resources):
         if self.enabled:
-            self.log.debug("Applying preprocessor: %s",
-                           self.__class__.__name__)
+            self.log.debug("Applying preprocessor: %s", self.__class__.__name__)
             return self.preprocess(nb, resources)
         else:
             return nb, resources
@@ -85,6 +85,5 @@ class Preprocessor(NbConvertBase):
             Index of the cell being processed
         """
 
-        raise NotImplementedError('should be implemented by subclass')
+        raise NotImplementedError("should be implemented by subclass")
         return cell, resources
-

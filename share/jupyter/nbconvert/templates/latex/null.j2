@@ -30,7 +30,7 @@ consider calling super even if it is a leaf block, we might insert more blocks l
 ((*- block body -*))
 ((*- for cell in nb.cells -*))
     ((*- block any_cell scoped -*))
-        ((*- if cell.cell_type == 'code'-*)) 
+        ((*- if cell.cell_type == 'code'-*))
             ((*- if resources.global_content_filter.include_code -*))
             ((*- block codecell scoped -*))
                 ((*- if resources.global_content_filter.include_input and not cell.get("transient",{}).get("remove_source", false) -*))

@@ -1,8 +1,8 @@
 """Backport of Python 3.11's contextlib.chdir."""
 
 
-from contextlib import AbstractContextManager
 import os
+from contextlib import AbstractContextManager
 
 
 class chdir(AbstractContextManager):

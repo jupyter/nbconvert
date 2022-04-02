@@ -7,12 +7,12 @@ filter.
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from __future__ import print_function, absolute_import
 
 import re
 
-from .base import Preprocessor
 from traitlets import Dict
+
+from .base import Preprocessor
 
 
 class HighlightMagicsPreprocessor(Preprocessor):
@@ -21,25 +21,29 @@ class HighlightMagicsPreprocessor(Preprocessor):
     """
 
     # list of magic language extensions and their associated pygment lexers
-    default_languages = Dict({
-            '%%R': 'r',
-            '%%bash': 'bash',
-            '%%cython': 'cython',
-            '%%javascript': 'javascript',
-            '%%julia': 'julia',
-            '%%latex': 'latex',
-            '%%octave': 'octave',
-            '%%perl': 'perl',
-            '%%ruby': 'ruby',
-            '%%sh': 'sh',
-            '%%sql': 'sql',
-    })
+    default_languages = Dict(
+        {
+            "%%R": "r",
+            "%%bash": "bash",
+            "%%cython": "cython",
+            "%%javascript": "javascript",
+            "%%julia": "julia",
+            "%%latex": "latex",
+            "%%octave": "octave",
+            "%%perl": "perl",
+            "%%ruby": "ruby",
+            "%%sh": "sh",
+            "%%sql": "sql",
+        }
+    )
 
     # user defined language extensions
     languages = Dict(
-        help=("Syntax highlighting for magic's extension languages. "
-         "Each item associates a language magic extension such as %%R, "
-         "with a pygments lexer such as r.")
+        help=(
+            "Syntax highlighting for magic's extension languages. "
+            "Each item associates a language magic extension such as %%R, "
+            "with a pygments lexer such as r."
+        )
     ).tag(config=True)
 
     def __init__(self, config=None, **kw):
@@ -53,8 +57,7 @@ class HighlightMagicsPreprocessor(Preprocessor):
         # build a regular expression to catch language extensions and choose
         # an adequate pygments lexer
         any_language = "|".join(self.default_languages.keys())
-        self.re_magic_language = re.compile(
-            r'^\s*({0})\s+'.format(any_language))
+        self.re_magic_language = re.compile(rf"^\s*({any_language})\s+")
 
     def which_magic_language(self, source):
         """
@@ -96,5 +99,5 @@ class HighlightMagicsPreprocessor(Preprocessor):
         if cell.cell_type == "code":
             magic_language = self.which_magic_language(cell.source)
             if magic_language:
-                cell['metadata']['magics_language'] = magic_language
+                cell["metadata"]["magics_language"] = magic_language
         return cell, resources

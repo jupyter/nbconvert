@@ -36,7 +36,7 @@
 </div>
 {%- endblock empty_in_prompt %}
 
-{# 
+{#
   output_prompt doesn't do anything in HTML,
   because there is a prompt div in each output area (see output block)
 #}
@@ -128,11 +128,11 @@ unknown type  {{ cell.type }}
 {% block data_html scoped -%}
 <div class="output_html rendered_html output_subarea {{ extra_class }}">
 {%- if output.get('metadata', {}).get('text/html', {}).get('isolated') -%}
-<iframe 
-    class="isolated-iframe" 
-    style="height:520px; width:100%; margin:0; padding: 0" 
-    frameborder="0" 
-    scrolling="auto" 
+<iframe
+    class="isolated-iframe"
+    style="height:520px; width:100%; margin:0; padding: 0"
+    frameborder="0"
+    scrolling="auto"
     src="data:text/html;base64,{{output.data['text/html'] | text_base64}}">
 </iframe>
 {%- else -%}
@@ -237,8 +237,8 @@ var element = $('#{{ div_id }}');
 
 {%- block data_widget_state scoped %}
 {% set div_id = uuid4() %}
-{% set datatype_list = output.data | filter_data_type %} 
-{% set datatype = datatype_list[0]%} 
+{% set datatype_list = output.data | filter_data_type %}
+{% set datatype = datatype_list[0]%}
 <div id="{{ div_id }}" class="output_subarea output_widget_state {{ extra_class }}">
 <script type="text/javascript">
 var element = $('#{{ div_id }}');
@@ -251,8 +251,8 @@ var element = $('#{{ div_id }}');
 
 {%- block data_widget_view scoped %}
 {% set div_id = uuid4() %}
-{% set datatype_list = output.data | filter_data_type %} 
-{% set datatype = datatype_list[0]%} 
+{% set datatype_list = output.data | filter_data_type %}
+{% set datatype = datatype_list[0]%}
 <div id="{{ div_id }}" class="output_subarea output_widget_view {{ extra_class }}">
 <script type="text/javascript">
 var element = $('#{{ div_id }}');
@@ -264,7 +264,7 @@ var element = $('#{{ div_id }}');
 {%- endblock data_widget_view -%}
 
 {%- block footer %}
-{% set mimetype = 'application/vnd.jupyter.widget-state+json'%} 
+{% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
 {{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}

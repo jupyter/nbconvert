@@ -1,6 +1,6 @@
 {
-    "base_template": "classic",
-    "mimetypes": {
-        "text/html": true
-    }
+  "base_template": "classic",
+  "mimetypes": {
+    "text/html": true
+  }
 }

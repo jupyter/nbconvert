@@ -8,14 +8,14 @@ import os
 import shutil
 from tempfile import TemporaryDirectory
 
-from .base import ExportersTestsBase
-from ..pdf import PDFExporter
 from ...tests.utils import onlyif_cmds_exist
+from ..pdf import PDFExporter
+from .base import ExportersTestsBase
 
-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Class
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 class TestPDF(ExportersTestsBase):
     """Test PDF export"""
@@ -26,8 +26,7 @@ class TestPDF(ExportersTestsBase):
         """Can a PDFExporter be constructed?"""
         self.exporter_class()
 
-
-    @onlyif_cmds_exist('xelatex', 'pandoc')
+    @onlyif_cmds_exist("xelatex", "pandoc")
     def test_export(self):
         """Smoke test PDFExporter"""
         with TemporaryDirectory() as td:
