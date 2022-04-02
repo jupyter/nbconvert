@@ -10,6 +10,7 @@ import nbformat
 import pytest
 from traitlets.tests.utils import check_help_all_output
 
+from nbconvert import nbconvertapp  # noqa
 from nbconvert.exporters import HTMLExporter
 
 from ..postprocessors import PostProcessorBase

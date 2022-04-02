@@ -81,10 +81,6 @@ class Testsvg2pdf(PreprocessorTestsBase):
         assert preprocessor.inkscape_version == "0.92.3"
 
     def test_inkscape_pre_v1_command(self):
-        preprocessor = self.build_preprocessor(inkscape_version="0.92.3")
-        assert preprocessor.command == "0.92.3"
-
-    def test_inkscape_pre_v1_command_fake(self):
         preprocessor = self.build_preprocessor(inkscape="fake-inkscape", inkscape_version="0.92.3")
         assert preprocessor.command == [
             "fake-inkscape",
