@@ -11,7 +11,6 @@ from tempfile import TemporaryDirectory
 import shutil
 from traitlets import Integer, List, Bool, Instance, Unicode, default
 from typing import Optional
-from testpath.tempdir import TemporaryWorkingDirectory
 from .latex import LatexExporter
 from ..utils import _contextlib_chdir
 
