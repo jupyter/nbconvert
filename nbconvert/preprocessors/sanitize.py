@@ -4,7 +4,6 @@ NBConvert Preprocessor for sanitizing HTML rendering of notebooks.
 
 import warnings
 
-import bleach
 from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
