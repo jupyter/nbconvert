@@ -2,10 +2,47 @@
 NBConvert Preprocessor for sanitizing HTML rendering of notebooks.
 """
 
-from bleach import ALLOWED_ATTRIBUTES, ALLOWED_STYLES, ALLOWED_TAGS, clean
+import warnings
+
+import bleach
+from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
+
+_USE_BLEACH_CSS_SANITIZER = False
+_USE_BLEACH_STYLES = False
+
+
+try:
+    # bleach[css] >=5.0
+    from bleach.css_sanitizer import (
+        CSSSanitizer,
+        ALLOWED_CSS_PROPERTIES as ALLOWED_STYLES, 
+    )
+    _USE_BLEACH_CSS_SANITIZER = True
+    _USE_BLEACH_STYLES = False
+except ImportError:
+    try:
+        # bleach <5
+        from bleach import ALLOWED_STYLES
+        _USE_BLEACH_CSS_SANITIZER = False
+        _USE_BLEACH_STYLES = True
+        warnings.warn(
+            "Support for bleach <5 will be removed in a future version of nbconvert", 
+            DeprecationWarning
+        )
+
+    except ImportError:
+        warnings.warn(
+            "The installed bleach/tinycss2 do not provide CSS sanitization, "
+            "please upgrade to bleach >=5",
+            UserWarning
+        )
+
+
 from .base import Preprocessor
+
+__all__ = ["SanitizeHTML"]
 
 
 class SanitizeHTML(Preprocessor):
@@ -118,11 +155,17 @@ class SanitizeHTML(Preprocessor):
         """
         Sanitize a string containing raw HTML tags.
         """
-        return clean(
-            html_str,
+        kwargs = dict(
             tags=self.tags,
             attributes=self.attributes,
-            styles=self.styles,
             strip=self.strip,
             strip_comments=self.strip_comments,
         )
+
+        if _USE_BLEACH_CSS_SANITIZER:
+            css_sanitizer = CSSSanitizer(allowed_css_properties=self.styles)
+            kwargs.update(css_sanitizer=css_sanitizer)
+        elif _USE_BLEACH_STYLES:
+            kwargs.update(styles=self.styles)
+
+        return clean(html_str, **kwargs)
