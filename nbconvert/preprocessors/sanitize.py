@@ -8,35 +8,34 @@ import bleach
 from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
-
 _USE_BLEACH_CSS_SANITIZER = False
 _USE_BLEACH_STYLES = False
 
 
 try:
     # bleach[css] >=5.0
-    from bleach.css_sanitizer import (
-        CSSSanitizer,
-        ALLOWED_CSS_PROPERTIES as ALLOWED_STYLES, 
-    )
+    from bleach.css_sanitizer import ALLOWED_CSS_PROPERTIES as ALLOWED_STYLES
+    from bleach.css_sanitizer import CSSSanitizer
+
     _USE_BLEACH_CSS_SANITIZER = True
     _USE_BLEACH_STYLES = False
 except ImportError:
     try:
         # bleach <5
         from bleach import ALLOWED_STYLES
+
         _USE_BLEACH_CSS_SANITIZER = False
         _USE_BLEACH_STYLES = True
         warnings.warn(
-            "Support for bleach <5 will be removed in a future version of nbconvert", 
-            DeprecationWarning
+            "Support for bleach <5 will be removed in a future version of nbconvert",
+            DeprecationWarning,
         )
 
     except ImportError:
         warnings.warn(
             "The installed bleach/tinycss2 do not provide CSS sanitization, "
             "please upgrade to bleach >=5",
-            UserWarning
+            UserWarning,
         )
 
 
