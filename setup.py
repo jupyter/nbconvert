@@ -251,6 +251,7 @@ setup_args["install_requires"] = [
     "packaging",
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
+    "tinycss2",  # for bleach >=5
     "traitlets>=5.0",
 ]
 
