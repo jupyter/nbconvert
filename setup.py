@@ -237,20 +237,22 @@ setup_args = dict(
 )
 
 setup_args["install_requires"] = [
-    "mistune>=0.8.1,<2",
-    "jinja2>=2.4",
-    "pygments>=2.4.1",
-    "jupyterlab_pygments",
-    "traitlets>=5.0",
-    "jupyter_core",
-    "nbformat>=4.4",
-    "entrypoints>=0.2.2",
-    "bleach",
-    "pandocfilters>=1.4.1",
-    "defusedxml",
     "beautifulsoup4",
-    "nbclient>=0.5.0,<0.6.0",
+    "bleach",
+    "defusedxml",
+    "entrypoints>=0.2.2",
+    "jinja2>=2.4",
+    "jupyter_core",
+    "jupyterlab_pygments",
     "MarkupSafe>=2.0",
+    "mistune>=0.8.1,<2",
+    "nbclient>=0.5.0,<0.6.0",
+    "nbformat>=4.4",
+    "packaging",
+    "pandocfilters>=1.4.1",
+    "pygments>=2.4.1",
+    "tinycss2",  # for bleach >=5
+    "traitlets>=5.0",
 ]
 
 pyppeteer_req = "pyppeteer>=1,<1.1"
