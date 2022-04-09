@@ -247,7 +247,7 @@ setup_args["install_requires"] = [
     "MarkupSafe>=2.0",
     "mistune>=0.8.1,<2",
     "nbclient>=0.5.0",
-    "nbformat>=5.0",
+    "nbformat>=5.1",
     "packaging",
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
