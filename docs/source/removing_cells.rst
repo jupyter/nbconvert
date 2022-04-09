@@ -58,7 +58,7 @@ This additional example demonstrates using the CLI to remove cells with a certai
 
 .. code-block:: sh
 
-   jupyter nbconvert mynotebook.ipynb -TagRemovePreprocessor.remove_cell_tags='{"remove_cell"}'
+   jupyter nbconvert mynotebook.ipynb --TagRemovePreprocessor.enabled=True --TagRemovePreprocessor.remove_cell_tags remove_cell
 
 Removing cells using Regular Expressions on cell content
 --------------------------------------------------------
