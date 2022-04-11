@@ -4,6 +4,15 @@
 Changes in nbconvert
 ====================
 
+6.5.0
+-----
+* Support bleach 5, add packaging and tinycss2 dependencies by @bollwyvl in :ghpull:`1755`
+* Drop dependency on testpath. by @anntzer in :ghpull:`1723`
+* Adopt pre-commit by @blink1073 in :ghpull:`1744`, :ghpull:`1746`, :ghpull:`1748`, :ghpull:`1749`, :ghpull:`1757`
+* Add pytest settings and handle warnings by @blink1073 in :ghpull:`1745`
+* Update cli example by @leahecole in :ghpull:`1753`
+* Clean up workflows by @blink1073 in :ghpull:`1750`
+
 6.4.4
 -----
 * HTMLExporter: Respect the embed_images flag for HTML blocks :ghpull:`1721`
