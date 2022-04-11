@@ -1,4 +1,4 @@
-version_info = (6, 4, 5)
+version_info = (6, 5, 0)
 pre_info = ""
 dev_info = ""
 
