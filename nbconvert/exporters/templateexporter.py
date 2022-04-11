@@ -375,7 +375,7 @@ class TemplateExporter(Exporter):
 
         Parameters
         ----------
-        nb : `nbformat.NotebookNode`
+        nb : :class:`~nbformat.NotebookNode`
             Notebook node
         resources : dict
             Additional resources that can be accessed read/write by
