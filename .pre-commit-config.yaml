@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
       - id: end-of-file-fixer
       - id: check-case-conflict
@@ -35,7 +35,7 @@ repos:
       - id: prettier
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.31.1
+    rev: v2.32.0
     hooks:
       - id: pyupgrade
         args: [--py37-plus]
@@ -60,7 +60,7 @@ repos:
         stages: [manual]
 
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.14.2
+    rev: 0.14.3
     hooks:
       - id: check-jsonschema
         name: "Check GitHub Workflows"
