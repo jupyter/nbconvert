@@ -120,13 +120,11 @@ class MarkdownWithMath(mistune.Markdown):
     def output_open_html(self):
         # This makes mistune behave more like markedjs
         # (markedjs behing used by Jupyter Notebook and JupyterLab)
-        MathInlineGrammar.linebreak = re.compile(r'^ *\n(?!\s*$)')
-        MathInlineGrammar.text = re.compile(
-            r'^[\s\S]+?(?=[\\<!\[_*`~]|https?://| *\n|$)'
-        )
+        MathInlineGrammar.linebreak = re.compile(r"^ *\n(?!\s*$)")
+        MathInlineGrammar.text = re.compile(r"^[\s\S]+?(?=[\\<!\[_*`~]|https?://| *\n|$)")
         out = super().output_open_html()
-        MathInlineGrammar.linebreak = re.compile(r'^ {2,}\n(?!\s*$)')
-        MathInlineGrammar.text = re.compile(r'^[\s\S]+?(?=[\\<!\[_*`~]|https?://| {2,}\n|$)')
+        MathInlineGrammar.linebreak = re.compile(r"^ {2,}\n(?!\s*$)")
+        MathInlineGrammar.text = re.compile(r"^[\s\S]+?(?=[\\<!\[_*`~]|https?://| {2,}\n|$)")
         return out
 
 
