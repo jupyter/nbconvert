@@ -98,8 +98,32 @@ class MarkdownWithMath(Markdown):
             inline = MathInlineParser(renderer, hard_wrap=False)
         super().__init__(renderer, block, inline, plugins)
 
+    def render(self, s):
+        """Compatibility method with `mistune==0.8.4`."""
+        return self.parse(s)
+
 
 class IPythonRenderer(HTMLRenderer):
+    def __init__(
+        self,
+        escape=True,
+        allow_harmful_protocols=None,
+        embed_images=False,
+        exclude_anchor_links=False,
+        anchor_link_text="¶",
+        path="",
+        attachments=None,
+    ):
+        super().__init__(escape, allow_harmful_protocols)
+        self.embed_images = embed_images
+        self.exclude_anchor_links = exclude_anchor_links
+        self.anchor_link_text = anchor_link_text
+        self.path = path
+        if attachments is not None:
+            self.attachments = attachments
+        else:
+            self.attachments = {}
+
     def block_code(self, code, info=None):
         if info:
             try:
@@ -116,27 +140,22 @@ class IPythonRenderer(HTMLRenderer):
         return highlight(code, lexer, formatter)
 
     def block_html(self, html):
-        embed_images = self.options.get("embed_images", False)
-
-        if embed_images:
+        if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().block_html(html)
 
     def inline_html(self, html):
-        embed_images = self.options.get("embed_images", False)
-
-        if embed_images:
+        if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().inline_html(html)
 
     def heading(self, text, level):
         html = super().heading(text, level)
-        if self.options.get("exclude_anchor_links"):
+        if self.exclude_anchor_links:
             return html
-        anchor_link_text = self.options.get("anchor_link_text", "¶")
-        return add_anchor(html, anchor_link_text=anchor_link_text)
+        return add_anchor(html, anchor_link_text=self.anchor_link_text)
 
     def escape_html(self, text):
         return html_escape(text)
@@ -161,17 +180,15 @@ class IPythonRenderer(HTMLRenderer):
         :param text: alt text of the image.
         :param title: title text of the image.
         """
-        attachments = self.options.get("attachments", {})
         attachment_prefix = "attachment:"
-        embed_images = self.options.get("embed_images", False)
 
         if src.startswith(attachment_prefix):
             name = src[len(attachment_prefix) :]
 
-            if name not in attachments:
+            if name not in self.attachments:
                 raise InvalidNotebook(f"missing attachment: {name}")
 
-            attachment = attachments[name]
+            attachment = self.attachments[name]
             # we choose vector over raster, and lossless over lossy
             preferred_mime_types = ["image/svg+xml", "image/png", "image/jpeg"]
             for preferred_mime_type in preferred_mime_types:
@@ -183,7 +200,7 @@ class IPythonRenderer(HTMLRenderer):
             data = attachment[mime_type]
             src = "data:" + mime_type + ";base64," + data
 
-        elif embed_images:
+        elif self.embed_images:
             base64_url = self._src_to_base64(src)
 
             if base64_url is not None:
@@ -197,8 +214,7 @@ class IPythonRenderer(HTMLRenderer):
         :param src: source link of the file.
         :return: the base64 url or None if the file was not found.
         """
-        path = self.options.get("path", "")
-        src_path = os.path.join(path, src)
+        src_path = os.path.join(self.path, src)
 
         if not os.path.exists(src_path):
             return None
