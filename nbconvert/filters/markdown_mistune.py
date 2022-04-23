@@ -48,6 +48,9 @@ class MathBlockParser(BlockParser):
 
     RULE_NAMES = ("multiline_math",) + BlockParser.RULE_NAMES
 
+    # Regex for header that doesn't require space after '#'
+    AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)\s*([^\n]*?)$")
+
     def parse_multiline_math(self, m, state):
         """Pass token through mutiline math."""
         return {"type": "multiline_math", "text": m.group(0)}
@@ -61,6 +64,19 @@ def _dotall(pattern):
     to the undocumented `re.Scanner`.
     """
     return f"(?s:{pattern})"
+
+
+def _strip(text, *, prefix, suffix):
+    """Remove prefix and suffix from text, if present.
+
+    `InlineParser` sometimes return these affixes, even though it shouldn't.
+    """
+    np, ns = len(prefix), len(suffix)
+    if text[:np] == prefix:
+        text = text[np:]
+    if text[-ns:] == suffix:
+        text = text[:-ns]
+    return text
 
 
 class MathInlineParser(InlineParser):
@@ -78,11 +94,19 @@ class MathInlineParser(InlineParser):
     RULE_NAMES = ("block_math", "inline_math", "latex_environment") + InlineParser.RULE_NAMES
 
     def parse_inline_math(self, m, state):
-        text = m.group(1) or m.group(2)
+        text = m.group(1)
+        if text:
+            text = _strip(text, prefix="$", suffix="$")
+        else:
+            text = _strip(m.group(2), prefix="\\\\(", suffix="\\\\)")
         return "inline_math", text
 
     def parse_block_math(self, m, state):
-        text = m.group(1) or m.group(2)
+        text = m.group(1)
+        if text:
+            text = _strip(text, prefix="$$", suffix="$$")
+        else:
+            text = _strip(m.group(2), prefix="\\\\[", suffix="\\\\]")
         return "block_math", text
 
     def parse_latex_environment(self, m, state):
@@ -107,7 +131,7 @@ class IPythonRenderer(HTMLRenderer):
     def __init__(
         self,
         escape=True,
-        allow_harmful_protocols=None,
+        allow_harmful_protocols=True,
         embed_images=False,
         exclude_anchor_links=False,
         anchor_link_text="¶",
@@ -206,7 +230,7 @@ class IPythonRenderer(HTMLRenderer):
             if base64_url is not None:
                 src = base64_url
 
-        return super().image(src, title, text)
+        return super().image(src, text, title)
 
     def _src_to_base64(self, src):
         """Turn the source file into a base64 url.
