@@ -66,19 +66,6 @@ def _dotall(pattern):
     return f"(?s:{pattern})"
 
 
-def _strip(text, *, prefix, suffix):
-    """Remove prefix and suffix from text, if present.
-
-    `InlineParser` sometimes return these affixes, even though it shouldn't.
-    """
-    np, ns = len(prefix), len(suffix)
-    if text[:np] == prefix:
-        text = text[np:]
-    if text[-ns:] == suffix:
-        text = text[:-ns]
-    return text
-
-
 class MathInlineParser(InlineParser):
     r"""This interprets the content of LaTeX style math objects.
 
@@ -87,27 +74,38 @@ class MathInlineParser(InlineParser):
     delimiters from all these varieties, and extracts the type of environment
     in the last case (``foo`` in this example).
     """
-    INLINE_MATH = _dotall(r"(?<![\\$])[$](.+?)(?<!\\)[$]|[\\]{2}[(](.+?)[\\]{2}[)]")
-    BLOCK_MATH = _dotall(r"(?<!\\)[$]{2}(.*?)(?<!\\)[$]{2}|\\\\\[(.*?)\\\\\]")
+    BLOCK_MATH_TEX = _dotall(r"(?<!\\)\$\$(.*?)(?<!\\)\$\$")
+    BLOCK_MATH_LATEX = _dotall(r"(?<!\\)\\\\\[(.*?)(?<!\\)\\\\\]")
+    INLINE_MATH_TEX = _dotall(r"(?<![$\\])\$(.+?)(?<![$\\])\$")
+    INLINE_MATH_LATEX = _dotall(r"(?<!\\)\\\\\((.*?)(?<!\\)\\\\\)")
     LATEX_ENVIRONMENT = _dotall(r"\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}")
 
-    RULE_NAMES = ("block_math", "inline_math", "latex_environment") + InlineParser.RULE_NAMES
+    # The order is important here
+    RULE_NAMES = (
+        "block_math_tex",
+        "block_math_latex",
+        "inline_math_tex",
+        "inline_math_latex",
+        "latex_environment",
+    ) + InlineParser.RULE_NAMES
 
-    def parse_inline_math(self, m, state):
+    def parse_block_math_tex(self, m, state):
+        # sometimes the Scanner keeps the final '$$', so we use the
+        # full matched string and remove the math markers
+        text = m.group(0)[2:-2]
+        return "block_math", text
+
+    def parse_block_math_latex(self, m, state):
         text = m.group(1)
-        if text:
-            text = _strip(text, prefix="$", suffix="$")
-        else:
-            text = _strip(m.group(2), prefix="\\\\(", suffix="\\\\)")
+        return "block_math", text
+
+    def parse_inline_math_tex(self, m, state):
+        text = m.group(1)
         return "inline_math", text
 
-    def parse_block_math(self, m, state):
+    def parse_inline_math_latex(self, m, state):
         text = m.group(1)
-        if text:
-            text = _strip(text, prefix="$$", suffix="$$")
-        else:
-            text = _strip(m.group(2), prefix="\\\\[", suffix="\\\\]")
-        return "block_math", text
+        return "inline_math", text
 
     def parse_latex_environment(self, m, state):
         name, text = m.group(1), m.group(2)
