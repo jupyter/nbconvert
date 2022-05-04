@@ -88,28 +88,16 @@ def _get_css_files():
             _get_css_file(template_name, url, filename)
 
 
-def _add_all(reqs):
-    all_reqs = set()
-    for req in reqs:
-        all_reqs.add(req.split(" ; ")[0])
-    for req in all_reqs:
-        reqs.append(f'{req} ; extra == "all"')
-    return reqs
-
-
 def get_requires_for_build_wheel(config_settings=None):
     _get_css_files()
-    reqs = get_requires_for_build_wheel_orig(config_settings=config_settings)
-    return _add_all(reqs)
+    return get_requires_for_build_wheel_orig(config_settings=config_settings)
 
 
 def get_requires_for_build_sdist(config_settings=None):
     _get_css_files()
-    reqs = get_requires_for_build_sdist_orig(config_settings=config_settings)
-    return _add_all(reqs)
+    return get_requires_for_build_sdist_orig(config_settings=config_settings)
 
 
 def get_requires_for_build_editable(config_settings=None):
     _get_css_files()
-    reqs = get_requires_for_build_editable_orig(config_settings=config_settings)
-    return _add_all(reqs)
+    return get_requires_for_build_editable_orig(config_settings=config_settings)

@@ -72,6 +72,20 @@ docs = [
     "nbsphinx>=0.2.12",
     "ipython",
 ]
+all = [
+    "ipykernel",
+    "ipython",
+    "ipywidgets>=7",
+    "nbsphinx>=0.2.12",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-dependency",
+    "pyppeteer>=1,<1.1",
+    "sphinx>=1.5.1",
+    "sphinx_rtd_theme",
+    "tornado>=6.1",
+]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"

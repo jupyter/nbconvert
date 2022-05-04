@@ -68,3 +68,13 @@ repos:
         types: [yaml]
         args: ["--schemafile", "https://json.schemastore.org/github-workflow"]
         stages: [manual]
+
+  - repo: local
+    hooks:
+      - id: check-pyproject
+        name: check pyproject file
+        language: python
+        entry: python -m check_requirements
+        files: ^pyproject.toml$
+        stages: [manual]
+        additional_dependencies: ["tomli"]
