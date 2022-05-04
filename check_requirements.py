@@ -3,7 +3,6 @@ import sys
 
 from tomli import load
 
-
 with open("pyproject.toml", "rb") as fid:
     data = load(fid)
 
