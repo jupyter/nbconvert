@@ -83,8 +83,8 @@ Create the release
 
     .. code:: bash
 
-        python setup.py sdist
-        python setup.py bdist_wheel
+        pip install build
+        python -m build .
 
 #.  You can now test the ``wheel`` and the ``sdist`` locally before uploading
     to PyPI. Make sure to use `twine <https://github.com/pypa/twine>`_ to

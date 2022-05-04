@@ -33,9 +33,7 @@ from .exporter import Exporter
 JINJA_EXTENSIONS = ["jinja2.ext.loopcontrols"]
 
 ROOT = os.path.dirname(__file__)
-DEV_MODE = os.path.exists(os.path.join(ROOT, "../../setup.py")) and os.path.exists(
-    os.path.join(ROOT, "../../share")
-)
+DEV_MODE = os.path.exists(os.path.join(ROOT, "../../.git"))
 
 
 default_filters = {

@@ -37,7 +37,5 @@ docs/source/config_options.rst
 .history
 .vscode
 
-# Downloaded theme files
-share/jupyter/nbconvert/templates/lab/static/index.css
-share/jupyter/nbconvert/templates/lab/static/theme-dark.css
-share/jupyter/nbconvert/templates/lab/static/theme-light.css
+# Data files
+jupyter-data
