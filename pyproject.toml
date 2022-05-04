@@ -8,6 +8,7 @@ name = "nbconvert"
 authors = [{name = "Jupyter Development Team", email = "jupyter@googlegroups.com"}]
 license = {file = "LICENSE"}
 description = "Converting Jupyter Notebooks"
+readme = "README.md"
 keywords = ["Interactive", "Interpreter", "Shell", "Web"]
 classifiers = [
     "Intended Audience :: Developers",
