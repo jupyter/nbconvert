@@ -92,7 +92,7 @@ jupyter-nbconvert = "nbconvert.nbconvertapp:main"
 jupyter-dejavu = "nbconvert.nbconvertapp:dejavu_main"
 
 [tool.flit.sdist]
-include = ["buildapi.py"]
+include = ["buildapi.py", "jupyter-data"]
 
 [tool.flit.external-data]
 directory = "jupyter-data"
