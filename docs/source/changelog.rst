@@ -4,6 +4,11 @@
 Changes in nbconvert
 ====================
 
+7.0.0rc0
+--------
+* Update to Mistune 2.0.2 by @TiagodePAlves in :ghpull:`1764`
+* Switch to flit build backend by @blink1073 in :ghpull:`1767`
+
 6.5.0
 -----
 * Support bleach 5, add packaging and tinycss2 dependencies by @bollwyvl in :ghpull:`1755`
