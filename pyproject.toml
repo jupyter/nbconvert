@@ -29,7 +29,7 @@ dependencies = [
     "jupyter_core>=4.7",
     "jupyterlab_pygments",
     "MarkupSafe>=2.0",
-    "mistune>=0.8.1,<2",
+    "mistune>=2.0.2",
     "nbclient>=0.5.0",
     "nbformat>=5.1",
     "packaging",
