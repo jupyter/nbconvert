@@ -52,14 +52,10 @@ clean:
 	rm -rf $(BUILDDIR)/*
 	rm source/config_options.rst
 
-html: source/config_options.rst
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-
-source/config_options.rst:
-	python3 autogen_config.py
-	@echo "Created docs for config options"
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

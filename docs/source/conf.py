@@ -22,6 +22,7 @@ import os
 # Automatically generate config_options.rst
 with open(os.path.join(os.path.dirname(__file__), "..", "autogen_config.py")) as f:
     exec(compile(f.read(), "autogen_config.py", "exec"), {})
+    print("Created docs for config options")
 
 # -- General configuration ------------------------------------------------
 
