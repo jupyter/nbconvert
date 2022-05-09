@@ -1,5 +1,5 @@
-version_info = (6, 5, 0)
-pre_info = ""
+version_info = (7, 0, 0)
+pre_info = "rc0"
 dev_info = ""
 
 
