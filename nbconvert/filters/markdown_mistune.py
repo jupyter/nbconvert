@@ -49,7 +49,10 @@ class MathBlockParser(BlockParser):
     RULE_NAMES = ("multiline_math",) + BlockParser.RULE_NAMES
 
     # Regex for header that doesn't require space after '#'
-    AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)\s*([^\n]*?)$")
+    AXT_HEADING = re.compile(
+        r' {0,3}(#{1,6})(?!#+)(?: *\n+|'
+        r'([^\n]*?)(?:\n+|\s+?#+\s*\n+))'
+    )
 
     def parse_multiline_math(self, m, state):
         """Pass token through mutiline math."""
@@ -147,6 +150,8 @@ class IPythonRenderer(HTMLRenderer):
             self.attachments = {}
 
     def block_code(self, code, info=None):
+        lang = ""
+        lexer = None
         if info:
             try:
                 lang = info.strip().split(None, 1)[0]
