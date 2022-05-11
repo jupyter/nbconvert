@@ -108,7 +108,10 @@ class TestMarkdown(TestsBase):
 
     def test_markdown2html_heading_anchors(self):
         for md, tokens in [
-            ("# test title", ("<h1", ">test title", 'id="test-title"', "&#182;</a>", "anchor-link")),
+            (
+                "# test title",
+                ("<h1", ">test title", 'id="test-title"', "&#182;</a>", "anchor-link"),
+            ),
             (
                 "###test head space",
                 ("<h3", ">test head space", 'id="test-head-space"', "&#182;</a>", "anchor-link"),
