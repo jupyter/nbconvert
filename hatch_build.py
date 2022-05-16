@@ -5,7 +5,6 @@ from urllib.request import urlopen
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
-
 notebook_css_version = "5.4.0"
 notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
