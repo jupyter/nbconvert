@@ -1,23 +1,9 @@
-"""A build backend that handles installing the template files.
-
-See https://peps.python.org/pep-0517/#in-tree-build-backends
-"""
+"""Custom build script for hatch backend"""
 import os
 import sys
 from urllib.request import urlopen
 
-from flit_core.buildapi import build_editable  # noqa
-from flit_core.buildapi import build_sdist  # noqa
-from flit_core.buildapi import build_wheel  # noqa
-from flit_core.buildapi import (
-    get_requires_for_build_editable as get_requires_for_build_editable_orig,
-)
-from flit_core.buildapi import (
-    get_requires_for_build_sdist as get_requires_for_build_sdist_orig,
-)
-from flit_core.buildapi import (
-    get_requires_for_build_wheel as get_requires_for_build_wheel_orig,
-)
+from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
 notebook_css_version = "5.4.0"
 notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
@@ -50,7 +36,7 @@ template_css_urls = {
 
 osp = os.path
 here = osp.abspath(osp.dirname(__file__))
-templates_dir = osp.join(here, "jupyter-data", "share", "jupyter", "nbconvert", "templates")
+templates_dir = osp.join(here, "share", "templates")
 
 
 def _get_css_file(template_name, url, filename):
@@ -88,16 +74,8 @@ def _get_css_files():
             _get_css_file(template_name, url, filename)
 
 
-def get_requires_for_build_wheel(config_settings=None):
-    _get_css_files()
-    return get_requires_for_build_wheel_orig(config_settings=config_settings)
-
-
-def get_requires_for_build_sdist(config_settings=None):
-    _get_css_files()
-    return get_requires_for_build_sdist_orig(config_settings=config_settings)
-
-
-def get_requires_for_build_editable(config_settings=None):
-    _get_css_files()
-    return get_requires_for_build_editable_orig(config_settings=config_settings)
+class CustomHook(BuildHookInterface):
+    def initialize(self, version, build_data):
+        if self.target_name not in ["wheel", "sdist"]:
+            return
+        _get_css_files()

@@ -1,3 +1,4 @@
+__version__ = "7.0.0rc0"
 version_info = (7, 0, 0)
 pre_info = "rc0"
 dev_info = ""
@@ -64,4 +65,4 @@ def create_valid_version(release_info, epoch=None, pre_input="", dev_input=""):
         raise ValueError(pep440_err)
 
 
-__version__ = create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info)
+assert __version__ == create_valid_version(version_info, pre_input=pre_info, dev_input=dev_info)

@@ -38,6 +38,6 @@ docs/source/config_options.rst
 .vscode
 
 # Downloaded theme files
-jupyter-data/share/jupyter/nbconvert/templates/lab/static/index.css
-jupyter-data/share/jupyter/nbconvert/templates/lab/static/theme-dark.css
-jupyter-data/share/jupyter/nbconvert/templates/lab/static/theme-light.css
+share/templates/lab/static/index.css
+share/templates/lab/static/theme-dark.css
+share/templates/lab/static/theme-light.css
