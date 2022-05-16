@@ -4,6 +4,11 @@
 Changes in nbconvert
 ====================
 
+7.0.0rc1
+--------
+* Clean up markdown parsing by @blink1073 in :ghpull:`1774`
+* Switch to hatch build backend by @blink1073 in :ghpull:`1777`
+
 7.0.0rc0
 --------
 * Update to Mistune 2.0.2 by @TiagodePAlves in :ghpull:`1764`
