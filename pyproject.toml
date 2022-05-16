@@ -93,6 +93,9 @@ jupyter-dejavu = "nbconvert.nbconvertapp:dejavu_main"
 [tool.hatch.version]
 path = "nbconvert/_version.py"
 
+# Used to call hatch_build.py
+[tool.hatch.build.hooks.custom]
+
 [tool.hatch.build.targets.sdist]
 artifacts = ["share/templates/lab/static/*.*"]
 
