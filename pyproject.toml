@@ -1,7 +1,6 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "buildapi"
-backend-path = ["."]
+requires = ["hatchling >=0.25"]
+build-backend = "hatchling.build"
 
 [project]
 name = "nbconvert"
@@ -91,11 +90,14 @@ all = [
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
 jupyter-dejavu = "nbconvert.nbconvertapp:dejavu_main"
 
-[tool.flit.sdist]
-include = ["buildapi.py", "jupyter-data"]
+[tool.hatch.version]
+path = "nbconvert/_version.py"
 
-[tool.flit.external-data]
-directory = "jupyter-data"
+[tool.hatch.build]
+artifacts = ["templates/lab/static/*.*"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"templates" = "share/jupyter/nbconvert/templates"
 
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
