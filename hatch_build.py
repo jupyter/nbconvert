@@ -36,7 +36,7 @@ template_css_urls = {
 
 osp = os.path
 here = osp.abspath(osp.dirname(__file__))
-templates_dir = osp.join(here, "templates")
+templates_dir = osp.join(here, "share", "templates")
 
 
 def _get_css_file(template_name, url, filename):

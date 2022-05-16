@@ -94,10 +94,10 @@ jupyter-dejavu = "nbconvert.nbconvertapp:dejavu_main"
 path = "nbconvert/_version.py"
 
 [tool.hatch.build]
-artifacts = ["templates/lab/static/*.*"]
+artifacts = ["share/templates/lab/static/*.*"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"templates" = "share/jupyter/nbconvert/templates"
+"share/templates" = "share/jupyter/nbconvert/templates"
 
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
