@@ -41,7 +41,7 @@ repos:
         args: [--py37-plus]
 
   - repo: https://github.com/PyCQA/doc8
-    rev: 0.11.1
+    rev: 0.11.2
     hooks:
       - id: doc8
         args: [--max-line-length=200]
@@ -60,7 +60,7 @@ repos:
         stages: [manual]
 
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.15.0
+    rev: 0.15.1
     hooks:
       - id: check-jsonschema
         name: "Check GitHub Workflows"
