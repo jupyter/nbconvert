@@ -5,7 +5,10 @@
 
 import os
 
-import entrypoints
+try:
+    import importlib.metadata as importlib_metadata
+except ModuleNotFoundError:
+    import importlib_metadata
 from nbformat import NotebookNode
 from traitlets.config import get_config
 from traitlets.log import get_logger
@@ -97,20 +100,14 @@ def get_exporter(name, config=get_config()):  # noqa
         name = "notebook"
 
     try:
-        exporter = entrypoints.get_single("nbconvert.exporters", name).load()
+        exporters = importlib_metadata.entry_points()["nbconvert.exporters"]
+        exporter = [e for e in exporters if e.name == name or e.name == name.lower()][0].load()
         if getattr(exporter(config=config), "enabled", True):
             return exporter
         else:
             raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
-    except entrypoints.NoSuchEntryPoint:
-        try:
-            exporter = entrypoints.get_single("nbconvert.exporters", name.lower()).load()
-            if getattr(exporter(config=config), "enabled", True):
-                return exporter
-            else:
-                raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
-        except entrypoints.NoSuchEntryPoint:
-            pass
+    except IndexError:
+        pass
 
     if "." in name:
         try:
@@ -136,7 +133,7 @@ def get_export_names(config=get_config()):  # noqa
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
-    exporters = sorted(entrypoints.get_group_named("nbconvert.exporters"))
+    exporters = (e.name for e in importlib_metadata.entry_points()["nbconvert.exporters"])
     if os.environ.get("NBCONVERT_DISABLE_CONFIG_EXPORTERS"):
         get_logger().info(
             "Config exporter loading disabled, no additional exporters will be automatically included."

@@ -26,6 +26,7 @@ docs/source/*.j2
 docs/source/example.html
 docs/source/mytemplate/*
 docs/source/config_options.rst
+.venv
 
 # Eclipse pollutes the filesystem
 .project

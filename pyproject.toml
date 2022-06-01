@@ -23,7 +23,7 @@ dependencies = [
     "beautifulsoup4",
     "bleach",
     "defusedxml",
-    "entrypoints>=0.2.2",
+    "importlib-metadata;python_version<3.8",
     "jinja2>=3.0",
     "jupyter_core>=4.7",
     "jupyterlab_pygments",
