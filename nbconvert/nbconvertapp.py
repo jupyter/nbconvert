@@ -346,7 +346,9 @@ class NbConvertApp(JupyterApp):
                      """,
     ).tag(config=True)
     from_stdin = Bool(False, help="read a single notebook from stdin.").tag(config=True)
-    recursive_glob = Bool(False, help="set the 'recursive' option for glob for searching wildcards.").tag(config=True)
+    recursive_glob = Bool(
+        False, help="set the 'recursive' option for glob for searching wildcards."
+    ).tag(config=True)
 
     @catch_config_error
     def initialize(self, argv=None):
