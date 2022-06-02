@@ -346,6 +346,7 @@ class NbConvertApp(JupyterApp):
                      """,
     ).tag(config=True)
     from_stdin = Bool(False, help="read a single notebook from stdin.").tag(config=True)
+    recursive_glob = Bool(False, help="set the 'recursive' option for glob for searching wildcards.").tag(config=True)
 
     @catch_config_error
     def initialize(self, argv=None):
@@ -385,8 +386,8 @@ class NbConvertApp(JupyterApp):
 
             # Use glob to find matching filenames.  Allow the user to convert
             # notebooks without having to type the extension.
-            globbed_files = glob.glob(pattern)
-            globbed_files.extend(glob.glob(pattern + ".ipynb"))
+            globbed_files = glob.glob(pattern, recursive=self.recursive_glob)
+            globbed_files.extend(glob.glob(pattern + ".ipynb", recursive=self.recursive_glob))
             if not globbed_files:
                 self.log.warning("pattern %r matched no files", pattern)
 
