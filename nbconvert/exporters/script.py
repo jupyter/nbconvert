@@ -2,11 +2,12 @@
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+import sys
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 from traitlets import Dict, default
 
 from .base import get_exporter
@@ -35,7 +36,7 @@ class ScriptExporter(TemplateExporter):
         """
         if lang_name not in self._lang_exporters:
             try:
-                exporters = importlib_metadata.entry_points()["nbconvert.exporters.script"]
+                exporters = entry_points(group="nbconvert.exporters.script")
                 Exporter = [e for e in exporters if e.name == lang_name][0].load()
             except (KeyError, IndexError):
                 self._lang_exporters[lang_name] = None
