@@ -64,7 +64,7 @@ year = date.today().year
 copyright = "2015-%s, Jupyter Development Team" % year
 author = "Jupyter Development Team"
 
-extlinks = {"ghpull": ("https://github.com/jupyter/nbconvert/pull/%s", "PR #")}
+extlinks = {"ghpull": ("https://github.com/jupyter/nbconvert/pull/%s", "PR #%s")}
 
 linkcheck_ignore = [
     "https://github.com/jupyter/nbconvert/pull/",
