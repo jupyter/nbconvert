@@ -134,7 +134,7 @@ def get_export_names(config=get_config()):  # noqa
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
-    exporters = (e.name for e in entry_points(group="nbconvert.exporters"))
+    exporters = sorted(e.name for e in entry_points(group="nbconvert.exporters"))
     if os.environ.get("NBCONVERT_DISABLE_CONFIG_EXPORTERS"):
         get_logger().info(
             "Config exporter loading disabled, no additional exporters will be automatically included."
