@@ -80,7 +80,11 @@
 {% endblock output_area_prompt %}
 
 {% block output %}
+{%- if output.output_type == 'execute_result' -%}
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+{%- else -%}
 <div class="jp-OutputArea-child">
+{%- endif -%}
 {% if resources.global_content_filter.include_output_prompt %}
     {{ self.output_area_prompt() }}
 {% endif %}
