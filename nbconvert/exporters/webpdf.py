@@ -89,7 +89,7 @@ class WebPDFExporter(HTMLExporter):
                 handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False, args=args
             )
             page = await browser.newPage()
-            await page.emulateMedia("screen")
+            await page.emulateMedia("print")
             await page.waitFor(100)
             await page.goto(f"file://{temp_file.name}", waitUntil="networkidle0")
             await page.waitFor(100)
