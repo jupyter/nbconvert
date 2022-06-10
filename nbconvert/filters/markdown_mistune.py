@@ -21,7 +21,7 @@ except ImportError:
     from cgi import escape as html_escape
 
 import bs4
-import mistune
+from mistune import BlockParser, HTMLRenderer, InlineParser, Markdown
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
@@ -34,158 +34,185 @@ class InvalidNotebook(Exception):
     pass
 
 
-class MathBlockGrammar(mistune.BlockGrammar):
-    """This defines a single regex comprised of the different patterns that
-    identify math content spanning multiple lines. These are used by the
-    MathBlockLexer.
-    """
-
-    multi_math_str = "|".join(
-        [r"^\$\$.*?\$\$", r"^\\\\\[.*?\\\\\]", r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}"]
-    )
-    multiline_math = re.compile(multi_math_str, re.DOTALL)
-
-
-class MathBlockLexer(mistune.BlockLexer):
-    """This acts as a pass-through to the MathInlineLexer. It is needed in
+class MathBlockParser(BlockParser):
+    """This acts as a pass-through to the MathInlineParser. It is needed in
     order to avoid other block level rules splitting math sections apart.
     """
 
-    default_rules = ["multiline_math"] + mistune.BlockLexer.default_rules
+    MULTILINE_MATH = re.compile(
+        r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}|"
+        r"\\\\\[.*?\\\\\]|"
+        r"\\begin\{([a-z]*\*?)\}.*?\\end\{\1\}",
+        re.DOTALL,
+    )
 
-    def __init__(self, rules=None, **kwargs):
-        if rules is None:
-            rules = MathBlockGrammar()
-        super().__init__(rules, **kwargs)
+    RULE_NAMES = ("multiline_math",) + BlockParser.RULE_NAMES
 
-    def parse_multiline_math(self, m):
-        """Add token to pass through mutiline math."""
-        self.tokens.append({"type": "multiline_math", "text": m.group(0)})
+    # Regex for header that doesn't require space after '#'
+    AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
+
+    def parse_multiline_math(self, m, state):
+        """Pass token through mutiline math."""
+        return {"type": "multiline_math", "text": m.group(0)}
 
 
-class MathInlineGrammar(mistune.InlineGrammar):
-    """This defines different ways of declaring math objects that should be
-    passed through to mathjax unaffected. These are used by the MathInlineLexer.
+def _dotall(pattern):
+    """Make the '.' special character match any character inside the pattern, including a newline.
+
+    This is implemented with the inline flag `(?s:...)` and is equivalent to using `re.DOTALL` when
+    it is the only pattern used. It is necessary since `mistune>=2.0.0`, where the pattern is passed
+    to the undocumented `re.Scanner`.
     """
-
-    inline_math = re.compile(r"^\$(.+?)\$|^\\\\\((.+?)\\\\\)", re.DOTALL)
-    block_math = re.compile(r"^\$\$(.*?)\$\$|^\\\\\[(.*?)\\\\\]", re.DOTALL)
-    latex_environment = re.compile(r"^\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}", re.DOTALL)
-    text = re.compile(r"^[\s\S]+?(?=[\\<!\[_*`~$]|https?://| {2,}\n|$)")
+    return f"(?s:{pattern})"
 
 
-class MathInlineLexer(mistune.InlineLexer):
-    r"""This interprets the content of LaTeX style math objects using the rules
-    defined by the MathInlineGrammar.
+class MathInlineParser(InlineParser):
+    r"""This interprets the content of LaTeX style math objects.
 
     In particular this grabs ``$$...$$``, ``\\[...\\]``, ``\\(...\\)``, ``$...$``,
     and ``\begin{foo}...\end{foo}`` styles for declaring mathematics. It strips
     delimiters from all these varieties, and extracts the type of environment
     in the last case (``foo`` in this example).
     """
-    default_rules = [
-        "block_math",
-        "inline_math",
+    BLOCK_MATH_TEX = _dotall(r"(?<!\\)\$\$(.*?)(?<!\\)\$\$")
+    BLOCK_MATH_LATEX = _dotall(r"(?<!\\)\\\\\[(.*?)(?<!\\)\\\\\]")
+    INLINE_MATH_TEX = _dotall(r"(?<![$\\])\$(.+?)(?<![$\\])\$")
+    INLINE_MATH_LATEX = _dotall(r"(?<!\\)\\\\\((.*?)(?<!\\)\\\\\)")
+    LATEX_ENVIRONMENT = _dotall(r"\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}")
+
+    # The order is important here
+    RULE_NAMES = (
+        "block_math_tex",
+        "block_math_latex",
+        "inline_math_tex",
+        "inline_math_latex",
         "latex_environment",
-    ] + mistune.InlineLexer.default_rules
+    ) + InlineParser.RULE_NAMES
 
-    def __init__(self, renderer, rules=None, **kwargs):
-        if rules is None:
-            rules = MathInlineGrammar()
-        super().__init__(renderer, rules, **kwargs)
+    def parse_block_math_tex(self, m, state):
+        # sometimes the Scanner keeps the final '$$', so we use the
+        # full matched string and remove the math markers
+        text = m.group(0)[2:-2]
+        return "block_math", text
 
-    def output_inline_math(self, m):
-        return self.renderer.inline_math(m.group(1) or m.group(2))
+    def parse_block_math_latex(self, m, state):
+        text = m.group(1)
+        return "block_math", text
 
-    def output_block_math(self, m):
-        return self.renderer.block_math(m.group(1) or m.group(2) or "")
+    def parse_inline_math_tex(self, m, state):
+        text = m.group(1)
+        return "inline_math", text
 
-    def output_latex_environment(self, m):
-        return self.renderer.latex_environment(m.group(1), m.group(2))
+    def parse_inline_math_latex(self, m, state):
+        text = m.group(1)
+        return "inline_math", text
 
-
-class MarkdownWithMath(mistune.Markdown):
-    def __init__(self, renderer, **kwargs):
-        if "inline" not in kwargs:
-            kwargs["inline"] = MathInlineLexer
-        if "block" not in kwargs:
-            kwargs["block"] = MathBlockLexer
-        super().__init__(renderer, **kwargs)
-
-    def output_multiline_math(self):
-        return self.inline(self.token["text"])
+    def parse_latex_environment(self, m, state):
+        name, text = m.group(1), m.group(2)
+        return "latex_environment", name, text
 
 
-class IPythonRenderer(mistune.Renderer):
-    def block_code(self, code, lang):
-        if lang:
+class MarkdownWithMath(Markdown):
+    def __init__(self, renderer, block=None, inline=None, plugins=None):
+        if block is None:
+            block = MathBlockParser()
+        if inline is None:
+            inline = MathInlineParser(renderer, hard_wrap=False)
+        super().__init__(renderer, block, inline, plugins)
+
+    def render(self, s):
+        """Compatibility method with `mistune==0.8.4`."""
+        return self.parse(s)
+
+
+class IPythonRenderer(HTMLRenderer):
+    def __init__(
+        self,
+        escape=True,
+        allow_harmful_protocols=True,
+        embed_images=False,
+        exclude_anchor_links=False,
+        anchor_link_text="¶",
+        path="",
+        attachments=None,
+    ):
+        super().__init__(escape, allow_harmful_protocols)
+        self.embed_images = embed_images
+        self.exclude_anchor_links = exclude_anchor_links
+        self.anchor_link_text = anchor_link_text
+        self.path = path
+        if attachments is not None:
+            self.attachments = attachments
+        else:
+            self.attachments = {}
+
+    def block_code(self, code, info=None):
+        lang = ""
+        lexer = None
+        if info:
             try:
+                lang = info.strip().split(None, 1)[0]
                 lexer = get_lexer_by_name(lang, stripall=True)
             except ClassNotFound:
                 code = lang + "\n" + code
                 lang = None
 
         if not lang:
-            return "\n<pre><code>%s</code></pre>\n" % mistune.escape(code)
+            return super().block_code(code)
 
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
 
     def block_html(self, html):
-        embed_images = self.options.get("embed_images", False)
-
-        if embed_images:
+        if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().block_html(html)
 
     def inline_html(self, html):
-        embed_images = self.options.get("embed_images", False)
-
-        if embed_images:
+        if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().inline_html(html)
 
-    def header(self, text, level, raw=None):
-        html = super().header(text, level, raw=raw)
-        if self.options.get("exclude_anchor_links"):
+    def heading(self, text, level):
+        html = super().heading(text, level)
+        if self.exclude_anchor_links:
             return html
-        anchor_link_text = self.options.get("anchor_link_text", "¶")
-        return add_anchor(html, anchor_link_text=anchor_link_text)
+        return add_anchor(html, anchor_link_text=self.anchor_link_text)
 
     def escape_html(self, text):
         return html_escape(text)
 
+    def multiline_math(self, text):
+        return text
+
     def block_math(self, text):
-        return "$$%s$$" % self.escape_html(text)
+        return f"$${self.escape_html(text)}$$"
 
     def latex_environment(self, name, text):
-        name = self.escape_html(name)
-        text = self.escape_html(text)
-        return rf"\begin{{{name}}}{text}\end{{{name}}}"
+        name, text = self.escape_html(name), self.escape_html(text)
+        return f"\\begin{{{name}}}{text}\\end{{{name}}}"
 
     def inline_math(self, text):
-        return "$%s$" % self.escape_html(text)
+        return f"${self.escape_html(text)}$"
 
-    def image(self, src, title, text):
+    def image(self, src, text, title):
         """Rendering a image with title and text.
 
         :param src: source link of the image.
-        :param title: title text of the image.
         :param text: alt text of the image.
+        :param title: title text of the image.
         """
-        attachments = self.options.get("attachments", {})
         attachment_prefix = "attachment:"
-        embed_images = self.options.get("embed_images", False)
 
         if src.startswith(attachment_prefix):
             name = src[len(attachment_prefix) :]
 
-            if name not in attachments:
+            if name not in self.attachments:
                 raise InvalidNotebook(f"missing attachment: {name}")
 
-            attachment = attachments[name]
+            attachment = self.attachments[name]
             # we choose vector over raster, and lossless over lossy
             preferred_mime_types = ["image/svg+xml", "image/png", "image/jpeg"]
             for preferred_mime_type in preferred_mime_types:
@@ -197,13 +224,13 @@ class IPythonRenderer(mistune.Renderer):
             data = attachment[mime_type]
             src = "data:" + mime_type + ";base64," + data
 
-        elif embed_images:
+        elif self.embed_images:
             base64_url = self._src_to_base64(src)
 
             if base64_url is not None:
                 src = base64_url
 
-        return super().image(src, title, text)
+        return super().image(src, text, title)
 
     def _src_to_base64(self, src):
         """Turn the source file into a base64 url.
@@ -211,8 +238,7 @@ class IPythonRenderer(mistune.Renderer):
         :param src: source link of the file.
         :return: the base64 url or None if the file was not found.
         """
-        path = self.options.get("path", "")
-        src_path = os.path.join(path, src)
+        src_path = os.path.join(self.path, src)
 
         if not os.path.exists(src_path):
             return None

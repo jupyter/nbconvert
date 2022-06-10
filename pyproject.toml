@@ -1,6 +1,106 @@
 [build-system]
-requires = ["setuptools>=60.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling >=0.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nbconvert"
+authors = [{name = "Jupyter Development Team", email = "jupyter@googlegroups.com"}]
+license = {file = "LICENSE"}
+description = "Converting Jupyter Notebooks"
+readme = "README.md"
+keywords = ["Interactive", "Interpreter", "Shell", "Web"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+urls = {Homepage = "https://jupyter.org"}
+requires-python = ">=3.7"
+dependencies = [
+    "beautifulsoup4",
+    "bleach",
+    "defusedxml",
+    "importlib_metadata>=3.6;python_version<\"3.10\"",
+    "jinja2>=3.0",
+    "jupyter_core>=4.7",
+    "jupyterlab_pygments",
+    "MarkupSafe>=2.0",
+    "mistune>=2.0.2",
+    "nbclient>=0.5.0",
+    "nbformat>=5.1",
+    "packaging",
+    "pandocfilters>=1.4.1",
+    "pygments>=2.4.1",
+    "tinycss2",
+    "traitlets>=5.0",
+]
+dynamic = ["version"]
+
+[project.entry-points."nbconvert.exporters"]
+custom = "nbconvert.exporters:TemplateExporter"
+html = "nbconvert.exporters:HTMLExporter"
+slides = "nbconvert.exporters:SlidesExporter"
+latex = "nbconvert.exporters:LatexExporter"
+pdf = "nbconvert.exporters:PDFExporter"
+webpdf = "nbconvert.exporters:WebPDFExporter"
+markdown = "nbconvert.exporters:MarkdownExporter"
+python = "nbconvert.exporters:PythonExporter"
+rst = "nbconvert.exporters:RSTExporter"
+notebook = "nbconvert.exporters:NotebookExporter"
+asciidoc = "nbconvert.exporters:ASCIIDocExporter"
+script = "nbconvert.exporters:ScriptExporter"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-dependency",
+    "ipykernel",
+    "ipywidgets>=7",
+    "pre-commit",
+    "pyppeteer>=1,<1.1",
+]
+serve = ["tornado>=6.1"]
+webpdf = ["pyppeteer>=1,<1.1"]
+docs = [
+    "sphinx>=1.5.1",
+    "sphinx_rtd_theme",
+    "nbsphinx>=0.2.12",
+    "ipython",
+]
+all = [
+    "ipykernel",
+    "ipython",
+    "ipywidgets>=7",
+    "nbsphinx>=0.2.12",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-dependency",
+    "pyppeteer>=1,<1.1",
+    "sphinx>=1.5.1",
+    "sphinx_rtd_theme",
+    "tornado>=6.1",
+]
+
+[project.scripts]
+jupyter-nbconvert = "nbconvert.nbconvertapp:main"
+jupyter-dejavu = "nbconvert.nbconvertapp:dejavu_main"
+
+[tool.hatch.version]
+path = "nbconvert/_version.py"
+
+# Used to call hatch_build.py
+[tool.hatch.build.hooks.custom]
+
+[tool.hatch.build.targets.sdist]
+artifacts = ["share/templates/lab/static/*.*"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"share/templates" = "share/jupyter/nbconvert/templates"
 
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
@@ -21,5 +121,4 @@ filterwarnings = [
     "ignore:unclosed <socket.socket:ResourceWarning",
     "ignore:unclosed event loop:ResourceWarning",
     "ignore:There is no current event loop:DeprecationWarning",
-
 ]

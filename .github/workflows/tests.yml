@@ -93,17 +93,6 @@ jobs:
           echo "or after-the-fact on already committed files with"
           echo "    pre-commit run --all-files --hook-stage=manual"
 
-  check_manifest:
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - name: Check Manifest
-        run: |
-          pip install check-manifest
-          check-manifest --ignore "share/**"
-
   test_minimum_versions:
     name: Test Minimum Versions
     timeout-minutes: 20

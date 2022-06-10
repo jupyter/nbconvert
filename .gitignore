@@ -26,6 +26,7 @@ docs/source/*.j2
 docs/source/example.html
 docs/source/mytemplate/*
 docs/source/config_options.rst
+.venv
 
 # Eclipse pollutes the filesystem
 .project
@@ -38,6 +39,6 @@ docs/source/config_options.rst
 .vscode
 
 # Downloaded theme files
-share/jupyter/nbconvert/templates/lab/static/index.css
-share/jupyter/nbconvert/templates/lab/static/theme-dark.css
-share/jupyter/nbconvert/templates/lab/static/theme-light.css
+share/templates/lab/static/index.css
+share/templates/lab/static/theme-dark.css
+share/templates/lab/static/theme-light.css

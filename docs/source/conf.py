@@ -22,6 +22,7 @@ import os
 # Automatically generate config_options.rst
 with open(os.path.join(os.path.dirname(__file__), "..", "autogen_config.py")) as f:
     exec(compile(f.read(), "autogen_config.py", "exec"), {})
+    print("Created docs for config options")
 
 # -- General configuration ------------------------------------------------
 
@@ -63,7 +64,7 @@ year = date.today().year
 copyright = "2015-%s, Jupyter Development Team" % year
 author = "Jupyter Development Team"
 
-extlinks = {"ghpull": ("https://github.com/jupyter/nbconvert/pull/%s", "PR #")}
+extlinks = {"ghpull": ("https://github.com/jupyter/nbconvert/pull/%s", "PR #%s")}
 
 linkcheck_ignore = [
     "https://github.com/jupyter/nbconvert/pull/",
@@ -87,7 +88,7 @@ release = version_ns["__version__"]
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
