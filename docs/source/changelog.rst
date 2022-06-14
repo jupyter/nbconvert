@@ -4,6 +4,16 @@
 Changes in nbconvert
 ====================
 
+7.0.0rc2
+--------
+* Switch from entrypoints to importlib-metadata by @konstin in :ghpull:`1782`
+* Add recursive flag for glob notebook search by @paoloalba in :ghpull:`1785`
+* Updates for sphinx 5.0 support by @blink1073 in :ghpull:`1788`
+* Fixed unique div ids in lab template, fixed #1759 by @veghdev in :ghpull:`1761`
+* WebPDFExporter: Emulate media print by @martinRenou in :ghpull:`1791`
+* Fix fonts overriden by user stylesheet by inheriting styles by @dakoop in :ghpull:`1793`
+* Fix lab template output alignment by @dakoop in :ghpull:`1795`
+
 7.0.0rc1
 --------
 * Clean up markdown parsing by @blink1073 in :ghpull:`1774`
