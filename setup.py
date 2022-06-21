@@ -237,6 +237,7 @@ setup_args = dict(
 )
 
 setup_args["install_requires"] = [
+    "lxml",
     "beautifulsoup4",
     "bleach",
     "defusedxml",

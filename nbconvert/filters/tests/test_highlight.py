@@ -16,6 +16,8 @@ Module with tests for Highlight
 
 import xml
 
+import pytest
+
 from ...tests.base import TestsBase
 from ..highlight import Highlight2HTML, Highlight2Latex
 
@@ -71,6 +73,11 @@ class TestHighlight(TestsBase):
         for lang, tkns in [(ht, ("def",)), (rb, ("def", "end"))]:
             root = xml.etree.ElementTree.fromstring(lang)
             self.assertEqual(self._extract_tokens(root, "k"), set(tkns))
+
+    @pytest.mark.filterwarnings("ignore")
+    def test_inject_html(self):
+        out = highlight2html(self.tests[0], 'ipython3-foo"><script>alert(1)</script>')
+        assert '<script>alert(1)</script>' not in out
 
     def _extract_tokens(self, root, cls):
         return set(map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']")))
