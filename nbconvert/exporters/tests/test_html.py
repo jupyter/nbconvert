@@ -134,3 +134,16 @@ class TestHTMLExporter(ExportersTestsBase):
             self._get_notebook()
         )
         assert len(output) > 0
+
+    def test_javascript_injection(self):
+        for template in ["lab", "classic", "reveal"]:
+            (output, resources) = HTMLExporter(template_name=template).from_filename(self._get_notebook('notebook_inject.ipynb'))
+
+            # Check injection in the metadata.title of the Notebook
+            assert "<script>alert('title')</script>" not in output
+
+            # Check injection in the metadata.widgets of the Notebook
+            assert "</script><script>alert('widgets')" not in output
+
+            # Check injection in the cell.metadata.tags of the Notebook
+            assert "<script>alert('cell_tag')</script>" not in output
