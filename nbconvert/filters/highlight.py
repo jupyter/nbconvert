@@ -10,6 +10,7 @@ from within Jinja templates.
 # because errors should be raised at runtime if it's actually needed,
 # not import time, when it may not be needed.
 
+from html import escape
 from warnings import warn
 
 from traitlets import observe
@@ -67,7 +68,7 @@ class Highlight2HTML(NbConvertBase):
         return _pygments_highlight(
             source if len(source) > 0 else " ",
             # needed to help post processors:
-            HtmlFormatter(cssclass=" highlight hl-" + language, **self.extra_formatter_options),
+            HtmlFormatter(cssclass=escape(f" highlight hl-{language}"), **self.extra_formatter_options),
             language,
             metadata,
         )
