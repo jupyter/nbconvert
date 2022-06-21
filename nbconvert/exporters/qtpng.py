@@ -12,6 +12,7 @@ class QtPNGExporter(QtExporter):
     This inherits from :class:`HTMLExporter`. It creates the HTML using the
     template machinery, and then uses pyqtwebengine to create a png.
     """
+
     export_from_notebook = "PNG via HTML"
 
     output_mimetype = "image/png"

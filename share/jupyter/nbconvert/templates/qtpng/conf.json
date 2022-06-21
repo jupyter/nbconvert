@@ -1,6 +1,6 @@
 {
-    "base_template": "lab",
-    "mimetypes": {
-        "image/png": true
-    }
+  "base_template": "lab",
+  "mimetypes": {
+    "image/png": true
+  }
 }

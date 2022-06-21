@@ -1,6 +1,6 @@
 {
-    "base_template": "lab",
-    "mimetypes": {
-        "application/pdf": true
-    }
+  "base_template": "lab",
+  "mimetypes": {
+    "application/pdf": true
+  }
 }

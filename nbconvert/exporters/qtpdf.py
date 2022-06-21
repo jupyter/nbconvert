@@ -14,6 +14,7 @@ class QtPDFExporter(QtExporter):
     This inherits from :class:`HTMLExporter`. It creates the HTML using the
     template machinery, and then uses pyqtwebengine to create a pdf.
     """
+
     export_from_notebook = "PDF via HTML"
 
     paginate = Bool(
@@ -24,7 +25,7 @@ class QtPDFExporter(QtExporter):
         If False, a PDF with one long page will be generated.
 
         Set to True to match behavior of LaTeX based PDF generator
-        """
+        """,
     ).tag(config=True)
 
     output_mimetype = "application/pdf"

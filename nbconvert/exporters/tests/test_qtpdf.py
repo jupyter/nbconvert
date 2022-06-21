@@ -3,8 +3,9 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from .base import ExportersTestsBase
 from ..qtpdf import QtPDFExporter
+from .base import ExportersTestsBase
+
 
 class TestQtPDFExporter(ExportersTestsBase):
     """Contains test functions for qtpdf.py"""

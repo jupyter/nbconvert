@@ -3,8 +3,9 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from .base import ExportersTestsBase
 from ..qtpng import QtPNGExporter
+from .base import ExportersTestsBase
+
 
 class TestQtPNGExporter(ExportersTestsBase):
     """Contains test functions for qtpng.py"""
