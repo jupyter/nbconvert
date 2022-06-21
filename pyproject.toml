@@ -84,6 +84,7 @@ all = [
     "pytest",
     "pytest-cov",
     "pytest-dependency",
+    "pyqtwebengine>=5.15",
     "pyppeteer>=1,<1.1",
     "sphinx>=1.5.1",
     "sphinx_rtd_theme",

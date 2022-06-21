@@ -1,4 +1,5 @@
-import tempfile, os
+import os
+import tempfile
 
 from jupyter_core.paths import jupyter_path
 from traitlets import default
@@ -14,25 +15,28 @@ class QtExporter(HTMLExporter):
         self.format = self.output_mimetype.split("/")[-1]
         super().__init__(*args, **kwargs)
 
-    @default('file_extension')
+    @default("file_extension")
     def _file_extension_default(self):
         return "." + self.format
 
-    @default('template_name')
+    @default("template_name")
     def _template_name_default(self):
         return "qt" + self.format
 
-    @default('template_data_paths')
+    @default("template_data_paths")
     def _template_data_paths_default(self):
         return jupyter_path("nbconvert", "templates", "qt" + self.format)
 
     def _check_launch_reqs(self):
         try:
             from PyQt5.QtWidgets import QApplication
+
             from .qt_screenshot import QtScreenshot
         except ModuleNotFoundError as e:
-            raise RuntimeError(f"PyQtWebEngine is not installed to support Qt {self.format.upper()} conversion. "
-                               f"Please install `nbconvert[qt{self.format}]` to enable.") from e
+            raise RuntimeError(
+                f"PyQtWebEngine is not installed to support Qt {self.format.upper()} conversion. "
+                f"Please install `nbconvert[qt{self.format}]` to enable."
+            ) from e
         return QApplication, QtScreenshot
 
     def run_pyqtwebengine(self, html):
@@ -42,7 +46,7 @@ class QtExporter(HTMLExporter):
         temp_file = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
         filename = f"{temp_file.name[:-len(ext)]}.{self.format}"
         with temp_file:
-            temp_file.write(html.encode('utf-8'))
+            temp_file.write(html.encode("utf-8"))
 
         try:
             QApplication, QtScreenshot = self._check_launch_reqs()
@@ -61,9 +65,7 @@ class QtExporter(HTMLExporter):
 
     def from_notebook_node(self, nb, resources=None, **kw):
         self._check_launch_reqs()
-        html, resources = super().from_notebook_node(
-            nb, resources=resources, **kw
-        )
+        html, resources = super().from_notebook_node(nb, resources=resources, **kw)
 
         self.log.info(f"Building {self.format.upper()}")
         data = self.run_pyqtwebengine(html)
@@ -71,6 +73,6 @@ class QtExporter(HTMLExporter):
 
         # convert output extension
         # the writer above required it to be html
-        resources['output_extension'] = f".{self.format}"
+        resources["output_extension"] = f".{self.format}"
 
         return data, resources
