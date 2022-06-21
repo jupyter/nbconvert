@@ -7,6 +7,7 @@ that uses Jinja2 to export notebook files into different formats.
 
 
 import json
+from lxml.html.clean import clean_html
 import os
 import uuid
 import warnings
@@ -71,6 +72,7 @@ default_filters = {
     # browsers will parse </script>, closing a script tag early
     # Since JSON allows escaping forward slash, this will still be parsed by JSON
     "escape_html_script": lambda x: x.replace("</script>", "<\\/script>"),
+    "clean_html": clean_html,
     "strip_trailing_newline": filters.strip_trailing_newline,
     "text_base64": filters.text_base64,
 }

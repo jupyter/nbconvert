@@ -20,7 +20,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
+{% set nb_title = nb.metadata.get('title', resources['metadata']['name']) | clean_html %}
 <title>{{nb_title}} slides</title>
 
 {%- block html_head_js -%}

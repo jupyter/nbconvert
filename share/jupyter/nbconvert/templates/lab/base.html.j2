@@ -299,7 +299,7 @@ var element = document.getElementById('{{ div_id }}');
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
+{{ nb.metadata.widgets[mimetype] | json_dumps | clean_html }}
 </script>
 {% endif %}
 {{ super() }}
