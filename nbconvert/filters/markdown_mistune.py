@@ -34,6 +34,10 @@ class InvalidNotebook(Exception):
     pass
 
 
+# BlockParser.RULE_NAMES was removed in mistune 3.0.
+_RULE_NAMES = getattr(BlockParser, 'RULE_NAMES', list(BlockParser.SPECIFICATION)) # type: ignore
+
+
 class MathBlockParser(BlockParser):
     """This acts as a pass-through to the MathInlineParser. It is needed in
     order to avoid other block level rules splitting math sections apart.
@@ -46,7 +50,7 @@ class MathBlockParser(BlockParser):
         re.DOTALL,
     )
 
-    RULE_NAMES = ("multiline_math",) + BlockParser.RULE_NAMES
+    RULE_NAMES = ("multiline_math",) + _RULE_NAMES
 
     # Regex for header that doesn't require space after '#'
     AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
