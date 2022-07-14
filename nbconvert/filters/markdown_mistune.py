@@ -35,7 +35,7 @@ class InvalidNotebook(Exception):
 
 
 # BlockParser.RULE_NAMES was removed in mistune 3.0.
-_RULE_NAMES = tuple(getattr(BlockParser, "RULE_NAMES", getattr(BlockParser, "SPECIFICATION", [])))  # type: ignore
+_BLOCK_RULE_NAMES = tuple(getattr(BlockParser, "RULE_NAMES", getattr(BlockParser, "SPECIFICATION", [])))  # type: ignore
 
 
 class MathBlockParser(BlockParser):
@@ -50,7 +50,7 @@ class MathBlockParser(BlockParser):
         re.DOTALL,
     )
 
-    RULE_NAMES = ("multiline_math",) + _RULE_NAMES
+    RULE_NAMES = ("multiline_math",) + _BLOCK_RULE_NAMES
 
     # Regex for header that doesn't require space after '#'
     AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
@@ -68,6 +68,10 @@ def _dotall(pattern):
     to the undocumented `re.Scanner`.
     """
     return f"(?s:{pattern})"
+
+
+# InlineParser.RULE_NAMES was removed in mistune 3.0.
+_INLINE_RULE_NAMES = tuple(getattr(InlineParser, "RULE_NAMES", getattr(InlineParser, "SPECIFICATION", [])))  # type: ignore
 
 
 class MathInlineParser(InlineParser):
@@ -91,7 +95,7 @@ class MathInlineParser(InlineParser):
         "inline_math_tex",
         "inline_math_latex",
         "latex_environment",
-    ) + InlineParser.RULE_NAMES
+    ) + _INLINE_RULE_NAMES
 
     def parse_block_math_tex(self, m, state):
         # sometimes the Scanner keeps the final '$$', so we use the
