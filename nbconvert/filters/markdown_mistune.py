@@ -35,7 +35,7 @@ class InvalidNotebook(Exception):
 
 
 # BlockParser.RULE_NAMES was removed in mistune 3.0.
-_RULE_NAMES = getattr(BlockParser, 'RULE_NAMES', list(BlockParser.SPECIFICATION)) # type: ignore
+_RULE_NAMES = getattr(BlockParser, 'RULE_NAMES', list(getattr(BlockParser, "SPECIFICATION", []))) # type: ignore
 
 
 class MathBlockParser(BlockParser):
