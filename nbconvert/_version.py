@@ -1,6 +1,6 @@
-__version__ = "7.0.0rc2"
+__version__ = "7.0.0rc3"
 version_info = (7, 0, 0)
-pre_info = "rc2"
+pre_info = "rc3"
 dev_info = ""
 
 

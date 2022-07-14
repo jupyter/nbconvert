@@ -4,6 +4,10 @@
 Changes in nbconvert
 ====================
 
+7.0.0rc3
+--------
+* Pin mistune for now by @blink1073 in :ghpull:`1808`
+
 7.0.0rc2
 --------
 * Switch from entrypoints to importlib-metadata by @konstin in :ghpull:`1782`
