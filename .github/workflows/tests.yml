@@ -52,7 +52,7 @@ jobs:
         run: |
           mamba create -n nbconvert
           conda activate nbconvert
-          mamba install pip pyqtwebengine pandoc
+          mamba install pip pyqtwebengine pandoc pyxdg
       - name: Install Linux dependencies
         if: startsWith(runner.os, 'Linux')
         run: |

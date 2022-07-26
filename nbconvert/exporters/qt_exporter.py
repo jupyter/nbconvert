@@ -50,7 +50,7 @@ class QtExporter(HTMLExporter):
 
         try:
             QApplication, QtScreenshot = self._check_launch_reqs()
-            app = QApplication([""])
+            app = QApplication([])
             s = QtScreenshot(app)
             s.capture(f"file://{temp_file.name}", filename, self.paginate)
         finally:
