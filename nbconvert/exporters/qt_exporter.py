@@ -53,12 +53,7 @@ class QtExporter(HTMLExporter):
         finally:
             # Ensure the file is deleted even if pyqtwebengine raises an exception
             os.unlink(temp_file.name)
-        data = b""
-        if os.path.exists(filename):
-            with open(filename, "rb") as f:
-                data = f.read()
-            os.unlink(filename)
-        return data
+        return s.data
 
     def from_notebook_node(self, nb, resources=None, **kw):
         self._check_launch_reqs()
