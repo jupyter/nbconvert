@@ -1,3 +1,5 @@
+import os
+
 from PyQt5 import QtCore
 from PyQt5.QtGui import QPageLayout, QPageSize
 from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
@@ -21,9 +23,15 @@ class QtScreenshot(QWebEngineView):
         # Create hidden view without scrollbars
         self.setAttribute(QtCore.Qt.WA_DontShowOnScreen)
         self.page().settings().setAttribute(QWebEngineSettings.ShowScrollBars, False)
+        self.data = b""
         if output_file.endswith(".pdf"):
             self.export = self.export_pdf
-            self.page().pdfPrintingFinished.connect(lambda *args: self.app.quit())
+
+            def cleanup(*args):
+                self.app.quit()
+                self.get_data()
+
+            self.page().pdfPrintingFinished.connect(cleanup)
         elif output_file.endswith(".png"):
             self.export = self.export_png
         else:
@@ -54,3 +62,10 @@ class QtScreenshot(QWebEngineView):
     def export_png(self):
         self.grab().save(self.output_file, "PNG")
         self.app.quit()
+        self.get_data()
+
+    def get_data(self):
+        if os.path.exists(self.output_file):
+            with open(self.output_file, "rb") as f:
+                self.data = f.read()
+            os.unlink(self.output_file)
