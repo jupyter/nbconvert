@@ -1,10 +1,14 @@
 from PyQt5 import QtCore
 from PyQt5.QtGui import QPageLayout, QPageSize
 from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
+from PyQt5.QtWidgets import QApplication
 
+app = None
+if not QApplication.instance():
+    app = QApplication([])
 
 class QtScreenshot(QWebEngineView):
-    def __init__(self, app):
+    def __init__(self):
         super().__init__()
         self.app = app
 
@@ -18,7 +22,7 @@ class QtScreenshot(QWebEngineView):
         self.page().settings().setAttribute(QWebEngineSettings.ShowScrollBars, False)
         if output_file.endswith(".pdf"):
             self.export = self.export_pdf
-            self.page().pdfPrintingFinished.connect(lambda *args: self.app.exit())
+            self.page().pdfPrintingFinished.connect(lambda *args: self.app.quit())
         elif output_file.endswith(".png"):
             self.export = self.export_png
         else:
