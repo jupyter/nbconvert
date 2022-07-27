@@ -29,15 +29,13 @@ class QtExporter(HTMLExporter):
 
     def _check_launch_reqs(self):
         try:
-            from PyQt5.QtWidgets import QApplication
-
             from .qt_screenshot import QtScreenshot
         except ModuleNotFoundError as e:
             raise RuntimeError(
                 f"PyQtWebEngine is not installed to support Qt {self.format.upper()} conversion. "
                 f"Please install `nbconvert[qt{self.format}]` to enable."
             ) from e
-        return QApplication, QtScreenshot
+        return QtScreenshot
 
     def run_pyqtwebengine(self, html):
         """Run pyqtwebengine."""
@@ -49,9 +47,8 @@ class QtExporter(HTMLExporter):
             temp_file.write(html.encode("utf-8"))
 
         try:
-            QApplication, QtScreenshot = self._check_launch_reqs()
-            app = QApplication([])
-            s = QtScreenshot(app)
+            QtScreenshot = self._check_launch_reqs()
+            s = QtScreenshot()
             s.capture(f"file://{temp_file.name}", filename, self.paginate)
         finally:
             # Ensure the file is deleted even if pyqtwebengine raises an exception
