@@ -7,6 +7,7 @@ app = None
 if not QApplication.instance():
     app = QApplication([])
 
+
 class QtScreenshot(QWebEngineView):
     def __init__(self):
         super().__init__()
@@ -51,5 +52,5 @@ class QtScreenshot(QWebEngineView):
         self.page().printToPdf(self.output_file, pageLayout=page_layout)
 
     def export_png(self):
-        self.grab().save(self.output_file, b"PNG")
+        self.grab().save(self.output_file, "PNG")
         self.app.quit()
