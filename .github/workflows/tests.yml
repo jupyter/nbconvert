@@ -22,7 +22,7 @@ jobs:
           - os: "macos-latest"
             python-version: "3.9"
           - os: "ubuntu-latest"
-            python-version: "pypy-3.8"
+            python-version: "3.10"
       fail-fast: false
     steps:
       - name: Check out repository code
@@ -33,15 +33,7 @@ jobs:
         with:
           mamba-version: "*"
           channels: conda-forge
-      - name: Install conda-forge pypy
-        if: startsWith(matrix.python-version, 'pypy')
-        shell: bash -l {0}
-        run: |
-          mamba create -n nbconvert
-          conda activate nbconvert
-          mamba install pypy
       - name: Install conda-forge python
-        if: ${{ !startsWith(matrix.python-version, 'pypy') }}
         shell: bash -l {0}
         run: |
           mamba create -n nbconvert
