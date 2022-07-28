@@ -156,7 +156,7 @@ unknown type  {{ cell.type }}
 {% block data_png scoped %}
 <div class="output_png output_subarea {{ extra_class }}">
 {%- if 'image/png' in output.metadata.get('filenames', {}) %}
-<img src="{{ output.metadata.filenames['image/png'] | posix_path }}"
+<img src="{{ output.metadata.filenames['image/png'] | posix_path | escape_html }}"
 {%- else %}
 <img src="data:image/png;base64,{{ output.data['image/png'] }}"
 {%- endif %}
@@ -182,7 +182,7 @@ alt="{{ alttext }}"
 {% block data_jpg scoped %}
 <div class="output_jpeg output_subarea {{ extra_class }}">
 {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
-<img src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}"
+<img src="{{ output.metadata.filenames['image/jpeg'] | posix_path | escape_html }}"
 {%- else %}
 <img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] }}"
 {%- endif %}
