@@ -162,18 +162,18 @@ unknown type  {{ cell.type }}
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/png') -%}
 {%- if width is not none %}
-width={{ width }}
+width={{ width | escape_html }}
 {%- endif %}
 {%- set height=output | get_metadata('height', 'image/png') -%}
 {%- if height is not none %}
-height={{ height }}
+height={{ height | escape_html }}
 {%- endif %}
 {%- if output | get_metadata('unconfined', 'image/png') %}
 class="unconfined"
 {%- endif %}
 {%- set alttext=(output | get_metadata('alt', 'image/png')) or (cell | get_metadata('alt')) -%}
 {%- if alttext is not none %}
-alt="{{ alttext }}"
+alt="{{ alttext | escape_html }}"
 {%- endif %}
 >
 </div>
@@ -188,18 +188,18 @@ alt="{{ alttext }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/jpeg') -%}
 {%- if width is not none %}
-width={{ width }}
+width={{ width | escape_html }}
 {%- endif %}
 {%- set height=output | get_metadata('height', 'image/jpeg') -%}
 {%- if height is not none %}
-height={{ height }}
+height={{ height | escape_html }}
 {%- endif %}
 {%- if output | get_metadata('unconfined', 'image/jpeg') %}
 class="unconfined"
 {%- endif %}
 {%- set alttext=(output | get_metadata('alt', 'image/jpeg')) or (cell | get_metadata('alt')) -%}
 {%- if alttext is not none %}
-alt="{{ alttext }}"
+alt="{{ alttext | escape_html }}"
 {%- endif %}
 >
 </div>
