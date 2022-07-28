@@ -176,7 +176,7 @@ unknown type  {{ cell.type }}
 {%- if 'image/png' in output.metadata.get('filenames', {}) %}
 <img src="{{ output.metadata.filenames['image/png'] | posix_path | escape_html }}"
 {%- else %}
-<img src="data:image/png;base64,{{ output.data['image/png'] }}"
+<img src="data:image/png;base64,{{ output.data['image/png'] | escape_html }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/png') -%}
 {%- if width is not none %}
@@ -206,7 +206,7 @@ jp-needs-dark-background
 {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
 <img src="{{ output.metadata.filenames['image/jpeg'] | posix_path | escape_html }}"
 {%- else %}
-<img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] }}"
+<img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] | escape_html }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/jpeg') -%}
 {%- if width is not none %}
