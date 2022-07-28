@@ -46,7 +46,7 @@
 {% block input %}
 <div class="inner_cell">
     <div class="input_area">
-{{ cell.source | highlight_code(metadata=cell.metadata) }}
+{{ cell.source | highlight_code(metadata=cell.metadata) | clean_html }}
     </div>
 </div>
 {%- endblock input %}
@@ -81,11 +81,17 @@
 {%- endif -%}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-{{ cell.source  | markdown2html | strip_files_prefix }}
+{{ cell.source  | markdown2html | strip_files_prefix | clean_html }}
 </div>
 </div>
 </div>
 {%- endblock markdowncell %}
+
+{% block rawcell scoped %}
+{%- if cell.metadata.get('raw_mimetype', '').lower() in resources.get('raw_mimetypes', ['']) -%}
+{{ cell.source | clean_html }}
+{%- endif -%}
+{%- endblock rawcell %}
 
 {% block unknowncell scoped %}
 unknown type  {{ cell.type }}
