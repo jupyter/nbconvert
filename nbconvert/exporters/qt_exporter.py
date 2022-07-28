@@ -31,13 +31,15 @@ class QtExporter(HTMLExporter):
     def _check_launch_reqs(self):
         if sys.platform.startswith("win") and self.format == "png":
             raise RuntimeError("Exporting to PNG using Qt is currently not supported on Windows.")
-        try:
-            from .qt_screenshot import QtScreenshot
-        except ModuleNotFoundError as e:
+        from .qt_screenshot import QT_INSTALLED
+
+        if not QT_INSTALLED:
             raise RuntimeError(
                 f"PyQtWebEngine is not installed to support Qt {self.format.upper()} conversion. "
                 f"Please install `nbconvert[qt{self.format}]` to enable."
-            ) from e
+            )
+        from .qt_screenshot import QtScreenshot
+
         return QtScreenshot
 
     def run_pyqtwebengine(self, html):

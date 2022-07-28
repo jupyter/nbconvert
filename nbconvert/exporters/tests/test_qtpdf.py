@@ -3,10 +3,14 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import pytest
+
+from ..qt_screenshot import QT_INSTALLED
 from ..qtpdf import QtPDFExporter
 from .base import ExportersTestsBase
 
 
+@pytest.mark.skipif(not QT_INSTALLED, reason="PyQtWebEngine not installed")
 class TestQtPDFExporter(ExportersTestsBase):
     """Contains test functions for qtpdf.py"""
 
