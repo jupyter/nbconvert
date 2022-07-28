@@ -98,7 +98,12 @@
     {{ self.empty_in_prompt() }}
 {%- endif -%}
 <div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput {{ celltags(cell) }}" data-mime-type="text/markdown">
-{{ cell.source  | markdown2html | strip_files_prefix | clean_html }}
+{%- if resources.should_sanitize_html %}
+{%- set html_value=cell.source  | markdown2html | strip_files_prefix | clean_html -%}
+{%- else %}
+{%- set html_value=cell.source  | markdown2html | strip_files_prefix -%}
+{%- endif %}
+{{ html_value }}
 </div>
 </div>
 </div>
@@ -161,13 +166,22 @@ unknown type  {{ cell.type }}
 
 {% block data_html scoped -%}
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output {{ extra_class }}" data-mime-type="text/html">
+{%- if resources.should_sanitize_html %}
+{{ output.data['text/html'] | clean_html }}
+{%- else %}
 {{ output.data['text/html'] }}
+{%- endif %}
 </div>
 {%- endblock data_html %}
 
 {% block data_markdown scoped -%}
+{%- if resources.should_sanitize_html %}
+{%- set html_value=output.data['text/markdown'] | markdown2html | clean_html -%}
+{%- else %}
+{%- set html_value=output.data['text/markdown'] | markdown2html -%}
+{%- endif %}
 <div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output {{ extra_class }}" data-mime-type="text/markdown">
-{{ output.data['text/markdown'] | markdown2html }}
+{{ html_value }}
 </div>
 {%- endblock data_markdown %}
 
@@ -266,10 +280,12 @@ jp-needs-dark-background
 {% set div_id = uuid4() %}
 {%- block data_javascript scoped %}
 <div id="{{ div_id }}" class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript">
+{%- if not resources.should_sanitize_html %}
 <script type="text/javascript">
 var element = document.getElementById('{{ div_id }}');
 {{ output.data['application/javascript'] }}
 </script>
+{%- endif %}
 </div>
 {%- endblock -%}
 

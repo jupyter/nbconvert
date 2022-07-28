@@ -70,10 +70,9 @@ default_filters = {
     "get_metadata": filters.get_metadata,
     "convert_pandoc": filters.convert_pandoc,
     "json_dumps": json.dumps,
-    # browsers will parse </script>, closing a script tag early
-    # Since JSON allows escaping forward slash, this will still be parsed by JSON
-    "escape_html_script": lambda x: x.replace("</script>", "<\\/script>"),
+    # For removing any HTML
     "escape_html": html.escape,
+    # For sanitizing HTML for any XSS
     "clean_html": clean_html,
     "strip_trailing_newline": filters.strip_trailing_newline,
     "text_base64": filters.text_base64,

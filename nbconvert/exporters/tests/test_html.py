@@ -137,7 +137,9 @@ class TestHTMLExporter(ExportersTestsBase):
 
     def test_javascript_injection(self):
         for template in ["lab", "classic", "reveal"]:
-            (output, resources) = HTMLExporter(template_name=template).from_filename(self._get_notebook('notebook_inject.ipynb'))
+            (output, resources) = HTMLExporter(
+                template_name=template
+            ).from_filename(self._get_notebook('notebook_inject.ipynb'))
 
             # Check injection in the metadata.title of the Notebook
             assert "<script>alert('title')</script>" not in output
@@ -150,7 +152,6 @@ class TestHTMLExporter(ExportersTestsBase):
 
             # Check injection in the cell.source of the Notebook
             assert "<script>alert('raw cell')</script>" not in output
-            assert "<script>alert('markdown cell')</script>" not in output
 
             # Check injection in svg output
             assert "<script>alert('image/svg+xml output')</script>" not in output
@@ -170,3 +171,27 @@ class TestHTMLExporter(ExportersTestsBase):
 
             # Check injection in widget view
             assert "<script>alert('output.data.application/vnd.jupyter.widget-view+json injection')" not in output
+
+        # By design, text/html, text/markdown, application/javascript and markdown cells should allow
+        # for JavaScript code execution
+        for template in ["lab", "classic", "reveal"]:
+            (output, resources) = HTMLExporter(
+                template_name=template
+            ).from_filename(self._get_notebook('notebook_inject.ipynb'))
+
+            assert "<script>alert('markdown cell')</script>" in output
+            assert "<script>alert('text/markdown output')</script>" in output
+            assert "<script>alert('text/html output')</script>" in output
+            assert "alert('application/javascript output')" in output
+
+        # But it's an opt-out
+        for template in ["lab", "classic", "reveal"]:
+            (output, resources) = HTMLExporter(
+                template_name=template,
+                sanitize_html=True
+            ).from_filename(self._get_notebook('notebook_inject.ipynb'))
+
+            assert "<script>alert('markdown cell')</script>" not in output
+            assert "<script>alert('text/markdown output')</script>" not in output
+            assert "<script>alert('text/html output')</script>" not in output
+            assert "alert('application/javascript output')" not in output

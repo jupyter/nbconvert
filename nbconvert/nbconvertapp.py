@@ -65,6 +65,7 @@ nbconvert_aliases.update(
         "template": "TemplateExporter.template_name",
         "template-file": "TemplateExporter.template_file",
         "theme": "HTMLExporter.theme",
+        "sanitize_html": "HTMLExporter.sanitize_html",
         "writer": "NbConvertApp.writer_class",
         "post": "NbConvertApp.postprocessor_class",
         "output": "NbConvertApp.output_base",
@@ -177,6 +178,14 @@ nbconvert_flags.update(
                 }
             },
             """Embed the images as base64 dataurls in the output. This flag is only useful for the HTML/WebPDF/Slides exports.""",
+        ),
+        "sanitize-html": (
+            {
+                "HTMLExporter": {
+                    "sanitize_html": True,
+                }
+            },
+            """Whether the HTML in Markdown cells and cell outputs should be sanitized..""",
         ),
     }
 )
