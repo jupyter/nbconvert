@@ -7,10 +7,12 @@ import os
 
 import pytest
 
+from ..qt_screenshot import QT_INSTALLED
 from ..qtpng import QtPNGExporter
 from .base import ExportersTestsBase
 
 
+@pytest.mark.skipif(not QT_INSTALLED, reason="PyQtWebEngine not installed")
 class TestQtPNGExporter(ExportersTestsBase):
     """Contains test functions for qtpng.py"""
 
