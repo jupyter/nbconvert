@@ -124,7 +124,7 @@ unknown type  {{ cell.type }}
 {% block data_svg scoped -%}
 <div class="output_svg output_subarea {{ extra_class }}">
 {%- if output.svg_filename %}
-<img src="{{ output.svg_filename | posix_path }}">
+<img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
 {{ output.data['image/svg+xml'] | clean_html }}
 {%- endif %}
