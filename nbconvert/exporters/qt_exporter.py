@@ -1,5 +1,6 @@
 import os
 import tempfile
+import sys
 
 from jupyter_core.paths import jupyter_path
 from traitlets import default
@@ -28,6 +29,8 @@ class QtExporter(HTMLExporter):
         return jupyter_path("nbconvert", "templates", "qt" + self.format)
 
     def _check_launch_reqs(self):
+        if sys.platform.startswith("win") and self.format == "png":
+            raise RuntimeError("Exporting to PNG using Qt is currently not supported on Windows.")
         try:
             from .qt_screenshot import QtScreenshot
         except ModuleNotFoundError as e:
