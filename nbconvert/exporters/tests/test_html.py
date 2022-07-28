@@ -159,3 +159,7 @@ class TestHTMLExporter(ExportersTestsBase):
             # Check injection in image filenames
             assert "<script>alert('png filenames')</script>" not in output
             assert "<script>alert('jpg filenames')</script>" not in output
+
+            # Check injection in image data
+            assert "<script>alert('image/png output')</script>" not in output
+            assert "<script>alert('image/jpeg output')</script>" not in output
