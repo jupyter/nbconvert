@@ -1,6 +1,6 @@
 import os
-import tempfile
 import sys
+import tempfile
 
 from jupyter_core.paths import jupyter_path
 from traitlets import default
