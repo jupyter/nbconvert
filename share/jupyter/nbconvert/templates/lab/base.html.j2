@@ -26,7 +26,7 @@
 {% block input %}
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-{{ cell.source | highlight_code(metadata=cell.metadata) }}
+{{ cell.source | highlight_code(metadata=cell.metadata) | clean_html }}
      </div>
 </div>
 {%- endblock input %}
@@ -98,12 +98,18 @@
     {{ self.empty_in_prompt() }}
 {%- endif -%}
 <div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput {{ celltags(cell) }}" data-mime-type="text/markdown">
-{{ cell.source  | markdown2html | strip_files_prefix }}
+{{ cell.source  | markdown2html | strip_files_prefix | clean_html }}
 </div>
 </div>
 </div>
 </div>
 {%- endblock markdowncell %}
+
+{% block rawcell scoped %}
+{%- if cell.metadata.get('raw_mimetype', '').lower() in resources.get('raw_mimetypes', ['']) -%}
+{{ cell.source | clean_html }}
+{%- endif -%}
+{%- endblock rawcell %}
 
 {% block unknowncell scoped %}
 unknown type  {{ cell.type }}

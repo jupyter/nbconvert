@@ -147,3 +147,7 @@ class TestHTMLExporter(ExportersTestsBase):
 
             # Check injection in the cell.metadata.tags of the Notebook
             assert "<script>alert('cell_tag')</script>" not in output
+
+            # Check injection in the cell.source of the Notebook
+            assert "<script>alert('raw cell')</script>" not in output
+            assert "<script>alert('markdown cell')</script>" not in output
