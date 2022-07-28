@@ -151,3 +151,6 @@ class TestHTMLExporter(ExportersTestsBase):
             # Check injection in the cell.source of the Notebook
             assert "<script>alert('raw cell')</script>" not in output
             assert "<script>alert('markdown cell')</script>" not in output
+
+            # Check injection in svg output
+            assert "<script>alert('image/svg+xml output')</script>" not in output
