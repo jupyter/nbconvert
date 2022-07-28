@@ -152,7 +152,7 @@ unknown type  {{ cell.type }}
 {% block data_svg scoped -%}
 <div class="jp-RenderedSVG jp-OutputArea-output {{ extra_class }}" data-mime-type="image/svg+xml">
 {%- if output.svg_filename %}
-<img src="{{ output.svg_filename | posix_path }}">
+<img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
 {{ output.data['image/svg+xml'] | clean_html }}
 {%- endif %}
