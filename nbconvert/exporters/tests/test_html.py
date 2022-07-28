@@ -167,3 +167,6 @@ class TestHTMLExporter(ExportersTestsBase):
             # Check injection in image width/height
             assert "<script>alert('output.metadata.width png injection')</script>" not in output
             assert "<script>alert('output.metadata.height png injection')</script>" not in output
+
+            # Check injection in widget view
+            assert "<script>alert('output.data.application/vnd.jupyter.widget-view+json injection')" not in output
