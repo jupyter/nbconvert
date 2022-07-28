@@ -81,7 +81,12 @@
 {%- endif -%}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-{{ cell.source  | markdown2html | strip_files_prefix | clean_html }}
+{%- if resources.should_sanitize_html %}
+{%- set html_value=cell.source  | markdown2html | strip_files_prefix | clean_html -%}
+{%- else %}
+{%- set html_value=cell.source  | markdown2html | strip_files_prefix -%}
+{%- endif %}
+{{ html_value }}
 </div>
 </div>
 </div>
@@ -133,23 +138,33 @@ unknown type  {{ cell.type }}
 
 {% block data_html scoped -%}
 <div class="output_html rendered_html output_subarea {{ extra_class }}">
+{%- if resources.should_sanitize_html %}
+{%- set html_value=output.data['text/html'] | clean_html -%}
+{%- else %}
+{%- set html_value=output.data['text/html'] -%}
+{%- endif %}
 {%- if output.get('metadata', {}).get('text/html', {}).get('isolated') -%}
 <iframe
     class="isolated-iframe"
     style="height:520px; width:100%; margin:0; padding: 0"
     frameborder="0"
     scrolling="auto"
-    src="data:text/html;base64,{{output.data['text/html'] | text_base64}}">
+    src="data:text/html;base64,{{ html_value | text_base64 }}">
 </iframe>
 {%- else -%}
-{{ output.data['text/html'] }}
+{{ html_value }}
 {%- endif -%}
 </div>
 {%- endblock data_html %}
 
 {% block data_markdown scoped -%}
+{%- if resources.should_sanitize_html %}
+{%- set html_value=output.data['text/markdown'] | markdown2html | clean_html -%}
+{%- else %}
+{%- set html_value=output.data['text/markdown'] | markdown2html -%}
+{%- endif %}
 <div class="output_markdown rendered_html output_subarea {{ extra_class }}">
-{{ output.data['text/markdown'] | markdown2html }}
+{{ html_value }}
 </div>
 {%- endblock data_markdown %}
 
@@ -234,14 +249,17 @@ alt="{{ alttext | escape_html }}"
 {%- block data_javascript scoped %}
 {% set div_id = uuid4() %}
 <div id="{{ div_id }}" class="output_subarea output_javascript {{ extra_class }}">
+{%- if not resources.should_sanitize_html %}
 <script type="text/javascript">
 var element = $('#{{ div_id }}');
 {{ output.data['application/javascript'] }}
 </script>
+{%- endif %}
 </div>
 {%- endblock -%}
 
 {%- block data_widget_view scoped %}
+{%- if not resources.should_sanitize_html %}
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %}
 {% set datatype = datatype_list[0]%}
@@ -253,14 +271,17 @@ var element = $('#{{ div_id }}');
 {{ output.data[datatype] | json_dumps | escape_html }}
 </script>
 </div>
+{%- endif %}
 {%- endblock data_widget_view -%}
 
 {%- block footer %}
+{%- if not resources.should_sanitize_html %}
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | clean_html }}
+{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html }}
 </script>
 {% endif %}
+{%- endif %}
 {{ super() }}
 {%- endblock footer-%}

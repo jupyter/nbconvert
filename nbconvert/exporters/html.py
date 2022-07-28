@@ -5,6 +5,7 @@
 
 import base64
 import json
+from lxml.html.clean import clean_html
 import mimetypes
 import os
 from pathlib import Path
@@ -149,6 +150,14 @@ class HTMLExporter(TemplateExporter):
         help="Template specific theme(e.g. the name of a JupyterLab CSS theme distributed as prebuilt extension for the lab template)",
     ).tag(config=True)
 
+    sanitize_html = Bool(
+        False,
+        help=(
+            "Whether the HTML in Markdown cells and cell outputs should be sanitized."
+            "This should be set to True by nbviewer or similar tools."
+        ),
+    ).tag(config=True)
+
     embed_images = Bool(
         False, help="Whether or not to embed images as base64 in markdown cells."
     ).tag(config=True)
@@ -287,4 +296,5 @@ class HTMLExporter(TemplateExporter):
         resources["jupyter_widgets_base_url"] = self.jupyter_widgets_base_url
         resources["widget_renderer_url"] = self.widget_renderer_url
         resources["html_manager_semver_range"] = self.html_manager_semver_range
+        resources["should_sanitize_html"] = self.sanitize_html
         return resources
