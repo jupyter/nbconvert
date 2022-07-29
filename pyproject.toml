@@ -70,7 +70,7 @@ qtpdf = ["pyqtwebengine>=5.15"]
 qtpng = ["pyqtwebengine>=5.15"]
 webpdf = ["pyppeteer>=1,<1.1"]
 docs = [
-    "sphinx>=1.5.1",
+    "sphinx==5.0.2",
     "sphinx_rtd_theme",
     "nbsphinx>=0.2.12",
     "ipython",
@@ -86,7 +86,7 @@ all = [
     "pytest-dependency",
     "pyqtwebengine>=5.15",
     "pyppeteer>=1,<1.1",
-    "sphinx>=1.5.1",
+    "sphinx==5.0.2",
     "sphinx_rtd_theme",
     "tornado>=6.1",
 ]
