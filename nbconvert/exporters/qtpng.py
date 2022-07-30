@@ -14,5 +14,4 @@ class QtPNGExporter(QtExporter):
     """
 
     export_from_notebook = "PNG via HTML"
-
-    output_mimetype = "image/png"
+    format = "png"

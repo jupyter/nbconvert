@@ -2,7 +2,6 @@ import os
 import sys
 import tempfile
 
-from jupyter_core.paths import jupyter_path
 from traitlets import default
 
 from .html import HTMLExporter
@@ -12,21 +11,9 @@ class QtExporter(HTMLExporter):
 
     paginate = None
 
-    def __init__(self, *args, **kwargs):
-        self.format = self.output_mimetype.split("/")[-1]
-        super().__init__(*args, **kwargs)
-
     @default("file_extension")
     def _file_extension_default(self):
-        return "." + self.format
-
-    @default("template_name")
-    def _template_name_default(self):
-        return "qt" + self.format
-
-    @default("template_data_paths")
-    def _template_data_paths_default(self):
-        return jupyter_path("nbconvert", "templates", "qt" + self.format)
+        return ".html"
 
     def _check_launch_reqs(self):
         if sys.platform.startswith("win") and self.format == "png":
@@ -42,15 +29,12 @@ class QtExporter(HTMLExporter):
 
         return QtScreenshot
 
-    def run_pyqtwebengine(self, html):
-        """Run pyqtwebengine."""
-
+    def _run_pyqtwebengine(self, html):
         ext = ".html"
         temp_file = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
         filename = f"{temp_file.name[:-len(ext)]}.{self.format}"
         with temp_file:
             temp_file.write(html.encode("utf-8"))
-
         try:
             QtScreenshot = self._check_launch_reqs()
             s = QtScreenshot()
@@ -65,7 +49,7 @@ class QtExporter(HTMLExporter):
         html, resources = super().from_notebook_node(nb, resources=resources, **kw)
 
         self.log.info(f"Building {self.format.upper()}")
-        data = self.run_pyqtwebengine(html)
+        data = self._run_pyqtwebengine(html)
         self.log.info(f"{self.format.upper()} successfully created")
 
         # convert output extension
