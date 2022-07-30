@@ -16,6 +16,7 @@ class QtPDFExporter(QtExporter):
     """
 
     export_from_notebook = "PDF via HTML"
+    format = "pdf"
 
     paginate = Bool(
         True,
@@ -27,5 +28,3 @@ class QtPDFExporter(QtExporter):
         Set to True to match behavior of LaTeX based PDF generator
         """,
     ).tag(config=True)
-
-    output_mimetype = "application/pdf"

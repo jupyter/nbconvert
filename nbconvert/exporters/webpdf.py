@@ -38,8 +38,6 @@ class WebPDFExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
-    output_mimetype = "text/html"
-
     @default("file_extension")
     def _file_extension_default(self):
         return ".html"
