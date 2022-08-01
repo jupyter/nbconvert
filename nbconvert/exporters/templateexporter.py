@@ -40,13 +40,6 @@ DEV_MODE = os.path.exists(os.path.join(ROOT, "../../setup.py")) and os.path.exis
 )
 
 
-def escape_html(s, quote=True):
-    if not isinstance(s, str):
-        return s
-    else:
-        return html.escape(s)
-
-
 default_filters = {
     "indent": filters.indent,
     "markdown2html": filters.markdown2html,
@@ -78,7 +71,7 @@ default_filters = {
     "convert_pandoc": filters.convert_pandoc,
     "json_dumps": json.dumps,
     # For removing any HTML
-    "escape_html": escape_html,
+    "escape_html": lambda s: html.escape(str(s)),
     # For sanitizing HTML for any XSS
     "clean_html": clean_html,
     "strip_trailing_newline": filters.strip_trailing_newline,
