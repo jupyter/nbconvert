@@ -105,6 +105,12 @@ path = "nbconvert/_version.py"
 [tool.hatch.build.targets.sdist]
 artifacts = ["share/templates/lab/static/*.*"]
 
+[tool.hatch.build.targets.wheel]
+exclude = [
+    "nbconvert/tests/",
+    "nbconvert/**/tests/",
+]
+
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
 
