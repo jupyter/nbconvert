@@ -68,7 +68,9 @@ class Highlight2HTML(NbConvertBase):
         return _pygments_highlight(
             source if len(source) > 0 else " ",
             # needed to help post processors:
-            HtmlFormatter(cssclass=escape(f" highlight hl-{language}"), **self.extra_formatter_options),
+            HtmlFormatter(
+                cssclass=escape(f" highlight hl-{language}"), **self.extra_formatter_options
+            ),
             language,
             metadata,
         )
