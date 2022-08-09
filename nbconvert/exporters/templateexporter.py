@@ -146,9 +146,7 @@ class TemplateExporter(Exporter):
     """
 
     # finish the docstring
-    __doc__ = __doc__.format(
-        filters="- " + "\n    - ".join(sorted(default_filters.keys()))
-    )
+    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))
 
     _template_cached = None
 
@@ -188,9 +186,9 @@ class TemplateExporter(Exporter):
         config=True, affects_template=True
     )
 
-    template_file = Unicode(
-        None, allow_none=True, help="Name of the template file to use"
-    ).tag(config=True, affects_template=True)
+    template_file = Unicode(None, allow_none=True, help="Name of the template file to use").tag(
+        config=True, affects_template=True
+    )
 
     raw_template = Unicode("", help="raw template string").tag(affects_environment=True)
 
@@ -357,9 +355,7 @@ class TemplateExporter(Exporter):
             self._invalidate_environment_cache,
             list(self.traits(affects_environment=True)),
         )
-        self.observe(
-            self._invalidate_template_cache, list(self.traits(affects_template=True))
-        )
+        self.observe(self._invalidate_template_cache, list(self.traits(affects_template=True)))
 
     def _load_template(self):
         """Load the Jinja template object from the template file
@@ -570,9 +566,7 @@ class TemplateExporter(Exporter):
             base_dir = os.path.join(root_dir, "nbconvert", "templates")
             paths.append(base_dir)
 
-            compatibility_dir = os.path.join(
-                root_dir, "nbconvert", "templates", "compatibility"
-            )
+            compatibility_dir = os.path.join(root_dir, "nbconvert", "templates", "compatibility")
             paths.append(compatibility_dir)
 
         additional_paths = []
@@ -609,9 +603,7 @@ class TemplateExporter(Exporter):
                     with open(conf_file) as f:
                         conf = recursive_update(json.load(f), conf)
             for root_dir in root_dirs:
-                template_dir = os.path.join(
-                    root_dir, "nbconvert", "templates", base_template
-                )
+                template_dir = os.path.join(root_dir, "nbconvert", "templates", base_template)
                 if os.path.exists(template_dir):
                     found_at_least_one = True
                 conf_file = os.path.join(template_dir, "conf.json")
@@ -648,11 +640,7 @@ class TemplateExporter(Exporter):
             merged_conf = recursive_update(dict(conf), merged_conf)
             base_template = conf.get("base_template")
         conf = merged_conf
-        mimetypes = [
-            mimetype
-            for mimetype, enabled in conf.get("mimetypes", {}).items()
-            if enabled
-        ]
+        mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = "\n\t".join(mimetypes)
             raise ValueError(
@@ -666,9 +654,7 @@ class TemplateExporter(Exporter):
         # relative to the package directory (first entry, meaning with highest precedence)
         root_dirs = []
         if DEV_MODE:
-            root_dirs.append(
-                os.path.abspath(os.path.join(ROOT, "..", "..", "share", "jupyter"))
-            )
+            root_dirs.append(os.path.abspath(os.path.join(ROOT, "..", "..", "share", "jupyter")))
         root_dirs.extend(jupyter_path())
         return root_dirs
 
