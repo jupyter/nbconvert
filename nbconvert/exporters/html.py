@@ -5,7 +5,6 @@
 
 import base64
 import json
-from lxml.html.clean import clean_html
 import mimetypes
 import os
 from pathlib import Path
