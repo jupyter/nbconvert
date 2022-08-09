@@ -77,7 +77,7 @@ class TestHighlight(TestsBase):
     @pytest.mark.filterwarnings("ignore")
     def test_inject_html(self):
         out = highlight2html(self.tests[0], 'ipython3-foo"><script>alert(1)</script>')
-        assert '<script>alert(1)</script>' not in out
+        assert "<script>alert(1)</script>" not in out
 
     def _extract_tokens(self, root, cls):
         return set(map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']")))
