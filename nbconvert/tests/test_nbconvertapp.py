@@ -374,7 +374,7 @@ class TestNbConvertApp(TestsBase):
                     '<span class="o">=</span> '
                     '<span class="n">symbols</span>'
                     '<span class="p">(</span>'
-                    '<span class="s1">&#39;x y z&#39;</span>'
+                    '<span class="s1">\'x y z\'</span>'
                     '<span class="p">)</span>'
                 ) not in text
             self.nbconvert("notebook1.ipynb --log-level 0 --to html")
@@ -392,7 +392,7 @@ class TestNbConvertApp(TestsBase):
                     '<span class="o">=</span> '
                     '<span class="n">symbols</span>'
                     '<span class="p">(</span>'
-                    '<span class="s1">&#39;x y z&#39;</span>'
+                    '<span class="s1">\'x y z\'</span>'
                     '<span class="p">)</span>'
                 ) in text2
 
