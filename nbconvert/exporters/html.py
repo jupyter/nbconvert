@@ -92,13 +92,13 @@ class HTMLExporter(TemplateExporter):
 
     export_from_notebook = "HTML"
 
-    anchor_link_text = Unicode("¶", help="The text used as the text for anchor links.").tag(
-        config=True
-    )
+    anchor_link_text = Unicode(
+        "¶", help="The text used as the text for anchor links."
+    ).tag(config=True)
 
-    exclude_anchor_links = Bool(False, help="If anchor links should be included or not.").tag(
-        config=True
-    )
+    exclude_anchor_links = Bool(
+        False, help="If anchor links should be included or not."
+    ).tag(config=True)
 
     require_js_url = Unicode(
         "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js",
@@ -131,7 +131,9 @@ class HTMLExporter(TemplateExporter):
         "https://unpkg.com/", help="URL base for Jupyter widgets"
     ).tag(config=True)
 
-    widget_renderer_url = Unicode("", help="Full URL for Jupyter widgets").tag(config=True)
+    widget_renderer_url = Unicode("", help="Full URL for Jupyter widgets").tag(
+        config=True
+    )
 
     html_manager_semver_range = Unicode(
         "*", help="Semver range for Jupyter widgets HTML manager"
@@ -226,7 +228,9 @@ class HTMLExporter(TemplateExporter):
     def _init_resources(self, resources):
         def resources_include_css(name):
             env = self.environment
-            code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])
+            code = """<style type="text/css">\n%s</style>""" % (
+                env.loader.get_source(env, name)[0]
+            )
             return markupsafe.Markup(code)
 
         def resources_include_lab_theme(name):

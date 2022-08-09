@@ -146,7 +146,9 @@ class TemplateExporter(Exporter):
     """
 
     # finish the docstring
-    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))
+    __doc__ = __doc__.format(
+        filters="- " + "\n    - ".join(sorted(default_filters.keys()))
+    )
 
     _template_cached = None
 
@@ -186,9 +188,9 @@ class TemplateExporter(Exporter):
         config=True, affects_template=True
     )
 
-    template_file = Unicode(None, allow_none=True, help="Name of the template file to use").tag(
-        config=True, affects_template=True
-    )
+    template_file = Unicode(
+        None, allow_none=True, help="Name of the template file to use"
+    ).tag(config=True, affects_template=True)
 
     raw_template = Unicode("", help="raw template string").tag(affects_environment=True)
 
@@ -257,7 +259,8 @@ class TemplateExporter(Exporter):
     template_extension = Unicode().tag(config=True, affects_environment=True)
 
     template_data_paths = List(
-        jupyter_path("nbconvert", "templates"), help="Path where templates can be installed too."
+        jupyter_path("nbconvert", "templates"),
+        help="Path where templates can be installed too.",
     ).tag(affects_environment=True)
 
     # Extension that the template files use.
@@ -271,11 +274,13 @@ class TemplateExporter(Exporter):
             return self.file_extension
 
     exclude_input = Bool(
-        False, help="This allows you to exclude code cell inputs from all templates if set to True."
+        False,
+        help="This allows you to exclude code cell inputs from all templates if set to True.",
     ).tag(config=True)
 
     exclude_input_prompt = Bool(
-        False, help="This allows you to exclude input prompts from all templates if set to True."
+        False,
+        help="This allows you to exclude input prompts from all templates if set to True.",
     ).tag(config=True)
 
     exclude_output = Bool(
@@ -284,7 +289,8 @@ class TemplateExporter(Exporter):
     ).tag(config=True)
 
     exclude_output_prompt = Bool(
-        False, help="This allows you to exclude output prompts from all templates if set to True."
+        False,
+        help="This allows you to exclude output prompts from all templates if set to True.",
     ).tag(config=True)
 
     exclude_output_stdin = Bool(
@@ -293,19 +299,23 @@ class TemplateExporter(Exporter):
     ).tag(config=True)
 
     exclude_code_cell = Bool(
-        False, help="This allows you to exclude code cells from all templates if set to True."
+        False,
+        help="This allows you to exclude code cells from all templates if set to True.",
     ).tag(config=True)
 
     exclude_markdown = Bool(
-        False, help="This allows you to exclude markdown cells from all templates if set to True."
+        False,
+        help="This allows you to exclude markdown cells from all templates if set to True.",
     ).tag(config=True)
 
     exclude_raw = Bool(
-        False, help="This allows you to exclude raw cells from all templates if set to True."
+        False,
+        help="This allows you to exclude raw cells from all templates if set to True.",
     ).tag(config=True)
 
     exclude_unknown = Bool(
-        False, help="This allows you to exclude unknown cells from all templates if set to True."
+        False,
+        help="This allows you to exclude unknown cells from all templates if set to True.",
     ).tag(config=True)
 
     extra_loaders = List(
@@ -344,9 +354,12 @@ class TemplateExporter(Exporter):
         super().__init__(config=config, **kw)
 
         self.observe(
-            self._invalidate_environment_cache, list(self.traits(affects_environment=True))
+            self._invalidate_environment_cache,
+            list(self.traits(affects_environment=True)),
         )
-        self.observe(self._invalidate_template_cache, list(self.traits(affects_template=True)))
+        self.observe(
+            self._invalidate_template_cache, list(self.traits(affects_template=True))
+        )
 
     def _load_template(self):
         """Load the Jinja template object from the template file
@@ -557,7 +570,9 @@ class TemplateExporter(Exporter):
             base_dir = os.path.join(root_dir, "nbconvert", "templates")
             paths.append(base_dir)
 
-            compatibility_dir = os.path.join(root_dir, "nbconvert", "templates", "compatibility")
+            compatibility_dir = os.path.join(
+                root_dir, "nbconvert", "templates", "compatibility"
+            )
             paths.append(compatibility_dir)
 
         additional_paths = []
@@ -594,7 +609,9 @@ class TemplateExporter(Exporter):
                     with open(conf_file) as f:
                         conf = recursive_update(json.load(f), conf)
             for root_dir in root_dirs:
-                template_dir = os.path.join(root_dir, "nbconvert", "templates", base_template)
+                template_dir = os.path.join(
+                    root_dir, "nbconvert", "templates", base_template
+                )
                 if os.path.exists(template_dir):
                     found_at_least_one = True
                 conf_file = os.path.join(template_dir, "conf.json")
@@ -606,7 +623,11 @@ class TemplateExporter(Exporter):
                 for root_dir in root_dirs:
                     compatibility_file = base_template + ".tpl"
                     compatibility_path = os.path.join(
-                        root_dir, "nbconvert", "templates", "compatibility", compatibility_file
+                        root_dir,
+                        "nbconvert",
+                        "templates",
+                        "compatibility",
+                        compatibility_file,
                     )
                     if os.path.exists(compatibility_path):
                         found_at_least_one = True
@@ -627,7 +648,11 @@ class TemplateExporter(Exporter):
             merged_conf = recursive_update(dict(conf), merged_conf)
             base_template = conf.get("base_template")
         conf = merged_conf
-        mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
+        mimetypes = [
+            mimetype
+            for mimetype, enabled in conf.get("mimetypes", {}).items()
+            if enabled
+        ]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = "\n\t".join(mimetypes)
             raise ValueError(
@@ -641,7 +666,9 @@ class TemplateExporter(Exporter):
         # relative to the package directory (first entry, meaning with highest precedence)
         root_dirs = []
         if DEV_MODE:
-            root_dirs.append(os.path.abspath(os.path.join(ROOT, "..", "..", "share", "jupyter")))
+            root_dirs.append(
+                os.path.abspath(os.path.join(ROOT, "..", "..", "share", "jupyter"))
+            )
         root_dirs.extend(jupyter_path())
         return root_dirs
 
