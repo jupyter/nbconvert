@@ -6,9 +6,8 @@ that uses Jinja2 to export notebook files into different formats.
 # Distributed under the terms of the Modified BSD License.
 
 
-import json
 import html
-from lxml.html.clean import clean_html
+import json
 import os
 import uuid
 import warnings
@@ -23,6 +22,7 @@ from jinja2 import (
     TemplateNotFound,
 )
 from jupyter_core.paths import jupyter_path
+from lxml.html.clean import clean_html
 from traitlets import Bool, Dict, HasTraits, List, Unicode, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
