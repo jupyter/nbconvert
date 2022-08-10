@@ -268,7 +268,7 @@ var element = $('#{{ div_id }}');
 var element = $('#{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
-{{ output.data[datatype] | json_dumps | escape_html }}
+{{ output.data[datatype] | json_dumps | escape_html_keep_quotes }}
 </script>
 </div>
 {%- endif %}
@@ -279,7 +279,7 @@ var element = $('#{{ div_id }}');
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html }}
+{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_keep_quotes }}
 </script>
 {% endif %}
 {%- endif %}

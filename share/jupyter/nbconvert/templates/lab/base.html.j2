@@ -298,7 +298,7 @@ var element = document.getElementById('{{ div_id }}');
 var element = document.getElementById('{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
-{{ output.data[datatype] | json_dumps | escape_html }}
+{{ output.data[datatype] | json_dumps | escape_html_keep_quotes }}
 </script>
 </div>
 {%- endblock data_widget_view -%}
@@ -307,7 +307,7 @@ var element = document.getElementById('{{ div_id }}');
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | clean_html }}
+{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_keep_quotes }}
 </script>
 {% endif %}
 {{ super() }}
