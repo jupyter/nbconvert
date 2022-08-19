@@ -277,8 +277,8 @@ jp-needs-dark-background
  ###############################################################################
  #}
 
-{% set div_id = uuid4() %}
 {%- block data_javascript scoped %}
+{% set div_id = uuid4() %}
 <div id="{{ div_id }}" class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript">
 {%- if not resources.should_sanitize_html %}
 <script type="text/javascript">
