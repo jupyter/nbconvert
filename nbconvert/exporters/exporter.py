@@ -334,7 +334,7 @@ class Exporter(LoggingConfigurable):
         resc = copy.deepcopy(resources)
 
         if hasattr(validator, "normalize"):
-            nbc, _ = validator.normalize(nbc)
+            _, nbc = validator.normalize(nbc)
 
         # Run each preprocessor on the notebook.  Carry the output along
         # to each preprocessor
