@@ -163,7 +163,7 @@ unknown type  {{ cell.type }}
 {%- if output.svg_filename %}
 <img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
-{{ output.data['image/svg+xml'] | clean_html }}
+{{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
 {%- endif %}
 </div>
 {%- endblock data_svg %}
