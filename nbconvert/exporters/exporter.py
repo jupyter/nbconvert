@@ -341,9 +341,9 @@ class Exporter(LoggingConfigurable):
         for preprocessor in self._preprocessors:
             nbc, resc = preprocessor(nbc, resc)
             if not self.optimistic_validation:
-                nbc = self._validate_preprocessor(nbc, preprocessor)
+                self._validate_preprocessor(nbc, preprocessor)
 
         if self.optimistic_validation:
-            nbc = self._validate_preprocessor(nbc, preprocessor)
+            self._validate_preprocessor(nbc, preprocessor)
 
         return nbc, resc
