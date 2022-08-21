@@ -29,12 +29,12 @@ from .base import ExportersTestsBase
 
 
 class PizzaPreprocessor(Preprocessor):
-    """Simple preprocessor that adds a 'pizza' entry to the NotebookNode.  Used
+    """Simple preprocessor that adds a 'pizza' entry to the Notebook metadata.  Used
     to test Exporter.
     """
 
     def preprocess(self, nb, resources):
-        nb["pizza"] = "cheese"
+        nb["metadata"]["pizza"] = "cheese"
         return nb, resources
 
 
@@ -56,7 +56,7 @@ class TestExporter(ExportersTestsBase):
         config = Config({"Exporter": {"preprocessors": [PizzaPreprocessor()]}})
         exporter = Exporter(config=config)
         (notebook, resources) = exporter.from_filename(self._get_notebook())
-        self.assertEqual(notebook["pizza"], "cheese")
+        self.assertEqual(notebook["metadata"]["pizza"], "cheese")
 
     def test_get_export_names_disable(self):
         """Can we disable all exporters then enable a single one"""
