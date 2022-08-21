@@ -119,7 +119,7 @@ class TagRemovePreprocessor(Preprocessor):
                     cell.metadata.pop(field, None)
 
         if self.remove_input_tags.intersection(cell.get("metadata", {}).get("tags", [])):
-            cell.transient = {"remove_source": True}
+            cell.metadata["transient"] = {"remove_source": True}
 
         if cell.get("outputs", []):
             cell.outputs = [
