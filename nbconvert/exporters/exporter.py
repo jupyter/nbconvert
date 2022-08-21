@@ -14,6 +14,7 @@ import sys
 from typing import Optional
 
 import nbformat
+from nbformat import validator
 from traitlets import Bool, HasTraits, List, TraitError, Unicode
 from traitlets.config import Config
 from traitlets.config.configurable import LoggingConfigurable
@@ -304,7 +305,10 @@ class Exporter(LoggingConfigurable):
 
     def _validate_preprocessor(self, nbc, preprocessor):
         try:
-            nbformat.validate(nbc, relax_add_props=True)
+            if not hasattr(validator, "normalize"):
+                nbformat.validate(nbc, relax_add_props=True)
+            else:
+                nbformat.validate(nbc)
         except nbformat.ValidationError:
             self.log.error("Notebook is invalid after preprocessor %s", preprocessor)
             raise
@@ -328,6 +332,9 @@ class Exporter(LoggingConfigurable):
         # we are never safe enough with what the preprocessors could do.
         nbc = copy.deepcopy(nb)
         resc = copy.deepcopy(resources)
+
+        if hasattr(validator, "normalize"):
+            _, nbc = validator.normalize(nbc)
 
         # Run each preprocessor on the notebook.  Carry the output along
         # to each preprocessor
