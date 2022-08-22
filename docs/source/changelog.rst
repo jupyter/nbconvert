@@ -4,10 +4,6 @@
 Changes in nbconvert
 ====================
 
-7.0.0rc3
---------
-* Pin mistune for now by @blink1073 in :ghpull:`1808`
-
 7.0.0
 --------
 * Update to Mistune 2.0.2 by @TiagodePAlves in :ghpull:`1764`
