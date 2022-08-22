@@ -8,25 +8,23 @@ Changes in nbconvert
 --------
 * Pin mistune for now by @blink1073 in :ghpull:`1808`
 
-7.0.0rc2
+7.0.0
 --------
-* Switch from entrypoints to importlib-metadata by @konstin in :ghpull:`1782`
+* Update to Mistune 2.0.2 by @TiagodePAlves in :ghpull:`1764`
+* Add qtpdf and qtpng exporters by @davidbrochart in :ghpull:`1611`
 * Add recursive flag for glob notebook search by @paoloalba in :ghpull:`1785`
+* Encode SVG image data as UTF-8 before calling lxml cleaner by @emarsden in :ghpull:`1837`
+* Fix lab template output alignment by @dakoop in :ghpull:`1795`
+* Handle nbformat 5.5 by @blink1073 :ghpull:`1841`
+* Remove downloaded CSS from repository by @martinRenou :ghpull:`1827`
+* Switch from entrypoints to importlib-metadata by @konstin in :ghpull:`1782`
 * Updates for sphinx 5.0 support by @blink1073 in :ghpull:`1788`
 * Fixed unique div ids in lab template, fixed #1759 by @veghdev in :ghpull:`1761`
 * WebPDFExporter: Emulate media print by @martinRenou in :ghpull:`1791`
 * Fix fonts overriden by user stylesheet by inheriting styles by @dakoop in :ghpull:`1793`
 * Fix lab template output alignment by @dakoop in :ghpull:`1795`
-
-7.0.0rc1
---------
 * Clean up markdown parsing by @blink1073 in :ghpull:`1774`
 * Switch to hatch build backend by @blink1073 in :ghpull:`1777`
-
-7.0.0rc0
---------
-* Update to Mistune 2.0.2 by @TiagodePAlves in :ghpull:`1764`
-* Switch to flit build backend by @blink1073 in :ghpull:`1767`
 
 6.5.0
 -----
