@@ -70,7 +70,7 @@ Create the release
 
 #.  Update the :doc:`changelog <changelog>` to account for all the PRs assigned to this milestone.
 
-#.  Update version number in ``notebook/_version.py`` and remove ``.dev`` from dev_info. Note that the version may already be on the dev version of the number you're releasing.
+#.  Update version number in ``nbconvert/_version.py`` and remove ``.dev`` from dev_info. Note that the version may already be on the dev version of the number you're releasing.
 
 #.  Commit and tag the release with the current version number:
 
@@ -112,7 +112,7 @@ Push directly on main, including --tags separately
 Return to development state
 ---------------------------
 
-If all went well, change the ``notebook/_version.py`` back by adding the
+If all went well, change the ``nbconvert/_version.py`` back by adding the
     ``.dev`` suffix and moving the version forward to the next patch
     release number.
 
