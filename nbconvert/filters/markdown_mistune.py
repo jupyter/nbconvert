@@ -122,11 +122,11 @@ class MarkdownWithMath(Markdown):
             plugins = [
                 # "abbr",
                 # 'footnotes',
-                'strikethrough',
-                'table',
-                'url',
-                'task_lists',
-                'def_list',
+                "strikethrough",
+                "table",
+                "url",
+                "task_lists",
+                "def_list",
             ]
             _plugins = []
             for p in plugins:
