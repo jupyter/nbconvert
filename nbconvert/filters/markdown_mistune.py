@@ -21,7 +21,7 @@ except ImportError:
     from cgi import escape as html_escape
 
 import bs4
-from mistune import BlockParser, HTMLRenderer, InlineParser, Markdown, PLUGINS
+from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
