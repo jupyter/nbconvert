@@ -21,7 +21,7 @@ except ImportError:
     from cgi import escape as html_escape
 
 import bs4
-from mistune import BlockParser, HTMLRenderer, InlineParser, Markdown
+from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
@@ -118,6 +118,23 @@ class MarkdownWithMath(Markdown):
             block = MathBlockParser()
         if inline is None:
             inline = MathInlineParser(renderer, hard_wrap=False)
+        if plugins is None:
+            plugins = [
+                # "abbr",
+                # 'footnotes',
+                "strikethrough",
+                "table",
+                "url",
+                "task_lists",
+                "def_list",
+            ]
+            _plugins = []
+            for p in plugins:
+                if isinstance(p, str):
+                    _plugins.append(PLUGINS[p])
+                else:
+                    _plugins.append(p)
+            plugins = _plugins
         super().__init__(renderer, block, inline, plugins)
 
     def render(self, s):
