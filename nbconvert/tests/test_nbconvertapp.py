@@ -358,43 +358,31 @@ class TestNbConvertApp(TestsBase):
         """
         Verify that the html has no input when given --no-input.
         """
-        with self.create_temp_cwd(["notebook1.ipynb"]):
-            self.nbconvert("notebook1.ipynb --log-level 0 --no-input --to html")
-            assert os.path.isfile("notebook1.html")
-            with open("notebook1.html", encoding="utf8") as f:
-                text = f.read()
-                assert "In&nbsp;[" not in text
-                assert "Out[6]" not in text
-                assert (
-                    '<span class="n">x</span>'
-                    '<span class="p">,</span>'
-                    '<span class="n">y</span>'
-                    '<span class="p">,</span>'
-                    '<span class="n">z</span> '
-                    '<span class="o">=</span> '
-                    '<span class="n">symbols</span>'
-                    '<span class="p">(</span>'
-                    "<span class=\"s1\">'x y z'</span>"
-                    '<span class="p">)</span>'
-                ) not in text
-            self.nbconvert("notebook1.ipynb --log-level 0 --to html")
-            assert os.path.isfile("notebook1.html")
-            with open("notebook1.html", encoding="utf8") as f:
-                text2 = f.read()
-                assert "In&nbsp;[" in text2
-                assert "Out[6]" in text2
-                assert (
-                    '<span class="n">x</span>'
-                    '<span class="p">,</span>'
-                    '<span class="n">y</span>'
-                    '<span class="p">,</span>'
-                    '<span class="n">z</span> '
-                    '<span class="o">=</span> '
-                    '<span class="n">symbols</span>'
-                    '<span class="p">(</span>'
-                    "<span class=\"s1\">'x y z'</span>"
-                    '<span class="p">)</span>'
-                ) in text2
+        input_content_html = (
+            '<span class="n">x</span>'
+            '<span class="p">,</span>'
+            '<span class="n">y</span>'
+            '<span class="p">,</span>'
+            '<span class="n">z</span> '
+            '<span class="o">=</span> '
+            '<span class="n">symbols</span>'
+            '<span class="p">(</span>'
+            "<span class=\"s1\">'x y z'</span>"
+            '<span class="p">)</span>'
+        )
+        for no_input_flag in (False, True):
+            with self.create_temp_cwd(["notebook1.ipynb"]):
+                command = "notebook1.ipynb --log-level 0 --to html"
+                if no_input_flag:
+                    command += " --no-input"
+                self.nbconvert(command)
+                assert os.path.isfile("notebook1.html")
+
+                with open("notebook1.html", encoding="utf8") as f:
+                    text = f.read()
+                    assert no_input_flag == ("In&nbsp;[" not in text)
+                    assert no_input_flag == ("Out[6]" not in text)
+                    assert no_input_flag == (input_content_html not in text)
 
     def test_allow_errors(self):
         """
