@@ -15,12 +15,15 @@ import warnings
 from urllib.parse import quote
 from xml.etree.ElementTree import Element
 
+import bleach
+
 # defusedxml does safe(r) parsing of untrusted XML data
 from defusedxml import ElementTree
 
 __all__ = [
     "wrap_text",
     "html2text",
+    "clean_html",
     "add_anchor",
     "strip_dollars",
     "strip_files_prefix",
@@ -73,6 +76,21 @@ def html2text(element):
         text += html2text(child)
     text += element.tail or ""
     return text
+
+
+def clean_html(element):
+    if isinstance(element, bytes):
+        element = element.decode()
+    else:
+        element = str(element)
+    return bleach.clean(
+        element,
+        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span"],
+        attributes={
+            **bleach.ALLOWED_ATTRIBUTES,
+            "*": ["class", "id"],
+        },
+    )
 
 
 def _convert_header_id(header_contents):

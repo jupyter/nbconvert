@@ -22,7 +22,6 @@ from jinja2 import (
     TemplateNotFound,
 )
 from jupyter_core.paths import jupyter_path
-from lxml.html.clean import clean_html
 from traitlets import Bool, Dict, HasTraits, List, Unicode, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
@@ -72,7 +71,7 @@ default_filters = {
     "escape_html": lambda s: html.escape(str(s)),
     "escape_html_keep_quotes": lambda s: html.escape(str(s), quote=False),
     # For sanitizing HTML for any XSS
-    "clean_html": clean_html,
+    "clean_html": filters.clean_html,
     "strip_trailing_newline": filters.strip_trailing_newline,
     "text_base64": filters.text_base64,
 }
