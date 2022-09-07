@@ -31,7 +31,6 @@ class _RevealMetadataPreprocessor(Preprocessor):
             if cell.metadata.slide_type not in {"notes", "skip"}:
                 cell.metadata.slide_type = "slide"
                 cell.metadata.slide_start = True
-                cell.metadata.subslide_start = True
                 first_slide_ix = index
                 break
         else:
@@ -74,7 +73,6 @@ class _RevealMetadataPreprocessor(Preprocessor):
 
         # The last cell will always be the end of a slide
         nb.cells[-1].metadata.fragment_end = in_fragment
-        nb.cells[-1].metadata.subslide_end = True
         nb.cells[-1].metadata.slide_end = True
 
         return nb, resources
