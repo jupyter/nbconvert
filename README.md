@@ -7,7 +7,6 @@
 [![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=latest)](https://nbconvert.readthedocs.io/en/latest/?badge=latest)
 [![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=stable)](https://nbconvert.readthedocs.io/en/stable/?badge=stable)
 [![codecov.io](https://codecov.io/github/jupyter/nbconvert/coverage.svg?branch=main)](https://codecov.io/github/jupyter/nbconvert?branch=main)
-[![CircleCI Docs Status](https://circleci.com/gh/jupyter/nbconvert/tree/main.svg?style=svg)](https://circleci.com/gh/jupyter/nbconvert/tree/main)
 
 The **nbconvert** tool, `jupyter nbconvert`, converts notebooks to various other
 formats via [Jinja][] templates. The nbconvert tool allows you to convert an
