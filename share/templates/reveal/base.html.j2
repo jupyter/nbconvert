@@ -1,14 +1,15 @@
 {%- extends 'lab/base.html.j2' -%}
+{% from 'cellslidedata.j2' import cellslidedata %}
 
 {%- block any_cell scoped -%}
 {%- if cell.metadata.get('slide_start', False) -%}
-<section>
+<section {{ cellslidedata(cell) }}>
 {%- endif -%}
 {%- if cell.metadata.get('subslide_start', False) -%}
-<section>
+<section {{ cellslidedata(cell) }}>
 {%- endif -%}
 {%- if cell.metadata.get('fragment_start', False) -%}
-<div class="fragment">
+<div class="fragment" {{ cellslidedata(cell) }}>
 {%- endif -%}
 
 {%- if cell.metadata.slide_type == 'notes' -%}
