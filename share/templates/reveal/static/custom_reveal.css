@@ -1,7 +1,36 @@
 /* Overrides of notebook CSS for static HTML export */
 .reveal {
-  font-size: 160%;
+  font-size: 100%;
 }
+
+section.has-light-background h1,
+section.has-light-background h2,
+section.has-light-background h3,
+section.has-light-background h4,
+section.has-light-background h5,
+section.has-light-background h6,
+section.has-light-background p,
+section.has-light-background blockquote,
+section.has-light-background div  {
+  color: #000000 !important;
+}
+
+p {
+  font-size: 140%;
+}
+
+ol, ul {
+  width: 86%;
+}
+
+img {
+  margin: 0 !important;
+}
+
+blockquote {
+  width: 85% !important;
+}
+
 .reveal table {
   font-size: var(--jp-ui-font-size1);
 }
@@ -21,7 +50,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0);
 }
 .reveal .slides {
-  text-align: left;
+  text-align: center;
 }
 .reveal.fade {
   opacity: 1;
@@ -101,6 +130,39 @@ div.jp-OutputPrompt {
 }
 .reveal .progress span {
   background: #727272;
+}
+
+.jp-RenderedHTMLCommon p {
+  text-align: center;
+  margin: 0px;
+}
+
+.jp-RenderedHTMLCommon {
+  padding-right: 10px;
+}
+
+.jp-RenderedHTMLCommon li {
+  font-size: 130%;
+}
+
+.jp-RenderedHTMLCommon h1:first-child {
+  margin-top: 20px;
+}
+
+.jp-RenderedHTMLCommon h1:first-child, .jp-RenderedHTMLCommon h2:first-child, .jp-RenderedHTMLCommon h3:first-child, .jp-RenderedHTMLCommon h4:first-child, .jp-RenderedHTMLCommon h5:first-child, .jp-RenderedHTMLCommon h6:first-child {
+  margin-top: calc(0.3 * var(--jp-content-heading-margin-top));
+}
+
+.jp-RenderedHTMLCommon > *:last-child {
+  margin-bottom: 0.6em;
+}
+
+.jp-RenderedHTMLCommon > *:first-child {
+  margin-top: 0.6em;
+}
+
+.reveal .slides>section, .reveal .slides>section>section {
+  padding: 0;
 }
 
 /* Scrollbars */
