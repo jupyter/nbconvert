@@ -83,6 +83,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         self._check_assign_resources(resources)
 
         with self.setup_kernel():
+            import pdb; pdb.set_trace()
             info_msg = self.wait_for_reply(self.kc.kernel_info())
             self.nb.metadata["language_info"] = info_msg["content"]["language_info"]
             for index, cell in enumerate(self.nb.cells):
