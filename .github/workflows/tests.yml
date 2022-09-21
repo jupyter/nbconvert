@@ -156,6 +156,8 @@ jobs:
           pip check
       - name: Run the tests
         run: |
+          pip install jupyter_client@https://github.com/blink1073/jupyter_client/archive/refs/heads/synchronous_managers.zip
+          pip install nbclient@https://github.com/blink1073/nbclient/archive/refs/heads/client-8-handling.zip
           pytest -vv || pytest -vv --lf
 
   make_sdist:
