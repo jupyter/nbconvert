@@ -4,6 +4,10 @@
 Changes in nbconvert
 ====================
 
+6.5.1
+-----
+* Fixed unique div ids in lab template by @veghdev in :ghpull:`1761`
+
 6.5.0
 -----
 * Support bleach 5, add packaging and tinycss2 dependencies by @bollwyvl in :ghpull:`1755`
