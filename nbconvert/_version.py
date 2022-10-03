@@ -1,7 +1,7 @@
-__version__ = "7.1.0"
-version_info = (7, 1, 0)
+__version__ = "7.2.0.dev0"
+version_info = (7, 2, 0)
 pre_info = ""
-dev_info = ""
+dev_info = "dev0"
 
 
 def create_valid_version(release_info, epoch=None, pre_input="", dev_input=""):
