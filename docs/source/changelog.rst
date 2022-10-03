@@ -4,8 +4,15 @@
 Changes in nbconvert
 ====================
 
+7.1.0
+-----
+* Fix markdown table not render bug by @Neutree in :ghpull:`1853`
+* Replace lxml.html.clean_html with bleach; drop lxml dependency by @akx in :ghpull:`1854`
+* Remove CircleCI badge from README by @akx in :ghpull:`1857`
+* Added support for section (slide) "data-*" attributes by @bouzidanas in :ghpull:`1861`
+
 7.0.0
---------
+-----
 * Update to Mistune 2.0.2 by @TiagodePAlves in :ghpull:`1764`
 * Add qtpdf and qtpng exporters by @davidbrochart in :ghpull:`1611`
 * Add recursive flag for glob notebook search by @paoloalba in :ghpull:`1785`
