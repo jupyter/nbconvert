@@ -511,7 +511,7 @@ GitHub](https://github.com/jupyter/nbconvert/issues?q=milestone%3A5.6+)
 #### Jupter Client Pin
 
 The `jupyter_client` dependency is now pinned to `>5.3.1`. This is done
-to support the [Parallel NBConvert](#parallel-nbconvert) below, and
+to support the Parallel NBConvert below, and
 future versions may require interface changes from that version.
 
 #### Parallel NBConvert

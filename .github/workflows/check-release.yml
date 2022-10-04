@@ -15,4 +15,5 @@ jobs:
       - run: pip install -e .
       - uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
         with:
+          version_spec: 10.10.10
           token: ${{ secrets.GITHUB_TOKEN }}
