@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - pip install -e .
+      - run: pip install -e .
       - uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

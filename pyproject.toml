@@ -81,6 +81,7 @@ all = [
     "ipython",
     "ipywidgets>=7",
     "nbsphinx>=0.2.12",
+    "myst_parser",
     "pre-commit",
     "pytest",
     "pytest-cov",
