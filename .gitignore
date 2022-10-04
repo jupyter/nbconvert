@@ -7,6 +7,7 @@ docs/source/api/generated
 docs/source/config/options
 docs/source/interactive/magics-generated.txt
 docs/gh-pages
+docs/source/CHANGELOG.md
 nbconvert/resources/style.min.css
 nbconvert/tests/files/*.html
 *.py[co]
