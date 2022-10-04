@@ -13,6 +13,9 @@
 # serve to show the default.
 
 import os
+import shutil
+
+HERE = os.path.dirname(__file__)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -20,7 +23,7 @@ import os
 # sys.path.insert(0, os.path.abspath('.'))
 
 # Automatically generate config_options.rst
-with open(os.path.join(os.path.dirname(__file__), "..", "autogen_config.py")) as f:
+with open(os.path.join(HERE, "..", "autogen_config.py")) as f:
     exec(compile(f.read(), "autogen_config.py", "exec"), {})
     print("Created docs for config options")
 
@@ -75,7 +78,7 @@ linkcheck_ignore = [
 # built documents.
 #
 # Get information from _version.py and use it to generate version and release
-_version_py = "../../nbconvert/_version.py"
+_version_py = os.path.join(HERE, "../../nbconvert/_version.py")
 version_ns = {}
 exec(compile(open(_version_py).read(), _version_py, "exec"), version_ns)
 # The short X.Y version.
@@ -316,3 +319,8 @@ intersphinx_mapping = {
     "jinja": ("http://jinja.pocoo.org/docs", None),
     "nbformat": ("https://nbformat.readthedocs.io/en/latest", None),
 }
+
+
+def setup(_):
+    dest = os.path.join(HERE, "changelog.md")
+    shutil.copy(os.path.join(HERE, "..", "..", "CHANGELOG.md"), dest)
