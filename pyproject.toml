@@ -70,6 +70,7 @@ qtpdf = ["pyqtwebengine>=5.15"]
 qtpng = ["pyqtwebengine>=5.15"]
 webpdf = ["pyppeteer>=1,<1.1"]
 docs = [
+    "myst_parser",
     "sphinx==5.0.2",
     "sphinx_rtd_theme",
     "nbsphinx>=0.2.12",
