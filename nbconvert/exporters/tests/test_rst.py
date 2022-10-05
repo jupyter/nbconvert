@@ -40,11 +40,13 @@ class TestRSTExporter(ExportersTestsBase):
         with open(nbname, encoding="utf8") as f:
             nb = nbformat.read(f, 4)
 
+        nb = v4.upgrade(nb)
         exporter = self.exporter_class()
 
         (output, resources) = exporter.from_notebook_node(nb)
         # add an empty code cell
         nb.cells.append(v4.new_code_cell(source=""))
+
         (output2, resources) = exporter.from_notebook_node(nb)
         # adding an empty code cell shouldn't change output
         self.assertEqual(output.strip(), output2.strip())

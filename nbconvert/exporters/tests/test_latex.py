@@ -160,6 +160,7 @@ class TestLatexExporter(ExportersTestsBase):
         Can a LatexExporter export when it recieves raw binary strings form svg?
         """
         filename = os.path.join(current_dir, "files", "svg.ipynb")
+
         (output, resources) = LatexExporter().from_filename(filename)
         assert len(output) > 0
 

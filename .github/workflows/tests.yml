@@ -67,7 +67,7 @@ jobs:
           pip freeze
           pip check
 
-      - name: Run tests with coverage
+      - name: Run tests on MacOS
         if: ${{ startsWith(runner.os, 'macos')  }}
         shell: bash -l {0}
         run: |
@@ -76,15 +76,14 @@ jobs:
           pip install -U websockets
           python -m pytest --cov nbconvert -vv
 
-      - name: Run tests on pypy and Windows
+      - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
         shell: bash -l {0}
         run: |
           conda activate nbconvert
           # See https://github.com/pyppeteer/pyppeteer/pull/321
           pip install -U websockets
-          #python -m pytest -vv
-          xvfb-run --auto-servernum `which coverage` run -m pytest -vv
+          NBFORMAT_VALIDATOR=jsonschema xvfb-run --auto-servernum `which coverage` run -m pytest -vv
 
       - name: Run tests on pypy and Windows
         if: ${{ startsWith(runner.os, 'Windows') }}
@@ -136,6 +135,7 @@ jobs:
         uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
       - name: Run the unit tests
         run: |
+          export NBFORMAT_VALIDATOR=jsonschema
           pytest -vv -W default || pytest -vv -W default --lf
 
   test_prereleases:
@@ -158,7 +158,7 @@ jobs:
         run: |
           pip install jupyter_client@https://github.com/blink1073/jupyter_client/archive/refs/heads/synchronous_managers.zip
           pip install nbclient==0.7.0
-          pytest -vv || pytest -vv --lf
+          pytest -vv -W default || pytest -vv -W default --lf
 
   make_sdist:
     name: Make SDist
