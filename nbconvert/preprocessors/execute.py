@@ -1,6 +1,7 @@
 """Module containing a preprocessor that executes the code cells
 and updates outputs"""
 
+from jupyter_client.manager import KernelManager
 from nbclient import NotebookClient
 from nbclient import execute as _execute
 
@@ -35,6 +36,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
 
     def __init__(self, **kw):
         nb = kw.get("nb")
+        kw.setdefault("kernel_manager_class", KernelManager)
         Preprocessor.__init__(self, nb=nb, **kw)
         NotebookClient.__init__(self, nb, **kw)
 
