@@ -9,7 +9,7 @@ Changes in nbconvert
 * Fix markdown table not render bug by @Neutree in :ghpull:`1853`
 * Replace lxml.html.clean_html with bleach; drop lxml dependency by @akx in :ghpull:`1854`
 * Remove CircleCI badge from README by @akx in :ghpull:`1857`
-* Added support for section (slide) "data-*" attributes by @bouzidanas in :ghpull:`1861`
+* Added support for section (slide) ``"data-*"`` attributes by @bouzidanas in :ghpull:`1861`
 
 7.0.0
 -----
