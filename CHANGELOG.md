@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.0...5cfa5893e3e8fe830eec2b8abf791199a52aad07))
+
+### Bugs fixed
+
+- Fix version handling [#1878](https://github.com/jupyter/nbconvert/pull/1878) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-10-06&to=2022-10-06&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-10-06..2022-10-06&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/7.1.0...e4e85b60c4c130f33db02c4ce209cc4704c7001a))
@@ -16,8 +32,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-10-03&to=2022-10-06&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-10-03..2022-10-06&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.1.0
 
