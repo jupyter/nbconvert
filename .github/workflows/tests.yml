@@ -22,7 +22,7 @@ jobs:
           - os: "macos-latest"
             python-version: "3.9"
           - os: "ubuntu-latest"
-            python-version: "3.10"
+            python-version: "3.11-dev"
       fail-fast: false
     steps:
       - name: Check out repository code
@@ -100,26 +100,33 @@ jobs:
           conda activate nbconvert
           codecov
 
-  # Run "pre-commit run --all-files --hook-stage=manual"
-  pre-commit:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 5
+  check_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - run: pip install -e .
+      - uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
+        with:
+          version_spec: 10.10.10
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  check_links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - uses: pre-commit/action@v2.0.0
-        with:
-          extra_args: --all-files --hook-stage=manual
-      - name: Help message if pre-commit fail
-        if: ${{ failure() }}
-        run: |
-          echo "You can install pre-commit hooks to automatically run formatting"
-          echo "on each commit with:"
-          echo "    pre-commit install"
-          echo "or you can run by hand on staged files with"
-          echo "    pre-commit run"
-          echo "or after-the-fact on already committed files with"
-          echo "    pre-commit run --all-files --hook-stage=manual"
+      - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
+
+  pre_commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/pre-commit@v1
 
   test_minimum_versions:
     name: Test Minimum Versions
