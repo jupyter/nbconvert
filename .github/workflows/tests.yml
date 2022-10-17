@@ -19,10 +19,8 @@ jobs:
         include:
           - os: "windows-latest"
             python-version: "3.8"
-          - os: "macos-latest"
+          - os: "ubunut-latest"
             python-version: "3.9"
-          - os: "ubuntu-latest"
-            python-version: "3.11-dev"
       fail-fast: false
     steps:
       - name: Check out repository code

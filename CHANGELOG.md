@@ -41,7 +41,7 @@
   @akx in [#1854](https://github.com/jupyter/nbconvert/pull/1854)
 - Remove CircleCI badge from README by @akx in
   [#1857](https://github.com/jupyter/nbconvert/pull/1857)
-- Added support for section (slide) \"data-\*\" attributes by
+- Added support for section (slide) "data-\*" attributes by
   @bouzidanas in [#1861](https://github.com/jupyter/nbconvert/pull/1861)
 
 ## 7.0.0
@@ -108,7 +108,7 @@
 - Add basic support for federated labextensions themes
   [#1703](https://github.com/jupyter/nbconvert/pull/1703)
 - Always hide the collapser element [#1712](https://github.com/jupyter/nbconvert/pull/1712)
-- Raise pyppeteer requirement to \>=1,\<1.1 [#1711](https://github.com/jupyter/nbconvert/pull/1711)
+- Raise pyppeteer requirement to >=1,\<1.1 [#1711](https://github.com/jupyter/nbconvert/pull/1711)
 
 ## 6.4.1
 
@@ -211,12 +211,12 @@ The following 31 authors contributed 81 commits.
   [#1504](https://github.com/jupyter/nbconvert/pull/1504)
 - Include output of stdin stream in lab template
   [#1454](https://github.com/jupyter/nbconvert/pull/1454)
-- Don\'t use a shell to call inkscape [#1512](https://github.com/jupyter/nbconvert/pull/1512)
+- Don't use a shell to call inkscape [#1512](https://github.com/jupyter/nbconvert/pull/1512)
 - JupyterLab export as HTML with widgets fails to load widgets
   [#1474](https://github.com/jupyter/nbconvert/pull/1474)
 - Move note inside Reveal.js HTML slideshow [#1510](https://github.com/jupyter/nbconvert/pull/1510)
 - fix issue 1507: broken command line option
-  \--CSSHTMLHeaderPreprocessor.style= [#1548](https://github.com/jupyter/nbconvert/pull/1548)
+  --CSSHTMLHeaderPreprocessor.style= [#1548](https://github.com/jupyter/nbconvert/pull/1548)
 - Fix order of template paths [#1496](https://github.com/jupyter/nbconvert/pull/1496)
 - Changed documentation of external_exporters [#1582](https://github.com/jupyter/nbconvert/pull/1582)
 - Fix template precedence when using a custom template (#1558)
@@ -247,9 +247,9 @@ The following 31 authors contributed 81 commits.
 - fix typo [#1499](https://github.com/jupyter/nbconvert/pull/1499)
 - Update version dependency of traitlets [#1498](https://github.com/jupyter/nbconvert/pull/1498)
 - Update execute.py [#1457](https://github.com/jupyter/nbconvert/pull/1457)
-- Fix code output indentation when running nbconvert \--no-input
+- Fix code output indentation when running nbconvert --no-input
   [#1444](https://github.com/jupyter/nbconvert/pull/1444)
-- fix issue (i\'d call it a BUG) #1167 [#1450](https://github.com/jupyter/nbconvert/pull/1450)
+- fix issue (i'd call it a BUG) #1167 [#1450](https://github.com/jupyter/nbconvert/pull/1450)
 - #1428 add docstring [#1433](https://github.com/jupyter/nbconvert/pull/1433)
 - Update nbconvert_library.ipynb [#1438](https://github.com/jupyter/nbconvert/pull/1438)
 - Supports isolated iframe when converting to HTML
@@ -341,7 +341,7 @@ A quick patch to fix an issue with get_exporter [#1367](https://github.com/jupyt
 ## 6.0
 
 The following authors and reviewers contributed the changes for this
-release \-- Thanks you all!
+release -- Thanks you all!
 
 - Ayaz Salikhov
 - bnables
@@ -361,7 +361,7 @@ release \-- Thanks you all!
 - Kerwin.Sun
 - letmerecall
 - Luciano Resende
-- Lumír \'Frenzy\' Balhar
+- Lumír 'Frenzy' Balhar
 - Maarten A. Breddels
 - Maarten Breddels
 - Marcel Stimberg
@@ -403,13 +403,13 @@ significant changes.
   style `.tpl` template use the full path with the `template_file`
   argument to the file. On the command line the pattern is
   `--template-file=<path/to/file.tpl>`.
-- Nbconvert 6.0 includes a new \"webpdf\" exporter, which renders
+- Nbconvert 6.0 includes a new "webpdf" exporter, which renders
   notebooks in pdf format through a headless web browser, so that
   complex outputs such as HTML tables, or even widgets are rendered in
   the same way as with the HTML exporter and a web browser.
 - The default template applied when exporting to HTML now produces the
-  same DOM structure as JupyterLab, and is styled using JupyterLab\'s
-  CSS. The pygments theme in use mimics JupyterLab\'s codemirror mode
+  same DOM structure as JupyterLab, and is styled using JupyterLab's
+  CSS. The pygments theme in use mimics JupyterLab's codemirror mode
   with the same CSS variables, so that custom JupyterLab themes could
   be applied. The classic notebook styling can still be enabled with
 
@@ -418,13 +418,13 @@ jupyter nbconvert --to html --template classic
 ```
 
 - Nbconvert 6.0 includes a new system for creating custom templates,
-  which can now be installed as packages. A custom \"foobar\" template
-  is installed in Jupyter\'s data directory under
+  which can now be installed as packages. A custom "foobar" template
+  is installed in Jupyter's data directory under
   `nbconvert/templates` and has the form of a directory containing all
   resources. Templates specify their base template as well as other
   configuration parameters in a `conf.json` at the root of the
   template directory.
-- The \"slideshow\" template now makes use of RevealJS version 4. It
+- The "slideshow" template now makes use of RevealJS version 4. It
   can now be used with the HTML exporter with
 
 ```bash
@@ -439,7 +439,7 @@ The `--to slides` exporter is still supported for convenience.
 
 ### Remaining changes
 
-We merged 105 pull requests! Rather than enumerate all of them we\'ll
+We merged 105 pull requests! Rather than enumerate all of them we'll
 link to the github page which contains the many smaller impact
 improvements.
 
@@ -449,7 +449,7 @@ GitHub](https://github.com/jupyter/nbconvert/issues?q=milestone%3A6.0+)
 ## 5.6.1
 
 The following authors and reviewers contributed the changes for this
-release \-- Thanks you all!
+release -- Thanks you all!
 
 - Charles Frye
 - Chris Holdgraf
@@ -504,7 +504,7 @@ Before this only cells that had outputs were filtered.
 
 ## 5.6
 
-The following 24 authors and reviewers contributed 224 commits \-- Thank
+The following 24 authors and reviewers contributed 224 commits -- Thank
 you all!
 
 - 00Kai0
@@ -570,7 +570,7 @@ buffered. Now, messages can be logged immediately rather than waiting
 for the cell to terminate.
 
 See [#994](https://github.com/jupyter/nbconvert/pull/994) for exact code changes if
-you\'re curious.
+you're curious.
 
 ### Comprehensive notes
 
@@ -625,7 +625,7 @@ you\'re curious.
 
 ## 5.5
 
-The following 18 authors contributed 144 commits \-- Thank you all!
+The following 18 authors contributed 144 commits -- Thank you all!
 
 - Benjamin Ragan-Kelley
 - Clayton A Davis
@@ -663,14 +663,16 @@ See [#979](https://github.com/jupyter/nbconvert/pull/979) for details.
 
 Now when a notebook executing contains [Jupyter
 Widgets](https://github.com/jupyter-widgets/ipywidgets/), the state of
-all the widgets can be stored in the notebook\'s metadata. This allows
+all the widgets can be stored in the notebook's metadata. This allows
 rendering of the live widgets on, for instance nbviewer, or when
 converting to html.
 
 You can tell nbconvert to not store the state using the
 `store_widget_state` argument:
 
-    jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
+```
+jupyter nbconvert --ExecutePreprocessor.store_widget_state=False --to notebook --execute mynotebook.ipynb
+```
 
 This widget rendering is not performed against a browser during
 execution, so only widget default states or states manipulated via user
@@ -678,7 +680,7 @@ code will be calculated during execution. `%%javascript` cells will
 execute upon notebook rendering, enabling complex interactions to
 function as expected when viewed by a UI.
 
-If you can\'t view widget results after execution, you may need to
+If you can't view widget results after execution, you may need to
 select `File --> Trust Notebook` in the menu.
 
 See [#779](https://github.com/jupyter/nbconvert/pull/779), [#900](https://github.com/jupyter/nbconvert/pull/900), and [#983](https://github.com/jupyter/nbconvert/pull/983) for details.
@@ -746,8 +748,8 @@ See [#992](https://github.com/jupyter/nbconvert/pull/992) for details
 - Typo in template syntax [#984](https://github.com/jupyter/nbconvert/pull/984)
 - Improved attachments +fix supporting non-unique names
   [#980](https://github.com/jupyter/nbconvert/pull/980)
-- PDFExporter \"output_mimetype\" traitlet is not longer
-  \'text/latex\' [#972](https://github.com/jupyter/nbconvert/pull/972)
+- PDFExporter "output_mimetype" traitlet is not longer
+  'text/latex' [#972](https://github.com/jupyter/nbconvert/pull/972)
 - FIX: respect wait for clear_output [#969](https://github.com/jupyter/nbconvert/pull/969)
 - address deprecation warning in cgi.escape [#963](https://github.com/jupyter/nbconvert/pull/963)
 - Correct inaccurate description of available LaTeX template
@@ -764,9 +766,9 @@ See [#992](https://github.com/jupyter/nbconvert/pull/992) for details
 
 #### Testing, Docs, and Builds
 
-- Added tests for each branch in execute\'s run_cell method
+- Added tests for each branch in execute's run_cell method
   [#982](https://github.com/jupyter/nbconvert/pull/982)
-- Mention formats in \--to options more clearly
+- Mention formats in --to options more clearly
   [#991](https://github.com/jupyter/nbconvert/pull/991)
 - Adds ascii output type to command line docs page, mention image
   folder output [#956](https://github.com/jupyter/nbconvert/pull/956)
@@ -801,7 +803,7 @@ Thanks to the following 11 authors who contributed 57 commits.
 #### New Features
 
 - Expose pygments styles [#889](https://github.com/jupyter/nbconvert/pull/889)
-- Tornado 6.0 support \-- Convert proxy handler from callback to
+- Tornado 6.0 support -- Convert proxy handler from callback to
   coroutine [#937](https://github.com/jupyter/nbconvert/pull/937)
 - Add option to overwrite the highlight_code filter
   [#877](https://github.com/jupyter/nbconvert/pull/877)
@@ -859,7 +861,7 @@ configuration option. Errors from executing the notebook can be allowed
 with a `raises-exception` tag on a single cell, or the `allow_errors`
 configurable option for all cells. An allowed error will be recorded in
 notebook output, and execution will continue. If an error occurs when it
-is not explicitly allowed, a \'CellExecutionError\' will be raised. If
+is not explicitly allowed, a 'CellExecutionError' will be raised. If
 `force_raise_errors` is True, `CellExecutionError` will be raised for
 any error that occurs while executing the notebook. This overrides both
 the `allow_errors` option and the `raises-exception` cell tags.
@@ -882,7 +884,7 @@ cluster location ahead of time without building a new kernel.
 Overall the ExecutePreprocessor has been reworked to make it easier to
 use. Future releases will continue this trend to make this section of
 the code more inheritable and reusable by others. We encourage you read
-the source code for this version if you\'re interested in the detailed
+the source code for this version if you're interested in the detailed
 improvements.
 
 See [#852](https://github.com/jupyter/nbconvert/pull/852) for implementation changes.
@@ -891,7 +893,7 @@ See [#852](https://github.com/jupyter/nbconvert/pull/852) for implementation cha
 
 Exporters are now exposed for front-ends to consume, including classic
 notebook. As an example, this means that latex exporter will be made
-available for latex \'text/latex\' media type from the Download As
+available for latex 'text/latex' media type from the Download As
 interface.
 
 See [#759](https://github.com/jupyter/nbconvert/pull/759) and [#864](https://github.com/jupyter/nbconvert/pull/864) for implementation changes.
@@ -919,7 +921,7 @@ See [#675](https://github.com/jupyter/nbconvert/pull/675) for implementation cha
 #### New command line flags
 
 The `--no-input` will hide input cells on export. This is great for
-notebooks which generate \"reports\" where you want the code that was
+notebooks which generate "reports" where you want the code that was
 executed to not appear by default in the extracts.
 
 An alias for `notebook` was added to exporter commands. Now `--to ipynb`
@@ -944,13 +946,13 @@ See [#825](https://github.com/jupyter/nbconvert/pull/825) and [#873](https://git
 - Refactor ExecutePreprocessor [#816](https://github.com/jupyter/nbconvert/pull/816)
 - Update widgets CDN for ipywidgets 7 w/fallback
   [#792](https://github.com/jupyter/nbconvert/pull/792)
-- Add support for adding custom exporters to the \"Download as\" menu.
+- Add support for adding custom exporters to the "Download as" menu.
   [#759](https://github.com/jupyter/nbconvert/pull/759)
 - Enable ANSI underline and inverse [#696](https://github.com/jupyter/nbconvert/pull/696)
 - Update notebook css to 5.4.0 [#748](https://github.com/jupyter/nbconvert/pull/748)
 - Change default for slides to direct to the reveal cdn rather than
   locally [#732](https://github.com/jupyter/nbconvert/pull/732)
-- Use \"title\" instead of \"name\" for metadata to match the notebook
+- Use "title" instead of "name" for metadata to match the notebook
   format [#703](https://github.com/jupyter/nbconvert/pull/703)
 - Img filename metadata [#685](https://github.com/jupyter/nbconvert/pull/685)
 - Added MathJax compatibility definitions [#687](https://github.com/jupyter/nbconvert/pull/687)
@@ -970,7 +972,7 @@ See [#825](https://github.com/jupyter/nbconvert/pull/825) and [#873](https://git
 #### Fixing Problems
 
 - Fix api break [#872](https://github.com/jupyter/nbconvert/pull/872)
-- Don\'t remove empty cells by default [#784](https://github.com/jupyter/nbconvert/pull/784)
+- Don't remove empty cells by default [#784](https://github.com/jupyter/nbconvert/pull/784)
 - Handle attached images in html converter [#780](https://github.com/jupyter/nbconvert/pull/780)
 - No need to check for the channels already running
   [#862](https://github.com/jupyter/nbconvert/pull/862)
@@ -1043,7 +1045,7 @@ metadata](https://nbformat.readthedocs.io/en/latest/format_description.html#cell
 
 **Usage**:
 
-1.  Apply tags to the elements that you want to remove.
+1. Apply tags to the elements that you want to remove.
 
 For removing an entire cell, the cell input, or all cell outputs apply
 the tag to the cell.
@@ -1055,9 +1057,9 @@ using a call like
 _NB_: Use different tags depending on whether you want to remove the
 entire cell, the input, all outputs, or individual outputs.
 
-2.  Add the tags for removing the different kinds of elements to the
-    following traitlets. Which kind of element you want to remove
-    determines which traitlet you add the tags to.
+2. Add the tags for removing the different kinds of elements to the
+   following traitlets. Which kind of element you want to remove
+   determines which traitlet you add the tags to.
 
 The following traitlets remove elements of different kinds:
 
@@ -1123,7 +1125,7 @@ access all of these is by using traitlets like
 TemplateExporter.exclude_input = True (or, for example
 HTMLExporter.exclude_markdown = True if you wanted to make it specific
 to HTML output). On the command line if you just want to not have input
-or output prompts just use \--no-prompt.
+or output prompts just use --no-prompt.
 
 #### Execute notebooks from a function
 
@@ -1180,11 +1182,11 @@ exporter can now surface that directly.
   [#563](https://github.com/jupyter/nbconvert/pull/563)
 - bug fixed: dynamic defaults for optional jupyter_client import
   [#559](https://github.com/jupyter/nbconvert/pull/559)
-- bug fixed: don\'t self-close non-void HTML tags
+- bug fixed: don't self-close non-void HTML tags
   [#548](https://github.com/jupyter/nbconvert/pull/548)
 - buf fixed: upgrade jupyter_client dependency to 4.2
   [#539](https://github.com/jupyter/nbconvert/pull/539)
-- bug fixed: LaTeX output through md→LaTeX conversion shouldn\'t be
+- bug fixed: LaTeX output through md→LaTeX conversion shouldn't be
   touched [#535](https://github.com/jupyter/nbconvert/pull/535)
 - bug fixed: now we escape `<` inside math formulas when converting to
   html [#514](https://github.com/jupyter/nbconvert/pull/514)
