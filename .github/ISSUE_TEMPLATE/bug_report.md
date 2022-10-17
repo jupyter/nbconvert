@@ -1,7 +1,6 @@
----
-name: Bug report
-about: Create a report to help us improve
----
+______________________________________________________________________
+
+## name: Bug report about: Create a report to help us improve
 
 <!--- Description --->
 
