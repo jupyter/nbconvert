@@ -19,7 +19,7 @@ jobs:
         include:
           - os: "windows-latest"
             python-version: "3.8"
-          - os: "ubunut-latest"
+          - os: "ubuntu-latest"
             python-version: "3.9"
       fail-fast: false
     steps:
