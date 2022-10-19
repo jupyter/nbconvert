@@ -2,7 +2,7 @@
 
 ## Using `jupyter_releaser`
 
-The recommended way to make a release is to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser).
+The recommended way to make a release is to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser) from this repository.
 
 - Run the "Step 1: Prep Release" workflow with the appropriate inputs.
 - Review the changelog in the draft GitHub release created in Step 1.
