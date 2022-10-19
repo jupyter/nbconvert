@@ -245,7 +245,7 @@ class TestNbConvertApp(TestsBase):
         Does the default config work?
         """
         with self.create_temp_cwd(["notebook*.ipynb", "jupyter_nbconvert_config.py"]):
-            self.nbconvert("--log-level 0")
+            self.nbconvert("--log-level 0 --config jupyter_nbconvert_config.py")
             assert os.path.isfile("notebook1.py")
             assert not os.path.isfile("notebook2.py")
 
