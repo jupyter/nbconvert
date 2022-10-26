@@ -606,6 +606,7 @@ class TestNbConvertApp(TestsBase):
                 assert '<g id="line2d_2">' in text  # Must not be escaped
                 # TODO: these currently break...
                 # assert '<use xlink:href=\"#m361cdeea3f\"' in text  # Must not be escaped
+                assert "<!-- 1.6 -->" in text  # Must not be stripped
 
     def test_execute_widgets_from_nbconvert(self):
         """Check jupyter widgets render"""

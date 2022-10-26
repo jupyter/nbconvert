@@ -88,6 +88,7 @@ def clean_html(element):
     return bleach.clean(
         element,
         tags=[*bleach.ALLOWED_TAGS, *ALLOWED_SVG_TAGS, "div", "pre", "code", "span"],
+        strip_comments=False,
         attributes={
             **bleach.ALLOWED_ATTRIBUTES,
             **{svg_tag: ALLOWED_SVG_ATTRIBUTES for svg_tag in ALLOWED_SVG_TAGS},
