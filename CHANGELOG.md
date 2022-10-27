@@ -2,6 +2,24 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.3
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.2...04180fdb015c56ac320d5062a81da065791c5726))
+
+### Bugs fixed
+
+- clean_html: allow SVG tags and SVG attributes  [#1890](https://github.com/jupyter/nbconvert/pull/1890) ([@akx](https://github.com/akx))
+
+### Maintenance and upkeep improvements
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-10-19&to=2022-10-27&type=c))
+
+[@akx](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aakx+updated%3A2022-10-19..2022-10-27&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-10-19..2022-10-27&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.2
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.1...a9566befb6e457b51373b61debffc78050d41273))
@@ -21,8 +39,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-10-06&to=2022-10-19&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-10-06..2022-10-19&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-10-06..2022-10-19&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.1
 
