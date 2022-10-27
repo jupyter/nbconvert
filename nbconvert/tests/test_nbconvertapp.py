@@ -595,6 +595,19 @@ class TestNbConvertApp(TestsBase):
                 assert "src='./containerized_deployments.jpeg'" not in text
                 assert text.count("data:image/jpeg;base64") == 3
 
+    def test_embedded_svg_remains(self):
+        """Check that the HTMLExporter doesn't scrub SVG"""
+
+        with self.create_temp_cwd(["issue1849_svg.ipynb"]):
+            self.nbconvert("issue1849_svg --log-level 0 --to html")
+            assert os.path.isfile("issue1849_svg.html")
+            with open("issue1849_svg.html", encoding="utf8") as f:
+                text = f.read()
+                assert '<g id="line2d_2">' in text  # Must not be escaped
+                # TODO: these currently break...
+                # assert '<use xlink:href=\"#m361cdeea3f\"' in text  # Must not be escaped
+                assert "<!-- 1.6 -->" in text  # Must not be stripped
+
     def test_execute_widgets_from_nbconvert(self):
         """Check jupyter widgets render"""
         notebookName = "Unexecuted_widget"
