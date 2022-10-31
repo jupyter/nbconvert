@@ -1,5 +1,6 @@
 {%- extends 'display_priority.j2' -%}
 {% from 'celltags.j2' import celltags %}
+{% from 'cell_id_anchor.j2' import cell_id_anchor %}
 
 {% block codecell %}
 {%- if not cell.outputs -%}
@@ -8,7 +9,7 @@
 {%- if not resources.global_content_filter.include_input -%}
 {%- set no_input_class="jp-mod-noInput" -%}
 {%- endif -%}
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}">
+<div {{ cell_id_anchor(cell) }} class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}">
 {{ super() }}
 </div>
 {%- endblock codecell %}
@@ -93,7 +94,7 @@
 {% endblock output %}
 
 {% block markdowncell scoped %}
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div {{ cell_id_anchor(cell) }} class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
