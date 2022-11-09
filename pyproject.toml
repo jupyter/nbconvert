@@ -134,6 +134,7 @@ filterwarnings = [
     "ignore:unclosed <socket.socket:ResourceWarning",
     "ignore:unclosed event loop:ResourceWarning",
     "ignore:There is no current event loop:DeprecationWarning",
+    "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
 ]
 
 [tool.flake8]
