@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.5
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.4...e5fefbb17b0bf3d6b5bbeb9a2ee62412d75ab0d8))
+
+### Bugs fixed
+
+- Fix for webpdf print margins [#1907](https://github.com/jupyter/nbconvert/pull/1907) ([@JWock82](https://github.com/JWock82))
+
+### Maintenance and upkeep improvements
+
+- Bump actions/upload-artifact from 2 to 3 [#1904](https://github.com/jupyter/nbconvert/pull/1904) ([@dependabot](https://github.com/dependabot))
+- Bump actions/checkout from 2 to 3 [#1903](https://github.com/jupyter/nbconvert/pull/1903) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-11-09&to=2022-11-14&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2022-11-09..2022-11-14&type=Issues) | [@JWock82](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AJWock82+updated%3A2022-11-09..2022-11-14&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.4
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.3...90ca66ccf02abc59052f4f38dcc657b0d2c34a07))
@@ -17,8 +38,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-10-27&to=2022-11-09&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-10-27..2022-11-09&type=Issues) | [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2022-10-27..2022-11-09&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-10-27..2022-11-09&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.3
 
