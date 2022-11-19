@@ -37,7 +37,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
-          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0 libxcb libxcb-xinerama0
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0 libxcb  libxcb-xinerama0 python3-pyqt5
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
