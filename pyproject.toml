@@ -56,6 +56,9 @@ asciidoc = "nbconvert.exporters:ASCIIDocExporter"
 script = "nbconvert.exporters:ScriptExporter"
 
 [project.optional-dependencies]
+qtpng = ["pyqtwebengine>=5.15"]
+qtpdf = ["nbconvert[qtpng]"]
+webpdf = ["pyppeteer>=1,<1.1"]
 test = [
     "pytest",
     "pytest-cov",
@@ -66,9 +69,6 @@ test = [
     "pyppeteer>=1,<1.1",
 ]
 serve = ["tornado>=6.1"]
-qtpdf = ["pyqtwebengine>=5.15"]
-qtpng = ["pyqtwebengine>=5.15"]
-webpdf = ["pyppeteer>=1,<1.1"]
 docs = [
     "myst_parser",
     "sphinx==5.0.2",
@@ -76,22 +76,7 @@ docs = [
     "nbsphinx>=0.2.12",
     "ipython",
 ]
-all = [
-    "ipykernel",
-    "ipython",
-    "ipywidgets>=7",
-    "nbsphinx>=0.2.12",
-    "myst_parser",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "pytest-dependency",
-    "pyqtwebengine>=5.15",
-    "pyppeteer>=1,<1.1",
-    "sphinx==5.0.2",
-    "sphinx_rtd_theme",
-    "tornado>=6.1",
-]
+all = ["nbconvert[qtpdf,webpdf,test,serve]"]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
@@ -127,9 +112,8 @@ test = "python -m pytest -vv {args}"
 nowarn = "test -W default {args}"
 
 [tool.hatch.envs.cov]
-features = ["test"]
-dependencies = ["coverage", "pytest-cov", "websockets", "pyqtwebengine",
-  "pyxdg"]
+features = ["all"]
+dependencies = ["coverage", "pytest-cov"]
 [tool.hatch.envs.cov.scripts]
 test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
 nowarn = "test -W default {args}"
