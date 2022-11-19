@@ -10,9 +10,6 @@ sphinx:
 
 formats: all
 
-conda:
-  environment: docs/environment.yml
-
 build:
   image: latest
 
@@ -21,3 +18,5 @@ python:
   install:
     - method: pip
       path: .
+      extra_requirements:
+        - docs

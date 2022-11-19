@@ -9,9 +9,15 @@ concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash -eux {0}
+
 jobs:
   run-tests:
     runs-on: ${{ matrix.os }}
+    env:
+      NBFORMAT_VALIDATOR: jsonschema
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
@@ -23,79 +29,29 @@ jobs:
             python-version: "3.9"
       fail-fast: false
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - name: Run base setup actions
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          mamba-version: "*"
-          channels: conda-forge
-      - name: Install conda-forge python
-        shell: bash -l {0}
-        run: |
-          mamba create -n nbconvert
-          conda activate nbconvert
-          mamba install python=${{ matrix.python-version }}
-      - name: Install conda-forge dependencies
-        shell: bash -l {0}
-        run: |
-          mamba create -n nbconvert
-          conda activate nbconvert
-          mamba install pip pyqtwebengine pandoc pyxdg
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
       - name: Install Linux dependencies
         if: startsWith(runner.os, 'Linux')
         run: |
           sudo apt-get update
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex
-          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0
-      - name: Install package dependencies
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          pip install codecov
-          pip install -e ".[execute,serve,test]"
-          which python
-          python -m ipykernel.kernelspec --sys-prefix
-
-      - name: List installed packages
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          pip freeze
-          pip check
-
-      - name: Run tests on MacOS
-        if: ${{ startsWith(runner.os, 'macos')  }}
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
-          python -m pytest --cov nbconvert -vv
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0 pandoc
 
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
-        shell: bash -l {0}
         run: |
-          conda activate nbconvert
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
-          NBFORMAT_VALIDATOR=jsonschema xvfb-run --auto-servernum `which coverage` run -m pytest -vv
+          xvfb-run --auto-servernum hatch run cov:test
 
-      - name: Run tests on pypy and Windows
-        if: ${{ startsWith(runner.os, 'Windows') }}
-        shell: bash -l {0}
+      - name: Run tests on other platforms
+        if: ${{ !startsWith(runner.os, 'linux')  }}
         run: |
-          conda activate nbconvert
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
-          python -m pytest -vv
+          hatch run cov:test
 
       - name: Code coverage
-        shell: bash -l {0}
         run: |
-          conda activate nbconvert
+          pip install codecov
           codecov
 
   check_release:
@@ -140,31 +96,40 @@ jobs:
           python_version: "3.7"
       - name: Install miniumum versions
         uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+        with:
+          python_version: "3.8"
+      - uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
+        with:
+          only_create_file: 1
       - name: Run the unit tests
         run: |
+          export PIP_CONSTRAINT="./contraints_file.txt"
           export NBFORMAT_VALIDATOR=jsonschema
-          pytest -vv -W default || pytest -vv -W default --lf
+          hatch run test:nowarn || hatch run test:nowarn --lf
 
   test_prereleases:
     name: Test Prereleases
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - name: Install the Python dependencies
-        run: |
-          pip install --pre -e ".[test]"
-      - name: List installed packages
-        run: |
-          pip freeze
-          pip check
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+        with:
+          python_version: "3.11"
       - name: Run the tests
         run: |
+          export PIP_PRE=1
           export NBFORMAT_VALIDATOR=jsonschema
-          pytest -vv -W default || pytest -vv -W default --lf
+          hatch run test:nowarn || hatch run test:nowarn --lf
+
+  test_docs:
+    name: Test Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - run: hatch run docs:build
 
   make_sdist:
     name: Make SDist
@@ -183,3 +148,21 @@ jobs:
     steps:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
+
+  tests_check: # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - run-tests
+      - pre_commit
+      - test_docs
+      - test_minimum_versions
+      - test_prereleases
+      - check_links
+      - check_release
+      - test_sdist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}

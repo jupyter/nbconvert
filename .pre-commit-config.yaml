@@ -62,22 +62,7 @@ repos:
           ["flake8-bugbear==22.6.22", "flake8-implicit-str-concat==0.2.0"]
         stages: [manual]
 
-  - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.18.4
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.19.1
     hooks:
-      - id: check-jsonschema
-        name: "Check GitHub Workflows"
-        files: ^\.github/workflows/
-        types: [yaml]
-        args: ["--schemafile", "https://json.schemastore.org/github-workflow"]
-        stages: [manual]
-
-  - repo: local
-    hooks:
-      - id: check-pyproject
-        name: check pyproject file
-        language: python
-        entry: python -m check_requirements
-        files: ^pyproject.toml$
-        stages: [manual]
-        additional_dependencies: ["tomli"]
+      - id: check-github-workflows

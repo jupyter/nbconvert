@@ -115,6 +115,25 @@ exclude = [
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
 
+[tool.hatch.envs.docs]
+features = ["docs"]
+[tool.hatch.envs.docs.scripts]
+build = "make -C docs html SPHINXOPTS='-W'"
+
+[tool.hatch.envs.test]
+features = ["test"]
+[tool.hatch.envs.test.scripts]
+test = "python -m pytest -vv {args}"
+nowarn = "test -W default {args}"
+
+[tool.hatch.envs.cov]
+features = ["test"]
+dependencies = ["coverage", "pytest-cov", "websockets", "pyqtwebengine",
+  "pyxdg"]
+[tool.hatch.envs.cov.scripts]
+test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
+nowarn = "test -W default {args}"
+
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
 addopts = "-raXs --durations 10 --color=yes --doctest-modules --ignore=nbconvert/tests/files/override.py --ignore=nbconvert/tests/files/jupyter_nbconvert_config.py"
@@ -132,9 +151,21 @@ filterwarnings = [
     "ignore:getargs.*format is deprecated:DeprecationWarning",
     # From jupyter_client
     "ignore:unclosed <socket.socket:ResourceWarning",
-    "ignore:unclosed event loop:ResourceWarning",
-    "ignore:There is no current event loop:DeprecationWarning",
     "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if self.debug:",
+  "if settings.DEBUG",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "class .*\bProtocol\\):",
+"@(abc\\.)?abstractmethod",
 ]
 
 [tool.flake8]
