@@ -56,12 +56,11 @@ asciidoc = "nbconvert.exporters:ASCIIDocExporter"
 script = "nbconvert.exporters:ScriptExporter"
 
 [project.optional-dependencies]
-qtpng = ["pyqtwebengine>=5.15"]
+qtpng = ["pyqtwebengine>=5.15, PyQt5>=5.15"]
 qtpdf = ["nbconvert[qtpng]"]
 webpdf = ["pyppeteer>=1,<1.1"]
 test = [
     "pytest",
-    "pytest-cov",
     "pytest-dependency",
     "ipykernel",
     "ipywidgets>=7",
@@ -76,7 +75,7 @@ docs = [
     "nbsphinx>=0.2.12",
     "ipython",
 ]
-all = ["nbconvert[qtpdf,webpdf,test,serve]"]
+all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
