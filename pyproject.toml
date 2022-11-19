@@ -114,9 +114,9 @@ nowarn = "test -W default {args}"
 features = ["all"]
 dependencies = ["coverage", "pytest-cov"]
 [tool.hatch.envs.cov.scripts]
-#test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
-#nowarn = "test -W default {args}"
-test = "python -c \"from nbconvert.exporters import qt_screenshot\""
+test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
+nowarn = "test -W default {args}"
+
 
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
