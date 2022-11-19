@@ -37,7 +37,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex
-          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0 pandoc
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0
+
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
@@ -123,14 +126,6 @@ jobs:
           export NBFORMAT_VALIDATOR=jsonschema
           hatch run test:nowarn || hatch run test:nowarn --lf
 
-  test_docs:
-    name: Test Docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - run: hatch run docs:build
-
   make_sdist:
     name: Make SDist
     runs-on: ubuntu-latest
@@ -154,7 +149,6 @@ jobs:
     needs:
       - run-tests
       - pre_commit
-      - test_docs
       - test_minimum_versions
       - test_prereleases
       - check_links
