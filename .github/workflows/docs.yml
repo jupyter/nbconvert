@@ -1,0 +1,57 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.10"]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - name: Install
+        run: pip install -v ".[all]"
+      - name: List installed packages
+        run: |
+          pip freeze
+          pip check
+      - name: Build HTML docs
+        run: |
+          cd docs
+          make html SPHINXOPTS="-W"
+      - name: Upload HTML
+        uses: actions/upload-artifact@v3
+        with:
+          name: html
+          path: build/sphinx/html
+      - name: Build PDF docs
+        run: |
+          cd docs
+          make latexpdf
+      - name: Upload PDF
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf
+          path: docs/build/latex/nbconvert.pdf
+      - name: Check links
+        run: |
+          cd docs
+          make linkcheck
