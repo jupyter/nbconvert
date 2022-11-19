@@ -56,9 +56,11 @@ asciidoc = "nbconvert.exporters:ASCIIDocExporter"
 script = "nbconvert.exporters:ScriptExporter"
 
 [project.optional-dependencies]
+qtpng = ["pyqtwebengine>=5.15"]
+qtpdf = ["nbconvert[qtpng]"]
+webpdf = ["pyppeteer>=1,<1.1"]
 test = [
     "pytest",
-    "pytest-cov",
     "pytest-dependency",
     "ipykernel",
     "ipywidgets>=7",
@@ -66,9 +68,6 @@ test = [
     "pyppeteer>=1,<1.1",
 ]
 serve = ["tornado>=6.1"]
-qtpdf = ["pyqtwebengine>=5.15"]
-qtpng = ["pyqtwebengine>=5.15"]
-webpdf = ["pyppeteer>=1,<1.1"]
 docs = [
     "myst_parser",
     "sphinx==5.0.2",
@@ -76,22 +75,7 @@ docs = [
     "nbsphinx>=0.2.12",
     "ipython",
 ]
-all = [
-    "ipykernel",
-    "ipython",
-    "ipywidgets>=7",
-    "nbsphinx>=0.2.12",
-    "myst_parser",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "pytest-dependency",
-    "pyqtwebengine>=5.15",
-    "pyppeteer>=1,<1.1",
-    "sphinx==5.0.2",
-    "sphinx_rtd_theme",
-    "tornado>=6.1",
-]
+all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
@@ -115,6 +99,25 @@ exclude = [
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
 
+[tool.hatch.envs.docs]
+features = ["docs"]
+[tool.hatch.envs.docs.scripts]
+build = "make -C docs html SPHINXOPTS='-W'"
+
+[tool.hatch.envs.test]
+features = ["test"]
+[tool.hatch.envs.test.scripts]
+test = "python -m pytest -vv {args}"
+nowarn = "test -W default {args}"
+
+[tool.hatch.envs.cov]
+features = ["all"]
+dependencies = ["coverage", "pytest-cov"]
+[tool.hatch.envs.cov.scripts]
+test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
+nowarn = "test -W default {args}"
+
+
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
 addopts = "-raXs --durations 10 --color=yes --doctest-modules --ignore=nbconvert/tests/files/override.py --ignore=nbconvert/tests/files/jupyter_nbconvert_config.py"
@@ -132,9 +135,24 @@ filterwarnings = [
     "ignore:getargs.*format is deprecated:DeprecationWarning",
     # From jupyter_client
     "ignore:unclosed <socket.socket:ResourceWarning",
-    "ignore:unclosed event loop:ResourceWarning",
     "ignore:There is no current event loop:DeprecationWarning",
+    "ignore:unclosed event loop:ResourceWarning",
+    # From jupyter_core
     "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if self.debug:",
+  "if settings.DEBUG",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "class .*\bProtocol\\):",
+"@(abc\\.)?abstractmethod",
 ]
 
 [tool.flake8]
