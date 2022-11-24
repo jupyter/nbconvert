@@ -54,7 +54,7 @@ jobs:
 
       - name: Code coverage
         run: |
-          pip install codecov
+          pip install codecov coverage[toml]
           codecov
 
   check_release:
@@ -96,18 +96,10 @@ jobs:
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
         with:
-          python_version: "3.7"
-      - name: Install miniumum versions
-        uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
-      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-        with:
-          python_version: "3.8"
-      - uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
-        with:
+          dependency_type: minimum
           only_create_file: 1
       - name: Run the unit tests
         run: |
-          export PIP_CONSTRAINT="./contraints_file.txt"
           export NBFORMAT_VALIDATOR=jsonschema
           hatch run test:nowarn || hatch run test:nowarn --lf
 
@@ -119,10 +111,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
         with:
-          python_version: "3.11"
+         dependency_type: pre
       - name: Run the tests
         run: |
-          export PIP_PRE=1
           export NBFORMAT_VALIDATOR=jsonschema
           hatch run test:nowarn || hatch run test:nowarn --lf
 
