@@ -71,9 +71,10 @@ serve = ["tornado>=6.1"]
 docs = [
     "myst_parser",
     "sphinx==5.0.2",
-    "sphinx_rtd_theme",
+    "pydata_sphinx_theme",
     "nbsphinx>=0.2.12",
     "ipython",
+    "ipykernel"
 ]
 all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
