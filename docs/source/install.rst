@@ -69,7 +69,7 @@ packages are specific to different operating systems:
         sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-plain-generic
 
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
-* Windows: `MikTex <https://miktex.org/>`_
+* Windows: `Latex Project <https://www.latex-project.org/get/>`_.
 
 Because nbconvert depends on packages and fonts included in standard
 TeX distributions, if you do not have a complete installation, you
