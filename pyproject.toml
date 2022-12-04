@@ -89,7 +89,7 @@ path = "nbconvert/_version.py"
 [tool.hatch.build.hooks.custom]
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["share/templates/lab/static/*.*"]
+artifacts = ["share/templates"]
 
 [tool.hatch.build.targets.wheel]
 exclude = [
