@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.6
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.5...788dd3c4de1b6333e807250d0f33b59b80d5b202))
+
+### Maintenance and upkeep improvements
+
+- Include all templates in sdist [#1916](https://github.com/jupyter/nbconvert/pull/1916) ([@blink1073](https://github.com/blink1073))
+- clean up workflows [#1911](https://github.com/jupyter/nbconvert/pull/1911) ([@blink1073](https://github.com/blink1073))
+- CI Cleanup [#1910](https://github.com/jupyter/nbconvert/pull/1910) ([@blink1073](https://github.com/blink1073))
+
+### Documentation improvements
+
+- Fix docs build and switch to PyData Sphinx Theme [#1912](https://github.com/jupyter/nbconvert/pull/1912) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-11-14&to=2022-12-05&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-11-14..2022-12-05&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.5
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.4...e5fefbb17b0bf3d6b5bbeb9a2ee62412d75ab0d8))
@@ -20,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-11-09&to=2022-11-14&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2022-11-09..2022-11-14&type=Issues) | [@JWock82](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AJWock82+updated%3A2022-11-09..2022-11-14&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.4
 
