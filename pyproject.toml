@@ -185,6 +185,7 @@ exclude_lines = [
 line-length = 100
 skip-string-normalization = true
 target-version = ["py37"]
+extend-exclude = ".*notebook1.ipynb$"
 
 [tool.ruff]
 target-version = "py37"
