@@ -6,6 +6,7 @@ from pprint import pprint
 
 from .base import WriterBase
 
+
 # -----------------------------------------------------------------------------
 # Copyright (c) 2013, the IPython Development Team.
 #
@@ -39,7 +40,7 @@ class DebugWriter(WriterBase):
         if isinstance(resources["outputs"], dict):
             print("outputs extracted from %s" % notebook_name)
             print("-" * 80)
-            pprint(resources["outputs"], indent=2, width=70)
+            pprint(resources["outputs"], indent=2, width=70)  # noqa
         else:
             print("no outputs extracted from %s" % notebook_name)
         print("=" * 80)

@@ -17,6 +17,7 @@ from nbconvert.tests.base import TestsBase
 from ...tests.utils import onlyif_cmds_exist
 from .. import pandoc
 
+
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------

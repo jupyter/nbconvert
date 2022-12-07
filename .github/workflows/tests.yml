@@ -14,7 +14,7 @@ defaults:
     shell: bash -eux {0}
 
 jobs:
-  run-tests:
+  tests:
     runs-on: ${{ matrix.os }}
     env:
       NBFORMAT_VALIDATOR: jsonschema
@@ -79,13 +79,18 @@ jobs:
         with:
           ignore_links: 'https://ipywidgets.readthedocs.io/en/latest/examples/Output'
 
-  pre_commit:
+  test_lint:
+    name: Test Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - uses: jupyterlab/maintainer-tools/.github/actions/pre-commit@v1
+      -  name: Run Linters
+         run: |
+          hatch run typing:test
+          hatch run lint:style
+          pipx run 'validate-pyproject[all]' pyproject.toml
+          pipx run doc8 --max-line-length=200
 
   test_minimum_versions:
     name: Test Minimum Versions
@@ -138,8 +143,8 @@ jobs:
   tests_check: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
-      - run-tests
-      - pre_commit
+      - tests
+      - test_lint
       - test_minimum_versions
       - test_prereleases
       - check_links

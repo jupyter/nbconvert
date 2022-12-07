@@ -76,6 +76,13 @@ docs = [
     "ipython",
     "ipykernel"
 ]
+lint = [
+  "black[jupyter]>=22.6.0",
+  "mdformat>0.7",
+  "mdformat-gfm>=0.3.5",
+  "ruff>=0.0.156"
+]
+typing = ["mypy>=0.990"]
 all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
 [project.scripts]
@@ -118,6 +125,24 @@ dependencies = ["coverage", "pytest-cov"]
 test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
 nowarn = "test -W default {args}"
 
+[tool.hatch.envs.typing]
+features = ["typing", "test"]
+[tool.hatch.envs.typing.scripts]
+test = "mypy --install-types --non-interactive {args:nbconvert}"
+
+[tool.hatch.envs.lint]
+features = ["lint"]
+[tool.hatch.envs.lint.scripts]
+style = [
+  "ruff {args:.}",
+  "black --check --diff {args:.}",
+  "mdformat --check {args:docs *.md}"
+]
+fmt = [
+  "black {args:.}",
+  "ruff --fix {args:.}",
+  "mdformat {args:docs *.md}"
+]
 
 [tool.pytest.ini_options]
 markers = "network: marks tests which require network connection"
@@ -156,27 +181,61 @@ exclude_lines = [
 "@(abc\\.)?abstractmethod",
 ]
 
-[tool.flake8]
-ignore = "E501, W503, E402"
-builtins = "c, get_config"
-exclude = [
-    ".cache",
-    ".github",
-    "docs",
+[tool.black]
+line-length = 100
+skip-string-normalization = true
+target-version = ["py37"]
+
+[tool.ruff]
+target-version = "py37"
+line-length = 100
+select = [
+  "A", "B", "C", "E", "F", "FBT", "I", "N", "Q", "RUF", "S", "T",
+  "UP", "W", "YTT",
 ]
-enable-extensions = "G"
-extend-ignore = [
-    "G001", "G002", "G004", "G200", "G201", "G202",
-    # black adds spaces around ':'
-    "E203",
+ignore = [
+  # Allow non-abstract empty methods in abstract base classes
+  "B027",
+  # Ignore McCabe complexity
+  "C901",
+  # Allow boolean positional values in function calls, like `dict.get(... True)`
+  "FBT003",
+  # Use of `assert` detected
+  "S101",
+  # Line too long
+  "E501",
+  # Relative imports are banned
+  "I252",
+  # Boolean ... in function definition
+  "FBT001", "FBT002",
+  # Module level import not at top of file
+  "E402",
+  # A001/A002/A003 .. is shadowing a python builtin
+  "A001", "A002", "A003",
+  # Possible hardcoded password
+  "S105", "S106",
+  # Q000 Single quotes found but double quotes preferred
+  "Q000",
+  # N806 Variable `B` in function should be lowercase
+  "N806",
+  # T201 `print` found
+  "T201",
+  # N802 Function name `CreateWellKnownSid` should be lowercase
+  "N802", "N803"
 ]
-per-file-ignores = [
-    # B011: Do not call assert False since python -O removes these calls
-    # F841 local variable 'foo' is assigned to but never used
-    "nbconvert/*/tests/*: B011", "F841",
-    "nbconvert/tests/*: B011", "F841",
-    # F401 'foo' imported but unused
-    # F403 'x' used; unable to detect undefined names
-    "nbconvert/*/__init__.py: F401", "F403",
-    "nbconvert/__init__.py: F401", "F403",
+unfixable = [
+  # Don't touch print statements
+  "T201",
+  # Don't touch noqa lines
+  "RUF100",
 ]
+
+[tool.ruff.per-file-ignores]
+ # B011: Do not call assert False since python -O removes these calls
+# F841 local variable 'foo' is assigned to but never used
+"nbconvert/*/tests/*" = ["B011", "F841"]
+"nbconvert/tests/*" = ["B011", "F841"]
+# F401 'foo' imported but unused
+# F403 'x' used; unable to detect undefined names
+"nbconvert/*/__init__.py" = ["F401", "F403"]
+"nbconvert/__init__.py" = ["F401", "F403"]

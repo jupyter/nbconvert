@@ -17,6 +17,7 @@ Module with tests for the csshtmlheader preprocessor
 from ..csshtmlheader import CSSHTMLHeaderPreprocessor
 from .base import PreprocessorTestsBase
 
+
 # -----------------------------------------------------------------------------
 # Class
 # -----------------------------------------------------------------------------

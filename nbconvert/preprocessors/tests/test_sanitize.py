@@ -9,7 +9,7 @@ from .base import PreprocessorTestsBase
 class TestSanitizer(PreprocessorTestsBase):
     """Contains test functions for sanitize.py"""
 
-    maxDiff = None
+    maxDiff = None  # noqa
 
     def build_preprocessor(self):
         """Make an instance of a preprocessor"""

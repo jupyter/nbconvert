@@ -85,8 +85,9 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         self._check_assign_resources(resources)
 
         with self.setup_kernel():
+            assert self.kc is not None
             info_msg = self.wait_for_reply(self.kc.kernel_info())
-            self.nb.metadata["language_info"] = info_msg["content"]["language_info"]
+            self.nb.metadata["language_info"] = info_msg["content"]["language_info"]  # type:ignore
             for index, cell in enumerate(self.nb.cells):
                 self.preprocess_cell(cell, resources, index)
         self.set_widgets_metadata()
