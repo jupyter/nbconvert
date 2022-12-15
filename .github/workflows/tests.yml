@@ -16,6 +16,7 @@ defaults:
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     env:
       NBFORMAT_VALIDATOR: jsonschema
     strategy:
