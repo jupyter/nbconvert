@@ -6,7 +6,6 @@ from pprint import pprint
 
 from .base import WriterBase
 
-
 # -----------------------------------------------------------------------------
 # Copyright (c) 2013, the IPython Development Team.
 #

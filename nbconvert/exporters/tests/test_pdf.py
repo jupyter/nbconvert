@@ -11,7 +11,6 @@ from ...tests.utils import onlyif_cmds_exist
 from ..pdf import PDFExporter
 from .base import ExportersTestsBase
 
-
 # -----------------------------------------------------------------------------
 # Class
 # -----------------------------------------------------------------------------

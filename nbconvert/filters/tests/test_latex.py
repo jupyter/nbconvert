@@ -17,7 +17,6 @@ Module with tests for Latex
 from ...tests.base import TestsBase
 from ..latex import escape_latex
 
-
 # -----------------------------------------------------------------------------
 # Class
 # -----------------------------------------------------------------------------

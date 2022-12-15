@@ -16,7 +16,6 @@ from ..postprocessors import PostProcessorBase
 from ..tests.utils import onlyif_cmds_exist
 from .base import TestsBase
 
-
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------

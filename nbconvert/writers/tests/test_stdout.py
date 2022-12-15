@@ -20,7 +20,6 @@ from io import StringIO
 from ...tests.base import TestsBase
 from ..stdout import StdoutWriter
 
-
 # -----------------------------------------------------------------------------
 # Class
 # -----------------------------------------------------------------------------
