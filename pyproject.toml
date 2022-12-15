@@ -65,6 +65,7 @@ test = [
     "ipykernel",
     "ipywidgets>=7",
     "pre-commit",
+    "pytest-timeout",
     "pyppeteer>=1,<1.1",
 ]
 serve = ["tornado>=6.1"]
@@ -145,6 +146,7 @@ fmt = [
 ]
 
 [tool.pytest.ini_options]
+timeout = 100
 markers = "network: marks tests which require network connection"
 addopts = "-raXs --durations 10 --color=yes --doctest-modules --ignore=nbconvert/tests/files/override.py --ignore=nbconvert/tests/files/jupyter_nbconvert_config.py"
 testpaths = [
