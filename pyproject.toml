@@ -119,8 +119,8 @@ test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-miss
 nowarn = "test -W default {args}"
 
 [tool.hatch.envs.typing]
-features = ["typing"]
-typing = ["mypy>=0.990"]
+features = ["test"]
+dependencies = ["mypy>=0.990"]
 [tool.hatch.envs.typing.scripts]
 test = "mypy --install-types --non-interactive {args:nbconvert}"
 
