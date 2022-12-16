@@ -3,9 +3,6 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import shlex
-import subprocess
-import sys
 import tempfile
 
 from traitlets import Bool, default
@@ -21,11 +18,6 @@ class WebPDFExporter(HTMLExporter):
     """
 
     export_from_notebook = "PDF via HTML"
-
-    allow_chromium_download = Bool(
-        False,
-        help="Whether to allow downloading Chromium if no suitable version is found on the system.",
-    ).tag(config=True)
 
     paginate = Bool(
         True,
@@ -70,19 +62,6 @@ class WebPDFExporter(HTMLExporter):
                 "playwright is not installed to support Web PDF conversion. "
                 "Please install `nbconvert[webpdf]` to enable."
             ) from e
-
-        try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch()
-                browser.close()
-        except Exception:
-            if not self.allow_chromium_download:
-                raise RuntimeError(
-                    "No suitable chromium executable found on the system. "
-                    "Please use '--allow-chromium-download' to allow downloading one."
-                ) from None
-            cmd = shlex.split(f"{sys.executable} -m playwright install chrome")
-            subprocess.check_call(cmd)
 
         return sync_playwright
 
@@ -135,7 +114,6 @@ class WebPDFExporter(HTMLExporter):
             return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
-        self._check_launch_reqs()
         html, resources = super().from_notebook_node(nb, resources=resources, **kw)
 
         self.log.info("Building PDF")
