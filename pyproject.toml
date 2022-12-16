@@ -66,6 +66,7 @@ test = [
     "ipywidgets>=7",
     "pre-commit",
     "pytest-timeout",
+    "nbconvert[webpdf]",
 ]
 serve = ["tornado>=6.1"]
 docs = [
