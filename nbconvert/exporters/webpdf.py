@@ -84,7 +84,11 @@ class WebPDFExporter(HTMLExporter):
         async def main(temp_file):
             args = ["--no-sandbox"] if self.disable_sandbox else []
             browser = await self._check_launch_reqs()(
-                handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False, args=args
+                handleSIGINT=False,
+                handleSIGTERM=False,
+                handleSIGHUP=False,
+                args=args,
+                headless=True,
             )
             page = await browser.newPage()
             await page.emulateMedia("print")
