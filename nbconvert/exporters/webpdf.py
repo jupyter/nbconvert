@@ -17,7 +17,7 @@ class WebPDFExporter(HTMLExporter):
     """Writer designed to write to PDF files.
 
     This inherits from :class:`HTMLExporter`. It creates the HTML using the
-    template machinery, and then run pyppeteer to create a pdf.
+    template machinery, and then run playwright to create a pdf.
     """
 
     export_from_notebook = "PDF via HTML"
