@@ -26,13 +26,6 @@ class TestWebPDFExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
-    def test_webpdf_without_chromium(self):
-        """
-        Generate PDFs if chromium not present?
-        """
-        with pytest.raises(RuntimeError):
-            WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
-
     def test_webpdf_without_playwright(self):
         """
         Generate PDFs if chromium not present?

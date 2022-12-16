@@ -3,6 +3,9 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import shlex
+import subprocess
+import sys
 import tempfile
 
 from traitlets import Bool, default
@@ -18,6 +21,11 @@ class WebPDFExporter(HTMLExporter):
     """
 
     export_from_notebook = "PDF via HTML"
+
+    allow_chromium_download = Bool(
+        False,
+        help="Whether to allow downloading Chromium if no suitable version is found on the system.",
+    ).tag(config=True)
 
     paginate = Bool(
         True,
@@ -69,7 +77,18 @@ class WebPDFExporter(HTMLExporter):
         """Run headless browser."""
         with self._check_launch_reqs()() as p:
             args = ["--no-sandbox"] if self.disable_sandbox else []
-            browser = p.chromium.launch(args=args)
+            try:
+                browser = p.chromium.launch(args=args)
+            except Exception:
+                if not self.allow_chromium_download:
+                    raise RuntimeError(
+                        "No suitable chromium executable found on the system. "
+                        "Please use '--allow-chromium-download' to allow downloading one."
+                    ) from None
+                cmd = shlex.split(f"{sys.executable} -m playwright install chromium")
+                subprocess.check_call(cmd)
+                browser = p.chromium.launch(args=args)
+
             page = browser.new_page()
             page.emulate_media(media='print')
             page.wait_for_timeout(100)
@@ -114,6 +133,7 @@ class WebPDFExporter(HTMLExporter):
             return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        self._check_launch_reqs()
         html, resources = super().from_notebook_node(nb, resources=resources, **kw)
 
         self.log.info("Building PDF")
