@@ -72,8 +72,9 @@ class WebPDFExporter(HTMLExporter):
             ) from e
 
         try:
-            with sync_playwright():
-                pass
+            with sync_playwright() as p:
+                browser = p.chromium.launch()
+                browser.close()
         except Exception:
             if not self.allow_chromium_download:
                 raise RuntimeError(
