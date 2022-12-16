@@ -44,7 +44,7 @@ jobs:
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
           pip install ."[webpdf]"
-          playwright install chrome
+          python -m playwright install --with-deps chrome
 
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
