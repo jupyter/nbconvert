@@ -33,6 +33,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
+      - name: Install Inkscape on Windows
+        if: ${{ startsWith('windows', matrix.os ) }}
+        run: choco install inkscape
+
       - name: Run tests
         run: |
           hatch run cov:test
@@ -65,7 +69,7 @@ jobs:
 
       - name: Install Depenedencies
         run: |
-          conda install -c conda-forge -y pandoc xvfbwrapper inkscape latexmk texlive-core pyqt5 hatch coverage pytest-cov
+          conda install -c conda-forge -y pandoc xvfbwrapper latexmk texlive-core pyqt5-sip hatch coverage pytest-cov
           pip install -e .[all]
 
       - name: Run tests

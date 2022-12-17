@@ -11,6 +11,7 @@ from ..webpdf import WebPDFExporter
 from .base import ExportersTestsBase
 
 try:
+    import playwright  # noqa
 
     PLAYWRIGHT_INSTALLED = True
 except ImportError:

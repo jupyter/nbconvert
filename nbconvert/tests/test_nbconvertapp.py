@@ -148,6 +148,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook with spaces.pdf")
 
     @pytest.mark.network
+    @onlyif_cmds_exist("playwright")
     def test_webpdf_with_chromium(self):
         """
         Generate PDFs if chromium allowed to be downloaded?
