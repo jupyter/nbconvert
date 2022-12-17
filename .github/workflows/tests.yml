@@ -69,7 +69,9 @@ jobs:
 
       - name: Install Depenedencies
         run: |
-          conda install -c conda-forge -y pandoc xvfbwrapper latexmk texlive-core pyqt5-sip hatch coverage pytest-cov
+          sudo apt-get update
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0 libxcb-xinerama0
+          conda install -c conda-forge -y pandoc latexmk texlive-core pyqt5-sip hatch coverage pytest-cov
           pip install -e .[all]
 
       - name: Run tests
