@@ -10,7 +10,14 @@ import pytest
 from ..webpdf import WebPDFExporter
 from .base import ExportersTestsBase
 
+try:
 
+    PLAYWRIGHT_INSTALLED = True
+except ImportError:
+    PLAYWRIGHT_INSTALLED = False
+
+
+@pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="playwright not installed")
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 

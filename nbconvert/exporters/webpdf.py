@@ -64,7 +64,7 @@ class WebPDFExporter(HTMLExporter):
 
     def _check_launch_reqs(self):
         try:
-            from playwright.sync_api import sync_playwright
+            from playwright.sync_api import sync_playwright  # type:ignore
         except ModuleNotFoundError as e:
             raise RuntimeError(
                 "playwright is not installed to support Web PDF conversion. "

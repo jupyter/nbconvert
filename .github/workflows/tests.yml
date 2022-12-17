@@ -65,7 +65,7 @@ jobs:
 
       - name: Install Depenedencies
         run: |
-          conda install -y pandoc xvfbwrapper inkscape latexmk texlive-core pyqt5 hatch coverage pytest-cov
+          conda install -c conda-forge -y pandoc xvfbwrapper inkscape latexmk texlive-core pyqt5 hatch coverage pytest-cov
           pip install -e .[all]
 
       - name: Run tests
