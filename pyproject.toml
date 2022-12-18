@@ -76,7 +76,7 @@ docs = [
     "ipython",
     "ipykernel"
 ]
-all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
+all = ["nbconvert[webpdf,test,serve,docs]"]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
