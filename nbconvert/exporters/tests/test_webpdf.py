@@ -7,10 +7,11 @@ from unittest.mock import patch
 
 import pytest
 
-from ..webpdf import WebPDFExporter
+from ..webpdf import WebPDFExporter, PYPPETEER_INSTALLED
 from .base import ExportersTestsBase
 
 
+@pytest.mark.skipif(not PYPPETEER_INSTALLED, reason="Pyppeteer not installed")
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 
