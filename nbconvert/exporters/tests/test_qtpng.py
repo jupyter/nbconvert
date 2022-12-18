@@ -18,7 +18,7 @@ class TestQtPNGExporter(ExportersTestsBase):
 
     exporter_class = QtPNGExporter
 
-    @pytest.skip(reason="testing")
+    @pytest.mark.skip(reason="testing")
     def test_export(self):
         """
         Can a TemplateExporter export something?
