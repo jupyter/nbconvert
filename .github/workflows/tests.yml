@@ -69,7 +69,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
-          conda install -c conda-forge -y pandoc latexmk texlive-core pyqt hatch coverage pytest-cov pyqt<6
+          conda install -c conda-forge -y pandoc latexmk texlive-core pyqt hatch coverage pytest-cov "pyqt<6"
           pip install -e .[all]
 
       - name: Run tests
