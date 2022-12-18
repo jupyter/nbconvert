@@ -20,12 +20,12 @@ jobs:
       NBFORMAT_VALIDATOR: jsonschema
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-20.04", "macos-latest", "windows-latest"]
         python-version: ["3.7", "3.10"]
         include:
           - os: "windows-latest"
             python-version: "3.8"
-          - os: "ubuntu-latest"
+          - os: "ubuntu-20.04"
             python-version: "3.9"
       fail-fast: false
     steps:
@@ -37,7 +37,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
-          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5 chromium-browser
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
@@ -45,7 +45,7 @@ jobs:
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
         run: |
-          xvfb-run --auto-servernum hatch run cov:test -s
+          xvfb-run --auto-servernum hatch run cov:test
 
       - name: Run tests on other platforms
         if: ${{ !startsWith(runner.os, 'linux')  }}
