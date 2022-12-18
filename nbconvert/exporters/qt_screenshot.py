@@ -1,10 +1,10 @@
 import os
 
 try:
-    from PyQt5 import QtCore
-    from PyQt5.QtGui import QPageLayout, QPageSize
-    from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
-    from PyQt5.QtWidgets import QApplication
+    from PyQt5 import QtCore  # type:ignore
+    from PyQt5.QtGui import QPageLayout, QPageSize  # type:ignore
+    from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView  # type:ignore
+    from PyQt5.QtWidgets import QApplication  # type:ignore
 
     QT_INSTALLED = True
 except ModuleNotFoundError:

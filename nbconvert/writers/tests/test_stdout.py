@@ -38,9 +38,9 @@ class TestStdout(TestsBase):
 
         # Create stdout writer, test output
         writer = StdoutWriter()
-        writer.write("a×", {"b": "c"})
+        writer.write("a×", {"b": "c"})  # noqa
         output = stream.getvalue()
-        self.fuzzy_compare(output, "a×")
+        self.fuzzy_compare(output, "a×")  # noqa
 
         # Revert stdout
         sys.stdout = stdout

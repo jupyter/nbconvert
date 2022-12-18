@@ -118,7 +118,7 @@ class TestsBase(unittest.TestCase):
             write(nb, f, 4)
 
     def copy_files_to(self, copy_filenames, dest="."):
-        "Copy test files into the destination directory"
+        """Copy test files into the destination directory"""
         if not os.path.isdir(dest):
             os.makedirs(dest)
         files_path = self._get_files_path()

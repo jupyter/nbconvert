@@ -11,17 +11,10 @@ import mimetypes
 import os
 import re
 from functools import partial
-
-try:
-    from html import escape
-
-    html_escape = partial(escape, quote=False)
-except ImportError:
-    # Python 2
-    from cgi import escape as html_escape
+from html import escape
 
 import bs4
-from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown
+from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown  # type:ignore
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
@@ -29,8 +22,10 @@ from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
 
+html_escape = partial(escape, quote=False)
 
-class InvalidNotebook(Exception):
+
+class InvalidNotebook(Exception):  # noqa
     pass
 
 

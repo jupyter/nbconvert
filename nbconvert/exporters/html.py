@@ -16,7 +16,7 @@ from traitlets import Bool, Unicode, default
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
-    from jinja2 import contextfilter
+    from jinja2 import contextfilter  # type:ignore
 else:
     from jinja2 import pass_context as contextfilter
 

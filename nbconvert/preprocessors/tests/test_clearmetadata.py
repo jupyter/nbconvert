@@ -23,9 +23,10 @@ class TestClearMetadata(PreprocessorTestsBase):
             notebook.cells[0].metadata = {}
         notebook.cells[0].metadata["test_field"] = "test_value"
         notebook.cells[0].metadata["test_nested"] = {"test_keep": "keep", "test_filtered": "filter"}
-        notebook.cells[0].metadata["executeTime"] = dict(
-            [("end_time", "09:31:50"), ("start_time", "09:31:49")]
-        )
+        notebook.cells[0].metadata["executeTime"] = {
+            "end_time": "09:31:50",
+            "start_time": "09:31:49",
+        }
         return notebook
 
     def build_preprocessor(self, **kwargs):

@@ -24,7 +24,7 @@ HERE = os.path.dirname(__file__)
 
 # Automatically generate config_options.rst
 with open(os.path.join(HERE, "..", "autogen_config.py")) as f:
-    exec(compile(f.read(), "autogen_config.py", "exec"), {})
+    exec(compile(f.read(), "autogen_config.py", "exec"), {})  # noqa
     print("Created docs for config options")
 
 # -- General configuration ------------------------------------------------
@@ -82,7 +82,7 @@ linkcheck_ignore = [
 # Get information from _version.py and use it to generate version and release
 _version_py = os.path.join(HERE, "../../nbconvert/_version.py")
 version_ns = {}
-exec(compile(open(_version_py).read(), _version_py, "exec"), version_ns)
+exec(compile(open(_version_py).read(), _version_py, "exec"), version_ns)  # noqa
 # The short X.Y version.
 version = "%i.%i" % version_ns["version_info"][:2]
 # The full version, including alpha/beta/rc tags.
