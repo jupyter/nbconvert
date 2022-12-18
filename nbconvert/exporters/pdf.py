@@ -15,7 +15,7 @@ from ..utils import _contextlib_chdir
 from .latex import LatexExporter
 
 
-class LatexFailed(IOError):
+class LatexFailed(IOError):  # noqa
     """Exception for failed latex run
 
     Captured latex output is in error.output.

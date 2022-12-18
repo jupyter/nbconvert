@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 
 
-class ConversionException(Exception):
+class ConversionException(Exception):  # noqa
     """An exception raised by the conversion process."""
 
     pass

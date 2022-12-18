@@ -2,7 +2,6 @@
 Contains debug writer.
 """
 
-from pprint import pprint
 
 from .base import WriterBase
 
@@ -39,7 +38,6 @@ class DebugWriter(WriterBase):
         if isinstance(resources["outputs"], dict):
             print("outputs extracted from %s" % notebook_name)
             print("-" * 80)
-            pprint(resources["outputs"], indent=2, width=70)
         else:
             print("no outputs extracted from %s" % notebook_name)
         print("=" * 80)
