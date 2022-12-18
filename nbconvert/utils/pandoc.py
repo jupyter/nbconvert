@@ -132,7 +132,7 @@ class PandocMissing(ConversionException):
 
     def __init__(self, *args, **kwargs):
         super().__init__(
-            "Pandoc wasn't found.\n"  # noqa
+            "Pandoc wasn't found.\n"
             + "Please check that pandoc is installed:\n"
             + "https://pandoc.org/installing.html"
         )

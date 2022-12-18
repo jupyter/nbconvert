@@ -153,12 +153,12 @@ class SanitizeHTML(Preprocessor):
         """
         Sanitize a string containing raw HTML tags.
         """
-        kwargs = dict(
-            tags=self.tags,
-            attributes=self.attributes,
-            strip=self.strip,
-            strip_comments=self.strip_comments,
-        )
+        kwargs = {
+            "tags": self.tags,
+            "attributes": self.attributes,
+            "strip": self.strip,
+            "strip_comments": self.strip_comments,
+        }
 
         if _USE_BLEACH_CSS_SANITIZER:
             css_sanitizer = CSSSanitizer(allowed_css_properties=self.styles)

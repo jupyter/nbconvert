@@ -238,7 +238,7 @@ class Testfiles(TestsBase):
                 f.write("d")
 
             # Create the resoruces dictionary
-            res = dict(metadata=dict(path="sub"))
+            res = {"metadata": {"path": "sub"}}
 
             # Create files writer, test output
             writer = FilesWriter()
@@ -272,7 +272,7 @@ class Testfiles(TestsBase):
                 f.write("d")
 
             # Create the resoruces dictionary
-            res = dict(metadata=dict(path="other_sub"))
+            res = {"metadata": {"path": "other_sub"}}
 
             # Create files writer, test output
             writer = FilesWriter()

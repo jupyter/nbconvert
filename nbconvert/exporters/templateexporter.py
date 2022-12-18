@@ -122,7 +122,7 @@ class ExtensionTolerantLoader(BaseLoader):
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
             if template.endswith(self.extension):
-                raise TemplateNotFound(template)
+                raise TemplateNotFound(template) from None
             return self.loader.get_source(environment, template + self.extension)
 
     def list_templates(self):
@@ -569,9 +569,9 @@ class TemplateExporter(Exporter):
     def get_compatibility_base_template_conf(cls, name):
         # Hard-coded base template confs to use for backwards compatibility for 5.x-only templates
         if name == "display_priority":
-            return dict(base_template="base")
+            return {"base_template": "base"}
         if name == "full":
-            return dict(base_template="classic", mimetypes={"text/html": True})
+            return {"base_template": "classic", "mimetypes": {"text/html": True}}
 
     def get_template_names(self):
         # finds a list of template names where each successive template name is the base template
