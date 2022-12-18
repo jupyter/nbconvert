@@ -16,7 +16,7 @@ defaults:
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       NBFORMAT_VALIDATOR: jsonschema
     strategy:
@@ -55,9 +55,6 @@ jobs:
       matrix:
         python-version: ["3.8", "3.11"]
       fail-fast: false
-    defaults:
-      run:
-        shell: bash -l {0}
 
     steps:
       - uses: actions/checkout@v3
@@ -68,13 +65,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Depenedencies
+        shell: bash -l {0}
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+          sudo apt-get install -y --no-install-recommends '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-devlibxkbcommon-dev libxkbcommon-x11-dev
           conda install -c conda-forge -y pandoc latexmk texlive-core pyqt hatch coverage pytest-cov pyqt<6
           pip install -e .[all]
 
       - name: Run tests
+        shell: bash -l {0}
         run: |
           xvfb-run --auto-servernum python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered
 
