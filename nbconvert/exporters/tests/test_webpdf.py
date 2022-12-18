@@ -10,15 +10,7 @@ import pytest
 from ..webpdf import WebPDFExporter
 from .base import ExportersTestsBase
 
-try:
-    import playwright  # type:ignore  # noqa
 
-    PLAYWRIGHT_INSTALLED = True
-except ImportError:
-    PLAYWRIGHT_INSTALLED = False
-
-
-@pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="playwright not installed")
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 
@@ -34,7 +26,15 @@ class TestWebPDFExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
-    def test_webpdf_without_playwright(self):
+    @patch("pyppeteer.util.check_chromium", return_value=False)
+    def test_webpdf_without_chromium(self, mock_check_chromium):
+        """
+        Generate PDFs if chromium not present?
+        """
+        with pytest.raises(RuntimeError):
+            WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
+
+    def test_webpdf_without_pyppeteer(self):
         """
         Generate PDFs if chromium not present?
         """

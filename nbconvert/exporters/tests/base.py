@@ -4,7 +4,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
-from typing import Any, List
 
 from ...tests.base import TestsBase
 
@@ -20,15 +19,15 @@ all_raw_mimetypes = {
 class ExportersTestsBase(TestsBase):
     """Contains base test functions for exporters"""
 
-    exporter_class: Any = None
-    should_include_raw: List[str] = []
+    exporter_class = None
+    should_include_raw = None
 
     def _get_notebook(self, nb_name="notebook2.ipynb"):
         return os.path.join(self._get_files_path(), nb_name)
 
     def test_raw_cell_inclusion(self):
         """test raw cell inclusion based on raw_mimetype metadata"""
-        if not self.should_include_raw:
+        if self.should_include_raw is None:
             return
         exporter = self.exporter_class()
         (output, resources) = exporter.from_filename(self._get_notebook("rawtest.ipynb"))

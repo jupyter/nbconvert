@@ -16,7 +16,16 @@ import sys
 from textwrap import dedent, fill
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
-from traitlets import Bool, DottedObjectName, Instance, List, Type, Unicode, default, observe
+from traitlets import (
+    Bool,
+    DottedObjectName,
+    Instance,
+    List,
+    Type,
+    Unicode,
+    default,
+    observe,
+)
 from traitlets.config import Configurable, catch_config_error
 from traitlets.utils.importstring import import_item
 
@@ -194,7 +203,7 @@ class NbConvertApp(JupyterApp):
     def _log_level_default(self):
         return logging.INFO
 
-    classes = List()  # type:ignore[assignment]
+    classes = List()
 
     @default("classes")
     def _classes_default(self):
@@ -207,7 +216,7 @@ class NbConvertApp(JupyterApp):
 
         return classes
 
-    description = Unicode(  # type:ignore[assignment]
+    description = Unicode(
         """This application is used to convert notebook files (*.ipynb)
         to various other formats.
 
@@ -354,7 +363,7 @@ class NbConvertApp(JupyterApp):
     def initialize(self, argv=None):
         """Initialize application, notebooks, writer, and postprocessor"""
         # See https://bugs.python.org/issue37373 :(
-        if sys.version_info >= (3, 8) and sys.platform.startswith("win"):
+        if sys.version_info[0] == 3 and sys.version_info[1] >= 8 and sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
         self.init_syspath()

@@ -80,7 +80,7 @@ class TestHighlight(TestsBase):
         assert "<script>alert(1)</script>" not in out
 
     def _extract_tokens(self, root, cls):
-        return set(map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']")))  # noqa
+        return set(map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']")))
 
     def _try_highlight(self, method, test, tokens):
         """Try highlighting source, look for key tokens"""

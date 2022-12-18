@@ -113,7 +113,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                 rkey = winreg.OpenKey(wr_handle, "SOFTWARE\\Classes\\inkscape.svg\\DefaultIcon")
                 inkscape = winreg.QueryValueEx(rkey, "")[0]
             except FileNotFoundError:
-                raise FileNotFoundError("Inkscape executable not found") from None
+                raise FileNotFoundError("Inkscape executable not found")
             return inkscape
         return "inkscape"
 

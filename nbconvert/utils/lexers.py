@@ -3,4 +3,4 @@ from warnings import warn
 
 warn("nbconvert.utils.lexers is deprecated as of 5.0. Use IPython.lib.lexers")
 
-from IPython.lib.lexers import *  # type:ignore  # noqa
+from IPython.lib.lexers import *  # noqa
