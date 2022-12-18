@@ -12,6 +12,13 @@ from traitlets import Bool, default
 
 from .html import HTMLExporter
 
+try:
+    import pyppeteer  # noqa
+
+    PYPPETEER_INSTALLED = True
+except ImportError:
+    PYPPETEER_INSTALLED = False
+
 
 class WebPDFExporter(HTMLExporter):
     """Writer designed to write to PDF files.
