@@ -45,7 +45,9 @@ jobs:
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
         run: |
-          xvfb-run --auto-servernum hatch run cov:test
+          pip install pyppeteer
+          python -c "import asyncio;from pyppeteer import launch;loop=asyncio.new_event_loop();browser=loop.run_until_complete(launch());loop.run_until_complete(browser.close())"
+          xvfb-run --auto-servernum hatch run cov:test -s
 
       - name: Run tests on other platforms
         if: ${{ !startsWith(runner.os, 'linux')  }}
