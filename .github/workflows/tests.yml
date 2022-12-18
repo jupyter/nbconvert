@@ -20,7 +20,7 @@ jobs:
       NBFORMAT_VALIDATOR: jsonschema
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-2004", "macos-latest", "windows-latest"]
         python-version: ["3.7", "3.10"]
         include:
           - os: "windows-latest"
