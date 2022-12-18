@@ -14,7 +14,13 @@ from traitlets.config import Config
 
 import nbconvert.tests
 
-from ..base import ExporterDisabledError, ExporterNameError, export, get_export_names, get_exporter
+from ..base import (
+    ExporterDisabledError,
+    ExporterNameError,
+    export,
+    get_export_names,
+    get_exporter,
+)
 from ..exporter import Exporter
 from ..python import PythonExporter
 from .base import ExportersTestsBase

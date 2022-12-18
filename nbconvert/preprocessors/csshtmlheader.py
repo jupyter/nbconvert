@@ -7,14 +7,14 @@
 import hashlib
 import os
 
-from jupyterlab_pygments import JupyterStyle  # type:ignore
+from jupyterlab_pygments import JupyterStyle
 from pygments.style import Style
 from traitlets import Type, Unicode, Union
 
 from .base import Preprocessor
 
 try:
-    from notebook import DEFAULT_STATIC_FILES_PATH  # type:ignore
+    from notebook import DEFAULT_STATIC_FILES_PATH
 except ImportError:
     DEFAULT_STATIC_FILES_PATH = None
 

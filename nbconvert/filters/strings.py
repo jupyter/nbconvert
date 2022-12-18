@@ -18,7 +18,7 @@ from xml.etree.ElementTree import Element
 import bleach
 
 # defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import ElementTree  # type:ignore
+from defusedxml import ElementTree
 
 __all__ = [
     "wrap_text",
@@ -56,7 +56,7 @@ def wrap_text(text, width=100):
     """
 
     split_text = text.split("\n")
-    wrp = map(lambda x: textwrap.wrap(x, width), split_text)  # noqa
+    wrp = map(lambda x: textwrap.wrap(x, width), split_text)
     wrpd = map("\n".join, wrp)
     return "\n".join(wrpd)
 
@@ -225,7 +225,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
-        from IPython.core.inputtransformer2 import TransformerManager  # type:ignore
+        from IPython.core.inputtransformer2 import TransformerManager
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."

@@ -124,7 +124,7 @@ class Highlight2Latex(NbConvertBase):
             source, LatexFormatter(**self.extra_formatter_options), language, metadata
         )
         if strip_verbatim:
-            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")
+            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")  # noqa
             return latex.replace("\n\\end{Verbatim}\n", "")
         else:
             return latex
@@ -157,7 +157,7 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
     lexer = None
     if language == "ipython2":
         try:
-            from IPython.lib.lexers import IPythonLexer  # type:ignore
+            from IPython.lib.lexers import IPythonLexer
         except ImportError:
             warn("IPython lexer unavailable, falling back on Python")
             language = "python"

@@ -21,7 +21,7 @@ try:
 except ImportError:
     try:
         # bleach <5
-        from bleach import ALLOWED_STYLES  # type:ignore
+        from bleach import ALLOWED_STYLES
 
         _USE_BLEACH_CSS_SANITIZER = False
         _USE_BLEACH_STYLES = True
@@ -153,12 +153,12 @@ class SanitizeHTML(Preprocessor):
         """
         Sanitize a string containing raw HTML tags.
         """
-        kwargs = {
-            "tags": self.tags,
-            "attributes": self.attributes,
-            "strip": self.strip,
-            "strip_comments": self.strip_comments,
-        }
+        kwargs = dict(
+            tags=self.tags,
+            attributes=self.attributes,
+            strip=self.strip,
+            strip_comments=self.strip_comments,
+        )
 
         if _USE_BLEACH_CSS_SANITIZER:
             css_sanitizer = CSSSanitizer(allowed_css_properties=self.styles)
