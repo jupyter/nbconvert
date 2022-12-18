@@ -13,7 +13,7 @@ from traitlets import Bool, default
 from .html import HTMLExporter
 
 try:
-    import pyppeteer
+    import pyppeteer  # noqa
 
     PYPPETEER_INSTALLED = True
 except ImportError:

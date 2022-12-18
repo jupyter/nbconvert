@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from ..webpdf import WebPDFExporter, PYPPETEER_INSTALLED
+from ..webpdf import PYPPETEER_INSTALLED, WebPDFExporter
 from .base import ExportersTestsBase
 
 
