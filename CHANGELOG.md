@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.7
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.6...a32c3c1063e081d7e639b7f1670788d220b93810))
+
+### Bugs fixed
+
+- Fix Hanging Tests on Linux [#1924](https://github.com/jupyter/nbconvert/pull/1924) ([@blink1073](https://github.com/blink1073))
+
+### Maintenance and upkeep improvements
+
+- Adopt ruff and handle lint [#1925](https://github.com/jupyter/nbconvert/pull/1925) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-12-05&to=2022-12-19&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-12-05..2022-12-19&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-12-05..2022-12-19&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.6
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.5...788dd3c4de1b6333e807250d0f33b59b80d5b202))
@@ -21,8 +41,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-11-14&to=2022-12-05&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-11-14..2022-12-05&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.5
 
