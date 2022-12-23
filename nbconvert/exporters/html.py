@@ -210,9 +210,9 @@ class HTMLExporter(TemplateExporter):
         yield from super().default_filters()
         yield ("markdown2html", self.markdown2html)
 
-    def from_notebook_node(
+    def from_notebook_node(  # type:ignore
         self, nb: NotebookNode, resources: Optional[Dict] = None, **kw: Any
-    ) -> Tuple[str, Dict]:  # type:ignore
+    ) -> Tuple[str, Dict]:
         """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))

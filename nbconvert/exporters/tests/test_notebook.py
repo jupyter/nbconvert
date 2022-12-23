@@ -24,9 +24,9 @@ class TestNotebookExporter(ExportersTestsBase):
         """
         with open(self._get_notebook()) as f:
             file_contents = f.read()
-        (output, resources) = self.exporter_class().from_filename(
+        (output, resources) = self.exporter_class().from_filename(  # type:ignore
             self._get_notebook()
-        )  # type:ignore
+        )
         assert len(output) > 0
         assert_big_text_equal(output, file_contents)
 

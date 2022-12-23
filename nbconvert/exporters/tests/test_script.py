@@ -25,9 +25,9 @@ class TestScriptExporter(ExportersTestsBase):
 
     def test_export(self):
         """ScriptExporter can export something"""
-        (output, resources) = self.exporter_class().from_filename(
+        (output, resources) = self.exporter_class().from_filename(  # type:ignore
             self._get_notebook()
-        )  # type:ignore
+        )
         assert len(output) > 0
 
     def test_export_python(self):

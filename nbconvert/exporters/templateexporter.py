@@ -376,21 +376,21 @@ class TemplateExporter(Exporter):
         self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
         return self.environment.get_template(template_file)
 
-    def from_filename(
+    def from_filename(  # type:ignore
         self, filename: str, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:  # type:ignore
+    ) -> t.Tuple[str, dict]:
         """Convert a notebook from a filename."""
         return super().from_filename(filename, resources, **kw)  # type:ignore
 
-    def from_file(
+    def from_file(  # type:ignore
         self, file_stream: t.Any, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:  # type:ignore
+    ) -> t.Tuple[str, dict]:
         """Convert a notebook from a file."""
         return super().from_file(file_stream, resources, **kw)  # type:ignore
 
-    def from_notebook_node(
+    def from_notebook_node(  # type:ignore
         self, nb: NotebookNode, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:  # type:ignore
+    ) -> t.Tuple[str, dict]:
         """
         Convert a notebook from a notebook node instance.
 

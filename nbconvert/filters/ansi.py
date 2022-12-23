@@ -203,11 +203,11 @@ def _ansi2anything(text, converter):
 
         if chunk:
             starttag, endtag = converter(
-                fg + 8 if bold and fg in range(8) else fg,
+                fg + 8 if bold and fg in range(8) else fg,  # type:ignore
                 bg,
                 bold,
                 underline,
-                inverse,  # type:ignore
+                inverse,
             )
             out.append(starttag)
             out.append(chunk)
