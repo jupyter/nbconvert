@@ -63,7 +63,7 @@ class ServePostProcessor(PostProcessorBase):
     def postprocess(self, input):
         """Serve the build directory with a webserver."""
         dirname, filename = os.path.split(input)
-        handlers = [
+        handlers: list = [
             (r"/(.+)", web.StaticFileHandler, {"path": dirname}),
             (r"/", web.RedirectHandler, {"url": "/%s" % filename}),
         ]

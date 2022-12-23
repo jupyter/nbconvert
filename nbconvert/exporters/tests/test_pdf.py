@@ -19,11 +19,11 @@ from .base import ExportersTestsBase
 class TestPDF(ExportersTestsBase):
     """Test PDF export"""
 
-    exporter_class = PDFExporter
+    exporter_class = PDFExporter  # type:ignore
 
     def test_constructor(self):
         """Can a PDFExporter be constructed?"""
-        self.exporter_class()
+        self.exporter_class()  # type:ignore
 
     @onlyif_cmds_exist("xelatex", "pandoc")
     def test_export(self):
@@ -32,7 +32,9 @@ class TestPDF(ExportersTestsBase):
             file_name = os.path.basename(self._get_notebook())
             newpath = os.path.join(td, file_name)
             shutil.copy(self._get_notebook(), newpath)
-            (output, resources) = self.exporter_class(latex_count=1).from_filename(newpath)
+            (output, resources) = self.exporter_class(latex_count=1).from_filename(  # type:ignore
+                newpath
+            )
             self.assertIsInstance(output, bytes)
             assert len(output) > 0
             # all temporary file should be cleaned up

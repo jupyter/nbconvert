@@ -22,8 +22,8 @@ current_dir = os.path.dirname(__file__)
 class TestLatexExporter(ExportersTestsBase):
     """Contains test functions for latex.py"""
 
-    exporter_class = LatexExporter
-    should_include_raw = ["latex"]
+    exporter_class = LatexExporter  # type:ignore
+    should_include_raw = ["latex"]  # type:ignore
 
     def test_constructor(self):
         """

@@ -13,7 +13,7 @@ from traitlets import Bool, default
 from .html import HTMLExporter
 
 try:
-    import pyppeteer  # noqa
+    import pyppeteer  # type:ignore  # noqa
 
     PYPPETEER_INSTALLED = True
 except ImportError:
@@ -72,7 +72,7 @@ class WebPDFExporter(HTMLExporter):
     def _check_launch_reqs(self):
         try:
             from pyppeteer import launch
-            from pyppeteer.util import check_chromium
+            from pyppeteer.util import check_chromium  # type:ignore
         except ModuleNotFoundError as e:
             raise RuntimeError(
                 "Pyppeteer is not installed to support Web PDF conversion. "

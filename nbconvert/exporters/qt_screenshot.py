@@ -2,10 +2,10 @@
 import os
 
 try:
-    from PyQt5 import QtCore
-    from PyQt5.QtGui import QPageLayout, QPageSize
-    from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
-    from PyQt5.QtWidgets import QApplication
+    from PyQt5 import QtCore  # type:ignore
+    from PyQt5.QtGui import QPageLayout, QPageSize  # type:ignore
+    from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView  # type:ignore
+    from PyQt5.QtWidgets import QApplication  # type:ignore
 
     QT_INSTALLED = True
 except ModuleNotFoundError:
@@ -40,7 +40,7 @@ if QT_INSTALLED:
 
                 def cleanup(*args):
                     """Cleanup the app."""
-                    self.app.quit()
+                    self.app.quit()  # type:ignore
                     self.get_data()
 
                 self.page().pdfPrintingFinished.connect(cleanup)
@@ -49,7 +49,7 @@ if QT_INSTALLED:
             else:
                 raise RuntimeError(f"Export file extension not supported: {output_file}")
             self.show()
-            self.app.exec()
+            self.app.exec()  # type:ignore
 
         def on_loaded(self):
             """Handle app load."""
@@ -76,7 +76,7 @@ if QT_INSTALLED:
         def export_png(self):
             """Export to png."""
             self.grab().save(self.output_file, "PNG")
-            self.app.quit()
+            self.app.quit()  # type:ignore
             self.get_data()
 
         def get_data(self):

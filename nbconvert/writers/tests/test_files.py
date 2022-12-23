@@ -21,7 +21,7 @@ class Testfiles(TestsBase):
         with self.create_temp_cwd():
 
             # Create the resoruces dictionary
-            res = {}
+            res: dict = {}
 
             # Create files writer, test output
             writer = FilesWriter()
@@ -128,7 +128,7 @@ class Testfiles(TestsBase):
                 f.write("d")
 
             # Create the resoruces dictionary
-            res = {}
+            res: dict = {}
 
             # Create files writer, test output
             writer = FilesWriter()
@@ -166,7 +166,7 @@ class Testfiles(TestsBase):
                 f.write("e")
 
             # Create the resoruces dictionary
-            res = {}
+            res: dict = {}
 
             # Create files writer, test output
             writer = FilesWriter()
@@ -203,7 +203,7 @@ class Testfiles(TestsBase):
                 f.write("d")
 
             # Create the resoruces dictionary
-            res = {}
+            res: dict = {}
 
             # Create files writer, test output
             writer = FilesWriter()

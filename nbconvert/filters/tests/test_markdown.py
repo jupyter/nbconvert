@@ -168,7 +168,7 @@ class TestMarkdown(TestsBase):
                 search_result = re.search(
                     "\\\\begin\\{equation.*\\}.*\\\\end\\{equation.*\\}", result, re.DOTALL
                 )
-            math = search_result.group(0)
+            math = search_result.group(0)  # type:ignore
             # the resulting math part can not contain "<", ">" or
             # "&" not followed by "lt;", "gt;", or "amp;".
             self.assertNotIn("<", math)

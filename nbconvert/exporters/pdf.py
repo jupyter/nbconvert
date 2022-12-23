@@ -122,7 +122,7 @@ class PDFExporter(LatexExporter):
 
         shell = sys.platform == "win32"
         if shell:
-            command = subprocess.list2cmdline(command)
+            command = subprocess.list2cmdline(command)  # type:ignore
         env = os.environ.copy()
         prepend_to_env_search_path("TEXINPUTS", self.texinputs, env)
         prepend_to_env_search_path("BIBINPUTS", self.texinputs, env)
@@ -144,17 +144,13 @@ class PDFExporter(LatexExporter):
                     if self.verbose:
                         # verbose means I didn't capture stdout with PIPE,
                         # so it's already been displayed and `out` is None.
-                        out = ""
+                        out_str = ""
                     else:
-                        out = out.decode("utf-8", "replace")
+                        out_str = out.decode("utf-8", "replace")
                     log_function(command, out)
-                    self._captured_output.append(out)
+                    self._captured_output.append(out_str)
                     if raise_on_failure:
-                        raise raise_on_failure(
-                            'Failed to run "{command}" command:\n{output}'.format(
-                                command=command, output=out
-                            )
-                        )
+                        raise raise_on_failure(f'Failed to run "{command}" command:\n{out_str}')
                     return False  # failure
         return True  # success
 

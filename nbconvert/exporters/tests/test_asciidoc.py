@@ -30,7 +30,7 @@ out_regex = r"Out\[(.*)\]:"
 class TestASCIIDocExporter(ExportersTestsBase):
     """Tests for ASCIIDocExporter"""
 
-    exporter_class = ASCIIDocExporter
+    exporter_class = ASCIIDocExporter  # type:ignore
 
     def test_constructor(self):
         """

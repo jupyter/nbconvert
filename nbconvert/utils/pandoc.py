@@ -53,8 +53,8 @@ def pandoc(source, fmt, to, extra_args=None, encoding="utf-8"):
     # we can safely continue
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     out, _ = p.communicate(source.encode())
-    out = TextIOWrapper(BytesIO(out), encoding, "replace").read()
-    return out.rstrip("\n")
+    out_str = TextIOWrapper(BytesIO(out), encoding, "replace").read()
+    return out_str.rstrip("\n")
 
 
 def get_pandoc_version():
@@ -80,7 +80,7 @@ def get_pandoc_version():
         version_pattern = re.compile(r"^\d+(\.\d+){1,}$")
         for tok in out_lines[0].decode("ascii", "replace").split():
             if version_pattern.match(tok):
-                __version = tok
+                __version = tok  # type:ignore
                 break
     return __version
 
@@ -93,8 +93,8 @@ def check_pandoc_version():
     PandocMissing
         If pandoc is unavailable.
     """
-    if check_pandoc_version._cached is not None:
-        return check_pandoc_version._cached
+    if check_pandoc_version._cached is not None:  # type:ignore
+        return check_pandoc_version._cached  # type:ignore
 
     v = get_pandoc_version()
     if v is None:
@@ -107,7 +107,7 @@ def check_pandoc_version():
         )
         return False
     ok = check_version(v, _minimal_version, max_v=_maximal_version)
-    check_pandoc_version._cached = ok
+    check_pandoc_version._cached = ok  # type:ignore
     if not ok:
         warnings.warn(
             "You are using an unsupported version of pandoc (%s).\n" % v
@@ -120,7 +120,7 @@ def check_pandoc_version():
     return ok
 
 
-check_pandoc_version._cached = None
+check_pandoc_version._cached = None  # type:ignore
 
 # -----------------------------------------------------------------------------
 # Exception handling

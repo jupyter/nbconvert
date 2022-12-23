@@ -31,7 +31,7 @@ class TestPandoc(TestsBase):
 
     def setUp(self):
         super().setUp()
-        pandoc.check_pandoc_version._cached = None
+        pandoc.check_pandoc_version._cached = None  # type:ignore
 
     @onlyif_cmds_exist("pandoc")
     def test_pandoc_available(self):
@@ -67,7 +67,7 @@ class TestPandoc(TestsBase):
         # only one warning after two calls, due to cache
         self.assertEqual(len(w), 1)
         # clear cache
-        pandoc.check_pandoc_version._cached = None
+        pandoc.check_pandoc_version._cached = None  # type:ignore
         pandoc._minimal_version = pandoc.get_pandoc_version()
         assert pandoc.check_pandoc_version()
 

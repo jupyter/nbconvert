@@ -15,7 +15,7 @@ from .base import ExportersTestsBase
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 
-    exporter_class = WebPDFExporter
+    exporter_class = WebPDFExporter  # type:ignore
 
     @pytest.mark.network
     def test_export(self):

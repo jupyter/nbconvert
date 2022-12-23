@@ -11,23 +11,18 @@ import mimetypes
 import os
 import re
 from functools import partial
-
-try:
-    from html import escape
-
-    html_escape = partial(escape, quote=False)
-except ImportError:
-    # Python 2
-    from cgi import escape as html_escape
+from html import escape
 
 import bs4
-from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown
+from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown  # type:ignore
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
 from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
+
+html_escape = partial(escape, quote=False)
 
 
 class InvalidNotebook(Exception):  # noqa
@@ -186,7 +181,7 @@ class IPythonRenderer(HTMLRenderer):
                 lexer = get_lexer_by_name(lang, stripall=True)
             except ClassNotFound:
                 code = lang + "\n" + code
-                lang = None
+                lang = None  # type:ignore
 
         if not lang:
             return super().block_code(code)
@@ -286,9 +281,9 @@ class IPythonRenderer(HTMLRenderer):
             mime_type = mimetypes.guess_type(src_path)[0]
 
             base64_data = base64.b64encode(fobj.read())
-            base64_data = base64_data.replace(b"\n", b"").decode("ascii")
+            base64_str = base64_data.replace(b"\n", b"").decode("ascii")
 
-            return f"data:{mime_type};base64,{base64_data}"
+            return f"data:{mime_type};base64,{base64_str}"
 
     def _html_embed_images(self, html):
         parsed_html = bs4.BeautifulSoup(html, features="html.parser")

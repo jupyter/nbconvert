@@ -14,7 +14,7 @@ from .base import ExportersTestsBase
 class TestQtPDFExporter(ExportersTestsBase):
     """Contains test functions for qtpdf.py"""
 
-    exporter_class = QtPDFExporter
+    exporter_class = QtPDFExporter  # type:ignore
 
     def test_export(self):
         """

@@ -15,8 +15,8 @@ from .base import ExportersTestsBase
 class TestHTMLExporter(ExportersTestsBase):
     """Tests for HTMLExporter"""
 
-    exporter_class = HTMLExporter
-    should_include_raw = ["html"]
+    exporter_class = HTMLExporter  # type:ignore
+    should_include_raw = ["html"]  # type:ignore
 
     def test_constructor(self):
         """
@@ -78,6 +78,7 @@ class TestHTMLExporter(ExportersTestsBase):
         )
         check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
         result = check_for_png.search(output)
+        assert result
         attr_string = result.group(1)
         assert "width" in attr_string
         assert "height" in attr_string
@@ -104,6 +105,7 @@ class TestHTMLExporter(ExportersTestsBase):
         )
         check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
         result = check_for_png.search(output)
+        assert result
         self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64,iVBOR'))
         self.assertTrue(result.group(1).strip().startswith('alt="image.png"'))
 
