@@ -1,4 +1,4 @@
-# Verify that the "all" reqs are in sync.
+"""Verify that the "all" reqs are in sync."""
 import sys
 
 from tomli import load

@@ -101,6 +101,7 @@ def recursive_update(target, new):
 
 # define function at the top level to avoid pickle errors
 def deprecated(msg):
+    """Emit a deprecation warning."""
     warnings.warn(msg, DeprecationWarning)
 
 
@@ -114,10 +115,12 @@ class ExtensionTolerantLoader(BaseLoader):
     """
 
     def __init__(self, loader, extension):
+        """Initialize the loader."""
         self.loader = loader
         self.extension = extension
 
     def get_source(self, environment, template):
+        """Get the source for a template."""
         try:
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
@@ -126,6 +129,7 @@ class ExtensionTolerantLoader(BaseLoader):
             return self.loader.get_source(environment, template + self.extension)
 
     def list_templates(self):
+        """List available templates."""
         return self.loader.list_templates()
 
 
@@ -567,6 +571,7 @@ class TemplateExporter(Exporter):
 
     @classmethod
     def get_compatibility_base_template_conf(cls, name):
+        """Get the base template config."""
         # Hard-coded base template confs to use for backwards compatibility for 5.x-only templates
         if name == "display_priority":
             return {"base_template": "base"}
@@ -574,7 +579,7 @@ class TemplateExporter(Exporter):
             return {"base_template": "classic", "mimetypes": {"text/html": True}}
 
     def get_template_names(self):
-        # finds a list of template names where each successive template name is the base template
+        """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
         base_template = self.template_name
@@ -635,6 +640,7 @@ class TemplateExporter(Exporter):
         return template_names
 
     def get_prefix_root_dirs(self):
+        """Get the prefix root dirs."""
         # We look at the usual jupyter locations, and for development purposes also
         # relative to the package directory (first entry, meaning with highest precedence)
         root_dirs = []

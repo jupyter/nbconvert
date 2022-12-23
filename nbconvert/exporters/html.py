@@ -204,10 +204,12 @@ class HTMLExporter(TemplateExporter):
         return MarkdownWithMath(renderer=renderer).render(source)
 
     def default_filters(self):
+        """Get the default filters."""
         yield from super().default_filters()
         yield ("markdown2html", self.markdown2html)
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))
         highlight_code = self.filters.get(
@@ -255,11 +257,13 @@ class HTMLExporter(TemplateExporter):
             return markupsafe.Markup(code)
 
         def resources_include_js(name):
+            """Get the resources include JS for a name."""
             env = self.environment
             code = """<script>\n%s</script>""" % (env.loader.get_source(env, name)[0])
             return markupsafe.Markup(code)
 
         def resources_include_url(name):
+            """Get the resources include url for a name."""
             env = self.environment
             mime_type, encoding = mimetypes.guess_type(name)
             try:

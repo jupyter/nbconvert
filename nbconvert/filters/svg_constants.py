@@ -1,3 +1,4 @@
+"""SVG constants for sanitization."""
 # These are lifted from html5lib's sanitizer module, which is deprecated.
 #
 # Quoth the migration guide (https://github.com/mozilla/bleach/blob/main/docs/migrating.rst#different-allow-lists):

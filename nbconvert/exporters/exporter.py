@@ -22,7 +22,10 @@ from traitlets.utils.importstring import import_item
 
 
 class ResourcesDict(collections.defaultdict):
+    """A default dict for resources."""
+
     def __missing__(self, key):
+        """Handle missing value."""
         return ""
 
 
@@ -33,6 +36,7 @@ class FilenameExtension(Unicode):
     info_text = "a filename extension, beginning with a dot"
 
     def validate(self, obj, value):
+        """Validate the file name."""
         # cast to proper unicode
         value = super().validate(obj, value)
 

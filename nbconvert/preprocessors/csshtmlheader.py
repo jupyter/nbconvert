@@ -34,6 +34,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
+        """Initialize the preprocessor."""
         Preprocessor.__init__(self, *pargs, **kwargs)
         self._default_css_hash = None
 

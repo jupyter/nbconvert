@@ -31,6 +31,7 @@ def guess_extension_without_jpe(mimetype):
 
 
 def platform_utf_8_encode(data):
+    """Encode data based on platform."""
     if isinstance(data, str):
         if sys.platform == "win32":
             data = data.replace("\n", "\r\n")

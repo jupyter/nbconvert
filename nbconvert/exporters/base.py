@@ -31,10 +31,14 @@ __all__ = [
 
 
 class ExporterNameError(NameError):
+    """An exporter name error."""
+
     pass
 
 
 class ExporterDisabledError(ValueError):
+    """An exporter disabled error."""
+
     pass
 
 

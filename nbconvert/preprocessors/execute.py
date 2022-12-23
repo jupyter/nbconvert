@@ -16,6 +16,7 @@ from .base import Preprocessor
 
 
 def executenb(*args, **kwargs):
+    """DEPRECATED."""
     from warnings import warn
 
     warn(
@@ -35,6 +36,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
     """
 
     def __init__(self, **kw):
+        """Initialize the preprocessor."""
         nb = kw.get("nb")
         kw.setdefault("kernel_manager_class", KernelManager)
         Preprocessor.__init__(self, nb=nb, **kw)

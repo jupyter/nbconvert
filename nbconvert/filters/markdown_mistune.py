@@ -31,6 +31,8 @@ from nbconvert.filters.strings import add_anchor
 
 
 class InvalidNotebook(Exception):  # noqa
+    """An invalid notebook model."""
+
     pass
 
 
@@ -90,30 +92,38 @@ class MathInlineParser(InlineParser):
     ) + InlineParser.RULE_NAMES
 
     def parse_block_math_tex(self, m, state):
+        """Parse block text math."""
         # sometimes the Scanner keeps the final '$$', so we use the
         # full matched string and remove the math markers
         text = m.group(0)[2:-2]
         return "block_math", text
 
     def parse_block_math_latex(self, m, state):
+        """Parse block latex math ."""
         text = m.group(1)
         return "block_math", text
 
     def parse_inline_math_tex(self, m, state):
+        """Parse inline tex math."""
         text = m.group(1)
         return "inline_math", text
 
     def parse_inline_math_latex(self, m, state):
+        """Parse inline latex math."""
         text = m.group(1)
         return "inline_math", text
 
     def parse_latex_environment(self, m, state):
+        """Parse a latex environment."""
         name, text = m.group(1), m.group(2)
         return "latex_environment", name, text
 
 
 class MarkdownWithMath(Markdown):
+    """Markdown text with math enabled."""
+
     def __init__(self, renderer, block=None, inline=None, plugins=None):
+        """Initialize the parser."""
         if block is None:
             block = MathBlockParser()
         if inline is None:
@@ -143,6 +153,8 @@ class MarkdownWithMath(Markdown):
 
 
 class IPythonRenderer(HTMLRenderer):
+    """An ipython html renderer."""
+
     def __init__(
         self,
         escape=True,
@@ -153,6 +165,7 @@ class IPythonRenderer(HTMLRenderer):
         path="",
         attachments=None,
     ):
+        """Initialize the renderer."""
         super().__init__(escape, allow_harmful_protocols)
         self.embed_images = embed_images
         self.exclude_anchor_links = exclude_anchor_links
@@ -164,6 +177,7 @@ class IPythonRenderer(HTMLRenderer):
             self.attachments = {}
 
     def block_code(self, code, info=None):
+        """Handle block code."""
         lang = ""
         lexer = None
         if info:
@@ -181,37 +195,45 @@ class IPythonRenderer(HTMLRenderer):
         return highlight(code, lexer, formatter)
 
     def block_html(self, html):
+        """Handle block html."""
         if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().block_html(html)
 
     def inline_html(self, html):
+        """Handle inline html."""
         if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().inline_html(html)
 
     def heading(self, text, level):
+        """Handle a heading."""
         html = super().heading(text, level)
         if self.exclude_anchor_links:
             return html
         return add_anchor(html, anchor_link_text=self.anchor_link_text)
 
     def escape_html(self, text):
+        """Escape html content."""
         return html_escape(text)
 
     def multiline_math(self, text):
+        """Handle mulitline math."""
         return text
 
     def block_math(self, text):
+        """Handle block math."""
         return f"$${self.escape_html(text)}$$"
 
     def latex_environment(self, name, text):
+        """Handle a latex environment."""
         name, text = self.escape_html(name), self.escape_html(text)
         return f"\\begin{{{name}}}{text}\\end{{{name}}}"
 
     def inline_math(self, text):
+        """Handle inline math."""
         return f"${self.escape_html(text)}$"
 
     def image(self, src, text, title):

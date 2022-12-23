@@ -42,6 +42,7 @@ class Preprocessor(NbConvertBase):
         super().__init__(**kw)
 
     def __call__(self, nb, resources):
+        """Apply the preprocessor."""
         if self.enabled:
             self.log.debug("Applying preprocessor: %s", self.__class__.__name__)
             return self.preprocess(nb, resources)

@@ -22,12 +22,15 @@ class LatexFailed(IOError):  # noqa
     """
 
     def __init__(self, output):
+        """Initialize the error."""
         self.output = output
 
     def __unicode__(self):
+        """Unicode representation."""
         return "PDF creating failed, captured latex output:\n%s" % self.output
 
     def __str__(self):
+        """String representation."""
         u = self.__unicode__()
         return u
 
@@ -178,6 +181,7 @@ class PDFExporter(LatexExporter):
         return self.run_command(self.bib_command, filename, 1, log_error, raise_on_failure)
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        """Convert from notebook node."""
         latex, resources = super().from_notebook_node(nb, resources=resources, **kw)
         # set texinputs directory, so that local files will be found
         if resources and resources.get("metadata", {}).get("path"):

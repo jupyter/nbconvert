@@ -45,6 +45,13 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
 ]
 
+try:
+    import enchant  # type:ignore  # noqa
+
+    extensions += ["sphinxcontrib.spelling"]
+except ImportError:
+    pass
+
 myst_enable_extensions = ["html_image"]
 
 # Add any paths that contain templates here, relative to this directory.

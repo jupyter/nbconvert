@@ -131,6 +131,7 @@ class PandocMissing(ConversionException):
     """Exception raised when Pandoc is missing."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the exception."""
         super().__init__(
             "Pandoc wasn't found.\n"
             + "Please check that pandoc is installed:\n"
@@ -142,6 +143,7 @@ class PandocMissing(ConversionException):
 # Internal state management
 # -----------------------------------------------------------------------------
 def clean_cache():
+    """Clean the internal cache."""
     global __version
     __version = None
 

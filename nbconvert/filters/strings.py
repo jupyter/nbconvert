@@ -81,6 +81,7 @@ def html2text(element):
 
 
 def clean_html(element):
+    """Clean an html element."""
     if isinstance(element, bytes):
         element = element.decode()
     else:
