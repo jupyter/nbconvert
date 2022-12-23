@@ -15,6 +15,8 @@ from .templateexporter import TemplateExporter
 
 
 class ScriptExporter(TemplateExporter):
+    """A script exporter."""
+
     # Caches of already looked-up and instantiated exporters for delegation:
     _exporters = Dict()
     _lang_exporters = Dict()
@@ -46,6 +48,7 @@ class ScriptExporter(TemplateExporter):
         return self._lang_exporters[lang_name]
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
 
         # delegate to custom exporter, if specified

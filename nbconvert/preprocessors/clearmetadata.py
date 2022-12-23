@@ -38,6 +38,7 @@ class ClearMetadataPreprocessor(Preprocessor):
     ).tag(config=True)
 
     def current_key(self, mask_key):
+        """Get the current key for a mask key."""
         if isinstance(mask_key, str):
             return mask_key
         elif len(mask_key) == 0:
@@ -47,9 +48,11 @@ class ClearMetadataPreprocessor(Preprocessor):
             return mask_key[0]
 
     def current_mask(self, mask):
+        """Get the current mask for a mask."""
         return {self.current_key(k) for k in mask if self.current_key(k) is not None}
 
     def nested_masks(self, mask):
+        """Get the nested masks for a mask."""
         return {
             self.current_key(k[0]): k[1:]
             for k in mask
@@ -57,6 +60,7 @@ class ClearMetadataPreprocessor(Preprocessor):
         }
 
     def nested_filter(self, items, mask):
+        """Get the nested filter for items given a mask."""
         keep_current = self.current_mask(mask)
         keep_nested_lookup = self.nested_masks(mask)
         for k, v in items:

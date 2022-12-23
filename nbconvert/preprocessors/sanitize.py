@@ -44,6 +44,7 @@ __all__ = ["SanitizeHTML"]
 
 
 class SanitizeHTML(Preprocessor):
+    """A preprocessor to sanitize html."""
 
     # Bleach config.
     attributes = Any(

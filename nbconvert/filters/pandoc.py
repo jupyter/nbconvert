@@ -1,3 +1,4 @@
+"""Convert between any two formats using pandoc."""
 from nbconvert.utils.pandoc import pandoc
 
 

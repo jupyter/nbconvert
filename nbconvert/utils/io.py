@@ -52,7 +52,10 @@ def unicode_stdin_stream():
 
 
 class FormatSafeDict(dict):
+    """Format a dictionary safely."""
+
     def __missing__(self, key):
+        """Handle missing value."""
         return "{" + key + "}"
 
 

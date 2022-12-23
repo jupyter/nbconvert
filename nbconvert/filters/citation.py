@@ -70,11 +70,13 @@ class CitationParser(HTMLParser):
     citetag = None
 
     def __init__(self):
+        """Initialize the parser."""
         self.citelist = []
         self.opentags = 0
         HTMLParser.__init__(self)
 
     def get_offset(self):
+        """Get the offset position."""
         # Compute startposition in source
         lin, offset = self.getpos()
         pos = 0
@@ -83,6 +85,7 @@ class CitationParser(HTMLParser):
         return pos + offset
 
     def handle_starttag(self, tag, attrs):
+        """Handle a start tag."""
         # for each tag check if attributes are present and if no citation is active
         if self.opentags == 0 and len(attrs) > 0:
             for atr, data in attrs:
@@ -97,6 +100,7 @@ class CitationParser(HTMLParser):
             self.opentags += 1
 
     def handle_endtag(self, tag):
+        """Handle an end tag."""
         if tag == self.citetag:
             # found citation tag check if starting one
             if self.opentags == 1:
@@ -105,5 +109,6 @@ class CitationParser(HTMLParser):
             self.opentags -= 1
 
     def feed(self, data):
+        """Handle a feed."""
         self.data = data
         HTMLParser.feed(self, data)

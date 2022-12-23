@@ -75,7 +75,10 @@ def _get_css_files():
 
 
 class CustomHook(BuildHookInterface):
+    """A custom build hook for nbconvert."""
+
     def initialize(self, version, build_data):
+        """Initialize the hook."""
         if self.target_name not in ["wheel", "sdist"]:
             return
         _get_css_files()

@@ -42,6 +42,7 @@ class DottedOrNone(DottedObjectName):
     default_value = ""
 
     def validate(self, obj, value):
+        """Validate an input."""
         if value is not None and len(value) > 0:
             return super().validate(obj, value)
         else:
@@ -644,7 +645,10 @@ class NbConvertApp(JupyterApp):
 
 
 class DejavuApp(NbConvertApp):
+    """A deja vu app."""
+
     def initialize(self, argv=None):
+        """Initialize the app."""
         self.config.TemplateExporter.exclude_input = True
         self.config.TemplateExporter.exclude_output_prompt = True
         self.config.TemplateExporter.exclude_input_prompt = True
@@ -655,7 +659,7 @@ class DejavuApp(NbConvertApp):
         super().initialize(argv)
 
     @default("export_format")
-    def default_export_format(self):
+    def _default_export_format(self):
         return "html"
 
 

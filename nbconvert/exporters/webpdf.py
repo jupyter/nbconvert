@@ -89,6 +89,7 @@ class WebPDFExporter(HTMLExporter):
         """Run pyppeteer."""
 
         async def main(temp_file):
+            """Run main pyppeteer script."""
             args = ["--no-sandbox"] if self.disable_sandbox else []
             browser = await self._check_launch_reqs()(
                 handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False, args=args
@@ -139,6 +140,7 @@ class WebPDFExporter(HTMLExporter):
             # TODO: when dropping Python 3.6, use
             # pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
             def run_coroutine(coro):
+                """Run an internal coroutine."""
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 return loop.run_until_complete(coro)
@@ -150,6 +152,7 @@ class WebPDFExporter(HTMLExporter):
         return pdf_data
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        """Convert from a notebook node."""
         self._check_launch_reqs()
         html, resources = super().from_notebook_node(nb, resources=resources, **kw)
 

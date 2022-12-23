@@ -35,6 +35,7 @@ class LatexExporter(TemplateExporter):
     output_mimetype = "text/latex"
 
     def default_filters(self):
+        """Get the default filters."""
         yield from super().default_filters()
         yield ("resolve_references", resolve_references)
 
@@ -64,6 +65,7 @@ class LatexExporter(TemplateExporter):
         return c
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))
         highlight_code = self.filters.get(

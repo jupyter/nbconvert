@@ -73,7 +73,8 @@ docs = [
     "pydata_sphinx_theme",
     "nbsphinx>=0.2.12",
     "ipython",
-    "ipykernel"
+    "ipykernel",
+    "sphinxcontrib_spelling",
 ]
 all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
@@ -122,7 +123,7 @@ dependencies = [
   "black[jupyter]==22.10.0",
   "mdformat>0.7",
   "mdformat-gfm>=0.3.5",
-  "ruff==0.0.181"
+  "ruff==0.0.189"
 ]
 detached = true
 [tool.hatch.envs.lint.scripts]
@@ -235,3 +236,13 @@ unfixable = [
 # F403 'x' used; unable to detect undefined names
 "nbconvert/*/__init__.py" = ["F401", "F403"]
 "nbconvert/__init__.py" = ["F401", "F403"]
+
+[tool.interrogate]
+ignore-init-module=true
+ignore-private=true
+ignore-semiprivate=true
+ignore-property-decorators=true
+ignore-nested-functions=true
+ignore-nested-classes=true
+fail-under=100
+exclude = ["*/tests", "docs"]

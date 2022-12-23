@@ -20,6 +20,8 @@ from ..utils.base import NbConvertBase
 # Classes
 # -----------------------------------------------------------------------------
 class PostProcessorBase(NbConvertBase):
+    """The base class for post processors."""
+
     def __call__(self, input):
         """
         See def postprocess() ...
