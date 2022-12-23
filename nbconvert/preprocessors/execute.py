@@ -41,8 +41,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         nb = kw.get("nb")
         kw.setdefault("kernel_manager_class", KernelManager)
         Preprocessor.__init__(self, nb=nb, **kw)
-        assert nb is not None
-        NotebookClient.__init__(self, nb, **kw)
+        NotebookClient.__init__(self, nb, **kw)  # type:ignore
 
     def _check_assign_resources(self, resources):
         if resources or not hasattr(self, "resources"):
