@@ -39,9 +39,11 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
     def __init__(self, **kw):
         """Initialize the preprocessor."""
         nb = kw.get("nb")
+        if nb is None:
+            nb = NotebookNode()
         kw.setdefault("kernel_manager_class", KernelManager)
         Preprocessor.__init__(self, nb=nb, **kw)
-        NotebookClient.__init__(self, nb, **kw)  # type:ignore
+        NotebookClient.__init__(self, nb, **kw)
 
     def _check_assign_resources(self, resources):
         if resources or not hasattr(self, "resources"):
