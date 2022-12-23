@@ -16,7 +16,7 @@ from .base import ExportersTestsBase
 class TestNotebookExporter(ExportersTestsBase):
     """Contains test functions for notebook.py"""
 
-    exporter_class = NotebookExporter
+    exporter_class = NotebookExporter  # type:ignore
 
     def test_export(self):
         """
@@ -24,18 +24,20 @@ class TestNotebookExporter(ExportersTestsBase):
         """
         with open(self._get_notebook()) as f:
             file_contents = f.read()
-        (output, resources) = self.exporter_class().from_filename(self._get_notebook())
+        (output, resources) = self.exporter_class().from_filename(
+            self._get_notebook()
+        )  # type:ignore
         assert len(output) > 0
         assert_big_text_equal(output, file_contents)
 
     def test_downgrade_3(self):
-        exporter = self.exporter_class(nbformat_version=3)
+        exporter = self.exporter_class(nbformat_version=3)  # type:ignore
         (output, resources) = exporter.from_filename(self._get_notebook())
         nb = json.loads(output)
         validate(nb)
 
     def test_downgrade_2(self):
-        exporter = self.exporter_class(nbformat_version=2)
+        exporter = self.exporter_class(nbformat_version=2)  # type:ignore
         (output, resources) = exporter.from_filename(self._get_notebook())
         nb = json.loads(output)
         self.assertEqual(nb["nbformat"], 2)

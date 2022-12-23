@@ -118,6 +118,12 @@ dependencies = ["coverage", "pytest-cov"]
 test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
 nowarn = "test -W default {args}"
 
+[tool.hatch.envs.typing]
+features = ["test"]
+dependencies = ["mypy>=0.990"]
+[tool.hatch.envs.typing.scripts]
+test = "mypy --install-types --non-interactive {args:nbconvert}"
+
 [tool.hatch.envs.lint]
 dependencies = [
   "black[jupyter]==22.10.0",
@@ -174,6 +180,22 @@ exclude_lines = [
   "class .*\bProtocol\\):",
 "@(abc\\.)?abstractmethod",
 ]
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+no_implicit_reexport = false
+pretty = true
+show_error_context = true
+show_error_codes = true
+strict_equality = true
+strict_optional = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
 
 [tool.black]
 line-length = 100

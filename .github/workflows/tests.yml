@@ -67,6 +67,7 @@ jobs:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       -  name: Run Linters
          run: |
+          hatch run typing:test
           hatch run lint:style
           pipx run interrogate -v .
           pipx run doc8 --max-line-length=200  --ignore-path=docs/source/other/full-config.rst

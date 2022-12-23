@@ -11,10 +11,10 @@ import copy
 import datetime
 import os
 import sys
-from typing import Optional
+import typing as t
 
 import nbformat
-from nbformat import validator
+from nbformat import NotebookNode, validator
 from traitlets import Bool, HasTraits, List, TraitError, Unicode
 from traitlets.config import Config
 from traitlets.config.configurable import LoggingConfigurable
@@ -75,7 +75,7 @@ class Exporter(LoggingConfigurable):
 
     # Should this converter be accessible from the notebook front-end?
     # If so, should be a friendly name to display (and possibly translated).
-    export_from_notebook = None
+    export_from_notebook: str = None  # type:ignore
 
     # Configurability, allows the user to easily add filters and preprocessors.
     preprocessors = List(help="""List of preprocessors, by name or namespace, to enable.""").tag(
@@ -126,7 +126,9 @@ class Exporter(LoggingConfigurable):
     def default_config(self):
         return Config()
 
-    def from_notebook_node(self, nb, resources=None, **kw):
+    def from_notebook_node(
+        self, nb: NotebookNode, resources: t.Optional[t.Any] = None, **kw: t.Any
+    ) -> t.Tuple[NotebookNode, t.Dict]:
         """
         Convert a notebook from a notebook node instance.
 
@@ -157,7 +159,9 @@ class Exporter(LoggingConfigurable):
         self._nb_metadata[notebook_name] = nb_copy.metadata
         return nb_copy, resources
 
-    def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):
+    def from_filename(
+        self, filename: str, resources: t.Optional[dict] = None, **kw: t.Any
+    ) -> t.Tuple[NotebookNode, t.Dict]:
         """
         Convert a notebook from a notebook file.
 
@@ -193,7 +197,9 @@ class Exporter(LoggingConfigurable):
         with open(filename, encoding="utf-8") as f:
             return self.from_file(f, resources=resources, **kw)
 
-    def from_file(self, file_stream, resources=None, **kw):
+    def from_file(
+        self, file_stream: t.Any, resources: t.Optional[dict] = None, **kw: t.Any
+    ) -> t.Tuple[NotebookNode, dict]:
         """
         Convert a notebook from a notebook file.
 

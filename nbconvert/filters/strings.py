@@ -18,7 +18,7 @@ from xml.etree.ElementTree import Element
 import bleach
 
 # defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import ElementTree
+from defusedxml import ElementTree  # type:ignore
 
 __all__ = [
     "wrap_text",
@@ -92,7 +92,7 @@ def clean_html(element):
         strip_comments=False,
         attributes={
             **bleach.ALLOWED_ATTRIBUTES,
-            **{svg_tag: ALLOWED_SVG_ATTRIBUTES for svg_tag in ALLOWED_SVG_TAGS},
+            **{svg_tag: list(ALLOWED_SVG_ATTRIBUTES) for svg_tag in ALLOWED_SVG_TAGS},
             "*": ["class", "id"],
         },
     )
@@ -226,7 +226,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
-        from IPython.core.inputtransformer2 import TransformerManager
+        from IPython.core.inputtransformer2 import TransformerManager  # type:ignore
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."

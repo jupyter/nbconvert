@@ -23,8 +23,8 @@ from .base import ExportersTestsBase
 class TestMarkdownExporter(ExportersTestsBase):
     """Tests for MarkdownExporter"""
 
-    exporter_class = MarkdownExporter
-    should_include_raw = ["markdown", "html"]
+    exporter_class = MarkdownExporter  # type:ignore
+    should_include_raw = ["markdown", "html"]  # type:ignore
 
     def test_constructor(self):
         """

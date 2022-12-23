@@ -1,4 +1,4 @@
-c = get_config()  # noqa
+c = get_config()  # type:ignore  # noqa
 
 # Export all the notebooks in the current directory to the sphinx_howto format.
 c.NbConvertApp.notebooks = ["notebook1.ipynb"]

@@ -1,5 +1,6 @@
 """Module containing a preprocessor that executes the code cells
 and updates outputs"""
+import typing as t
 
 from jupyter_client.manager import KernelManager
 from nbclient import NotebookClient
@@ -40,13 +41,16 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         nb = kw.get("nb")
         kw.setdefault("kernel_manager_class", KernelManager)
         Preprocessor.__init__(self, nb=nb, **kw)
+        assert nb is not None
         NotebookClient.__init__(self, nb, **kw)
 
     def _check_assign_resources(self, resources):
         if resources or not hasattr(self, "resources"):
             self.resources = resources
 
-    def preprocess(self, nb: NotebookNode, resources=None, km=None):
+    def preprocess(
+        self, nb: NotebookNode, resources: t.Any = None, km: t.Optional[KernelManager] = None
+    ) -> t.Tuple[NotebookNode, dict]:
         """
         Preprocess notebook executing each code cell.
 
@@ -87,7 +91,9 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         self._check_assign_resources(resources)
 
         with self.setup_kernel():
+            assert self.kc
             info_msg = self.wait_for_reply(self.kc.kernel_info())
+            assert info_msg
             self.nb.metadata["language_info"] = info_msg["content"]["language_info"]
             for index, cell in enumerate(self.nb.cells):
                 self.preprocess_cell(cell, resources, index)

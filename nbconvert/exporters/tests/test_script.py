@@ -17,23 +17,25 @@ from .base import ExportersTestsBase
 class TestScriptExporter(ExportersTestsBase):
     """Tests for ScriptExporter"""
 
-    exporter_class = ScriptExporter
+    exporter_class = ScriptExporter  # type:ignore
 
     def test_constructor(self):
         """Construct ScriptExporter"""
-        e = self.exporter_class()
+        e = self.exporter_class()  # type:ignore
 
     def test_export(self):
         """ScriptExporter can export something"""
-        (output, resources) = self.exporter_class().from_filename(self._get_notebook())
+        (output, resources) = self.exporter_class().from_filename(
+            self._get_notebook()
+        )  # type:ignore
         assert len(output) > 0
 
     def test_export_python(self):
         """delegate to custom exporter from language_info"""
-        exporter = self.exporter_class()
+        exporter = self.exporter_class()  # type:ignore
 
         pynb = v4.new_notebook()
-        (output, resources) = self.exporter_class().from_notebook_node(pynb)
+        (output, resources) = self.exporter_class().from_notebook_node(pynb)  # type:ignore
         self.assertNotIn("# coding: utf-8", output)
 
         pynb.metadata.language_info = {
@@ -41,7 +43,7 @@ class TestScriptExporter(ExportersTestsBase):
             "mimetype": "text/x-python",
             "nbconvert_exporter": "python",
         }
-        (output, resources) = self.exporter_class().from_notebook_node(pynb)
+        (output, resources) = self.exporter_class().from_notebook_node(pynb)  # type:ignore
         self.assertIn("# coding: utf-8", output)
 
     def test_export_config_transfer(self):
@@ -53,7 +55,7 @@ class TestScriptExporter(ExportersTestsBase):
             "nbconvert_exporter": "python",
         }
 
-        exporter = self.exporter_class()
+        exporter = self.exporter_class()  # type:ignore
         exporter.from_notebook_node(nb)
         assert exporter._exporters["python"] != exporter
         assert exporter._exporters["python"].config == exporter.config

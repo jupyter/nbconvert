@@ -12,6 +12,7 @@ class QtExporter(HTMLExporter):
     """A qt exporter."""
 
     paginate = None
+    format = ""
 
     @default("file_extension")
     def _file_extension_default(self):

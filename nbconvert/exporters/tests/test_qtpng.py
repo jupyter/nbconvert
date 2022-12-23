@@ -16,7 +16,7 @@ from .base import ExportersTestsBase
 class TestQtPNGExporter(ExportersTestsBase):
     """Contains test functions for qtpng.py"""
 
-    exporter_class = QtPNGExporter
+    exporter_class = QtPNGExporter  # type:ignore
 
     def test_export(self):
         """

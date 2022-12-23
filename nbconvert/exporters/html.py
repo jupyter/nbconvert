@@ -8,6 +8,7 @@ import json
 import mimetypes
 import os
 from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
 import jinja2
 import markupsafe
@@ -16,11 +17,12 @@ from traitlets import Bool, Unicode, default
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
-    from jinja2 import contextfilter
+    from jinja2 import contextfilter  # type:ignore
 else:
     from jinja2 import pass_context as contextfilter
 
 from jinja2.loaders import split_template_path
+from nbformat import NotebookNode
 
 from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
@@ -208,7 +210,9 @@ class HTMLExporter(TemplateExporter):
         yield from super().default_filters()
         yield ("markdown2html", self.markdown2html)
 
-    def from_notebook_node(self, nb, resources=None, **kw):
+    def from_notebook_node(
+        self, nb: NotebookNode, resources: Optional[Dict] = None, **kw: Any
+    ) -> Tuple[str, Dict]:  # type:ignore
         """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))
@@ -247,11 +251,9 @@ class HTMLExporter(TemplateExporter):
                     # Replace asset url by a base64 dataurl
                     with open(theme_path / asset, "rb") as assetfile:
                         base64_data = base64.b64encode(assetfile.read())
-                        base64_data = base64_data.replace(b"\n", b"").decode("ascii")
+                        base64_str = base64_data.replace(b"\n", b"").decode("ascii")
 
-                        data = data.replace(
-                            local_url, f"url(data:{mime_type};base64,{base64_data})"
-                        )
+                        data = data.replace(local_url, f"url(data:{mime_type};base64,{base64_str})")
 
             code = """<style type="text/css">\n%s</style>""" % data
             return markupsafe.Markup(code)

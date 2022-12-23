@@ -12,8 +12,8 @@ from .base import ExportersTestsBase
 class TestSlidesExporter(ExportersTestsBase):
     """Tests for SlidesExporter"""
 
-    exporter_class = SlidesExporter
-    should_include_raw = ["html"]
+    exporter_class = SlidesExporter  # type:ignore
+    should_include_raw = ["html"]  # type:ignore
 
     def test_constructor(self):
         """

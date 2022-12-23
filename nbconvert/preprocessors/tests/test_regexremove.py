@@ -70,4 +70,4 @@ class TestRegexRemove(PreprocessorTestsBase):
             patterns = list(map(re.compile, preprocessor.patterns))
             for cell in nb.cells:
                 for pattern in patterns:
-                    self.assertFalse(pattern.match(cell.source))
+                    self.assertFalse(pattern.match(cell.source))  # type:ignore

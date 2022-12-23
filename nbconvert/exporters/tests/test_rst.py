@@ -16,8 +16,8 @@ from .base import ExportersTestsBase
 class TestRSTExporter(ExportersTestsBase):
     """Tests for RSTExporter"""
 
-    exporter_class = RSTExporter
-    should_include_raw = ["rst"]
+    exporter_class = RSTExporter  # type:ignore
+    should_include_raw = ["rst"]  # type:ignore
 
     def test_constructor(self):
         """
@@ -41,7 +41,7 @@ class TestRSTExporter(ExportersTestsBase):
             nb = nbformat.read(f, 4)
 
         nb = v4.upgrade(nb)
-        exporter = self.exporter_class()
+        exporter = self.exporter_class()  # type:ignore
 
         (output, resources) = exporter.from_notebook_node(nb)
         # add an empty code cell

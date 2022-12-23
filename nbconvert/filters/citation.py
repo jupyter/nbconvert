@@ -63,17 +63,11 @@ class CitationParser(HTMLParser):
     """
 
     # number of open tags
-    opentags = None
+    opentags = 0
     # list of found citations
-    citelist = None
+    citelist: list = []
     # active citation tag
-    citetag = None
-
-    def __init__(self):
-        """Initialize the parser."""
-        self.citelist = []
-        self.opentags = 0
-        HTMLParser.__init__(self)
+    citetag = ""
 
     def get_offset(self):
         """Get the offset position."""
@@ -97,6 +91,7 @@ class CitationParser(HTMLParser):
 
         if tag == self.citetag:
             # found an open citation tag but not the starting one
+            assert self.opentags
             self.opentags += 1
 
     def handle_endtag(self, tag):
@@ -106,6 +101,7 @@ class CitationParser(HTMLParser):
             if self.opentags == 1:
                 pos = self.get_offset()
                 self.citelist[-1].append(pos + len(tag) + 3)
+            assert self.opentags is not None
             self.opentags -= 1
 
     def feed(self, data):

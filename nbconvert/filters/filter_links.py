@@ -4,7 +4,7 @@ Converts links between notebooks to Latex cross-references.
 """
 import re
 
-from pandocfilters import RawInline, applyJSONFilters, stringify
+from pandocfilters import RawInline, applyJSONFilters, stringify  # type:ignore
 
 
 def resolve_references(source):
