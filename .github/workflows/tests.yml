@@ -94,14 +94,6 @@ jobs:
         with:
           ignore_links: 'https://ipywidgets.readthedocs.io/en/latest/examples/Output'
 
-  pre_commit:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v3
-      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - uses: jupyterlab/maintainer-tools/.github/actions/pre-commit@v1
-
   test_minimum_versions:
     name: Test Minimum Versions
     timeout-minutes: 20
@@ -154,7 +146,7 @@ jobs:
     if: always()
     needs:
       - run-tests
-      - pre_commit
+      - test_lint
       - test_minimum_versions
       - test_prereleases
       - check_links
