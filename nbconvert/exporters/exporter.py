@@ -315,10 +315,7 @@ class Exporter(LoggingConfigurable):
 
     def _validate_preprocessor(self, nbc, preprocessor):
         try:
-            if not hasattr(validator, "normalize"):
-                nbformat.validate(nbc, relax_add_props=True)
-            else:
-                nbformat.validate(nbc)
+            nbformat.validate(nbc, relax_add_props=True)
         except nbformat.ValidationError:
             self.log.error("Notebook is invalid after preprocessor %s", preprocessor)
             raise
