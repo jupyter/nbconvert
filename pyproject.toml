@@ -153,10 +153,6 @@ testpaths = [
 filterwarnings = [
     "error",
     "ignore:nbconvert.utils.lexers is deprecated as of 5.0:UserWarning",
-    # Pending https://github.com/jupyter/nbformat/pull/343
-    "ignore:`relax_add_props` kwargs of validate has been deprecated for security:DeprecationWarning",
-    # Pending https://github.com/jupyter/nbformat/pull/256
-    "ignore:Passing a schema to Validator.iter_errors is deprecated:DeprecationWarning",
     # https://github.com/pyppeteer/pyppeteer/issues/342
     "ignore:remove loop argument:DeprecationWarning:websockets",
     # https://github.com/mhammond/pywin32/issues/1802
