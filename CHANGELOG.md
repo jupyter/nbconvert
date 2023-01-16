@@ -2,6 +2,30 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.8
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.7...73f7b1b93a4526d7e9d987f5a5b207eaed8171f2))
+
+### Bugs fixed
+
+- always pass relax_add_props=True when validating [#1936](https://github.com/jupyter/nbconvert/pull/1936) ([@minrk](https://github.com/minrk))
+
+### Maintenance and upkeep improvements
+
+- Update codecov link [#1935](https://github.com/jupyter/nbconvert/pull/1935) ([@blink1073](https://github.com/blink1073))
+- Fix types and add lint to automerge [#1932](https://github.com/jupyter/nbconvert/pull/1932) ([@blink1073](https://github.com/blink1073))
+- Add type checking [#1930](https://github.com/jupyter/nbconvert/pull/1930) ([@blink1073](https://github.com/blink1073))
+- Add spelling and docstring enforcement [#1929](https://github.com/jupyter/nbconvert/pull/1929) ([@blink1073](https://github.com/blink1073))
+- Add scheduled ci run [#1926](https://github.com/jupyter/nbconvert/pull/1926) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-12-19&to=2023-01-16&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-12-19..2023-01-16&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amaartenbreddels+updated%3A2022-12-19..2023-01-16&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AmartinRenou+updated%3A2022-12-19..2023-01-16&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2022-12-19..2023-01-16&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-12-19..2023-01-16&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.7
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.6...a32c3c1063e081d7e639b7f1670788d220b93810))
@@ -19,8 +43,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-12-05&to=2022-12-19&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-12-05..2022-12-19&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-12-05..2022-12-19&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.6
 
