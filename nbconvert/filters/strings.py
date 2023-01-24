@@ -20,6 +20,8 @@ import bleach
 # defusedxml does safe(r) parsing of untrusted XML data
 from defusedxml import ElementTree  # type:ignore
 
+from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
+
 __all__ = [
     "wrap_text",
     "html2text",
@@ -86,6 +88,10 @@ def clean_html(element):
         element = element.decode()
     else:
         element = str(element)
+    kwargs = {}
+    css_sanitizer = _get_default_css_sanitizer()
+    if css_sanitizer:
+        kwargs['css_sanitizer'] = css_sanitizer
     return bleach.clean(
         element,
         tags=[*bleach.ALLOWED_TAGS, *ALLOWED_SVG_TAGS, "div", "pre", "code", "span"],
@@ -95,6 +101,7 @@ def clean_html(element):
             **{svg_tag: list(ALLOWED_SVG_ATTRIBUTES) for svg_tag in ALLOWED_SVG_TAGS},
             "*": ["class", "id"],
         },
+        **kwargs,
     )
 
 

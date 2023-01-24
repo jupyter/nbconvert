@@ -168,3 +168,8 @@ class SanitizeHTML(Preprocessor):
             kwargs.update(styles=self.styles)
 
         return clean(html_str, **kwargs)
+
+
+def _get_default_css_sanitizer():
+    if _USE_BLEACH_CSS_SANITIZER:
+        return CSSSanitizer(allowed_css_properties=ALLOWED_STYLES)
