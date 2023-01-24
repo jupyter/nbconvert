@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.9
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.8...14b1d7aa75485ea754c2d0ffc67cc528e3984a99))
+
+### Bugs fixed
+
+- Fix handling of css sanitizer [#1940](https://github.com/jupyter/nbconvert/pull/1940) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-01-16&to=2023-01-24&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-01-16..2023-01-24&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.8
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.7...73f7b1b93a4526d7e9d987f5a5b207eaed8171f2))
@@ -23,8 +39,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2022-12-19&to=2023-01-16&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2022-12-19..2023-01-16&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amaartenbreddels+updated%3A2022-12-19..2023-01-16&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AmartinRenou+updated%3A2022-12-19..2023-01-16&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2022-12-19..2023-01-16&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2022-12-19..2023-01-16&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.7
 

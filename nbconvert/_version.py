@@ -3,7 +3,7 @@ import re
 from typing import List
 
 # Version string must appear intact for versioning
-__version__ = "7.2.8"
+__version__ = "7.2.9"
 
 # Build up version_info tuple for backwards compatibility
 pattern = r"(?P<major>\d+).(?P<minor>\d+).(?P<patch>\d+)(?P<rest>.*)"
