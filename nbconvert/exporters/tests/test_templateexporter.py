@@ -138,7 +138,7 @@ class TestExporter(ExportersTestsBase):
             assert os.path.dirname(template) in exporter.template_paths
 
     def test_relative_template_file(self):
-        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):  # noqa
             with patch("os.getcwd", return_value=os.path.abspath(td)):
                 template = os.path.join("relative", "relative_template.ext.j2")
                 template_abs = os.path.abspath(os.path.join(td, template))
@@ -168,7 +168,7 @@ class TestExporter(ExportersTestsBase):
             assert os.path.dirname(template) in exporter.template_paths
 
     def test_relative_template_file_compatibility(self):
-        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):  # noqa
             with patch("os.getcwd", return_value=os.path.abspath(td)):
                 template = os.path.join("relative", "relative_template.tpl")
                 template_abs = os.path.abspath(os.path.join(td, template))
@@ -220,7 +220,7 @@ class TestExporter(ExportersTestsBase):
 
     # Can't use @pytest.mark.parametrize without removing all self.assert calls in all tests... repeating some here
     def relative_template_test(self, template):
-        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):  # noqa
             with patch("os.getcwd", return_value=os.path.abspath(td)):
                 template_abs = os.path.abspath(os.path.join(td, template))
                 dirname = os.path.dirname(template_abs)
@@ -269,7 +269,7 @@ class TestExporter(ExportersTestsBase):
             assert os.path.join(td, template) in exporter.template_paths
 
     def test_local_template_dir(self):
-        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):  # noqa
             with patch("os.getcwd", return_value=os.path.abspath(td)):
                 template = "mytemplate"
                 template_file = os.path.join(template, "index.py.j2")

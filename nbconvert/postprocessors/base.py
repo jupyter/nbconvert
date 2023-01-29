@@ -13,7 +13,7 @@ Basic post processor
 # Imports
 # -----------------------------------------------------------------------------
 
-from ..utils.base import NbConvertBase
+from nbconvert.utils.base import NbConvertBase
 
 
 # -----------------------------------------------------------------------------
@@ -22,14 +22,15 @@ from ..utils.base import NbConvertBase
 class PostProcessorBase(NbConvertBase):
     """The base class for post processors."""
 
-    def __call__(self, input):
+    def __call__(self, input_):
         """
         See def postprocess() ...
         """
-        self.postprocess(input)
+        self.postprocess(input_)
 
-    def postprocess(self, input):
+    def postprocess(self, input_):
         """
         Post-process output from a writer.
         """
-        raise NotImplementedError("postprocess")
+        msg = "postprocess"
+        raise NotImplementedError(msg)

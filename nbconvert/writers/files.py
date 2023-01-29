@@ -62,7 +62,8 @@ class FilesWriter(WriterBase):
 
         # Verify that a notebook name is provided.
         if notebook_name is None:
-            raise TypeError("notebook_name")
+            msg = "notebook_name"
+            raise TypeError(msg)
 
         # Pull the extension and subdir from the resources dict.
         output_extension = resources.get("output_extension", None)
@@ -113,15 +114,12 @@ class FilesWriter(WriterBase):
                     self._makedir(path)
 
                     # Copy if destination is different.
-                    if not os.path.normpath(dest) == os.path.normpath(matching_filename):
+                    if os.path.normpath(dest) != os.path.normpath(matching_filename):
                         self.log.info("Copying %s -> %s", matching_filename, dest)
                         link_or_copy(matching_filename, dest)
 
         # Determine where to write conversion results.
-        if output_extension is not None:
-            dest = notebook_name + output_extension
-        else:
-            dest = notebook_name
+        dest = notebook_name + output_extension if output_extension is not None else notebook_name
         dest = Path(build_directory) / dest
 
         # Write conversion results.

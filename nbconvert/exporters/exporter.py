@@ -186,7 +186,9 @@ class Exporter(LoggingConfigurable):
         resources["metadata"]["name"] = notebook_name
         resources["metadata"]["path"] = path
 
-        modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+        modified_date = datetime.datetime.fromtimestamp(
+            os.path.getmtime(filename), tz=datetime.timezone.utc
+        )
         # datetime.strftime date format for ipython
         if sys.platform == "win32":
             date_format = "%B %d, %Y"
@@ -235,7 +237,8 @@ class Exporter(LoggingConfigurable):
 
         """
         if preprocessor is None:
-            raise TypeError("preprocessor must not be None")
+            msg = "preprocessor must not be None"
+            raise TypeError(msg)
         isclass = isinstance(preprocessor, type)
         constructed = not isclass
 

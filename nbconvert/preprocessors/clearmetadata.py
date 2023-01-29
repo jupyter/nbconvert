@@ -76,13 +76,12 @@ class ClearMetadataPreprocessor(Preprocessor):
         """
         All the code cells are returned with an empty metadata field.
         """
-        if self.clear_cell_metadata:
-            if cell.cell_type == "code":
-                # Remove metadata
-                if "metadata" in cell:
-                    cell.metadata = dict(
-                        self.nested_filter(cell.metadata.items(), self.preserve_cell_metadata_mask)
-                    )
+        if self.clear_cell_metadata and cell.cell_type == "code":  # noqa
+            # Remove metadata
+            if "metadata" in cell:
+                cell.metadata = dict(
+                    self.nested_filter(cell.metadata.items(), self.preserve_cell_metadata_mask)
+                )
         return cell, resources
 
     def preprocess(self, nb, resources):
@@ -100,9 +99,8 @@ class ClearMetadataPreprocessor(Preprocessor):
             preprocessors to pass variables into the Jinja engine.
         """
         nb, resources = super().preprocess(nb, resources)
-        if self.clear_notebook_metadata:
-            if "metadata" in nb:
-                nb.metadata = dict(
-                    self.nested_filter(nb.metadata.items(), self.preserve_nb_metadata_mask)
-                )
+        if self.clear_notebook_metadata and "metadata" in nb:
+            nb.metadata = dict(
+                self.nested_filter(nb.metadata.items(), self.preserve_nb_metadata_mask)
+            )
         return nb, resources

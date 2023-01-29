@@ -72,18 +72,18 @@ def export(exporter, nb, **kw):
 
     # Check arguments
     if exporter is None:
-        raise TypeError("Exporter is None")
+        msg = "Exporter is None"
+        raise TypeError(msg)
     elif not isinstance(exporter, Exporter) and not issubclass(exporter, Exporter):
-        raise TypeError("exporter does not inherit from Exporter (base)")
+        msg = "exporter does not inherit from Exporter (base)"
+        raise TypeError(msg)
     if nb is None:
-        raise TypeError("nb is None")
+        msg = "nb is None"
+        raise TypeError(msg)
 
     # Create the exporter
     resources = kw.pop("resources", None)
-    if isinstance(exporter, Exporter):
-        exporter_instance = exporter
-    else:
-        exporter_instance = exporter(**kw)
+    exporter_instance = exporter if isinstance(exporter, Exporter) else exporter(**kw)
 
     # Try to convert the notebook using the appropriate conversion function.
     if isinstance(nb, NotebookNode):
@@ -125,11 +125,10 @@ def get_exporter(name, config=get_config()):  # noqa
             log = get_logger()
             log.error("Error importing %s" % name, exc_info=True)
 
-    raise ExporterNameError(
-        'Unknown exporter "{}", did you mean one of: {}?'.format(
-            name, ", ".join(get_export_names())
-        )
+    msg = 'Unknown exporter "{}", did you mean one of: {}?'.format(
+        name, ", ".join(get_export_names())
     )
+    raise ExporterNameError(msg)
 
 
 def get_export_names(config=get_config()):  # noqa
@@ -152,5 +151,5 @@ def get_export_names(config=get_config()):  # noqa
             if e.enabled:
                 enabled_exporters.append(exporter_name)
         except (ExporterDisabledError, ValueError):
-            pass
+            pass  # noqa
     return enabled_exporters

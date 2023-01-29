@@ -14,6 +14,7 @@
 
 import os
 import shutil
+from datetime import datetime, timezone
 
 HERE = os.path.dirname(__file__)
 
@@ -70,10 +71,10 @@ master_doc = "index"
 
 # General information about the project.
 project = "nbconvert"
-from datetime import date
 
-year = date.today().year
-copyright = "2015-%s, Jupyter Development Team" % year
+
+year = datetime.now(tz=timezone.utc).date().year
+copyright = "2015-%s, Jupyter Development Team" % year  # noqa
 author = "Jupyter Development Team"
 
 extlinks = {"ghpull": ("https://github.com/jupyter/nbconvert/pull/%s", "PR #%s")}

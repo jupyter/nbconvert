@@ -134,8 +134,8 @@ class PandocMissing(ConversionException):
         """Initialize the exception."""
         super().__init__(
             "Pandoc wasn't found.\n"
-            + "Please check that pandoc is installed:\n"
-            + "https://pandoc.org/installing.html"
+            "Please check that pandoc is installed:\n"
+            "https://pandoc.org/installing.html"
         )
 
 

@@ -31,7 +31,7 @@ class TestExport(ExportersTestsBase):
             exporter = get_exporter("not_a_name")
             export(exporter, self._get_notebook())
         except ExporterNameError as e:
-            pass
+            pass  # noqa
 
     def test_export_disabled(self):
         """

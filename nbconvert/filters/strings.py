@@ -58,7 +58,7 @@ def wrap_text(text, width=100):
     """
 
     split_text = text.split("\n")
-    wrp = map(lambda x: textwrap.wrap(x, width), split_text)
+    wrp = map(lambda x: textwrap.wrap(x, width), split_text)  # noqa
     wrpd = map("\n".join, wrp)
     return "\n".join(wrpd)
 
@@ -84,10 +84,7 @@ def html2text(element):
 
 def clean_html(element):
     """Clean an html element."""
-    if isinstance(element, bytes):
-        element = element.decode()
-    else:
-        element = str(element)
+    element = element.decode() if isinstance(element, bytes) else str(element)
     kwargs = {}
     css_sanitizer = _get_default_css_sanitizer()
     if css_sanitizer:

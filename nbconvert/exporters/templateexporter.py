@@ -150,7 +150,7 @@ class TemplateExporter(Exporter):
     """
 
     # finish the docstring
-    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))
+    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))  # noqa
 
     _template_cached = None
 
@@ -214,9 +214,8 @@ class TemplateExporter(Exporter):
             directory, self.template_file = os.path.split(self.template_name)
             if directory:
                 directory, template_name = os.path.split(directory)
-            if directory:
-                if os.path.isabs(directory):
-                    self.extra_template_basedirs = [directory]
+            if directory and os.path.isabs(directory):
+                self.extra_template_basedirs = [directory]
         return template_name
 
     @observe("template_file")
@@ -230,7 +229,7 @@ class TemplateExporter(Exporter):
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
             directory, self.template_file = os.path.split(full_path)
-            self.extra_template_paths = [directory] + self.extra_template_paths
+            self.extra_template_paths = [directory, *self.extra_template_paths]
             # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
             if self.template_file.endswith(".tpl"):
                 warnings.warn(
@@ -366,7 +365,8 @@ class TemplateExporter(Exporter):
                 self.template_file = self._raw_template_key
 
         if not self.template_file:
-            raise ValueError("No template_file specified!")
+            msg = "No template_file specified!"
+            raise ValueError(msg)
 
         # First try to load the
         # template by name with extension added, then try loading the template
@@ -435,7 +435,8 @@ class TemplateExporter(Exporter):
         filter : filter
         """
         if jinja_filter is None:
-            raise TypeError("filter")
+            msg = "filter"
+            raise TypeError(msg)
         isclass = isinstance(jinja_filter, type)
         constructed = not isclass
 
@@ -465,7 +466,8 @@ class TemplateExporter(Exporter):
         else:
             # filter is an instance of something without a __call__
             # attribute.
-            raise TypeError("filter")
+            msg = "filter"
+            raise TypeError(msg)
 
     def register_filter(self, name, jinja_filter):
         """
@@ -500,7 +502,8 @@ class TemplateExporter(Exporter):
         paths = self.template_paths
         self.log.debug("Template paths:\n\t%s", "\n\t".join(paths))
 
-        loaders = self.extra_loaders + [
+        loaders = [
+            *self.extra_loaders,
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
             DictLoader({self._raw_template_key: self.raw_template}),
         ]
@@ -508,6 +511,7 @@ class TemplateExporter(Exporter):
             loader=ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS,
             enable_async=self.enable_async,
+            autoescape=True,
         )
 
         environment.globals["uuid4"] = uuid.uuid4
@@ -594,7 +598,7 @@ class TemplateExporter(Exporter):
         if name == "full":
             return {"base_template": "classic", "mimetypes": {"text/html": True}}
 
-    def get_template_names(self):
+    def get_template_names(self):  # noqa
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
