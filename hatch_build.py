@@ -54,7 +54,8 @@ def _get_css_file(template_name, url, filename):
         if osp.exists(dest):
             print("Already have CSS: %s, moving on." % dest)
         else:
-            raise OSError("Need CSS to proceed.")
+            msg = "Need CSS to proceed."
+            raise OSError(msg)
         return
 
     with open(dest, "wb") as f:

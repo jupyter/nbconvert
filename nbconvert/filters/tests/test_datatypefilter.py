@@ -17,9 +17,9 @@ class TestDataTypeFilter(TestsBase):
 
     def test_junk_types(self):
         """Can the DataTypeFilter pickout a useful type from a dict with junk types as keys?"""
-        filter = DataTypeFilter()
-        assert "image/png" in filter({"hair": "1", "water": 2, "image/png": 3, "rock": 4.0})
-        assert "application/pdf" in filter(
+        filter_ = DataTypeFilter()
+        assert "image/png" in filter_({"hair": "1", "water": 2, "image/png": 3, "rock": 4.0})
+        assert "application/pdf" in filter_(
             {
                 "application/pdf": "file_path",
                 "hair": 2,
@@ -31,7 +31,7 @@ class TestDataTypeFilter(TestsBase):
 
         with pytest.warns(UserWarning):
             self.assertEqual(
-                filter(
+                filter_(
                     {"hair": "this is not", "water": "going to return anything", "rock": "or is it"}
                 ),
                 [],
@@ -39,6 +39,6 @@ class TestDataTypeFilter(TestsBase):
 
     def test_null(self):
         """Will the DataTypeFilter fail if no types are passed in?"""
-        filter = DataTypeFilter()
+        filter_ = DataTypeFilter()
         with pytest.warns(UserWarning):
-            self.assertEqual(filter({}), [])
+            self.assertEqual(filter_({}), [])

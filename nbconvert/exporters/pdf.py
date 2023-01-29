@@ -11,7 +11,8 @@ from tempfile import TemporaryDirectory
 
 from traitlets import Bool, Instance, Integer, List, Unicode, default
 
-from ..utils import _contextlib_chdir
+from nbconvert.utils import _contextlib_chdir
+
 from .latex import LatexExporter
 
 
@@ -111,11 +112,12 @@ class PDFExporter(LatexExporter):
         cmd = shutil.which(command_list[0])
         if cmd is None:
             link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
-            raise OSError(
+            msg = (
                 "{formatter} not found on PATH, if you have not installed "
                 "{formatter} you may need to do so. Find further instructions "
                 "at {link}.".format(formatter=command_list[0], link=link)
             )
+            raise OSError(msg)
 
         times = "time" if count == 1 else "times"
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
@@ -150,7 +152,8 @@ class PDFExporter(LatexExporter):
                     log_function(command, out)
                     self._captured_output.append(out_str)
                     if raise_on_failure:
-                        raise raise_on_failure(f'Failed to run "{command}" command:\n{out_str}')
+                        msg = f'Failed to run "{command}" command:\n{out_str}'
+                        raise raise_on_failure(msg)
                     return False  # failure
         return True  # success
 

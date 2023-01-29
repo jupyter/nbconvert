@@ -74,15 +74,17 @@ class WebPDFExporter(HTMLExporter):
             from pyppeteer import launch
             from pyppeteer.util import check_chromium  # type:ignore
         except ModuleNotFoundError as e:
-            raise RuntimeError(
+            msg = (
                 "Pyppeteer is not installed to support Web PDF conversion. "
                 "Please install `nbconvert[webpdf]` to enable."
-            ) from e
+            )
+            raise RuntimeError(msg) from e
         if not self.allow_chromium_download and not check_chromium():
-            raise RuntimeError(
+            msg = (
                 "No suitable chromium executable found on the system. "
                 "Please use '--allow-chromium-download' to allow downloading one."
             )
+            raise RuntimeError(msg)
         return launch
 
     def run_pyppeteer(self, html):

@@ -43,7 +43,7 @@ class MathBlockParser(BlockParser):
         re.DOTALL,
     )
 
-    RULE_NAMES = ("multiline_math",) + BlockParser.RULE_NAMES
+    RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)
 
     # Regex for header that doesn't require space after '#'
     AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
@@ -84,7 +84,8 @@ class MathInlineParser(InlineParser):
         "inline_math_tex",
         "inline_math_latex",
         "latex_environment",
-    ) + InlineParser.RULE_NAMES
+        *InlineParser.RULE_NAMES,
+    )
 
     def parse_block_math_tex(self, m, state):
         """Parse block text math."""
@@ -244,7 +245,8 @@ class IPythonRenderer(HTMLRenderer):
             name = src[len(attachment_prefix) :]
 
             if name not in self.attachments:
-                raise InvalidNotebook(f"missing attachment: {name}")
+                msg = f"missing attachment: {name}"
+                raise InvalidNotebook(msg)
 
             attachment = self.attachments[name]
             # we choose vector over raster, and lossless over lossy

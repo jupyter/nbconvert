@@ -612,22 +612,22 @@ class TestNbConvertApp(TestsBase):
 
     def test_execute_widgets_from_nbconvert(self):
         """Check jupyter widgets render"""
-        notebookName = "Unexecuted_widget"
-        with self.create_temp_cwd([f"{notebookName}.ipynb"]):
-            self.nbconvert(f"{notebookName}.ipynb --execute --log-level 0 --to html")
-            assert os.path.isfile(f"{notebookName}.html")
-            with open(f"{notebookName}.html", encoding="utf8") as f:
+        notebook_name = "Unexecuted_widget"
+        with self.create_temp_cwd([f"{notebook_name}.ipynb"]):
+            self.nbconvert(f"{notebook_name}.ipynb --execute --log-level 0 --to html")
+            assert os.path.isfile(f"{notebook_name}.html")
+            with open(f"{notebook_name}.html", encoding="utf8") as f:
                 text = f.read()
                 assert '<script type="application/vnd.jupyter.widget-view+json">' in text
                 assert '<script type="application/vnd.jupyter.widget-state+json">' in text
 
     def test_execute_multiple_notebooks(self):
         """Check jupyter widgets render in case of batch convert"""
-        notebookName = "Unexecuted_widget"
-        with self.create_temp_cwd([f"{notebookName}*.ipynb"]):
+        notebook_name = "Unexecuted_widget"
+        with self.create_temp_cwd([f"{notebook_name}*.ipynb"]):
             self.nbconvert("*.ipynb --execute --log-level 0 --to html")
 
-            for name in (notebookName, f"{notebookName}_2"):
+            for name in (notebook_name, f"{notebook_name}_2"):
                 assert os.path.isfile(f"{name}.html")
                 with open(f"{name}.html", encoding="utf8") as f:
                     text = f.read()

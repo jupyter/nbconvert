@@ -69,7 +69,7 @@ class TestMarkdown(TestsBase):
         # sometimes pandoc uses $math$, sometimes it uses \(math\)
         expected = re.compile(r"(\$|\\\()\\alpha(\$|\\\)) latex math")
 
-        assertRegex = self.assertRegex
+        assertRegex = self.assertRegex  # noqa
 
         assertRegex(convert_pandoc(s, "markdown_strict+tex_math_dollars", "latex"), expected)
 
@@ -83,7 +83,7 @@ class TestMarkdown(TestsBase):
             ]
         )
         long_line = " ".join(["long"] * 30)
-        env = Environment()
+        env = Environment()  # noqa
         env.filters.update(
             {
                 "md2l": lambda code, extra_args: convert_pandoc(
@@ -125,7 +125,7 @@ class TestMarkdown(TestsBase):
         # all the "<", ">", "&" must be escaped correctly
         cases = [
             (
-                "\\begin{equation*}\n"
+                "\\begin{equation*}\n"  # noqa
                 + (
                     "\\left( \\sum_{k=1}^n a_k b_k \\right)^2 "
                     "\\leq \\left( \\sum_{k=1}^n a_k^2 \\right) "

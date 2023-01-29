@@ -7,7 +7,7 @@ Contains writer base class.
 
 from traitlets import List
 
-from ..utils.base import NbConvertBase
+from nbconvert.utils.base import NbConvertBase
 
 
 class WriterBase(NbConvertBase):

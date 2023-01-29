@@ -21,7 +21,7 @@ NbConvertBase.display_data_priority
 import os
 from warnings import warn
 
-from ..utils.base import NbConvertBase
+from nbconvert.utils.base import NbConvertBase
 
 __all__ = ["WidgetsDataTypeFilter"]
 

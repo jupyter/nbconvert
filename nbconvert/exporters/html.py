@@ -72,13 +72,15 @@ def find_lab_theme(theme_name):
                     theme_path = Path(dirpath) / "themes" / labext_name
 
     if len(matching_themes) == 0:
-        raise ValueError(f'Could not find lab theme "{theme_name}"')
+        msg = f'Could not find lab theme "{theme_name}"'
+        raise ValueError(msg)
 
     if len(matching_themes) > 1:
-        raise ValueError(
+        msg = (
             f'Found multiple themes matching "{theme_name}": {matching_themes}. '
             "Please be more specific about which theme you want to use."
         )
+        raise ValueError(msg)
 
     return full_theme_name, theme_path
 
@@ -228,7 +230,7 @@ class HTMLExporter(TemplateExporter):
         self.register_filter("filter_data_type", filter_data_type)
         return super().from_notebook_node(nb, resources, **kw)
 
-    def _init_resources(self, resources):
+    def _init_resources(self, resources):  # noqa
         def resources_include_css(name):
             env = self.environment
             code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])
@@ -282,8 +284,9 @@ class HTMLExporter(TemplateExporter):
                         with open(filename, "rb") as f:
                             data = f.read()
                             break
-                else:
-                    raise ValueError(f"No file {name!r} found in {searchpath!r}")
+                else:  # noqa
+                    msg = f"No file {name!r} found in {searchpath!r}"
+                    raise ValueError(msg)
             data = base64.b64encode(data)
             data = data.replace(b"\n", b"").decode("ascii")
             src = f"data:{mime_type};base64,{data}"

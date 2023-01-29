@@ -19,7 +19,7 @@ NbConvertBase.display_data_priority
 
 from warnings import warn
 
-from ..utils.base import NbConvertBase
+from nbconvert.utils.base import NbConvertBase
 
 __all__ = ["DataTypeFilter"]
 

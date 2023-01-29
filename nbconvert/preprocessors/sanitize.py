@@ -7,6 +7,8 @@ import warnings
 from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
+from .base import Preprocessor
+
 _USE_BLEACH_CSS_SANITIZER = False
 _USE_BLEACH_STYLES = False
 
@@ -37,8 +39,6 @@ except ImportError:
             UserWarning,
         )
 
-
-from .base import Preprocessor
 
 __all__ = ["SanitizeHTML"]
 

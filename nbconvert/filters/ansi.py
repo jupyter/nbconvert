@@ -71,7 +71,7 @@ def ansi2latex(text):
     return _ansi2anything(text, _latexconverter)
 
 
-def _htmlconverter(fg, bg, bold, underline, inverse):
+def _htmlconverter(fg, bg, bold, underline, inverse):  # noqa
     """
     Return start and end tags for given foreground/background/bold/underline.
 
@@ -114,7 +114,7 @@ def _htmlconverter(fg, bg, bold, underline, inverse):
     return starttag, "</span>"
 
 
-def _latexconverter(fg, bg, bold, underline, inverse):
+def _latexconverter(fg, bg, bold, underline, inverse):  # noqa
     """
     Return start and end markup given foreground/background/bold/underline.
 
@@ -165,7 +165,7 @@ def _latexconverter(fg, bg, bold, underline, inverse):
     return starttag, endtag
 
 
-def _ansi2anything(text, converter):
+def _ansi2anything(text, converter):  # noqa
     r"""
     Convert ANSI colors to HTML or LaTeX.
 

@@ -47,7 +47,8 @@ if QT_INSTALLED:
             elif output_file.endswith(".png"):
                 self.export = self.export_png
             else:
-                raise RuntimeError(f"Export file extension not supported: {output_file}")
+                msg = f"Export file extension not supported: {output_file}"
+                raise RuntimeError(msg)
             self.show()
             self.app.exec()  # type:ignore
 

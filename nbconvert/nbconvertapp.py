@@ -378,10 +378,7 @@ class NbConvertApp(JupyterApp):
 
         # Specifying notebooks on the command-line overrides (rather than
         # adds) the notebook list
-        if self.extra_args:
-            patterns = self.extra_args
-        else:
-            patterns = self.notebooks
+        patterns = self.extra_args if self.extra_args else self.notebooks
 
         # Use glob to replace all the notebook patterns with filenames.
         filenames = []
@@ -507,8 +504,10 @@ class NbConvertApp(JupyterApp):
         file
             results from the specified writer output of exporter
         """
+
         if "unique_key" not in resources:
-            raise KeyError("unique_key MUST be specified in the resources, but it is not")
+            msg = "unique_key MUST be specified in the resources, but it is not"
+            raise KeyError(msg)
 
         notebook_name = resources["unique_key"]
         if self.use_output_suffix and not self.output_base:
@@ -577,10 +576,11 @@ class NbConvertApp(JupyterApp):
             sys.exit(-1)
 
         if not self.export_format:
-            raise ValueError(
+            msg = (
                 "Please specify an output format with '--to <format>'."
                 f"\nThe following formats are available: {get_export_names()}"
             )
+            raise ValueError(msg)
 
         # initialize the exporter
         cls = get_exporter(self.export_format)
