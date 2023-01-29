@@ -507,11 +507,10 @@ class TemplateExporter(Exporter):
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
             DictLoader({self._raw_template_key: self.raw_template}),
         ]
-        environment = Environment(
+        environment = Environment(  # noqa
             loader=ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS,
             enable_async=self.enable_async,
-            autoescape=True,
         )
 
         environment.globals["uuid4"] = uuid.uuid4
