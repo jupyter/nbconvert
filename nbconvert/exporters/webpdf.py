@@ -7,17 +7,14 @@ import asyncio
 import concurrent.futures
 import os
 import tempfile
+from importlib import util as importlib_util
 
 from traitlets import Bool, default
 
 from .html import HTMLExporter
 
-try:
-    import pyppeteer  # type:ignore  # noqa
 
-    PYPPETEER_INSTALLED = True
-except ImportError:
-    PYPPETEER_INSTALLED = False
+PYPPETEER_INSTALLED = importlib_util.find_spec("pyppeteer") is not None
 
 
 class WebPDFExporter(HTMLExporter):
