@@ -13,7 +13,6 @@ from traitlets import Bool, default
 
 from .html import HTMLExporter
 
-
 PYPPETEER_INSTALLED = importlib_util.find_spec("pyppeteer") is not None
 
 
