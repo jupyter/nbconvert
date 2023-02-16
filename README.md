@@ -91,8 +91,6 @@ py.test --pyargs nbconvert
 - [Jupyter mailing list](https://groups.google.com/forum/#!forum/jupyter)
 - [Project Jupyter website](https://jupyter.org)
 
-[jinja]: http://jinja.pocoo.org/
-
 ## About the Jupyter Development Team
 
 The Jupyter Development Team is the set of all contributors to the Jupyter project.
@@ -120,3 +118,5 @@ to indicate the copyright and license terms:
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 ```
+
+[jinja]: http://jinja.pocoo.org/
