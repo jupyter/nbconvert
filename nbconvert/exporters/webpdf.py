@@ -67,7 +67,7 @@ class WebPDFExporter(HTMLExporter):
 
     def _check_launch_reqs(self):
         try:
-            from pyppeteer import launch  # type: ignore
+            from pyppeteer import launch  # type: ignore[import]
             from pyppeteer.util import check_chromium  # type:ignore
         except ModuleNotFoundError as e:
             msg = (
