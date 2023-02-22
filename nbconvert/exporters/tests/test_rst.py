@@ -3,23 +3,21 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import io
-import pytest
 import re
 
 import nbformat
 from nbformat import v4
 
-from .base import ExportersTestsBase
-from ..rst import RSTExporter
 from ...tests.utils import onlyif_cmds_exist
+from ..rst import RSTExporter
+from .base import ExportersTestsBase
 
 
 class TestRSTExporter(ExportersTestsBase):
     """Tests for RSTExporter"""
 
-    exporter_class = RSTExporter
-    should_include_raw = ['rst']
+    exporter_class = RSTExporter  # type:ignore
+    should_include_raw = ["rst"]  # type:ignore
 
     def test_constructor(self):
         """
@@ -27,8 +25,7 @@ class TestRSTExporter(ExportersTestsBase):
         """
         RSTExporter()
 
-
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_export(self):
         """
         Can a RSTExporter export something?
@@ -36,38 +33,37 @@ class TestRSTExporter(ExportersTestsBase):
         (output, resources) = RSTExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_empty_code_cell(self):
         """No empty code cells in rst"""
         nbname = self._get_notebook()
-        with io.open(nbname, encoding='utf8') as f:
+        with open(nbname, encoding="utf8") as f:
             nb = nbformat.read(f, 4)
 
-        exporter = self.exporter_class()
+        nb = v4.upgrade(nb)
+        exporter = self.exporter_class()  # type:ignore
 
         (output, resources) = exporter.from_notebook_node(nb)
         # add an empty code cell
-        nb.cells.append(
-            v4.new_code_cell(source="")
-        )
+        nb.cells.append(v4.new_code_cell(source=""))
+
         (output2, resources) = exporter.from_notebook_node(nb)
         # adding an empty code cell shouldn't change output
         self.assertEqual(output.strip(), output2.strip())
 
-    @onlyif_cmds_exist('pandoc')
+    @onlyif_cmds_exist("pandoc")
     def test_png_metadata(self):
         """
         Does RSTExporter treat pngs with width/height metadata correctly?
         """
         (output, resources) = RSTExporter().from_filename(
-            self._get_notebook(nb_name="pngmetadata.ipynb"))
+            self._get_notebook(nb_name="pngmetadata.ipynb")
+        )
         assert len(output) > 0
-        check_for_png = re.compile(
-            r'.. image::.*?\n\s+(.*?)\n\s*\n',
-            re.DOTALL)
+        check_for_png = re.compile(r".. image::.*?\n\s+(.*?)\n\s*\n", re.DOTALL)
         result = check_for_png.search(output)
         assert result is not None
         attr_string = result.group(1)
-        assert ':width:' in attr_string
-        assert ':height:' in attr_string
-        assert 'px' in attr_string
+        assert ":width:" in attr_string
+        assert ":height:" in attr_string
+        assert "px" in attr_string

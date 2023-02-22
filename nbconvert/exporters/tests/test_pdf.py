@@ -3,38 +3,38 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import logging
 import os
 import shutil
 from tempfile import TemporaryDirectory
 
-from .base import ExportersTestsBase
-from ..pdf import PDFExporter
 from ...tests.utils import onlyif_cmds_exist
+from ..pdf import PDFExporter
+from .base import ExportersTestsBase
 
-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Class
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 class TestPDF(ExportersTestsBase):
     """Test PDF export"""
 
-    exporter_class = PDFExporter
+    exporter_class = PDFExporter  # type:ignore
 
     def test_constructor(self):
         """Can a PDFExporter be constructed?"""
-        self.exporter_class()
+        self.exporter_class()  # type:ignore
 
-
-    @onlyif_cmds_exist('xelatex', 'pandoc')
+    @onlyif_cmds_exist("xelatex", "pandoc")
     def test_export(self):
         """Smoke test PDFExporter"""
         with TemporaryDirectory() as td:
             file_name = os.path.basename(self._get_notebook())
             newpath = os.path.join(td, file_name)
             shutil.copy(self._get_notebook(), newpath)
-            (output, resources) = self.exporter_class(latex_count=1).from_filename(newpath)
+            (output, resources) = self.exporter_class(latex_count=1).from_filename(  # type:ignore
+                newpath
+            )
             self.assertIsInstance(output, bytes)
             assert len(output) > 0
             # all temporary file should be cleaned up

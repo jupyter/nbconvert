@@ -4,37 +4,43 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
-import warnings
+import sys
 
-import entrypoints
-
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
+from nbformat import NotebookNode
 from traitlets.config import get_config
 from traitlets.log import get_logger
 from traitlets.utils.importstring import import_item
 
-from nbformat import NotebookNode
-
 from .exporter import Exporter
 
-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Functions
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 __all__ = [
-    'export',
-    'Exporter',
-    'get_exporter',
-    'get_export_names',
-    'ExporterNameError',
+    "export",
+    "Exporter",
+    "get_exporter",
+    "get_export_names",
+    "ExporterNameError",
 ]
 
 
 class ExporterNameError(NameError):
+    """An exporter name error."""
+
     pass
 
+
 class ExporterDisabledError(ValueError):
+    """An exporter disabled error."""
+
     pass
+
 
 def export(exporter, nb, **kw):
     """
@@ -47,7 +53,7 @@ def export(exporter, nb, **kw):
         method initializes its own instance of the class, it is ASSUMED that
         the class type provided exposes a constructor (``__init__``) with the same
         signature as the base Exporter class.
-    nb : `nbformat.NotebookNode`
+    nb : :class:`~nbformat.NotebookNode`
         The notebook to export.
     config : config (optional, keyword arg)
         User configuration instance.
@@ -63,23 +69,23 @@ def export(exporter, nb, **kw):
             Dictionary of resources used prior to and during the conversion
             process.
     """
-    
-    #Check arguments
+
+    # Check arguments
     if exporter is None:
-        raise TypeError("Exporter is None")
+        msg = "Exporter is None"
+        raise TypeError(msg)
     elif not isinstance(exporter, Exporter) and not issubclass(exporter, Exporter):
-        raise TypeError("exporter does not inherit from Exporter (base)")
+        msg = "exporter does not inherit from Exporter (base)"
+        raise TypeError(msg)
     if nb is None:
-        raise TypeError("nb is None")
-    
-    #Create the exporter
-    resources = kw.pop('resources', None)
-    if isinstance(exporter, Exporter):
-        exporter_instance = exporter
-    else:
-        exporter_instance = exporter(**kw)
-    
-    #Try to convert the notebook using the appropriate conversion function.
+        msg = "nb is None"
+        raise TypeError(msg)
+
+    # Create the exporter
+    resources = kw.pop("resources", None)
+    exporter_instance = exporter if isinstance(exporter, Exporter) else exporter(**kw)
+
+    # Try to convert the notebook using the appropriate conversion function.
     if isinstance(nb, NotebookNode):
         output, resources = exporter_instance.from_notebook_node(nb, resources)
     elif isinstance(nb, (str,)):
@@ -89,35 +95,29 @@ def export(exporter, nb, **kw):
     return output, resources
 
 
-def get_exporter(name, config=get_config()):
+def get_exporter(name, config=get_config()):  # noqa
     """Given an exporter name or import path, return a class ready to be instantiated
 
     Raises ExporterName if exporter is not found or ExporterDisabledError if not enabled
     """
-    
-    if name == 'ipynb':
-        name = 'notebook'
+
+    if name == "ipynb":
+        name = "notebook"
 
     try:
-        exporter = entrypoints.get_single('nbconvert.exporters', name).load()
-        if getattr(exporter(config=config), 'enabled', True):
+        exporters = entry_points(group="nbconvert.exporters")
+        exporter = [e for e in exporters if e.name == name or e.name == name.lower()][0].load()
+        if getattr(exporter(config=config), "enabled", True):
             return exporter
         else:
             raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
-    except entrypoints.NoSuchEntryPoint:
-        try:
-            exporter = entrypoints.get_single('nbconvert.exporters', name.lower()).load()
-            if getattr(exporter(config=config), 'enabled', True):
-                return exporter
-            else:
-                raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
-        except entrypoints.NoSuchEntryPoint:
-            pass
-        
-    if '.' in name:
+    except IndexError:
+        pass
+
+    if "." in name:
         try:
             exporter = import_item(name)
-            if getattr(exporter(config=config), 'enabled', True):
+            if getattr(exporter(config=config), "enabled", True):
                 return exporter
             else:
                 raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
@@ -125,19 +125,23 @@ def get_exporter(name, config=get_config()):
             log = get_logger()
             log.error("Error importing %s" % name, exc_info=True)
 
-    raise ExporterNameError('Unknown exporter "%s", did you mean one of: %s?'
-                     % (name, ', '.join(get_export_names())))
+    msg = 'Unknown exporter "{}", did you mean one of: {}?'.format(
+        name, ", ".join(get_export_names())
+    )
+    raise ExporterNameError(msg)
 
 
-def get_export_names(config=get_config()):
+def get_export_names(config=get_config()):  # noqa
     """Return a list of the currently supported export targets
 
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
-    exporters = sorted(entrypoints.get_group_named('nbconvert.exporters'))
+    exporters = sorted(e.name for e in entry_points(group="nbconvert.exporters"))
     if os.environ.get("NBCONVERT_DISABLE_CONFIG_EXPORTERS"):
-        get_logger().info("Config exporter loading disabled, no additional exporters will be automatically included.")
+        get_logger().info(
+            "Config exporter loading disabled, no additional exporters will be automatically included."
+        )
         return exporters
 
     enabled_exporters = []
@@ -147,5 +151,5 @@ def get_export_names(config=get_config()):
             if e.enabled:
                 enabled_exporters.append(exporter_name)
         except (ExporterDisabledError, ValueError):
-            pass
+            pass  # noqa
     return enabled_exporters

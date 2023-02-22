@@ -6,6 +6,7 @@ Module with tests for the serve post-processor
 # Distributed under the terms of the Modified BSD License.
 
 import pytest
+
 from ...tests.base import TestsBase
 
 
@@ -18,7 +19,6 @@ class TestServe(TestsBase):
         try:
             from ..serve import ServePostProcessor
         except ImportError:
-            print("Something weird is happening.\n" 
-                  "Tornado is sometimes present, sometimes not.")
+            print("Something weird is happening.\nTornado is sometimes present, sometimes not.")
             raise
         ServePostProcessor()

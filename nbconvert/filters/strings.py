@@ -1,4 +1,3 @@
-# coding: utf-8
 """String filters.
 
 Contains a collection of useful string manipulation filters for use in Jinja
@@ -8,36 +7,41 @@ templates.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import base64
 import os
 import re
 import textwrap
 import warnings
-import base64
-
 from urllib.parse import quote
-
-# defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import ElementTree
 from xml.etree.ElementTree import Element
 
+import bleach
+
+# defusedxml does safe(r) parsing of untrusted XML data
+from defusedxml import ElementTree  # type:ignore
+
+from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
 
 __all__ = [
-    'wrap_text',
-    'html2text',
-    'add_anchor',
-    'strip_dollars',
-    'strip_files_prefix',
-    'comment_lines',
-    'get_lines',
-    'ipython2python',
-    'posix_path',
-    'path2url',
-    'add_prompts',
-    'ascii_only',
-    'prevent_list_blocks',
-    'strip_trailing_newline',
-    'text_base64',
+    "wrap_text",
+    "html2text",
+    "clean_html",
+    "add_anchor",
+    "strip_dollars",
+    "strip_files_prefix",
+    "comment_lines",
+    "get_lines",
+    "ipython2python",
+    "posix_path",
+    "path2url",
+    "add_prompts",
+    "ascii_only",
+    "prevent_list_blocks",
+    "strip_trailing_newline",
+    "text_base64",
 ]
+
+from nbconvert.filters.svg_constants import ALLOWED_SVG_ATTRIBUTES, ALLOWED_SVG_TAGS
 
 
 def wrap_text(text, width=100):
@@ -53,10 +57,10 @@ def wrap_text(text, width=100):
         Number of characters to wrap to, default 100.
     """
 
-    split_text = text.split('\n')
-    wrp = map(lambda x:textwrap.wrap(x,width), split_text)
-    wrpd = map('\n'.join, wrp)
-    return '\n'.join(wrpd)
+    split_text = text.split("\n")
+    wrp = map(lambda x: textwrap.wrap(x, width), split_text)  # noqa
+    wrpd = map("\n".join, wrp)
+    return "\n".join(wrpd)
 
 
 def html2text(element):
@@ -74,8 +78,28 @@ def html2text(element):
     text = element.text or ""
     for child in element:
         text += html2text(child)
-    text += (element.tail or "")
+    text += element.tail or ""
     return text
+
+
+def clean_html(element):
+    """Clean an html element."""
+    element = element.decode() if isinstance(element, bytes) else str(element)
+    kwargs = {}
+    css_sanitizer = _get_default_css_sanitizer()
+    if css_sanitizer:
+        kwargs['css_sanitizer'] = css_sanitizer
+    return bleach.clean(
+        element,
+        tags=[*bleach.ALLOWED_TAGS, *ALLOWED_SVG_TAGS, "div", "pre", "code", "span"],
+        strip_comments=False,
+        attributes={
+            **bleach.ALLOWED_ATTRIBUTES,
+            **{svg_tag: list(ALLOWED_SVG_ATTRIBUTES) for svg_tag in ALLOWED_SVG_TAGS},
+            "*": ["class", "id"],
+        },
+        **kwargs,
+    )
 
 
 def _convert_header_id(header_contents):
@@ -88,10 +112,10 @@ def _convert_header_id(header_contents):
     # Valid IDs need to be non-empty and contain no space characters, but are otherwise arbitrary.
     # However, these IDs are also used in URL fragments, which are more restrictive, so we URL
     # encode any characters that are not valid in URL fragments.
-    return quote(header_contents.replace(' ', '-'), safe="?/:@!$&'()*+,;=")
+    return quote(header_contents.replace(" ", "-"), safe="?/:@!$&'()*+,;=")
 
 
-def add_anchor(html, anchor_link_text=u'¶'):
+def add_anchor(html, anchor_link_text="¶"):
     """Add an id and an anchor-link to an html header
 
     For use on markdown headings
@@ -102,7 +126,7 @@ def add_anchor(html, anchor_link_text=u'¶'):
         # failed to parse, just return it unmodified
         return html
     link = _convert_header_id(html2text(h))
-    h.set('id', link)
+    h.set("id", link)
     a = Element("a", {"class": "anchor-link", "href": "#" + link})
     try:
         # Test if the anchor link text is HTML (e.g. an image)
@@ -112,17 +136,17 @@ def add_anchor(html, anchor_link_text=u'¶'):
         a.text = anchor_link_text
     h.append(a)
 
-    return ElementTree.tostring(h).decode(encoding='utf-8')
+    return ElementTree.tostring(h).decode(encoding="utf-8")
 
 
-def add_prompts(code, first='>>> ', cont='... '):
+def add_prompts(code, first=">>> ", cont="... "):
     """Add prompts to code snippets"""
     new_code = []
-    code_list = code.split('\n')
+    code_list = code.split("\n")
     new_code.append(first + code_list[0])
     for line in code_list[1:]:
         new_code.append(cont + line)
-    return '\n'.join(new_code)
+    return "\n".join(new_code)
 
 
 def strip_dollars(text):
@@ -135,11 +159,12 @@ def strip_dollars(text):
         Text to remove dollars from
     """
 
-    return text.strip('$')
+    return text.strip("$")
 
 
 files_url_pattern = re.compile(r'(src|href)\=([\'"]?)/?files/')
-markdown_url_pattern = re.compile(r'(!?)\[(?P<caption>.*?)\]\(/?files/(?P<location>.*?)\)')
+markdown_url_pattern = re.compile(r"(!?)\[(?P<caption>.*?)\]\(/?files/(?P<location>.*?)\)")
+
 
 def strip_files_prefix(text):
     """
@@ -152,11 +177,11 @@ def strip_files_prefix(text):
         Text in which to replace 'src="files/real...' with 'src="real...'
     """
     cleaned_text = files_url_pattern.sub(r"\1=\2", text)
-    cleaned_text = markdown_url_pattern.sub(r'\1[\2](\3)', cleaned_text)
+    cleaned_text = markdown_url_pattern.sub(r"\1[\2](\3)", cleaned_text)
     return cleaned_text
 
 
-def comment_lines(text, prefix='# '):
+def comment_lines(text, prefix="# "):
     """
     Build a Python comment line from input text.
 
@@ -168,13 +193,13 @@ def comment_lines(text, prefix='# '):
         Character to append to the start of each line.
     """
 
-    #Replace line breaks with line breaks and comment symbols.
-    #Also add a comment symbol at the beginning to comment out
-    #the first line.
-    return prefix + ('\n'+prefix).join(text.split('\n'))
+    # Replace line breaks with line breaks and comment symbols.
+    # Also add a comment symbol at the beginning to comment out
+    # the first line.
+    return prefix + ("\n" + prefix).join(text.split("\n"))
 
 
-def get_lines(text, start=None,end=None):
+def get_lines(text, start=None, end=None):
     """
     Split the input text into separate lines and then return the
     lines that the caller is interested in.
@@ -193,7 +218,8 @@ def get_lines(text, start=None,end=None):
     lines = text.split("\n")
 
     # Return the right lines.
-    return "\n".join(lines[start:end]) #re-join
+    return "\n".join(lines[start:end])  # re-join
+
 
 def ipython2python(code):
     """Transform IPython syntax to pure Python syntax
@@ -204,7 +230,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
-        from IPython.core.inputsplitter import IPythonInputSplitter
+        from IPython.core.inputtransformer2 import TransformerManager
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."
@@ -212,8 +238,9 @@ def ipython2python(code):
         )
         return code
     else:
-        isp = IPythonInputSplitter(line_input_checker=False)
+        isp = TransformerManager()
         return isp.transform_cell(code)
+
 
 def posix_path(path):
     """Turn a path into posix-style path/to/etc
@@ -221,36 +248,41 @@ def posix_path(path):
     Mainly for use in latex on Windows,
     where native Windows paths are not allowed.
     """
-    if os.path.sep != '/':
-        return path.replace(os.path.sep, '/')
+    if os.path.sep != "/":
+        return path.replace(os.path.sep, "/")
     return path
+
 
 def path2url(path):
     """Turn a file path into a URL"""
     parts = path.split(os.path.sep)
-    return '/'.join(quote(part) for part in parts)
+    return "/".join(quote(part) for part in parts)
+
 
 def ascii_only(s):
     """ensure a string is ascii"""
-    return s.encode('ascii', 'replace').decode('ascii')
+    return s.encode("ascii", "replace").decode("ascii")
+
 
 def prevent_list_blocks(s):
     """
     Prevent presence of enumerate or itemize blocks in latex headings cells
     """
-    out = re.sub(r'(^\s*\d*)\.', r'\1\.', s)
-    out = re.sub(r'(^\s*)\-', r'\1\-', out)
-    out = re.sub(r'(^\s*)\+', r'\1\+', out)
-    out = re.sub(r'(^\s*)\*', r'\1\*', out)
+    out = re.sub(r"(^\s*\d*)\.", r"\1\.", s)
+    out = re.sub(r"(^\s*)\-", r"\1\-", out)
+    out = re.sub(r"(^\s*)\+", r"\1\+", out)
+    out = re.sub(r"(^\s*)\*", r"\1\*", out)
     return out
+
 
 def strip_trailing_newline(text):
     """
     Strips a newline from the end of text.
     """
-    if text.endswith('\n'):
+    if text.endswith("\n"):
         text = text[:-1]
     return text
+
 
 def text_base64(text):
     """

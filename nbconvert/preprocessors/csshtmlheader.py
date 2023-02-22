@@ -4,19 +4,17 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import os
-import io
 import hashlib
-import nbconvert.resources
+import os
 
-from traitlets import Unicode, Union, Type
+from jupyterlab_pygments import JupyterStyle  # type:ignore
 from pygments.style import Style
-from jupyterlab_pygments import JupyterStyle
+from traitlets import Type, Unicode, Union
 
 from .base import Preprocessor
 
 try:
-    from notebook import DEFAULT_STATIC_FILES_PATH
+    from notebook import DEFAULT_STATIC_FILES_PATH  # type:ignore
 except ImportError:
     DEFAULT_STATIC_FILES_PATH = None
 
@@ -26,16 +24,17 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     Preprocessor used to pre-process notebook for HTML output.  Adds IPython notebook
     front-end CSS and Pygments CSS to HTML output.
     """
-    highlight_class = Unicode('.highlight',
-                              help="CSS highlight class identifier"
-    ).tag(config=True)
 
-    style = Union([Unicode('default'), Type(klass=Style)],
-                  help='Name of the pygments style to use',
-                  default_value=JupyterStyle
+    highlight_class = Unicode(".highlight", help="CSS highlight class identifier").tag(config=True)
+
+    style = Union(
+        [Unicode("default"), Type(klass=Style)],
+        help="Name of the pygments style to use",
+        default_value=JupyterStyle,
     ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
+        """Initialize the preprocessor."""
         Preprocessor.__init__(self, *pargs, **kwargs)
         self._default_css_hash = None
 
@@ -54,8 +53,8 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
             Additional resources used in the conversion process.  Allows
             preprocessors to pass variables into the Jinja engine.
         """
-        resources['inlining'] = {}
-        resources['inlining']['css'] = self._generate_header(resources)
+        resources["inlining"] = {}
+        resources["inlining"]["css"] = self._generate_header(resources)
         return nb, resources
 
     def _generate_header(self, resources):
@@ -64,6 +63,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         and Pygments.
         """
         from pygments.formatters import HtmlFormatter
+
         header = []
 
         formatter = HtmlFormatter(style=self.style)
@@ -73,19 +73,21 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         # Load the user's custom CSS and IPython's default custom CSS.  If they
         # differ, assume the user has made modifications to his/her custom CSS
         # and that we should inline it in the nbconvert output.
-        config_dir = resources['config_dir']
-        custom_css_filename = os.path.join(config_dir, 'custom', 'custom.css')
+        config_dir = resources["config_dir"]
+        custom_css_filename = os.path.join(config_dir, "custom", "custom.css")
         if os.path.isfile(custom_css_filename):
             if DEFAULT_STATIC_FILES_PATH and self._default_css_hash is None:
-                self._default_css_hash = self._hash(os.path.join(DEFAULT_STATIC_FILES_PATH, 'custom', 'custom.css'))
+                self._default_css_hash = self._hash(
+                    os.path.join(DEFAULT_STATIC_FILES_PATH, "custom", "custom.css")
+                )
             if self._hash(custom_css_filename) != self._default_css_hash:
-                with io.open(custom_css_filename, encoding='utf-8') as f:
+                with open(custom_css_filename, encoding="utf-8") as f:
                     header.append(f.read())
         return header
 
     def _hash(self, filename):
         """Compute the hash of a file."""
-        md5 = hashlib.md5()
-        with open(filename, 'rb') as f:
+        md5 = hashlib.md5()  # noqa
+        with open(filename, "rb") as f:
             md5.update(f.read())
         return md5.digest()

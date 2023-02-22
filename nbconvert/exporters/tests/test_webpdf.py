@@ -3,28 +3,31 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import io
-import pytest
-
 from unittest.mock import patch
 
-from .base import ExportersTestsBase
-from ..webpdf import WebPDFExporter
+import pytest
 
+from ..webpdf import PYPPETEER_INSTALLED, WebPDFExporter
+from .base import ExportersTestsBase
+
+
+@pytest.mark.skipif(not PYPPETEER_INSTALLED, reason="Pyppeteer not installed")
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 
-    exporter_class = WebPDFExporter
+    exporter_class = WebPDFExporter  # type:ignore
 
     @pytest.mark.network
     def test_export(self):
         """
         Can a TemplateExporter export something?
         """
-        (output, resources) = WebPDFExporter(allow_chromium_download=True).from_filename(self._get_notebook())
+        (output, resources) = WebPDFExporter(allow_chromium_download=True).from_filename(
+            self._get_notebook()
+        )
         assert len(output) > 0
 
-    @patch('pyppeteer.util.check_chromium', return_value=False)
+    @patch("pyppeteer.util.check_chromium", return_value=False)
     def test_webpdf_without_chromium(self, mock_check_chromium):
         """
         Generate PDFs if chromium not present?
@@ -38,8 +41,8 @@ class TestWebPDFExporter(ExportersTestsBase):
         """
         with pytest.raises(RuntimeError):
             exporter = WebPDFExporter()
-            with io.open(self._get_notebook(), encoding='utf-8') as f:
+            with open(self._get_notebook(), encoding="utf-8") as f:
                 nb = exporter.from_file(f, resources={})
                 # Have to do this as the very last action as traitlets do dynamic importing often
-                with patch('builtins.__import__', side_effect=ModuleNotFoundError("Fake missing")):
+                with patch("builtins.__import__", side_effect=ModuleNotFoundError("Fake missing")):
                     exporter.from_notebook_node(nb)

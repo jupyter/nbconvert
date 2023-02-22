@@ -2,23 +2,49 @@
 NBConvert Preprocessor for sanitizing HTML rendering of notebooks.
 """
 
-from bleach import (
-    ALLOWED_ATTRIBUTES,
-    ALLOWED_STYLES,
-    ALLOWED_TAGS,
-    clean,
-)
-from traitlets import (
-    Any,
-    Bool,
-    List,
-    Set,
-    Unicode,
-)
+import warnings
+
+from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
+from traitlets import Any, Bool, List, Set, Unicode
+
 from .base import Preprocessor
+
+_USE_BLEACH_CSS_SANITIZER = False
+_USE_BLEACH_STYLES = False
+
+
+try:
+    # bleach[css] >=5.0
+    from bleach.css_sanitizer import ALLOWED_CSS_PROPERTIES as ALLOWED_STYLES
+    from bleach.css_sanitizer import CSSSanitizer
+
+    _USE_BLEACH_CSS_SANITIZER = True
+    _USE_BLEACH_STYLES = False
+except ImportError:
+    try:
+        # bleach <5
+        from bleach import ALLOWED_STYLES  # type:ignore
+
+        _USE_BLEACH_CSS_SANITIZER = False
+        _USE_BLEACH_STYLES = True
+        warnings.warn(
+            "Support for bleach <5 will be removed in a future version of nbconvert",
+            DeprecationWarning,
+        )
+
+    except ImportError:
+        warnings.warn(
+            "The installed bleach/tinycss2 do not provide CSS sanitization, "
+            "please upgrade to bleach >=5",
+            UserWarning,
+        )
+
+
+__all__ = ["SanitizeHTML"]
 
 
 class SanitizeHTML(Preprocessor):
+    """A preprocessor to sanitize html."""
 
     # Bleach config.
     attributes = Any(
@@ -36,12 +62,12 @@ class SanitizeHTML(Preprocessor):
         Unicode(),
         config=True,
         default_value=ALLOWED_STYLES,
-        help="Allowed CSS styles if <style> tag is whitelisted"
+        help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(
         config=True,
         default_value=False,
-        help="If True, remove unsafe markup entirely instead of escaping"
+        help="If True, remove unsafe markup entirely instead of escaping",
     )
     strip_comments = Bool(
         config=True,
@@ -53,20 +79,20 @@ class SanitizeHTML(Preprocessor):
     safe_output_keys = Set(
         config=True,
         default_value={
-            'metadata',  # Not a mimetype per-se, but expected and safe.
-            'text/plain',
-            'text/latex',
-            'application/json',
-            'image/png',
-            'image/jpeg',
+            "metadata",  # Not a mimetype per-se, but expected and safe.
+            "text/plain",
+            "text/latex",
+            "application/json",
+            "image/png",
+            "image/jpeg",
         },
         help="Cell output mimetypes to render without modification",
     )
     sanitized_output_types = Set(
         config=True,
         default_value={
-            'text/html',
-            'text/markdown',
+            "text/html",
+            "text/markdown",
         },
         help="Cell output types to display after escaping with Bleach.",
     )
@@ -83,16 +109,16 @@ class SanitizeHTML(Preprocessor):
           code:
             Sanitize outputs that could result in code execution
         """
-        if cell.cell_type == 'raw':
+        if cell.cell_type == "raw":
             # Sanitize all raw cells anyway.
             # Only ones with the text/html mimetype should be emitted
             # but erring on the side of safety maybe.
             cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
-        elif cell.cell_type == 'markdown':
+        elif cell.cell_type == "markdown":
             cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
-        elif cell.cell_type == 'code':
+        elif cell.cell_type == "code":
             cell.outputs = self.sanitize_code_outputs(cell.outputs)
             return cell, resources
 
@@ -105,7 +131,7 @@ class SanitizeHTML(Preprocessor):
         """
         for output in outputs:
             # These are always ascii, so nothing to escape.
-            if output['output_type'] in ('stream', 'error'):
+            if output["output_type"] in ("stream", "error"):
                 continue
             data = output.data
             to_remove = []
@@ -128,11 +154,22 @@ class SanitizeHTML(Preprocessor):
         """
         Sanitize a string containing raw HTML tags.
         """
-        return clean(
-            html_str,
-            tags=self.tags,
-            attributes=self.attributes,
-            styles=self.styles,
-            strip=self.strip,
-            strip_comments=self.strip_comments,
-        )
+        kwargs = {
+            "tags": self.tags,
+            "attributes": self.attributes,
+            "strip": self.strip,
+            "strip_comments": self.strip_comments,
+        }
+
+        if _USE_BLEACH_CSS_SANITIZER:
+            css_sanitizer = CSSSanitizer(allowed_css_properties=self.styles)
+            kwargs.update(css_sanitizer=css_sanitizer)
+        elif _USE_BLEACH_STYLES:
+            kwargs.update(styles=self.styles)
+
+        return clean(html_str, **kwargs)
+
+
+def _get_default_css_sanitizer():
+    if _USE_BLEACH_CSS_SANITIZER:
+        return CSSSanitizer(allowed_css_properties=ALLOWED_STYLES)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -26,11 +25,11 @@
 #     surface as in Dessler Fig. 4.6. Does adding a second opaque (ε=1)
 #     layer (Dessler Figure 4.7) increase the greenhouse effect, decrease
 #     the greenhouse effect, or leave the greenhouse effect unchanged?
-#     
+#
 #     A.  increase
-#     
+#
 #     B.  decrease
-#     
+#
 #     C.  no change
 
 # %% [markdown] ctype="question" qnum="2"
@@ -38,15 +37,15 @@
 #     semi-transparent atmosphere shown below (and seen in your reading),
 #     what would the approximate long-wave atmospheric emissivity ε need to be in
 #     order for $T_g$=320 K, if the average shorwave flux was $I_0=400\ W\,m^{-2}$. (Hint, look at equations 5-6 in the reading).
-#     
+#
 #     A.  0.54
-#     
+#
 #     B.  0.65
-#     
+#
 #     C.  0.77
-#     
+#
 #     D.  0.88
-#     
+#
 #     E.  0.95
 
 # %% [markdown] ctype="question" qnum="2"
@@ -54,7 +53,7 @@
 
 # %% [markdown] ctype="question" qnum="3"
 # 3. Given a one-layer atmosphere like problem 2, but with $\epsilon=0.8$, $T_G$=306 K, $T_1$=258 K, $I_0$ = 300 $W\,m^{-2}$,  calculate the greenouse effect. (choose the closest number)
-#  
+#
 # A. -121 $W\,m^2$
 #
 # B. +121 $W\,m^2$
@@ -67,7 +66,7 @@
 
 # %% [markdown] ctype="question" qnum="4"
 # 4.  According to the figure in Trenberth et al. 2009 below, how big is the Earth's greenhouse effect?
-#  
+#
 # A.  85 $W\,m^{-2}$
 #
 # B. 157 $W\,m^{-2}$

@@ -12,14 +12,14 @@ class MyExporter(HTMLExporter):
     """
     My custom exporter
     """
-    
-    @default('file_extension')
+
+    @default("file_extension")
     def _file_extension_default(self):
         """
         The new file extension is `.test_ext`
         """
-        return '.test_ext'
+        return ".test_ext"
 
-    @default('template_extension')
+    @default("template_extension")
     def _template_extension_default(self):
-        return '.html.j2'
+        return ".html.j2"

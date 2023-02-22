@@ -70,7 +70,7 @@ Create the release
 
 #.  Update the :doc:`changelog <changelog>` to account for all the PRs assigned to this milestone.
 
-#.  Update version number in ``notebook/_version.py`` and remove ``.dev`` from dev_info. Note that the version may already be on the dev version of the number you're releasing.
+#.  Update version number in ``nbconvert/_version.py`` and remove ``.dev`` from dev_info. Note that the version may already be on the dev version of the number you're releasing.
 
 #.  Commit and tag the release with the current version number:
 
@@ -83,8 +83,8 @@ Create the release
 
     .. code:: bash
 
-        python setup.py sdist
-        python setup.py bdist_wheel
+        pip install build
+        python -m build .
 
 #.  You can now test the ``wheel`` and the ``sdist`` locally before uploading
     to PyPI. Make sure to use `twine <https://github.com/pypa/twine>`_ to
@@ -112,7 +112,7 @@ Push directly on main, including --tags separately
 Return to development state
 ---------------------------
 
-If all went well, change the ``notebook/_version.py`` back by adding the
+If all went well, change the ``nbconvert/_version.py`` back by adding the
     ``.dev`` suffix and moving the version forward to the next patch
     release number.
 
@@ -120,4 +120,6 @@ If all went well, change the ``notebook/_version.py`` back by adding the
 Email googlegroup with update letter
 ------------------------------------
 
-Make sure to email jupyter@googlegroups.com with the subject line of "[ANN] NBConvert $VERSION -- ..." and include at least the significant changes, contributors, and individual PR notes (if not many significant changes).
+Make sure to email jupyter@googlegroups.com with the subject line of
+"[ANN] NBConvert $VERSION -- ..." and include at least the significant changes,
+contributors, and individual PR notes (if not many significant changes).

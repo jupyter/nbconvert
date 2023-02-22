@@ -51,7 +51,13 @@ HTML
   - ``--template lab`` (default)
 
     A full static HTML render of the notebook.
-    This looks very similar to the jupyter lab interactive view.
+    This looks very similar to the JupyterLab interactive view.
+
+    The lab template supports the extra ``--theme`` option, which defaults to ``light``.
+    This extra option not only allows you to use the default ``light`` or ``dark`` themes provided by JupyterLab,
+    but it allows you to use custom themes. For example:
+
+    ``pip install jupyterlab-miami-nights`` then ``--theme jupyterlab_miami_nights``.
 
   - ``--template classic``
 
@@ -60,6 +66,10 @@ HTML
   - ``--template basic``
 
     Base HTML, rendering with minimal structure and styles.
+
+  - ``--embed-images``
+
+    If this option is provided, embed images as base64 urls in the resulting HTML file.
 
 .. _convert_latex:
 

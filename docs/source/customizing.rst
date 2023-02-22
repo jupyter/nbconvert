@@ -4,7 +4,7 @@ Creating Custom Templates for nbconvert
 Selecting a template
 --------------------
 
-Most exporters in nbconvert are subclasses of `TemplateExporter`, and make use of
+Most exporters in nbconvert are subclasses of ``TemplateExporter``, and make use of
 jinja to render notebooks into the destination format.
 
 Alternative nbconvert templates can be selected by name from the command line with the
@@ -140,3 +140,68 @@ from the Jupyter data directory.
 For example, in the reveal template, ``index.html.j2`` extends ``base.html.j2`` which is in the same directory, and
 ``base.html.j2`` extends ``lab/base.html.j2``. This approach allows using content that is available in other templates
 or may be overriden in the current template.
+
+A practical example
+~~~~~~~~~~~~~~~~~~~
+
+Say you would like to modify the existing Markdown template to wrap each
+output statement in a fenced code block:
+
+.. code::
+
+   ```output
+   (1, 2, 3)
+   ```
+
+Start by creating a new template directory, say ``mdoutput``.  In it,
+you have the following files::
+
+  conf.json
+  index.md.j2
+
+The configuration file, ``conf.json`` states that your template
+applies to markdown files::
+
+  {
+    "mimetypes": {
+      "text/markdown": true
+    }
+  }
+
+The ``index.md.j2`` template entrypoint extends the existing markdown
+template, and redefines how output blocks are rendered:
+
+.. code::
+
+   {% extends 'markdown/index.md.j2' %}
+
+   {%- block traceback_line -%}
+   ```output
+   {{ line.rstrip() | strip_ansi }}
+   ```
+   {%- endblock traceback_line -%}
+
+   {%- block stream -%}
+   ```output
+   {{ output.text.rstrip() }}
+   ```
+   {%- endblock stream -%}
+
+   {%- block data_text scoped -%}
+   ```output
+   {{ output.data['text/plain'].rstrip() }}
+   ```
+   {%- endblock data_text -%}
+
+You can now convert your notebook to markdown using the new template::
+
+  jupyter nbconvert --execute notebook.ipynb --to markdown --template=mdoutput
+
+(If you put your template folder in a different location than your
+notebook, remember to add
+``--TemplateExporter.extra_template_basedirs=path/to/template/parent``.)
+
+To further explore the possibilities of templating, take a look at the
+root of all templates: ``null.j2``.  You can find it in the
+``./nbconvert/templates/base`` subfolder of one of the data paths given
+by ``jupyter --paths``.

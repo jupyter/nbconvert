@@ -1,41 +1,32 @@
-name: Generate Docs
+name: Docs
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9' ]
+        python-version: ["3.7", "3.10"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk enchant-2
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
-      - name: Install Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: 'x64'
-      - name: Cache pip on Linux
-        uses: actions/cache@v2
-        if: startsWith(runner.os, 'Linux')
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - name: Install
         run: pip install -v ".[all]"
       - name: List installed packages
@@ -43,26 +34,24 @@ jobs:
           pip freeze
           pip check
       - name: Build HTML docs
-        env:
-          PYTHONWARNINGS: default
         run: |
-          python setup.py build_sphinx -b html
+          cd docs
+          make html SPHINXOPTS="-W"
       - name: Upload HTML
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: html
           path: build/sphinx/html
       - name: Build PDF docs
-        env:
-          PYTHONWARNINGS: default
         run: |
-          python -Wd setup.py build_sphinx -b latex
           cd docs
           make latexpdf
       - name: Upload PDF
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pdf
           path: docs/build/latex/nbconvert.pdf
       - name: Check links
-        run: python setup.py build_sphinx -b linkcheck
+        run: |
+          cd docs
+          make linkcheck

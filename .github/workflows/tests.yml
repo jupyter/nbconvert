@@ -4,60 +4,157 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+  schedule:
+    - cron: "0 8 * * *"
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -eux {0}
 
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      NBFORMAT_VALIDATOR: jsonschema
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9' ]
+        os: ["ubuntu-20.04", "macos-latest", "windows-latest"]
+        python-version: ["3.7", "3.10"]
+        include:
+          - os: "windows-latest"
+            python-version: "3.8"
+          - os: "ubuntu-20.04"
+            python-version: "3.9"
+      fail-fast: false
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Install dependencies
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
+      - name: Install Linux dependencies
+        if: startsWith(runner.os, 'Linux')
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-plain-generic inkscape texlive-xetex
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
           wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
 
-      - name: Install Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: 'x64'
-      - name: Cache pip on Linux
-        uses: actions/cache@v2
-        if: startsWith(runner.os, 'Linux')
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}
-
-      - name: Install package dependencies
+      - name: Run tests on Linux
+        if: ${{ startsWith(runner.os, 'linux') }}
         run: |
-          pip install --upgrade setuptools pip pytest
-          pip install -f travis-wheels/wheelhouse . codecov coverage
-          pip install nbconvert[execute,serve,test]
-          pip install check-manifest
-          python -m ipykernel.kernelspec --user
+          xvfb-run --auto-servernum hatch run cov:test
 
-      - name: List installed packages
+      - name: Run tests on other platforms
+        if: ${{ !startsWith(runner.os, 'linux')  }}
         run: |
-          pip freeze
-          pip check
-
-      - name: Run tests
-        env:
-          PYTHONWARNINGS: default
-        run: |
-          check-manifest --ignore "share/**"
-          # cd so we test the install, not the repo
-          cd `mktemp -d`
-          py.test --cov nbconvert -v --pyargs nbconvert
+          hatch run cov:test
 
       - name: Code coverage
-        run: codecov
+        run: |
+          pip install codecov coverage[toml]
+          codecov
+
+  test_lint:
+    name: Test Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      -  name: Run Linters
+         run: |
+          hatch run typing:test
+          hatch run lint:style
+          pipx run interrogate -v .
+          pipx run doc8 --max-line-length=200  --ignore-path=docs/source/other/full-config.rst
+
+  check_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - run: pip install -e .
+      - uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
+        with:
+          version_spec: 10.10.10
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  check_links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
+        with:
+          ignore_links: 'https://ipywidgets.readthedocs.io/en/latest/examples/Output'
+
+  test_minimum_versions:
+    name: Test Minimum Versions
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Base Setup
+        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+        with:
+          dependency_type: minimum
+          only_create_file: 1
+      - name: Run the unit tests
+        run: |
+          export NBFORMAT_VALIDATOR=jsonschema
+          hatch run test:nowarn || hatch run test:nowarn --lf
+
+  test_prereleases:
+    name: Test Prereleases
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+        with:
+         dependency_type: pre
+      - name: Run the tests
+        run: |
+          export NBFORMAT_VALIDATOR=jsonschema
+          hatch run test:nowarn || hatch run test:nowarn --lf
+
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/make-sdist@v1
+
+  test_sdist:
+    runs-on: ubuntu-latest
+    needs: [make_sdist]
+    name: Install from SDist and Test
+    timeout-minutes: 20
+    steps:
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
+
+  tests_check: # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - run-tests
+      - test_lint
+      - test_minimum_versions
+      - test_prereleases
+      - check_links
+      - check_release
+      - test_sdist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}

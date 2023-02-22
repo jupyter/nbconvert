@@ -3,26 +3,26 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from __future__ import print_function
 
 import os
-import webbrowser
 import threading
+import webbrowser
 
-from tornado import web, ioloop, httpserver, log, gen
+from tornado import gen, httpserver, ioloop, log, web
 from tornado.httpclient import AsyncHTTPClient
-from traitlets import Bool, Unicode, Int
+from traitlets import Bool, Int, Unicode
 
 from .base import PostProcessorBase
 
 
 class ProxyHandler(web.RequestHandler):
     """handler the proxies requests from a local prefix to a CDN"""
+
     @gen.coroutine
     def get(self, prefix, url):
         """proxy a request to a CDN"""
-        proxy_url = "/".join([self.settings['cdn'], url])
-        client = self.settings['client']
+        proxy_url = "/".join([self.settings["cdn"], url])
+        client = self.settings["client"]
         response = yield client.fetch(proxy_url)
 
         for header in ["Content-Type", "Cache-Control", "Date", "Last-Modified", "Expires"]:
@@ -33,42 +33,42 @@ class ProxyHandler(web.RequestHandler):
 
 class ServePostProcessor(PostProcessorBase):
     """Post processor designed to serve files
-    
+
     Proxies reveal.js requests to a CDN if no local reveal.js is present
     """
 
+    open_in_browser = Bool(True, help="""Should the browser be opened automatically?""").tag(
+        config=True
+    )
 
-    open_in_browser = Bool(True,
-        help="""Should the browser be opened automatically?"""
+    browser = Unicode(
+        "",
+        help="""Specify what browser should be used to open slides. See
+                      https://docs.python.org/3/library/webbrowser.html#webbrowser.register
+                      to see how keys are mapped to browser executables. If
+                      not specified, the default browser will be determined
+                      by the `webbrowser`
+                      standard library module, which allows setting of the BROWSER
+                      environment variable to override it.
+                      """,
     ).tag(config=True)
 
-    browser = Unicode(u'', 
-                      help="""Specify what browser should be used to open slides. See
-                      https://docs.python.org/3/library/webbrowser.html#webbrowser.register
-                      to see how keys are mapped to browser executables. If 
-                      not specified, the default browser will be determined 
-                      by the `webbrowser` 
-                      standard library module, which allows setting of the BROWSER 
-                      environment variable to override it.
-                      """).tag(config=True)
-
-    reveal_cdn = Unicode("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0",
-                         help="""URL for reveal.js CDN.""").tag(config=True)
-    reveal_prefix = Unicode("reveal.js",
-                            help="URL prefix for reveal.js").tag(config=True)
-    ip = Unicode("127.0.0.1",
-                 help="The IP address to listen on.").tag(config=True)
+    reveal_cdn = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.5.0", help="""URL for reveal.js CDN."""
+    ).tag(config=True)
+    reveal_prefix = Unicode("reveal.js", help="URL prefix for reveal.js").tag(config=True)
+    ip = Unicode("127.0.0.1", help="The IP address to listen on.").tag(config=True)
     port = Int(8000, help="port for the server to listen on.").tag(config=True)
 
-    def postprocess(self, input):
+    def postprocess(self, input):  # noqa
         """Serve the build directory with a webserver."""
         dirname, filename = os.path.split(input)
-        handlers = [
-            (r"/(.+)", web.StaticFileHandler, {'path' : dirname}),
-            (r"/", web.RedirectHandler, {"url": "/%s" % filename})
+        handlers: list = [
+            (r"/(.+)", web.StaticFileHandler, {"path": dirname}),
+            (r"/", web.RedirectHandler, {"url": "/%s" % filename}),
         ]
-        
-        if ('://' in self.reveal_prefix or self.reveal_prefix.startswith("//")):
+
+        if "://" in self.reveal_prefix or self.reveal_prefix.startswith("//"):
             # reveal specifically from CDN, nothing to do
             pass
         elif os.path.isdir(os.path.join(dirname, self.reveal_prefix)):
@@ -77,12 +77,13 @@ class ServePostProcessor(PostProcessorBase):
         else:
             self.log.info("Redirecting %s requests to %s", self.reveal_prefix, self.reveal_cdn)
             handlers.insert(0, (r"/(%s)/(.*)" % self.reveal_prefix, ProxyHandler))
-        
-        app = web.Application(handlers,
-                              cdn=self.reveal_cdn,
-                              client=AsyncHTTPClient(),
-                              )
-        
+
+        app = web.Application(
+            handlers,
+            cdn=self.reveal_cdn,
+            client=AsyncHTTPClient(),
+        )
+
         # hook up tornado logging to our logger
         log.app_log = self.log
 
@@ -94,10 +95,10 @@ class ServePostProcessor(PostProcessorBase):
         if self.open_in_browser:
             try:
                 browser = webbrowser.get(self.browser or None)
-                b = lambda: browser.open(url, new=2)
+                b = lambda: browser.open(url, new=2)  # noqa
                 threading.Thread(target=b).start()
             except webbrowser.Error as e:
-                self.log.warning('No web browser found: %s.' % e)
+                self.log.warning("No web browser found: %s." % e)
                 browser = None
 
         try:
@@ -105,11 +106,14 @@ class ServePostProcessor(PostProcessorBase):
         except KeyboardInterrupt:
             print("\nInterrupted")
 
+
 def main(path):
     """allow running this module to serve the slides"""
     server = ServePostProcessor()
     server(path)
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     import sys
+
     main(sys.argv[1])

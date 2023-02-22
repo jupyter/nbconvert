@@ -1,5 +1,6 @@
 """filters for metadata"""
 
+
 def get_metadata(output, key, mimetype=None):
     """Resolve an output metadata key
 
@@ -8,7 +9,7 @@ def get_metadata(output, key, mimetype=None):
     Otherwise, just resolve at top-level.
     Returns None if no data found.
     """
-    md = output.get('metadata') or {}
+    md = output.get("metadata") or {}
     if mimetype and mimetype in md:
         value = md[mimetype].get(key)
         if value is not None:

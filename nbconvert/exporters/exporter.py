@@ -5,41 +5,43 @@ see templateexporter.py.
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from __future__ import print_function, absolute_import
 
-import io
-import os
-import copy
 import collections
+import copy
 import datetime
+import os
 import sys
+import typing as t
 
 import nbformat
-
-from traitlets.config.configurable import LoggingConfigurable
+from nbformat import NotebookNode, validator
+from traitlets import Bool, HasTraits, List, TraitError, Unicode
 from traitlets.config import Config
-from traitlets import Bool, HasTraits, Unicode, List, TraitError
+from traitlets.config.configurable import LoggingConfigurable
 from traitlets.utils.importstring import import_item
-from typing import Optional
 
 
 class ResourcesDict(collections.defaultdict):
+    """A default dict for resources."""
+
     def __missing__(self, key):
-        return ''
+        """Handle missing value."""
+        return ""
 
 
 class FilenameExtension(Unicode):
     """A trait for filename extensions."""
 
-    default_value = u''
-    info_text = 'a filename extension, beginning with a dot'
+    default_value = ""
+    info_text = "a filename extension, beginning with a dot"
 
     def validate(self, obj, value):
+        """Validate the file name."""
         # cast to proper unicode
         value = super().validate(obj, value)
 
         # check that it starts with a dot
-        if value and not value.startswith('.'):
+        if value and not value.startswith("."):
             msg = "FileExtension trait '{}' does not begin with a dot: {!r}"
             raise TraitError(msg.format(self.name, value))
 
@@ -53,48 +55,50 @@ class Exporter(LoggingConfigurable):
     accompanying resources dict.
     """
 
-    enabled = Bool(True,
-        help = "Disable this exporter (and any exporters inherited from it)."
-    ).tag(config=True)
+    enabled = Bool(True, help="Disable this exporter (and any exporters inherited from it).").tag(
+        config=True
+    )
 
     file_extension = FilenameExtension(
         help="Extension of the file that should be written to disk"
     ).tag(config=True)
 
-    optimistic_validation = Bool(False,
-        help = "Reduces the number of validation steps so that it only occurs after all preprocesors have run."
+    optimistic_validation = Bool(
+        False,
+        help="Reduces the number of validation steps so that it only occurs after all preprocesors have run.",
     ).tag(config=True)
 
     # MIME type of the result file, for HTTP response headers.
     # This is *not* a traitlet, because we want to be able to access it from
     # the class, not just on instances.
-    output_mimetype = ''
+    output_mimetype = ""
 
     # Should this converter be accessible from the notebook front-end?
     # If so, should be a friendly name to display (and possibly translated).
-    export_from_notebook = None
+    export_from_notebook: str = None  # type:ignore
 
-    #Configurability, allows the user to easily add filters and preprocessors.
-    preprocessors = List(
-        help="""List of preprocessors, by name or namespace, to enable."""
-    ).tag(config=True)
+    # Configurability, allows the user to easily add filters and preprocessors.
+    preprocessors = List(help="""List of preprocessors, by name or namespace, to enable.""").tag(
+        config=True
+    )
 
     _preprocessors = List()
 
-    default_preprocessors = List([
-                                  'nbconvert.preprocessors.TagRemovePreprocessor',
-                                  'nbconvert.preprocessors.RegexRemovePreprocessor',
-                                  'nbconvert.preprocessors.ClearOutputPreprocessor',
-                                  'nbconvert.preprocessors.ExecutePreprocessor',
-                                  'nbconvert.preprocessors.coalesce_streams',
-                                  'nbconvert.preprocessors.SVG2PDFPreprocessor',
-                                  'nbconvert.preprocessors.LatexPreprocessor',
-                                  'nbconvert.preprocessors.HighlightMagicsPreprocessor',
-                                  'nbconvert.preprocessors.ExtractOutputPreprocessor',
-                                  'nbconvert.preprocessors.ClearMetadataPreprocessor',
-                              ],
+    default_preprocessors = List(
+        [
+            "nbconvert.preprocessors.TagRemovePreprocessor",
+            "nbconvert.preprocessors.RegexRemovePreprocessor",
+            "nbconvert.preprocessors.ClearOutputPreprocessor",
+            "nbconvert.preprocessors.ExecutePreprocessor",
+            "nbconvert.preprocessors.coalesce_streams",
+            "nbconvert.preprocessors.SVG2PDFPreprocessor",
+            "nbconvert.preprocessors.LatexPreprocessor",
+            "nbconvert.preprocessors.HighlightMagicsPreprocessor",
+            "nbconvert.preprocessors.ExtractOutputPreprocessor",
+            "nbconvert.preprocessors.ClearMetadataPreprocessor",
+        ],
         help="""List of preprocessors available by default, by name, namespace,
-        instance, or type."""
+        instance, or type.""",
     ).tag(config=True)
 
     def __init__(self, config=None, **kw):
@@ -122,13 +126,15 @@ class Exporter(LoggingConfigurable):
     def default_config(self):
         return Config()
 
-    def from_notebook_node(self, nb, resources=None, **kw):
+    def from_notebook_node(
+        self, nb: NotebookNode, resources: t.Optional[t.Any] = None, **kw: t.Any
+    ) -> t.Tuple[NotebookNode, t.Dict]:
         """
         Convert a notebook from a notebook node instance.
 
         Parameters
         ----------
-        nb : `nbformat.NotebookNode`
+        nb : :class:`~nbformat.NotebookNode`
             Notebook node (dict-like with attr-access)
         resources : dict
             Additional resources that can be accessed read/write by
@@ -140,20 +146,22 @@ class Exporter(LoggingConfigurable):
         nb_copy = copy.deepcopy(nb)
         resources = self._init_resources(resources)
 
-        if 'language' in nb['metadata']:
-            resources['language'] = nb['metadata']['language'].lower()
+        if "language" in nb["metadata"]:
+            resources["language"] = nb["metadata"]["language"].lower()
 
         # Preprocess
         nb_copy, resources = self._preprocess(nb_copy, resources)
-        notebook_name = ''
+        notebook_name = ""
         if resources is not None:
-            name = resources.get('metadata', {}).get('name', '')
-            path = resources.get('metadata', {}).get('path', '')
+            name = resources.get("metadata", {}).get("name", "")
+            path = resources.get("metadata", {}).get("path", "")
             notebook_name = os.path.join(path, name)
         self._nb_metadata[notebook_name] = nb_copy.metadata
         return nb_copy, resources
 
-    def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):
+    def from_filename(
+        self, filename: str, resources: t.Optional[dict] = None, **kw: t.Any
+    ) -> t.Tuple[NotebookNode, t.Dict]:
         """
         Convert a notebook from a notebook file.
 
@@ -171,26 +179,29 @@ class Exporter(LoggingConfigurable):
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
-        if not 'metadata' in resources or resources['metadata'] == '':
-            resources['metadata'] = ResourcesDict()
+        if "metadata" not in resources or resources["metadata"] == "":
+            resources["metadata"] = ResourcesDict()
         path, basename = os.path.split(filename)
         notebook_name = os.path.splitext(basename)[0]
-        resources['metadata']['name'] = notebook_name
-        resources['metadata']['path'] = path
+        resources["metadata"]["name"] = notebook_name
+        resources["metadata"]["path"] = path
 
-        modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+        modified_date = datetime.datetime.fromtimestamp(
+            os.path.getmtime(filename), tz=datetime.timezone.utc
+        )
         # datetime.strftime date format for ipython
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             date_format = "%B %d, %Y"
         else:
             date_format = "%B %-d, %Y"
-        resources['metadata']['modified_date'] = modified_date.strftime(date_format)
+        resources["metadata"]["modified_date"] = modified_date.strftime(date_format)
 
-        with io.open(filename, encoding='utf-8') as f:
+        with open(filename, encoding="utf-8") as f:
             return self.from_file(f, resources=resources, **kw)
 
-
-    def from_file(self, file_stream, resources=None, **kw):
+    def from_file(
+        self, file_stream: t.Any, resources: t.Optional[dict] = None, **kw: t.Any
+    ) -> t.Tuple[NotebookNode, dict]:
         """
         Convert a notebook from a notebook file.
 
@@ -205,8 +216,9 @@ class Exporter(LoggingConfigurable):
             Ignored
 
         """
-        return self.from_notebook_node(nbformat.read(file_stream, as_version=4), resources=resources, **kw)
-
+        return self.from_notebook_node(
+            nbformat.read(file_stream, as_version=4), resources=resources, **kw
+        )
 
     def register_preprocessor(self, preprocessor, enabled=False):
         """
@@ -225,18 +237,22 @@ class Exporter(LoggingConfigurable):
 
         """
         if preprocessor is None:
-            raise TypeError('preprocessor must not be None')
+            msg = "preprocessor must not be None"
+            raise TypeError(msg)
         isclass = isinstance(preprocessor, type)
         constructed = not isclass
 
         # Handle preprocessor's registration based on it's type
-        if constructed and isinstance(preprocessor, str,):
+        if constructed and isinstance(
+            preprocessor,
+            str,
+        ):
             # Preprocessor is a string, import the namespace and recursively call
             # this register_preprocessor method
             preprocessor_cls = import_item(preprocessor)
             return self.register_preprocessor(preprocessor_cls, enabled)
 
-        if constructed and hasattr(preprocessor, '__call__'):
+        if constructed and hasattr(preprocessor, "__call__"):  # noqa
             # Preprocessor is a function, no need to construct it.
             # Register and return the preprocessor.
             if enabled:
@@ -256,8 +272,9 @@ class Exporter(LoggingConfigurable):
         else:
             # Preprocessor is an instance of something without a __call__
             # attribute.
-            raise TypeError('preprocessor must be callable or an importable constructor, got %r' % preprocessor)
-
+            raise TypeError(
+                "preprocessor must be callable or an importable constructor, got %r" % preprocessor
+            )
 
     def _init_preprocessors(self):
         """
@@ -274,10 +291,9 @@ class Exporter(LoggingConfigurable):
         for preprocessor in self.preprocessors:
             self.register_preprocessor(preprocessor, enabled=True)
 
-
     def _init_resources(self, resources):
 
-        #Make sure the resources dict is of ResourcesDict type.
+        # Make sure the resources dict is of ResourcesDict type.
         if resources is None:
             resources = ResourcesDict()
         if not isinstance(resources, ResourcesDict):
@@ -285,28 +301,27 @@ class Exporter(LoggingConfigurable):
             new_resources.update(resources)
             resources = new_resources
 
-        #Make sure the metadata extension exists in resources
-        if 'metadata' in resources:
-            if not isinstance(resources['metadata'], ResourcesDict):
+        # Make sure the metadata extension exists in resources
+        if "metadata" in resources:
+            if not isinstance(resources["metadata"], ResourcesDict):
                 new_metadata = ResourcesDict()
-                new_metadata.update(resources['metadata'])
-                resources['metadata'] = new_metadata
+                new_metadata.update(resources["metadata"])
+                resources["metadata"] = new_metadata
         else:
-            resources['metadata'] = ResourcesDict()
-            if not resources['metadata']['name']:
-                resources['metadata']['name'] = 'Notebook'
+            resources["metadata"] = ResourcesDict()
+            if not resources["metadata"]["name"]:
+                resources["metadata"]["name"] = "Notebook"
 
-        #Set the output extension
-        resources['output_extension'] = self.file_extension
+        # Set the output extension
+        resources["output_extension"] = self.file_extension
         return resources
 
     def _validate_preprocessor(self, nbc, preprocessor):
         try:
             nbformat.validate(nbc, relax_add_props=True)
         except nbformat.ValidationError:
-            self.log.error('Notebook is invalid after preprocessor %s',
-                               preprocessor)
-            raise 
+            self.log.error("Notebook is invalid after preprocessor %s", preprocessor)
+            raise
 
     def _preprocess(self, nb, resources):
         """
@@ -325,8 +340,11 @@ class Exporter(LoggingConfigurable):
 
         # Do a copy.deepcopy first,
         # we are never safe enough with what the preprocessors could do.
-        nbc =  copy.deepcopy(nb)
+        nbc = copy.deepcopy(nb)
         resc = copy.deepcopy(resources)
+
+        if hasattr(validator, "normalize"):
+            _, nbc = validator.normalize(nbc)
 
         # Run each preprocessor on the notebook.  Carry the output along
         # to each preprocessor
@@ -336,6 +354,6 @@ class Exporter(LoggingConfigurable):
                 self._validate_preprocessor(nbc, preprocessor)
 
         if self.optimistic_validation:
-          self._validate_preprocessor(nbc, preprocessor) 
+            self._validate_preprocessor(nbc, preprocessor)
 
         return nbc, resc

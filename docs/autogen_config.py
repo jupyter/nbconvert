@@ -8,6 +8,7 @@ jupyter_nbconvert_config.py.
 
 """
 import os.path
+
 from nbconvert.nbconvertapp import NbConvertApp
 
 header = """\
@@ -48,11 +49,25 @@ try:
     indir = os.path.dirname(__file__)
 except NameError:
     indir = os.path.dirname(os.getcwd())
-destination = os.path.join(indir, 'source/config_options.rst')
+destination = os.path.join(indir, "source/config_options.rst")
 
-with open(destination, 'w') as f:
+with open(destination, "w") as f:
     app = NbConvertApp()
     f.write(header)
     f.write(app.document_flag_help())
     f.write(app.document_alias_help())
     f.write(app.document_config_options())
+
+
+# Workaround until https://github.com/jupyter/nbclient/pull/216 is released
+with open(destination) as f:
+    data = f.read()
+
+data = data.replace("`CellExecutionError`", "``CellExecutionError``")
+data = data.replace("`cell`", "``cell``")
+data = data.replace("`cell_index`", "``cell_index``")
+data = data.replace("`cell_allows_errors`", "``cell_allows_errors``")
+data = data.replace("`notebook`", "``notebook``")
+
+with open(destination, "w") as f:
+    f.write(data)

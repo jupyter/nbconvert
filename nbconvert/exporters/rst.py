@@ -13,27 +13,25 @@ class RSTExporter(TemplateExporter):
     """
     Exports reStructuredText documents.
     """
-    
-    @default('file_extension')
+
+    @default("file_extension")
     def _file_extension_default(self):
-        return '.rst'
+        return ".rst"
 
-    @default('template_name')
+    @default("template_name")
     def _template_name_default(self):
-        return 'rst'
+        return "rst"
 
-    output_mimetype = 'text/restructuredtext'
+    output_mimetype = "text/restructuredtext"
     export_from_notebook = "reST"
 
     @property
     def default_config(self):
-        c = Config({
-            'ExtractOutputPreprocessor':{
-                'enabled':True
-                },
-            'HighlightMagicsPreprocessor': {
-                'enabled':True
-                },
-            })
+        c = Config(
+            {
+                "ExtractOutputPreprocessor": {"enabled": True},
+                "HighlightMagicsPreprocessor": {"enabled": True},
+            }
+        )
         c.merge(super().default_config)
         return c

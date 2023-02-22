@@ -3,28 +3,39 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import io
-import os
+import contextlib
 import glob
+import os
 import shlex
 import shutil
 import sys
 import unittest
-import nbconvert
-from subprocess import Popen, PIPE
+from subprocess import PIPE, Popen
+from tempfile import TemporaryDirectory
 
 from nbformat import v4, write
-from testpath.tempdir import TemporaryWorkingDirectory
+
+import nbconvert
+
+from ..utils import _contextlib_chdir
 
 
 class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
     functions."""
 
-
-    def fuzzy_compare(self, a, b, newlines_are_spaces=True, tabs_are_spaces=True,
-                      fuzzy_spacing=True, ignore_spaces=False,
-                      ignore_newlines=False, case_sensitive=False, leave_padding=False):
+    def fuzzy_compare(
+        self,
+        a,
+        b,
+        newlines_are_spaces=True,
+        tabs_are_spaces=True,
+        fuzzy_spacing=True,
+        ignore_spaces=False,
+        ignore_newlines=False,
+        case_sensitive=False,
+        leave_padding=False,
+    ):
         """
         Performs a fuzzy comparison of two strings.  A fuzzy comparison is a
         comparison that ignores insignificant differences in the two comparands.
@@ -37,24 +48,24 @@ class TestsBase(unittest.TestCase):
             b = b.strip()
 
         if ignore_newlines:
-            a = a.replace('\n', '')
-            b = b.replace('\n', '')
+            a = a.replace("\n", "")
+            b = b.replace("\n", "")
 
         if newlines_are_spaces:
-            a = a.replace('\n', ' ')
-            b = b.replace('\n', ' ')
+            a = a.replace("\n", " ")
+            b = b.replace("\n", " ")
 
         if tabs_are_spaces:
-            a = a.replace('\t', ' ')
-            b = b.replace('\t', ' ')
+            a = a.replace("\t", " ")
+            b = b.replace("\t", " ")
 
         if ignore_spaces:
-            a = a.replace(' ', '')
-            b = b.replace(' ', '')
+            a = a.replace(" ", "")
+            b = b.replace(" ", "")
 
         if fuzzy_spacing:
-            a = self.recursive_replace(a, '  ', ' ')
-            b = self.recursive_replace(b, '  ', ' ')
+            a = self.recursive_replace(a, "  ", " ")
+            b = self.recursive_replace(b, "  ", " ")
 
         if not case_sensitive:
             a = a.lower()
@@ -86,15 +97,12 @@ class TestsBase(unittest.TestCase):
             text = text.replace(search, replacement)
         return text
 
+    @contextlib.contextmanager
     def create_temp_cwd(self, copy_filenames=None):
-        temp_dir = TemporaryWorkingDirectory()
-
-        #Copy the files if requested.
-        if copy_filenames is not None:
-            self.copy_files_to(copy_filenames, dest=temp_dir.name)
-
-        #Return directory handler
-        return temp_dir
+        with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):
+            if copy_filenames is not None:  # Copy the files if requested.
+                self.copy_files_to(copy_filenames, dest=td)
+            yield td  # Return directory handler
 
     @classmethod
     def merge_dicts(cls, *dict_args):
@@ -106,11 +114,11 @@ class TestsBase(unittest.TestCase):
 
     def create_empty_notebook(self, path):
         nb = v4.new_notebook()
-        with io.open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             write(nb, f, 4)
 
-    def copy_files_to(self, copy_filenames, dest='.'):
-        "Copy test files into the destination directory"
+    def copy_files_to(self, copy_filenames, dest="."):
+        """Copy test files into the destination directory"""
         if not os.path.isdir(dest):
             os.makedirs(dest)
         files_path = self._get_files_path()
@@ -122,12 +130,12 @@ class TestsBase(unittest.TestCase):
 
     def _get_files_path(self):
 
-        #Get the relative path to this module in the IPython directory.
-        names = self.__module__.split('.')[1:-1]
-        names.append('files')
+        # Get the relative path to this module in the IPython directory.
+        names = self.__module__.split(".")[1:-1]
+        names.append("files")
 
-        #Build a path using the nbconvert directory and the relative path we just
-        #found.
+        # Build a path using the nbconvert directory and the relative path we just
+        # found.
         path = os.path.dirname(nbconvert.__file__)
         return os.path.join(path, *names)
 
@@ -144,12 +152,12 @@ class TestsBase(unittest.TestCase):
         ignore_return_code : optional bool (default False)
             Throw an OSError if the return code
         """
-        cmd = [sys.executable, '-m', 'nbconvert']
-        if sys.platform == 'win32':
+        cmd = [sys.executable, "-m", "nbconvert"]
+        if sys.platform == "win32":
             if isinstance(parameters, (str,)):
-                cmd = ' '.join(cmd) + ' ' + parameters
+                cmd = " ".join(cmd) + " " + parameters
             else:
-                cmd = ' '.join(cmd + parameters)
+                cmd = " ".join(cmd + parameters)
         else:
             if isinstance(parameters, (str,)):
                 parameters = shlex.split(parameters)
@@ -157,8 +165,8 @@ class TestsBase(unittest.TestCase):
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
         stdout, stderr = p.communicate(input=stdin)
         if not (p.returncode == 0 or ignore_return_code):
-            raise OSError(stderr.decode('utf8', 'replace'))
-        return stdout.decode('utf8', 'replace'), stderr.decode('utf8', 'replace')
+            raise OSError(stderr.decode("utf8", "replace"))
+        return stdout.decode("utf8", "replace"), stderr.decode("utf8", "replace")
 
 
 def assert_big_text_equal(a, b, chunk_size=80):
@@ -168,13 +176,15 @@ def assert_big_text_equal(a, b, chunk_size=80):
     to give better info than vanilla assertEqual for large text blobs.
     """
     for i in range(0, len(a), chunk_size):
-        chunk_a = a[i:i + chunk_size]
-        chunk_b = b[i:i + chunk_size]
+        chunk_a = a[i : i + chunk_size]
+        chunk_b = b[i : i + chunk_size]
         assert chunk_a == chunk_b, "[offset: %i]\n%r != \n%r" % (i, chunk_a, chunk_b)
 
     if len(a) > len(b):
-        raise AssertionError("Length doesn't match (%i > %i). Extra text:\n%r" % (
-                             len(a), len(b), a[len(b):]))
+        raise AssertionError(
+            "Length doesn't match (%i > %i). Extra text:\n%r" % (len(a), len(b), a[len(b) :])
+        )
     elif len(a) < len(b):
-        raise AssertionError("Length doesn't match (%i < %i). Extra text:\n%r" % (
-                             len(a), len(b), a[len(b):]))
+        raise AssertionError(
+            "Length doesn't match (%i < %i). Extra text:\n%r" % (len(a), len(b), a[len(b) :])
+        )
