@@ -292,7 +292,6 @@ class Exporter(LoggingConfigurable):
             self.register_preprocessor(preprocessor, enabled=True)
 
     def _init_resources(self, resources):
-
         # Make sure the resources dict is of ResourcesDict type.
         if resources is None:
             resources = ResourcesDict()

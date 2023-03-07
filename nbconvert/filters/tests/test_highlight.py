@@ -66,7 +66,6 @@ class TestHighlight(TestsBase):
             self._try_highlight(highlight2latex, test, self.tokens[index])
 
     def test_parse_html_many_lang(self):
-
         ht = highlight2html(self.tests[0])
         rb = highlight2html_ruby(self.tests[0])
 

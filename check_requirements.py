@@ -10,7 +10,7 @@ all_reqs = data["project"]["optional-dependencies"]["all"]
 remaining_all = all_reqs.copy()
 errors = []
 
-for (key, reqs) in data["project"]["optional-dependencies"].items():
+for key, reqs in data["project"]["optional-dependencies"].items():
     if key == "all":
         continue
     for req in reqs:

@@ -129,7 +129,6 @@ class TestsBase(unittest.TestCase):
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
     def _get_files_path(self):
-
         # Get the relative path to this module in the IPython directory.
         names = self.__module__.split(".")[1:-1]
         names.append("files")

@@ -44,7 +44,6 @@ class ConvertFiguresPreprocessor(Preprocessor):
                 and self.from_format in output.data
                 and self.to_format not in output.data
             ):
-
                 output.data[self.to_format] = self.convert_figure(
                     self.from_format, output.data[self.from_format]
                 )

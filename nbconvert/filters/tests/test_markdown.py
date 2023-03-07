@@ -17,7 +17,6 @@ from ..pandoc import convert_pandoc
 
 
 class TestMarkdown(TestsBase):
-
     tests = [
         "*test",
         "**test",
