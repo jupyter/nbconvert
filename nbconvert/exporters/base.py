@@ -151,5 +151,5 @@ def get_export_names(config=get_config()):  # noqa
             if e.enabled:
                 enabled_exporters.append(exporter_name)
         except (ExporterDisabledError, ValueError):
-            pass  # noqa
+            pass
     return enabled_exporters

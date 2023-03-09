@@ -69,7 +69,7 @@ def get_pandoc_version():
     PandocMissing
         If pandoc is unavailable.
     """
-    global __version
+    global __version  # noqa
 
     if __version is None:
         if not shutil.which("pandoc"):
@@ -144,7 +144,7 @@ class PandocMissing(ConversionException):
 # -----------------------------------------------------------------------------
 def clean_cache():
     """Clean the internal cache."""
-    global __version
+    global __version  # noqa
     __version = None
 
 

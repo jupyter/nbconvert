@@ -80,7 +80,7 @@ class TestHighlight(TestsBase):
 
     def _extract_tokens(self, root, cls):
         return set(  # noqa
-            map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']"))  # type:ignore  # noqa
+            map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']"))  # type:ignore
         )
 
     def _try_highlight(self, method, test, tokens):

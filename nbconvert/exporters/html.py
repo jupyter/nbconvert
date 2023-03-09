@@ -284,7 +284,7 @@ class HTMLExporter(TemplateExporter):
                         with open(filename, "rb") as f:
                             data = f.read()
                             break
-                else:  # noqa
+                else:
                     msg = f"No file {name!r} found in {searchpath!r}"
                     raise ValueError(msg)
             data = base64.b64encode(data)

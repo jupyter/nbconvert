@@ -109,7 +109,7 @@ class SanitizeHTML(Preprocessor):
           code:
             Sanitize outputs that could result in code execution
         """
-        if cell.cell_type == "raw":
+        if cell.cell_type == "raw":  # noqa
             # Sanitize all raw cells anyway.
             # Only ones with the text/html mimetype should be emitted
             # but erring on the side of safety maybe.

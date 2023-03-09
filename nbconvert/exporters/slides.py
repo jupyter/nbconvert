@@ -16,7 +16,7 @@ from .html import HTMLExporter
 class _RevealMetadataPreprocessor(Preprocessor):
     # A custom preprocessor adding convenience metadata to cells
 
-    def preprocess(self, nb, resources=None):  # noqa
+    def preprocess(self, nb, resources=None):
         nb = deepcopy(nb)
 
         for cell in nb.cells:

@@ -84,7 +84,7 @@ class PDFExporter(LatexExporter):
     def _template_extension_default(self):
         return ".tex.j2"
 
-    def run_command(self, command_list, filename, count, log_function, raise_on_failure=None):
+    def run_command(self, command_list, filename, count, log_function, raise_on_failure=None):  # noqa
         """Run command_list count times.
 
         Parameters
@@ -143,7 +143,7 @@ class PDFExporter(LatexExporter):
                 )
                 out, _ = p.communicate()
                 if p.returncode:
-                    if self.verbose:
+                    if self.verbose:  # noqa
                         # verbose means I didn't capture stdout with PIPE,
                         # so it's already been displayed and `out` is None.
                         out_str = ""

@@ -24,7 +24,7 @@ class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
     functions."""
 
-    def fuzzy_compare(
+    def fuzzy_compare(  # noqa
         self,
         a,
         b,

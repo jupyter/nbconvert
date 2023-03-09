@@ -55,7 +55,7 @@ def _get_css_file(template_name, url, filename):
             print("Already have CSS: %s, moving on." % dest)
         else:
             msg = "Need CSS to proceed."
-            raise OSError(msg)
+            raise OSError(msg) from None
         return
 
     with open(dest, "wb") as f:
