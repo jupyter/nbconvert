@@ -1,6 +1,6 @@
 """Utilities for converting notebooks to and from different formats."""
 
-from ._version import __version__, version_info 
+from ._version import __version__, version_info
 
 try:
     from . import filters, postprocessors, preprocessors, writers
