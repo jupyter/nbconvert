@@ -84,9 +84,9 @@ class PDFExporter(LatexExporter):
     def _template_extension_default(self):
         return ".tex.j2"
 
-    def run_command(   # noqa
+    def run_command(  # noqa
         self, command_list, filename, count, log_function, raise_on_failure=None
-    ): 
+    ):
         """Run command_list count times.
 
         Parameters
