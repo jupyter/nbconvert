@@ -57,7 +57,7 @@ def find_lab_theme(theme_name):
     matching_themes = []
     theme_path = None
     for path in paths:
-        for (dirpath, dirnames, filenames) in os.walk(path):
+        for dirpath, dirnames, filenames in os.walk(path):
             # If it's a federated labextension that contains themes
             if "package.json" in filenames and "themes" in dirnames:
                 # TODO Find the theme name in the JS code instead?
@@ -284,7 +284,7 @@ class HTMLExporter(TemplateExporter):
                         with open(filename, "rb") as f:
                             data = f.read()
                             break
-                else:  # noqa
+                else:
                     msg = f"No file {name!r} found in {searchpath!r}"
                     raise ValueError(msg)
             data = base64.b64encode(data)

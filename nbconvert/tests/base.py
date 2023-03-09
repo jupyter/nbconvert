@@ -24,7 +24,7 @@ class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
     functions."""
 
-    def fuzzy_compare(
+    def fuzzy_compare(  # noqa
         self,
         a,
         b,
@@ -129,7 +129,6 @@ class TestsBase(unittest.TestCase):
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
     def _get_files_path(self):
-
         # Get the relative path to this module in the IPython directory.
         names = self.__module__.split(".")[1:-1]
         names.append("files")

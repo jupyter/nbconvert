@@ -543,7 +543,6 @@ class TestExporter(ExportersTestsBase):
         assert "# In[" not in nb_no_input_prompt
 
     def test_exclude_markdown(self):
-
         no_md = {
             "TemplateExporter": {
                 "exclude_output": False,
@@ -630,7 +629,6 @@ class TestExporter(ExportersTestsBase):
         assert "test input: input value" in nb_output_stdin
 
     def test_remove_elements_with_tags(self):
-
         conf = Config(
             {
                 "TagRemovePreprocessor": {

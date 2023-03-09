@@ -151,7 +151,7 @@ class MarkdownWithMath(Markdown):
 class IPythonRenderer(HTMLRenderer):
     """An ipython html renderer."""
 
-    def __init__(
+    def __init__(  # noqa
         self,
         escape=True,
         allow_harmful_protocols=True,
