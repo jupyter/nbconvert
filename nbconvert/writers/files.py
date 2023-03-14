@@ -84,7 +84,6 @@ class FilesWriter(WriterBase):
                 os.path.join(resources.get("output_files_dir", ""), ""),
             )
         for filename, data in items:
-
             # Determine where to write the file to
             dest = os.path.join(build_directory, filename)
             path = os.path.dirname(dest)
@@ -98,10 +97,8 @@ class FilesWriter(WriterBase):
         # Copy referenced files to output directory
         if build_directory:
             for filename in self.files:
-
                 # Copy files that match search pattern
                 for matching_filename in glob.glob(filename):
-
                     # compute the relative path for the filename
                     if relpath != "":
                         dest_filename = os.path.relpath(matching_filename, relpath)

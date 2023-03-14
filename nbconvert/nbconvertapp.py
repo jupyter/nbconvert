@@ -383,7 +383,6 @@ class NbConvertApp(JupyterApp):
         # Use glob to replace all the notebook patterns with filenames.
         filenames = []
         for pattern in patterns:
-
             # Use glob to find matching filenames.  Allow the user to convert
             # notebooks without having to type the extension.
             globbed_files = glob.glob(pattern, recursive=self.recursive_glob)

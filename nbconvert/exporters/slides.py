@@ -16,7 +16,7 @@ from .html import HTMLExporter
 class _RevealMetadataPreprocessor(Preprocessor):
     # A custom preprocessor adding convenience metadata to cells
 
-    def preprocess(self, nb, resources=None):  # noqa
+    def preprocess(self, nb, resources=None):
         nb = deepcopy(nb)
 
         for cell in nb.cells:
@@ -42,7 +42,6 @@ class _RevealMetadataPreprocessor(Preprocessor):
         in_fragment = False
 
         for index, cell in enumerate(nb.cells[first_slide_ix + 1 :], start=(first_slide_ix + 1)):
-
             previous_cell = nb.cells[index - 1]
 
             # Slides are <section> elements in the HTML, subslides (the vertically

@@ -541,7 +541,7 @@ class TemplateExporter(Exporter):
                 preprocessor_cls = import_item(preprocessor_cls)
                 if preprocessor_cls.__name__ in self.config:
                     kwargs.update(self.config[preprocessor_cls.__name__])
-                preprocessor = preprocessor_cls(**kwargs)
+                preprocessor = preprocessor_cls(**kwargs)  # noqa
                 self.register_preprocessor(preprocessor)
 
     def _get_conf(self):
@@ -597,7 +597,7 @@ class TemplateExporter(Exporter):
         if name == "full":
             return {"base_template": "classic", "mimetypes": {"text/html": True}}
 
-    def get_template_names(self):  # noqa
+    def get_template_names(self):
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()

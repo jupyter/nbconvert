@@ -127,7 +127,6 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
         # Work in a temporary directory
         with TemporaryDirectory() as tmpdir:
-
             # Write fig to temp file
             input_filename = os.path.join(tmpdir, "figure.svg")
             # SVG data is unicode text

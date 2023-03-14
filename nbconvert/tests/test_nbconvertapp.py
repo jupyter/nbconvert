@@ -446,7 +446,6 @@ class TestNbConvertApp(TestsBase):
             assert "```" in output1  # but should have fenced blocks
 
         with self.create_temp_cwd(["notebook_jl*.ipynb"]):
-
             output2, _ = self.nbconvert("--to markdown --stdout notebook_jl.ipynb")
             assert "```julia" in output2  # shouldn't have language
             assert "```" in output2  # but should also plain ``` to close cell

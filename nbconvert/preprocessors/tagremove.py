@@ -110,7 +110,6 @@ class TagRemovePreprocessor(Preprocessor):
             self.remove_all_outputs_tags.intersection(cell.get("metadata", {}).get("tags", []))
             and cell.cell_type == "code"
         ):
-
             cell.outputs = []
             cell.execution_count = None
             # Remove metadata associated with output

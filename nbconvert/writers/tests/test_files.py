@@ -19,7 +19,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create the resoruces dictionary
             res: dict = {}
 
@@ -37,7 +36,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create the resoruces dictionary
             res = {"output_extension": ".txt"}
 
@@ -56,7 +54,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create the resoruces dictionary
             res = {"outputs": {os.path.join("z_files", "a"): b"b"}}
 
@@ -81,7 +78,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create the resoruces dictionary
             res = {"outputs": {os.path.join("z_files", "a"): b"b"}}
 
@@ -121,7 +117,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create test file
             os.mkdir("sub")
             with open(os.path.join("sub", "c"), "w") as f:
@@ -157,7 +152,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create test files
             os.mkdir("sub")
             with open(os.path.join("sub", "c"), "w") as f:
@@ -196,7 +190,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create test file
             os.mkdir("sub")
             with open(os.path.join("sub", "c"), "w") as f:
@@ -231,7 +224,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create test file
             os.mkdir("sub")
             with open(os.path.join("sub", "c"), "w") as f:
@@ -265,7 +257,6 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-
             # Create test file
             os.mkdir("sub")
             with open(os.path.join("sub", "c"), "w") as f:
