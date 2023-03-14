@@ -2,6 +2,31 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.2.10
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.9...acf41acf6d83cb725f3a2c48686c828eff7b24d8))
+
+### Enhancements made
+
+- Add cell-id anchor for cell identification [#1897](https://github.com/jupyter/nbconvert/pull/1897) ([@krassowski](https://github.com/krassowski))
+
+### Bugs fixed
+
+- Do not import pyppeteer for installation check [#1947](https://github.com/jupyter/nbconvert/pull/1947) ([@krassowski](https://github.com/krassowski))
+
+### Maintenance and upkeep improvements
+
+- Clean up license  [#1949](https://github.com/jupyter/nbconvert/pull/1949) ([@dcsaba89](https://github.com/dcsaba89))
+- Add more linting [#1943](https://github.com/jupyter/nbconvert/pull/1943) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-01-24&to=2023-03-14&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-01-24..2023-03-14&type=Issues) | [@dcsaba89](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adcsaba89+updated%3A2023-01-24..2023-03-14&type=Issues) | [@krassowski](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2023-01-24..2023-03-14&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-01-24..2023-03-14&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.9
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.8...14b1d7aa75485ea754c2d0ffc67cc528e3984a99))
@@ -15,8 +40,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-01-16&to=2023-01-24&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-01-16..2023-01-24&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.8
 
