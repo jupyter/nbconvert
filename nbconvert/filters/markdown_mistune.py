@@ -172,7 +172,6 @@ class IPythonRenderer(HTMLRenderer):
         else:
             self.attachments = {}
 
-
     def block_code(self, code, info=None):
         """Handle block code."""
         lang = ""
