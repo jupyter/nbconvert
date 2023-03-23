@@ -172,6 +172,7 @@ class IPythonRenderer(HTMLRenderer):
         else:
             self.attachments = {}
 
+
     def block_code(self, code, info=None):
         """Handle block code."""
         lang = ""
@@ -198,7 +199,7 @@ class IPythonRenderer(HTMLRenderer):
 
     def block_mermaidjs(self, code, info=None):
         """Handle mermaid syntax."""
-        return f"""<div class="jp-RenderedMermaid">
+        return f"""<div class="jp-Mermaid">
             <pre class="mermaid">{code}</pre>
         </div>"""
 
