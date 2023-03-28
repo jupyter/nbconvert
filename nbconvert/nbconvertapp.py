@@ -587,9 +587,7 @@ class NbConvertApp(JupyterApp):
 
         # Validate that output_base does not cause us to overwrite already generated
         # files
-        notebook_names = [
-            self._notebook_filename_to_name(fn) for fn in self.notebooks
-        ]
+        notebook_names = [self._notebook_filename_to_name(fn) for fn in self.notebooks]
         if len(notebook_names) != len(set(notebook_names)):
             msg = (
                 "Conversion would override an already generated output. "
