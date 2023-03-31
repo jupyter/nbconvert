@@ -2,7 +2,7 @@
 
 ### Jupyter Notebook Conversion
 
-[![Build Status](https://travis-ci.org/jupyter/nbconvert.svg?branch=main)](https://travis-ci.org/jupyter/nbconvert)
+[![Build Status](https://github.com/jupyter/nbconvert/actions/workflows/tests.yml/badge.svg?query=branch%3Amain++)](https://github.com/jupyter/nbconvert/actions/workflows/tests.yml/badge.svg?query=branch%3Amain++)
 [![Documentation Status](https://readthedocs.org/projects/nbconvert/badge/?version=latest)](https://nbconvert.readthedocs.io/en/latest/?badge=latest)
 [![codecov.io](https://codecov.io/gh/jupyter/nbconvert/coverage.svg?branch=main)](https://codecov.io/gh/gh/nbconvert?branch=main)
 
