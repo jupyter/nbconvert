@@ -632,3 +632,37 @@ class TestNbConvertApp(TestsBase):
                     text = f.read()
                     assert '<script type="application/vnd.jupyter.widget-view+json">' in text
                     assert '<script type="application/vnd.jupyter.widget-state+json">' in text
+
+    def test_output_base(self):
+        """
+        Check various configurations of output_base (--output)
+        """
+        notebook_names = [
+            "notebook1",
+            "notebook2",
+        ]
+        with self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --output '{notebook_name}_test_addition.asd' --to markdown")
+
+            for nbn in notebook_names:
+                assert os.path.isfile(f"{nbn}_test_addition.asd.md")
+
+        with self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --to markdown")
+
+            for nbn in notebook_names:
+                assert os.path.isfile(f"{nbn}.md")
+
+        with pytest.raises(OSError), self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --output notebook_test_name --to markdown")
+
+        # Test single output with static output name
+        with self.create_temp_cwd([notebook_names[0] + ".ipynb"]):
+            self.nbconvert("*.ipynb --output notebook_test_name --to markdown")
+            assert os.path.isfile("notebook_test_name.md")
+
+        # Test double extension fix
+        with self.create_temp_cwd([notebook_names[0] + ".ipynb"]):
+            self.nbconvert("*.ipynb --output notebook_test_name.md --to markdown")
+            assert os.path.isfile("notebook_test_name.md")
+            assert not os.path.isfile("notebook_test_name.md.md")
