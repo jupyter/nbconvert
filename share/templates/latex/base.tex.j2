@@ -179,7 +179,11 @@ override this.-=))
     ((*- set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] -*))
     \title{((( nb_title | escape_latex )))}
     ((*- endblock title *))
-    ((* block date *))((* endblock date *))
+    ((* block date *))
+    ((* if 'date' in nb.metadata *))
+    \date{((( nb.metadata.date | escape_latex )))}
+    ((* endif *))
+    ((* endblock date *))
     ((* block author *))
     ((* if 'authors' in nb.metadata *))
     \author{((( nb.metadata.authors | join(', ', attribute='name') )))}
