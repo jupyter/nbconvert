@@ -89,6 +89,34 @@ LaTeX
 
     Latex report, providing a table of contents and chapters.
 
+  Optionally you can specify ``authors``, ``title`` and ``date`` in the notebook's
+  metadata. These will be used to render the header of the LaTeX document.
+
+  .. code-block:: json
+
+      {
+          "authors": [
+              {
+                  "name": "Jane Doe"
+              },
+              {
+                  "name": "John Doe"
+              }
+          ],
+          "date": "January 2023",
+          "title": "Annual Data Report 2022",
+          "kernelspec": { },
+          "language_info": { }
+      }
+
+  If no date is specified, today's date will be used (i.e. the date when the
+  document is re/compiled). Use an empty string to suppress the date.
+
+  The values in the notebook can be overridden by the command line arguments
+  ``--LatexPreprocessor.title``, ``--LatexPreprocessor.date`` and
+  ``--LatexPreprocessor.author_names`` (specify this argument multiple times
+  for each individual author name).
+
   .. note::
 
     nbconvert uses pandoc_ to convert between various markup languages,
