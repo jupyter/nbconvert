@@ -2,6 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.3.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.10...056dc4ecc8f9f3e9249f0dbddf1221c65228b961))
+
+### Enhancements made
+
+- Allow pattern in output_base [#1967](https://github.com/jupyter/nbconvert/pull/1967) ([@JeppeKlitgaard](https://github.com/JeppeKlitgaard))
+- Make date configurable in latex/PDF [#1963](https://github.com/jupyter/nbconvert/pull/1963) ([@achimgaedke](https://github.com/achimgaedke))
+- Update jupyterlab CSS [#1960](https://github.com/jupyter/nbconvert/pull/1960) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Update ci badge [#1968](https://github.com/jupyter/nbconvert/pull/1968) ([@blink1073](https://github.com/blink1073))
+- More detailed release instructions [#1959](https://github.com/jupyter/nbconvert/pull/1959) ([@Carreau](https://github.com/Carreau))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-03-14&to=2023-04-03&type=c))
+
+[@achimgaedke](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aachimgaedke+updated%3A2023-03-14..2023-04-03&type=Issues) | [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-03-14..2023-04-03&type=Issues) | [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-03-14..2023-04-03&type=Issues) | [@JeppeKlitgaard](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AJeppeKlitgaard+updated%3A2023-03-14..2023-04-03&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AmartinRenou+updated%3A2023-03-14..2023-04-03&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.2.10
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.9...acf41acf6d83cb725f3a2c48686c828eff7b24d8))
@@ -24,8 +47,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-01-24&to=2023-03-14&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-01-24..2023-03-14&type=Issues) | [@dcsaba89](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adcsaba89+updated%3A2023-01-24..2023-03-14&type=Issues) | [@krassowski](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2023-01-24..2023-03-14&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-01-24..2023-03-14&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.9
 
