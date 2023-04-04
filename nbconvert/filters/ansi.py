@@ -133,7 +133,7 @@ def _latexconverter(fg, bg, bold, underline, inverse):
     elif fg:
         # See http://tex.stackexchange.com/a/291102/13684
         starttag += r"\def\tcRGB{\textcolor[RGB]}\expandafter"
-        starttag += r"\tcRGB\expandafter{\detokenize{%s,%s,%s}}{" % fg
+        starttag += r"\tcRGB\expandafter{{\detokenize{{{},{},{}}}}}{{".format(*fg)
         endtag = "}" + endtag
     elif inverse:
         starttag += r"\textcolor{ansi-default-inverse-fg}{"
@@ -147,7 +147,7 @@ def _latexconverter(fg, bg, bold, underline, inverse):
         starttag += r"\setlength{\fboxsep}{0pt}"
         # See http://tex.stackexchange.com/a/291102/13684
         starttag += r"\def\cbRGB{\colorbox[RGB]}\expandafter"
-        starttag += r"\cbRGB\expandafter{\detokenize{%s,%s,%s}}{" % bg
+        starttag += r"\cbRGB\expandafter{{\detokenize{{{},{},{}}}}}{{".format(*bg)
         endtag = r"\strut}" + endtag
     elif inverse:
         starttag += r"\setlength{\fboxsep}{0pt}"
