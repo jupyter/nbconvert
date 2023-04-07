@@ -24,6 +24,7 @@ def executenb(*args, **kwargs):
         "The 'nbconvert.preprocessors.execute.executenb' function was moved to nbclient.execute. "
         "We recommend importing that library directly.",
         FutureWarning,
+        stacklevel=2,
     )
     return _execute(*args, **kwargs)
 

@@ -104,7 +104,7 @@ def recursive_update(target, new):
 # define function at the top level to avoid pickle errors
 def deprecated(msg):
     """Emit a deprecation warning."""
-    warnings.warn(msg, DeprecationWarning)
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
 
 class ExtensionTolerantLoader(BaseLoader):
@@ -210,6 +210,7 @@ class TemplateExporter(Exporter):
             warnings.warn(
                 f"5.x style template name passed '{self.template_name}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                 DeprecationWarning,
+                stacklevel=2,
             )
             directory, self.template_file = os.path.split(self.template_name)
             if directory:
@@ -235,6 +236,7 @@ class TemplateExporter(Exporter):
                 warnings.warn(
                     f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                     DeprecationWarning,
+                    stacklevel=2,
                 )
 
     @default("template_file")
@@ -597,7 +599,7 @@ class TemplateExporter(Exporter):
         if name == "full":
             return {"base_template": "classic", "mimetypes": {"text/html": True}}
 
-    def get_template_names(self):
+    def get_template_names(self):  # noqa
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
@@ -635,6 +637,7 @@ class TemplateExporter(Exporter):
                         warnings.warn(
                             f"5.x template name passed '{self.template_name}'. Use 'lab' or 'classic' for new template usage.",
                             DeprecationWarning,
+                            stacklevel=2,
                         )
                         self.template_file = compatibility_file
                         conf = self.get_compatibility_base_template_conf(base_template)

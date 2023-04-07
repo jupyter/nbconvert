@@ -46,7 +46,8 @@ class Highlight2HTML(NbConvertBase):
     def _default_language_changed(self, change):
         warn(
             "Setting default_language in config is deprecated as of 5.0, "
-            "please use language_info metadata instead."
+            "please use language_info metadata instead.",
+            stacklevel=2,
         )
         self.pygments_lexer = change["new"]
 
@@ -102,7 +103,8 @@ class Highlight2Latex(NbConvertBase):
     def _default_language_changed(self, change):
         warn(
             "Setting default_language in config is deprecated as of 5.0, "
-            "please use language_info metadata instead."
+            "please use language_info metadata instead.",
+            stacklevel=2,
         )
         self.pygments_lexer = change["new"]
 
@@ -164,7 +166,7 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
         try:
             from IPython.lib.lexers import IPythonLexer
         except ImportError:
-            warn("IPython lexer unavailable, falling back on Python")
+            warn("IPython lexer unavailable, falling back on Python", stacklevel=2)
             language = "python"
         else:
             lexer = IPythonLexer()
@@ -172,7 +174,7 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
         try:
             from IPython.lib.lexers import IPython3Lexer
         except ImportError:
-            warn("IPython3 lexer unavailable, falling back on Python 3")
+            warn("IPython3 lexer unavailable, falling back on Python 3", stacklevel=2)
             language = "python3"
         else:
             lexer = IPython3Lexer()
@@ -181,7 +183,7 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
         try:
             lexer = get_lexer_by_name(language, stripall=True)
         except ClassNotFound:
-            warn("No lexer found for language %r. Treating as plain text." % language)
+            warn("No lexer found for language %r. Treating as plain text." % language, stacklevel=2)
             from pygments.lexers.special import TextLexer
 
             lexer = TextLexer()

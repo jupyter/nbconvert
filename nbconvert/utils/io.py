@@ -103,7 +103,7 @@ def link_or_copy(src, dst):
             # anyway, we get duplicate files - see http://bugs.python.org/issue21876
             return
 
-        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"
+        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"  # noqa
         try:
             link_or_copy(src, new_dst)
         except BaseException:
