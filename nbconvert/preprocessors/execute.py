@@ -41,7 +41,6 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         nb = kw.get("nb")
         if nb is None:
             nb = NotebookNode()
-        kw.setdefault("kernel_manager_class", KernelManager)
         Preprocessor.__init__(self, nb=nb, **kw)
         NotebookClient.__init__(self, nb, **kw)
 
