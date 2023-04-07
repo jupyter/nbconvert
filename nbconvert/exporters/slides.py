@@ -124,7 +124,8 @@ class SlidesExporter(HTMLExporter):
         if "RevealHelpPreprocessor.url_prefix" in self.config:
             warn(
                 "Please update RevealHelpPreprocessor.url_prefix to "
-                "SlidesExporter.reveal_url_prefix in config files."
+                "SlidesExporter.reveal_url_prefix in config files.",
+                stacklevel=2,
             )
             return self.config.RevealHelpPreprocessor.url_prefix
         return "https://unpkg.com/reveal.js@4.0.2"

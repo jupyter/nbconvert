@@ -100,7 +100,7 @@ class FilesWriter(WriterBase):
                 # Copy files that match search pattern
                 for matching_filename in glob.glob(filename):
                     # compute the relative path for the filename
-                    if relpath != "":
+                    if relpath != "":  # noqa
                         dest_filename = os.path.relpath(matching_filename, relpath)
                     else:
                         dest_filename = matching_filename

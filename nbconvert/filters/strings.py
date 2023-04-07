@@ -234,7 +234,8 @@ def ipython2python(code):
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."
-            " Install ipython if you need this functionality."
+            " Install ipython if you need this functionality.",
+            stacklevel=2,
         )
         return code
     else:
