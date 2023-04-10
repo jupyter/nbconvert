@@ -2,6 +2,24 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.3.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.3.0...3860152ecea3d9833540eebe279ff603b3d47cea))
+
+### Bugs fixed
+
+- Remove overwriting of default KernelManager [#1972](https://github.com/jupyter/nbconvert/pull/1972) ([@tuncbkose](https://github.com/tuncbkose))
+
+### Maintenance and upkeep improvements
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-04-03&to=2023-04-10&type=c))
+
+[@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-04-03..2023-04-10&type=Issues) | [@tuncbkose](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atuncbkose+updated%3A2023-04-03..2023-04-10&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.3.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.2.10...056dc4ecc8f9f3e9249f0dbddf1221c65228b961))
@@ -22,8 +40,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-03-14&to=2023-04-03&type=c))
 
 [@achimgaedke](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aachimgaedke+updated%3A2023-03-14..2023-04-03&type=Issues) | [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-03-14..2023-04-03&type=Issues) | [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-03-14..2023-04-03&type=Issues) | [@JeppeKlitgaard](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AJeppeKlitgaard+updated%3A2023-03-14..2023-04-03&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AmartinRenou+updated%3A2023-03-14..2023-04-03&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.2.10
 
