@@ -54,10 +54,15 @@ jobs:
         run: |
           hatch run cov:test
 
-      - name: Code coverage
-        run: |
-          pip install codecov coverage[toml]
-          codecov
+      - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs:
+      - run-tests
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/report-coverage@v1
 
   test_lint:
     name: Test Lint
@@ -145,7 +150,7 @@ jobs:
   tests_check: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
-      - run-tests
+      - coverage
       - test_lint
       - test_minimum_versions
       - test_prereleases
