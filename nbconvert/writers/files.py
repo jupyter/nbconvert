@@ -51,6 +51,19 @@ class FilesWriter(WriterBase):
             self.log.info("Making directory %s", path)
             ensure_dir_exists(path)
 
+    def _write_items(self, items, build_dir):
+        """Write a dict containing filename->binary data"""
+        for filename, data in items:
+            # Determine where to write the file to
+            dest = os.path.join(build_dir, filename)
+            path = os.path.dirname(dest)
+            self._makedir(path)
+
+            # Write file
+            self.log.debug("Writing %i bytes to %s", len(data), dest)
+            with open(dest, "wb") as f:
+                f.write(data)
+
     def write(self, output, resources, notebook_name=None, **kw):
         """
         Consume and write Jinja output to the file system.  Output directory
@@ -73,7 +86,7 @@ class FilesWriter(WriterBase):
         relpath = self.relpath or resource_path
         build_directory = self.build_directory or resource_path
 
-        # Write all of the extracted resources to the destination directory.
+        # Write the extracted outputs to the destination directory.
         # NOTE: WE WRITE EVERYTHING AS-IF IT'S BINARY.  THE EXTRACT FIG
         # PREPROCESSOR SHOULD HANDLE UNIX/WINDOWS LINE ENDINGS...
 
@@ -83,16 +96,17 @@ class FilesWriter(WriterBase):
                 "Support files will be in %s",
                 os.path.join(resources.get("output_files_dir", ""), ""),
             )
-        for filename, data in items:
-            # Determine where to write the file to
-            dest = os.path.join(build_directory, filename)
-            path = os.path.dirname(dest)
-            self._makedir(path)
+            self._write_items(items, build_directory)
 
-            # Write file
-            self.log.debug("Writing %i bytes to support file %s", len(data), dest)
-            with open(dest, "wb") as f:
-                f.write(data)
+        # Write the extracted attachments
+        # if ExtractAttachmentsOutput specified a separate directory
+        attachs = resources.get("attachments", {}).items()
+        if attachs:
+            self.log.info(
+                "Attachments will be in %s",
+                os.path.join(resources.get("attachment_files_dir", ""), ""),
+            )
+            self._write_items(attachs, build_directory)
 
         # Copy referenced files to output directory
         if build_directory:
