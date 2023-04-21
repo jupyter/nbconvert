@@ -654,7 +654,6 @@ class TestNbConvertApp(TestsBase):
             for nbn in notebook_names:
                 assert os.path.isfile(f"{nbn}.md")
 
-
         # Test single output with static output name
         nbname = notebook_names[0]
         with self.create_temp_cwd([nbname + ".ipynb"]):

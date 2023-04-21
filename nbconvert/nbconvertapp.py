@@ -420,9 +420,7 @@ class NbConvertApp(JupyterApp):
         """
         basename = os.path.basename(notebook_filename)
         notebook_name = basename[: basename.rfind(".")]
-        notebook_name = self.output_base.format(
-            notebook_name=notebook_name
-        )
+        notebook_name = self.output_base.format(notebook_name=notebook_name)
 
         return notebook_name
 
