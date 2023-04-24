@@ -45,9 +45,7 @@ class DummyExporter(TemplateExporter):
 
     @property
     def default_config(self):
-        c = Config(
-            {"TagRemovePreprocessor": {"enabled": False}}
-        )
+        c = Config({"TagRemovePreprocessor": {"enabled": False}})
         if super().default_config:
             c2 = super().default_config.copy()
             c2.merge(c)
@@ -113,4 +111,3 @@ class TestExporter(ExportersTestsBase):
         e = DummyExporter()
         self.assertFalse(e.default_config["TagRemovePreprocessor"]["enabled"])
         self.assertTrue(e.default_config["RegexRemovePreprocessor"]["enabled"])
-
