@@ -19,8 +19,8 @@ from unittest.mock import patch
 from traitlets.config import Config
 
 from ...preprocessors.base import Preprocessor
+from .. import Exporter, TemplateExporter
 from ..base import get_export_names
-from ..exporter import Exporter
 from .base import ExportersTestsBase
 
 # -----------------------------------------------------------------------------
@@ -36,6 +36,23 @@ class PizzaPreprocessor(Preprocessor):
     def preprocess(self, nb, resources):
         nb["metadata"]["pizza"] = "cheese"
         return nb, resources
+
+
+class DummyExporter(TemplateExporter):
+    """
+    Dummy exporter to check that parent default_config gets overwritten properly
+    """
+
+    @property
+    def default_config(self):
+        c = Config(
+            {"TagRemovePreprocessor": {"enabled": False}}
+        )
+        if super().default_config:
+            c2 = super().default_config.copy()
+            c2.merge(c)
+            c = c2
+        return c
 
 
 class TestExporter(ExportersTestsBase):
@@ -87,3 +104,13 @@ class TestExporter(ExportersTestsBase):
         del os.environ["NBCONVERT_DISABLE_CONFIG_EXPORTERS"]
         export_names = get_export_names(config=config)
         self.assertEqual(export_names, ["notebook"])
+
+    def test_default_config_merge(self):
+        """
+        Do default_configs merge properly?
+        Class config should overwrite parent config
+        """
+        e = DummyExporter()
+        self.assertFalse(e.default_config["TagRemovePreprocessor"]["enabled"])
+        self.assertTrue(e.default_config["RegexRemovePreprocessor"]["enabled"])
+
