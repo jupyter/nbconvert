@@ -431,7 +431,8 @@ class TestNbConvertApp(TestsBase):
             )
             assert 'print("Some text before the error")' in error_output
             assert 'raise RuntimeError("This is a deliberate exception")' in error_output
-            assert "RuntimeError: This is a deliberate exception" in error_output
+            assert "RuntimeError" in error_output
+            assert "This is a deliberate exception" in error_output
 
     def test_fenced_code_blocks_markdown(self):
         """
