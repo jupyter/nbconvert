@@ -39,7 +39,9 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
         # directory path,
         self.path_name = ""  # will be set in self.preprocess, needs resources
         # Where extracted attachments are stored in resources
-        self.resources_item_key = "attachments"  # Here as a default, in case someone doesn't want to call preprocess
+        self.resources_item_key = (
+            "attachments"  # Here as a default, in case someone doesn't want to call preprocess
+        )
 
     # Add condition and configurability here
     def preprocess(self, nb, resources):
