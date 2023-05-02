@@ -646,8 +646,7 @@ class TemplateExporter(Exporter):
                 if not found_at_least_one:
                     paths = "\n\t".join(root_dirs)
                     raise ValueError(
-                        "No template sub-directory with name %r found in the following paths:\n\t%s"
-                        % (base_template, paths)
+                        f"No template sub-directory with name {base_template!r} found in the following paths:\n\t{paths}"
                     )
             merged_conf = recursive_update(dict(conf), merged_conf)
             base_template = conf.get("base_template")
@@ -656,8 +655,7 @@ class TemplateExporter(Exporter):
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = "\n\t".join(mimetypes)
             raise ValueError(
-                "Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s"
-                % (self.output_mimetype, self.template_name, supported_mimetypes)
+                f"Unsupported mimetype {self.output_mimetype!r} for template {self.template_name!r}, mimetypes supported are: \n\t{supported_mimetypes}"
             )
         return template_names
 
