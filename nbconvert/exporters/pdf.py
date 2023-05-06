@@ -140,7 +140,7 @@ class PDFExporter(LatexExporter):
                     stdout=stdout,
                     stderr=subprocess.STDOUT,
                     stdin=null,
-                    shell=shell,
+                    shell=shell,  # noqa
                     env=env,
                 )
                 out, _ = p.communicate()
