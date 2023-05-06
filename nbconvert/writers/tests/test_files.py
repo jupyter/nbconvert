@@ -19,7 +19,7 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res: dict = {}
 
             # Create files writer, test output
@@ -54,8 +54,11 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-            # Create the resoruces dictionary
-            res = {"outputs": {os.path.join("z_files", "a"): b"b"}}
+            # Create the resources dictionary
+            res = {
+                "outputs": {os.path.join("z_files", "a"): b"b"},
+                "attachments": {os.path.join("z_attachments", "c"): b"d"},
+            }
 
             # Create files writer, test output
             writer = FilesWriter()
@@ -73,12 +76,18 @@ class Testfiles(TestsBase):
                 output = f.read()
                 self.assertEqual(output, "b")
 
+            attachment_file_dest = os.path.join("z_attachments", "c")
+            assert os.path.isfile(attachment_file_dest)
+            with open(attachment_file_dest) as f:
+                content = f.read()
+                self.assertEqual(content, "d")
+
     def test_build_dir(self):
         """Can FilesWriter write to a build dir correctly?"""
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res = {"outputs": {os.path.join("z_files", "a"): b"b"}}
 
             # Create files writer, test output
@@ -122,7 +131,7 @@ class Testfiles(TestsBase):
             with open(os.path.join("sub", "c"), "w") as f:
                 f.write("d")
 
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res: dict = {}
 
             # Create files writer, test output
@@ -195,7 +204,7 @@ class Testfiles(TestsBase):
             with open(os.path.join("sub", "c"), "w") as f:
                 f.write("d")
 
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res: dict = {}
 
             # Create files writer, test output
@@ -229,7 +238,7 @@ class Testfiles(TestsBase):
             with open(os.path.join("sub", "c"), "w") as f:
                 f.write("d")
 
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res = {"metadata": {"path": "sub"}}
 
             # Create files writer, test output
@@ -262,7 +271,7 @@ class Testfiles(TestsBase):
             with open(os.path.join("sub", "c"), "w") as f:
                 f.write("d")
 
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res = {"metadata": {"path": "other_sub"}}
 
             # Create files writer, test output

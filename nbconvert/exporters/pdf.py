@@ -210,8 +210,9 @@ class PDFExporter(LatexExporter):
         # convert output extension to pdf
         # the writer above required it to be tex
         resources["output_extension"] = ".pdf"
-        # clear figure outputs, extracted by latex export,
+        # clear figure outputs and attachments, extracted by latex export,
         # so we don't claim to be a multi-file export.
         resources.pop("outputs", None)
+        resources.pop("attachments", None)
 
         return pdf_data, resources
