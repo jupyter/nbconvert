@@ -183,7 +183,10 @@ class TemplateExporter(Exporter):
                 "TagRemovePreprocessor": {"enabled": True},
             }
         )
-        c.merge(super().default_config)
+        if super().default_config:
+            c2 = super().default_config.copy()
+            c2.merge(c)
+            c = c2
         return c
 
     template_name = Unicode(help="Name of the template to use").tag(
@@ -645,20 +648,16 @@ class TemplateExporter(Exporter):
                         break
                 if not found_at_least_one:
                     paths = "\n\t".join(root_dirs)
-                    raise ValueError(
-                        "No template sub-directory with name %r found in the following paths:\n\t%s"
-                        % (base_template, paths)
-                    )
+                    msg = f"No template sub-directory with name {base_template!r} found in the following paths:\n\t{paths}"
+                    raise ValueError(msg)
             merged_conf = recursive_update(dict(conf), merged_conf)
             base_template = conf.get("base_template")
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = "\n\t".join(mimetypes)
-            raise ValueError(
-                "Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s"
-                % (self.output_mimetype, self.template_name, supported_mimetypes)
-            )
+            msg = f"Unsupported mimetype {self.output_mimetype!r} for template {self.template_name!r}, mimetypes supported are: \n\t{supported_mimetypes}"
+            raise ValueError(msg)
         return template_names
 
     def get_prefix_root_dirs(self):

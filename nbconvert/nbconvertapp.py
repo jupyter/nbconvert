@@ -218,7 +218,7 @@ class NbConvertApp(JupyterApp):
     output_base = Unicode(
         "{notebook_name}",
         help="""Overwrite base name use for output files.
-            Supports pattern replacements '{notebook_name}' and '{notebook_filename}'.
+            Supports pattern replacements '{notebook_name}'.
             """,
     ).tag(config=True)
 
@@ -420,9 +420,7 @@ class NbConvertApp(JupyterApp):
         """
         basename = os.path.basename(notebook_filename)
         notebook_name = basename[: basename.rfind(".")]
-        notebook_name = self.output_base.format(
-            notebook_name=notebook_name, notebook_filename=notebook_filename
-        )
+        notebook_name = self.output_base.format(notebook_name=notebook_name)
 
         return notebook_name
 
@@ -513,7 +511,7 @@ class NbConvertApp(JupyterApp):
             raise KeyError(msg)
 
         notebook_name = resources["unique_key"]
-        if self.use_output_suffix:
+        if self.use_output_suffix and self.output_base == "{notebook_name}":
             notebook_name += resources.get("output_suffix", "")
 
         write_results = self.writer.write(output, resources, notebook_name=notebook_name)
@@ -584,18 +582,6 @@ class NbConvertApp(JupyterApp):
             base, ext = os.path.splitext(self.output_base)
             if ext == self.exporter.file_extension:
                 self.output_base = base
-
-        # Validate that output_base does not cause us to overwrite already generated
-        # files
-        notebook_names = [self._notebook_filename_to_name(fn) for fn in self.notebooks]
-        if len(notebook_names) != len(set(notebook_names)):
-            msg = (
-                "Conversion would override an already generated output. "
-                "This is probably due to --output or output_base configuration "
-                "leading to non-unique output names. "
-                f"Output notebook names were: {notebook_names}"
-            )
-            raise ValueError(msg)
 
         # convert each notebook
         if not self.from_stdin:

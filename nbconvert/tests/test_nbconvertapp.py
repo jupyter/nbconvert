@@ -654,16 +654,31 @@ class TestNbConvertApp(TestsBase):
             for nbn in notebook_names:
                 assert os.path.isfile(f"{nbn}.md")
 
-        with pytest.raises(OSError), self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
-            self.nbconvert("*.ipynb --output notebook_test_name --to markdown")
-
         # Test single output with static output name
-        with self.create_temp_cwd([notebook_names[0] + ".ipynb"]):
-            self.nbconvert("*.ipynb --output notebook_test_name --to markdown")
+        nbname = notebook_names[0]
+        with self.create_temp_cwd([nbname + ".ipynb"]):
+            self.nbconvert(f"{nbname}.ipynb --output notebook_test_name --to markdown")
             assert os.path.isfile("notebook_test_name.md")
+
+            self.nbconvert(f"{nbname}.ipynb --to notebook")
+            assert os.path.isfile("notebook1.nbconvert.ipynb")
+
+            self.nbconvert(f"{nbname}.ipynb --to notebook --output out.ipynb")
+            assert os.path.isfile("out.ipynb")
 
         # Test double extension fix
         with self.create_temp_cwd([notebook_names[0] + ".ipynb"]):
             self.nbconvert("*.ipynb --output notebook_test_name.md --to markdown")
             assert os.path.isfile("notebook_test_name.md")
             assert not os.path.isfile("notebook_test_name.md.md")
+
+    def test_same_filename_different_dir(self):
+        """
+        Check if files with same name in different directories pose a problem
+        """
+        with self.create_temp_cwd() as temp_wd:
+            self.copy_files_to(["notebook1.ipynb"], temp_wd + "/dir1")
+            self.copy_files_to(["notebook1.ipynb"], temp_wd + "/dir2")
+            self.nbconvert("dir1/notebook1.ipynb dir2/notebook1.ipynb --to markdown")
+            assert os.path.isfile("dir1/notebook1.md")
+            assert os.path.isfile("dir2/notebook1.md")

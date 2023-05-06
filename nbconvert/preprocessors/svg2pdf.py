@@ -54,7 +54,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     @default("inkscape_version")
     def _inkscape_version_default(self):
         p = subprocess.Popen(
-            [self.inkscape, "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            [self.inkscape, "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE  # noqa
         )
         output, _ = p.communicate()
         if p.returncode != 0:
@@ -143,7 +143,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
                 full_cmd = self.command.format(*template_vars)
-            subprocess.call(full_cmd, shell=isinstance(full_cmd, str))
+            subprocess.call(full_cmd, shell=isinstance(full_cmd, str))  # noqa
 
             # Read output from drive
             # return value expects a filename
