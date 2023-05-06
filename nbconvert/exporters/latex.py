@@ -54,6 +54,7 @@ class LatexExporter(TemplateExporter):
                         "text/plain",
                     ]
                 },
+                "ExtractAttachmentsPreprocessor": {"enabled": True},
                 "ExtractOutputPreprocessor": {"enabled": True},
                 "SVG2PDFPreprocessor": {"enabled": True},
                 "LatexPreprocessor": {"enabled": True},

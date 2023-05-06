@@ -3,6 +3,8 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from base64 import b64encode
+
 from nbformat import v4 as nbformat
 
 from ...exporters.exporter import ResourcesDict
@@ -12,7 +14,7 @@ from ...tests.base import TestsBase
 class PreprocessorTestsBase(TestsBase):
     """Contains test functions preprocessor tests"""
 
-    def build_notebook(self, with_json_outputs=False):
+    def build_notebook(self, with_json_outputs=False, with_attachment=False):
         """Build a notebook in memory for use with preprocessor tests"""
 
         outputs = [
@@ -41,6 +43,19 @@ class PreprocessorTestsBase(TestsBase):
             nbformat.new_code_cell(source="$ e $", execution_count=1, outputs=outputs),
             nbformat.new_markdown_cell(source="$ e $"),
         ]
+
+        if with_attachment:
+            data = b"test"
+            encoded_data = b64encode(data)
+            # this is conversion of bytes to string, not base64 decoding
+            attachments = {"image.png": {"image/png": encoded_data.decode()}}
+            cells.extend(
+                [
+                    nbformat.new_markdown_cell(
+                        source="![image.png](attachment:image.png)", attachments=attachments
+                    )
+                ]
+            )
 
         return nbformat.new_notebook(cells=cells)
 

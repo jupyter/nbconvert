@@ -34,6 +34,7 @@ class MarkdownExporter(TemplateExporter):
     def default_config(self):
         c = Config(
             {
+                "ExtractAttachmentsPreprocessor": {"enabled": True},
                 "ExtractOutputPreprocessor": {"enabled": True},
                 "NbConvertBase": {
                     "display_data_priority": [
