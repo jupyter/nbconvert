@@ -161,7 +161,7 @@ class TestsBase(unittest.TestCase):
             if isinstance(parameters, (str,)):
                 parameters = shlex.split(parameters)
             cmd += parameters
-        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)  # noqa
         stdout, stderr = p.communicate(input=stdin)
         if not (p.returncode == 0 or ignore_return_code):
             raise OSError(stderr.decode("utf8", "replace"))
