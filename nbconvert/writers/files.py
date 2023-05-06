@@ -3,13 +3,14 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import errno
 import glob
 import os
 from pathlib import Path
 
 from traitlets import Unicode, observe
 
-from nbconvert.utils.io import ensure_dir_exists, link_or_copy
+from nbconvert.utils.io import link_or_copy
 
 from .base import WriterBase
 
@@ -38,18 +39,30 @@ class FilesWriter(WriterBase):
     def _build_directory_changed(self, change):
         new = change["new"]
         if new:
-            ensure_dir_exists(new)
+            self._makedir(new)
 
     def __init__(self, **kw):
         """Initialize the writer."""
         super().__init__(**kw)
         self._build_directory_changed({"new": self.build_directory})
 
-    def _makedir(self, path):
-        """Make a directory if it doesn't already exist"""
-        if path:
+    def _makedir(self, path, mode=0o755):
+        """ensure that a directory exists
+
+        If it doesn't exist, try to create it and protect against a race condition
+        if another process is doing the same.
+
+        The default permissions are 755, which differ from os.makedirs default of 777.
+        """
+        if not os.path.exists(path):
             self.log.info("Making directory %s", path)
-            ensure_dir_exists(path)
+            try:
+                os.makedirs(path, mode=mode)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
+        elif not os.path.isdir(path):
+            raise OSError("%r exists but is not a directory" % path)
 
     def _write_items(self, items, build_dir):
         """Write a dict containing filename->binary data"""
