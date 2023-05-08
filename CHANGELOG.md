@@ -2,6 +2,34 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.4.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.3.1...32fcf7b26462f5d51d577f8beda9d49cd3a0f441))
+
+### Enhancements made
+
+- Add ExtractAttachmentsPreprocessor [#1978](https://github.com/jupyter/nbconvert/pull/1978) ([@tuncbkose](https://github.com/tuncbkose))
+
+### Bugs fixed
+
+- Moved ensure_dir_exists to FilesWriter [#1987](https://github.com/jupyter/nbconvert/pull/1987) ([@tuncbkose](https://github.com/tuncbkose))
+- Tweak exporter default_config merging behavior [#1981](https://github.com/jupyter/nbconvert/pull/1981) ([@tuncbkose](https://github.com/tuncbkose))
+- Revert unintended effects of #1966 [#1974](https://github.com/jupyter/nbconvert/pull/1974) ([@tuncbkose](https://github.com/tuncbkose))
+
+### Maintenance and upkeep improvements
+
+- Fix test_errors_print_traceback test [#1985](https://github.com/jupyter/nbconvert/pull/1985) ([@blink1073](https://github.com/blink1073))
+- Ensure toml support in coverage reporting [#1984](https://github.com/jupyter/nbconvert/pull/1984) ([@blink1073](https://github.com/blink1073))
+- Use local coverage [#1976](https://github.com/jupyter/nbconvert/pull/1976) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-04-10&to=2023-05-08&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-04-10..2023-05-08&type=Issues) | [@krassowski](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2023-04-10..2023-05-08&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-04-10..2023-05-08&type=Issues) | [@tuncbkose](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atuncbkose+updated%3A2023-04-10..2023-05-08&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.3.1
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.3.0...3860152ecea3d9833540eebe279ff603b3d47cea))
@@ -17,8 +45,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-04-03&to=2023-04-10&type=c))
 
 [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-04-03..2023-04-10&type=Issues) | [@tuncbkose](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atuncbkose+updated%3A2023-04-03..2023-04-10&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.3.0
 
