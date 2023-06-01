@@ -14,7 +14,7 @@ from nbconvert.utils.version import check_version
 from .exceptions import ConversionException
 
 _minimal_version = "1.12.1"
-_maximal_version = "3.0.0"
+_maximal_version = "4.0.0"
 
 
 def pandoc(source, fmt, to, extra_args=None, encoding="utf-8"):
