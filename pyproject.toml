@@ -35,7 +35,7 @@ dependencies = [
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
     "tinycss2",
-    "traitlets>=5.0",
+    "traitlets>=5.1",
 ]
 dynamic = ["version"]
 
