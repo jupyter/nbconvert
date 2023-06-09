@@ -30,12 +30,12 @@ dependencies = [
     "MarkupSafe>=2.0",
     "mistune>=2.0.3,<3",
     "nbclient>=0.5.0",
-    "nbformat>=5.1",
+    "nbformat>=5.7",
     "packaging",
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
     "tinycss2",
-    "traitlets>=5.0",
+    "traitlets>=5.1",
 ]
 dynamic = ["version"]
 
@@ -129,7 +129,7 @@ dependencies = [
   "black[jupyter]==23.3.0",
   "mdformat>0.7",
   "mdformat-gfm>=0.3.5",
-  "ruff==0.0.263"
+  "ruff==0.0.270"
 ]
 detached = true
 [tool.hatch.envs.lint.scripts]
