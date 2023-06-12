@@ -1,5 +1,5 @@
 {%- macro mermaid_js(
-url="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.esm.min.mjs"
+url="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.0.2/mermaid.esm.min.mjs"
 ) -%}
 <script type="module">
   document.addEventListener("DOMContentLoaded", async () => {
@@ -24,7 +24,7 @@ url="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.esm.min.mjs"
     let _nextMermaidId = 0;
 
     function makeMermaidImage(svg) {
-      const img = document.createElement("img");
+      const img = document.createElement('img');
       const maxWidth = svg.match(/max-width: (\d+)/);
       if (maxWidth && maxWidth[1]) {
         const width = parseInt(maxWidth[1]);
@@ -32,42 +32,52 @@ url="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.esm.min.mjs"
           img.width = width;
         }
       }
-      img.setAttribute("src", `data:image/svg+xml,${encodeURIComponent(svg)}`);
+      img.setAttribute('src', `data:image/svg+xml,${encodeURIComponent(svg)}`);
       return img;
+    }
+
+    async function makeMermaidError(text) {
+      let errorMessage = '';
+      try {
+        await mermaid.parse(text);
+      } catch (err) {
+        errorMessage = `${err}`;
+      }
+
+      const result = document.createElement('details');
+      const summary = document.createElement('summary');
+      const pre = document.createElement('pre');
+      const code = document.createElement('code');
+      code.innerText = text;
+      pre.appendChild(code);
+      summary.appendChild(pre);
+      result.appendChild(summary);
+
+      const warning = document.createElement('pre');
+      warning.innerText = errorMessage;
+      result.appendChild(warning);
+      return result;
     }
 
     async function renderOneMarmaid(src) {
       const id = `jp-mermaid-${_nextMermaidId++}`;
-      let svg = "";
-      let error = "";
       const parent = src.parentNode;
-      let raw = src.textContent;
+      let raw = src.textContent.trim();
       const el = document.createElement("div");
       el.style.visibility = "hidden";
       document.body.appendChild(el);
+      let result = null;
       try {
-        svg = (await mermaid.render(id, raw, el)).svg;
-        parent.appendChild(makeMermaidImage(svg));
-        src.remove();
+        const { svg } = await mermaid.render(id, raw, el);
+        result = makeMermaidImage(svg);
       } catch (err) {
-        try {
-          await mermaid.parse(raw);
-        } catch (err) {
-          error = `${err}`;
-        }
+        parent.classList.add("jp-mod-warning");
+        result = await makeMermaidError(raw);
       } finally {
         el.remove();
       }
       parent.classList.add("jp-RenderedMermaid");
-      if (error) {
-        parent.innerHTML = `<details>
-          <summary>
-            <pre><code>${raw}</code></pre>
-          </summary>
-          <pre><code>${error}</code></pre>
-        </details>`;
-        parent.classList.add("jp-mod-warning");
-      }
+      parent.appendChild(result);
     }
 
     void Promise.all([...diagrams].map(renderOneMarmaid));
@@ -95,6 +105,9 @@ url="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.esm.min.mjs"
   }
   .jp-RenderedMarkdown .jp-RenderedMermaid.jp-mod-warning summary > pre {
     display: inline-block;
+  }
+  .jp-RenderedMermaid > .mermaid {
+    display: none;
   }
 </style>
 <!-- End of mermaid configuration -->

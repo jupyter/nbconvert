@@ -176,19 +176,17 @@ class IPythonRenderer(HTMLRenderer):
         """Handle block code."""
         lang = ""
         lexer = None
-        raw_code = code
-        raw_lang = info
+
+        if info and info.startswith("mermaid"):
+            return self.block_mermaidjs(code)
 
         if info:
             try:
-                lang = raw_lang
+                lang = info.strip().split(None, 1)[0]
                 lexer = get_lexer_by_name(lang, stripall=True)
             except ClassNotFound:
-                code = lang + "\n" + raw_code
+                code = lang + "\n" + code
                 lang = None  # type:ignore
-
-        if raw_lang.startswith("mermaid"):
-            return self.block_mermaidjs(raw_code)
 
         if not lang:
             return super().block_code(code)
@@ -198,9 +196,11 @@ class IPythonRenderer(HTMLRenderer):
 
     def block_mermaidjs(self, code, info=None):
         """Handle mermaid syntax."""
-        return f"""<div class="jp-Mermaid">
-            <pre class="mermaid">{code}</pre>
-        </div>"""
+        return (
+            """<div class="jp-Mermaid"><pre class="mermaid">\n"""
+            f"""{code.strip()}"""
+            """\n</pre></div>"""
+        )
 
     def block_html(self, html):
         """Handle block html."""
