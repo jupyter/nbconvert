@@ -30,6 +30,7 @@ except ImportError:
         warnings.warn(
             "Support for bleach <5 will be removed in a future version of nbconvert",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     except ImportError:
@@ -37,6 +38,7 @@ except ImportError:
             "The installed bleach/tinycss2 do not provide CSS sanitization, "
             "please upgrade to bleach >=5",
             UserWarning,
+            stacklevel=2,
         )
 
 

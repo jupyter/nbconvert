@@ -140,7 +140,7 @@ class PDFExporter(LatexExporter):
                     stdout=stdout,
                     stderr=subprocess.STDOUT,
                     stdin=null,
-                    shell=shell,
+                    shell=shell,  # noqa
                     env=env,
                 )
                 out, _ = p.communicate()
@@ -186,7 +186,7 @@ class PDFExporter(LatexExporter):
         latex, resources = super().from_notebook_node(nb, resources=resources, **kw)
         # set texinputs directory, so that local files will be found
         if resources and resources.get("metadata", {}).get("path"):
-            self.texinputs = resources["metadata"]["path"]
+            self.texinputs = os.path.abspath(resources["metadata"]["path"])
         else:
             self.texinputs = os.getcwd()
 
@@ -210,8 +210,9 @@ class PDFExporter(LatexExporter):
         # convert output extension to pdf
         # the writer above required it to be tex
         resources["output_extension"] = ".pdf"
-        # clear figure outputs, extracted by latex export,
+        # clear figure outputs and attachments, extracted by latex export,
         # so we don't claim to be a multi-file export.
         resources.pop("outputs", None)
+        resources.pop("attachments", None)
 
         return pdf_data, resources

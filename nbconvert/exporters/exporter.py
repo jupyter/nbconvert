@@ -95,6 +95,7 @@ class Exporter(LoggingConfigurable):
             "nbconvert.preprocessors.LatexPreprocessor",
             "nbconvert.preprocessors.HighlightMagicsPreprocessor",
             "nbconvert.preprocessors.ExtractOutputPreprocessor",
+            "nbconvert.preprocessors.ExtractAttachmentsPreprocessor",
             "nbconvert.preprocessors.ClearMetadataPreprocessor",
         ],
         help="""List of preprocessors available by default, by name, namespace,
@@ -179,7 +180,7 @@ class Exporter(LoggingConfigurable):
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
-        if "metadata" not in resources or resources["metadata"] == "":
+        if "metadata" not in resources or resources["metadata"] == "":  # noqa
             resources["metadata"] = ResourcesDict()
         path, basename = os.path.split(filename)
         notebook_name = os.path.splitext(basename)[0]

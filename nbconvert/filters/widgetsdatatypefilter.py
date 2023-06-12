@@ -71,7 +71,8 @@ class WidgetsDataTypeFilter(NbConvertBase):
                 return [fmt]
         warn(
             "Your element with mimetype(s) {mimetypes}"
-            " is not able to be represented.".format(mimetypes=output.keys())
+            " is not able to be represented.".format(mimetypes=output.keys()),
+            stacklevel=2,
         )
 
         return []

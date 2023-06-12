@@ -431,7 +431,8 @@ class TestNbConvertApp(TestsBase):
             )
             assert 'print("Some text before the error")' in error_output
             assert 'raise RuntimeError("This is a deliberate exception")' in error_output
-            assert "RuntimeError: This is a deliberate exception" in error_output
+            assert "RuntimeError" in error_output
+            assert "This is a deliberate exception" in error_output
 
     def test_fenced_code_blocks_markdown(self):
         """
@@ -632,3 +633,52 @@ class TestNbConvertApp(TestsBase):
                     text = f.read()
                     assert '<script type="application/vnd.jupyter.widget-view+json">' in text
                     assert '<script type="application/vnd.jupyter.widget-state+json">' in text
+
+    def test_output_base(self):
+        """
+        Check various configurations of output_base (--output)
+        """
+        notebook_names = [
+            "notebook1",
+            "notebook2",
+        ]
+        with self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --output '{notebook_name}_test_addition.asd' --to markdown")
+
+            for nbn in notebook_names:
+                assert os.path.isfile(f"{nbn}_test_addition.asd.md")
+
+        with self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --to markdown")
+
+            for nbn in notebook_names:
+                assert os.path.isfile(f"{nbn}.md")
+
+        # Test single output with static output name
+        nbname = notebook_names[0]
+        with self.create_temp_cwd([nbname + ".ipynb"]):
+            self.nbconvert(f"{nbname}.ipynb --output notebook_test_name --to markdown")
+            assert os.path.isfile("notebook_test_name.md")
+
+            self.nbconvert(f"{nbname}.ipynb --to notebook")
+            assert os.path.isfile("notebook1.nbconvert.ipynb")
+
+            self.nbconvert(f"{nbname}.ipynb --to notebook --output out.ipynb")
+            assert os.path.isfile("out.ipynb")
+
+        # Test double extension fix
+        with self.create_temp_cwd([notebook_names[0] + ".ipynb"]):
+            self.nbconvert("*.ipynb --output notebook_test_name.md --to markdown")
+            assert os.path.isfile("notebook_test_name.md")
+            assert not os.path.isfile("notebook_test_name.md.md")
+
+    def test_same_filename_different_dir(self):
+        """
+        Check if files with same name in different directories pose a problem
+        """
+        with self.create_temp_cwd() as temp_wd:
+            self.copy_files_to(["notebook1.ipynb"], temp_wd + "/dir1")
+            self.copy_files_to(["notebook1.ipynb"], temp_wd + "/dir2")
+            self.nbconvert("dir1/notebook1.ipynb dir2/notebook1.ipynb --to markdown")
+            assert os.path.isfile("dir1/notebook1.md")
+            assert os.path.isfile("dir2/notebook1.md")

@@ -104,7 +104,7 @@ def recursive_update(target, new):
 # define function at the top level to avoid pickle errors
 def deprecated(msg):
     """Emit a deprecation warning."""
-    warnings.warn(msg, DeprecationWarning)
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
 
 class ExtensionTolerantLoader(BaseLoader):
@@ -183,7 +183,10 @@ class TemplateExporter(Exporter):
                 "TagRemovePreprocessor": {"enabled": True},
             }
         )
-        c.merge(super().default_config)
+        if super().default_config:
+            c2 = super().default_config.copy()
+            c2.merge(c)
+            c = c2
         return c
 
     template_name = Unicode(help="Name of the template to use").tag(
@@ -210,6 +213,7 @@ class TemplateExporter(Exporter):
             warnings.warn(
                 f"5.x style template name passed '{self.template_name}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                 DeprecationWarning,
+                stacklevel=2,
             )
             directory, self.template_file = os.path.split(self.template_name)
             if directory:
@@ -235,6 +239,7 @@ class TemplateExporter(Exporter):
                 warnings.warn(
                     f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                     DeprecationWarning,
+                    stacklevel=2,
                 )
 
     @default("template_file")
@@ -597,7 +602,7 @@ class TemplateExporter(Exporter):
         if name == "full":
             return {"base_template": "classic", "mimetypes": {"text/html": True}}
 
-    def get_template_names(self):
+    def get_template_names(self):  # noqa
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
@@ -635,6 +640,7 @@ class TemplateExporter(Exporter):
                         warnings.warn(
                             f"5.x template name passed '{self.template_name}'. Use 'lab' or 'classic' for new template usage.",
                             DeprecationWarning,
+                            stacklevel=2,
                         )
                         self.template_file = compatibility_file
                         conf = self.get_compatibility_base_template_conf(base_template)
@@ -642,20 +648,16 @@ class TemplateExporter(Exporter):
                         break
                 if not found_at_least_one:
                     paths = "\n\t".join(root_dirs)
-                    raise ValueError(
-                        "No template sub-directory with name %r found in the following paths:\n\t%s"
-                        % (base_template, paths)
-                    )
+                    msg = f"No template sub-directory with name {base_template!r} found in the following paths:\n\t{paths}"
+                    raise ValueError(msg)
             merged_conf = recursive_update(dict(conf), merged_conf)
             base_template = conf.get("base_template")
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = "\n\t".join(mimetypes)
-            raise ValueError(
-                "Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s"
-                % (self.output_mimetype, self.template_name, supported_mimetypes)
-            )
+            msg = f"Unsupported mimetype {self.output_mimetype!r} for template {self.template_name!r}, mimetypes supported are: \n\t{supported_mimetypes}"
+            raise ValueError(msg)
         return template_names
 
     def get_prefix_root_dirs(self):

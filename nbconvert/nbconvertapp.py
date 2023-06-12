@@ -216,9 +216,9 @@ class NbConvertApp(JupyterApp):
     )
 
     output_base = Unicode(
-        "",
-        help="""overwrite base name use for output files.
-            can only be used when converting one notebook at a time.
+        "{notebook_name}",
+        help="""Overwrite base name use for output files.
+            Supports pattern replacements '{notebook_name}'.
             """,
     ).tag(config=True)
 
@@ -399,7 +399,7 @@ class NbConvertApp(JupyterApp):
         """Initialize the writer (which is stateless)"""
         self._writer_class_changed({"new": self.writer_class})
         self.writer = self.writer_factory(parent=self)
-        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
+        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":  # noqa
             self.use_output_suffix = False
 
     def init_postprocessor(self):
@@ -412,6 +412,17 @@ class NbConvertApp(JupyterApp):
         """Run start after initialization process has completed"""
         super().start()
         self.convert_notebooks()
+
+    def _notebook_filename_to_name(self, notebook_filename):
+        """
+        Returns the notebook name from the notebook filename by
+        applying `output_base` pattern and stripping extension
+        """
+        basename = os.path.basename(notebook_filename)
+        notebook_name = basename[: basename.rfind(".")]
+        notebook_name = self.output_base.format(notebook_name=notebook_name)
+
+        return notebook_name
 
     def init_single_notebook_resources(self, notebook_filename):
         """Step 1: Initialize resources
@@ -427,16 +438,7 @@ class NbConvertApp(JupyterApp):
                 - output_files_dir: a directory where output files (not
                   including the notebook itself) should be saved
         """
-        basename = os.path.basename(notebook_filename)
-        notebook_name = basename[: basename.rfind(".")]
-        if self.output_base:
-            # strip duplicate extension from output_base, to avoid Basename.ext.ext
-            if getattr(self.exporter, "file_extension", False):
-                base, ext = os.path.splitext(self.output_base)
-                if ext == self.exporter.file_extension:
-                    self.output_base = base
-            notebook_name = self.output_base
-
+        notebook_name = self._notebook_filename_to_name(notebook_filename)
         self.log.debug("Notebook name is '%s'", notebook_name)
 
         # first initialize the resources we want to use
@@ -509,7 +511,7 @@ class NbConvertApp(JupyterApp):
             raise KeyError(msg)
 
         notebook_name = resources["unique_key"]
-        if self.use_output_suffix and not self.output_base:
+        if self.use_output_suffix and self.output_base == "{notebook_name}":
             notebook_name += resources.get("output_suffix", "")
 
         write_results = self.writer.write(output, resources, notebook_name=notebook_name)
@@ -557,17 +559,7 @@ class NbConvertApp(JupyterApp):
         self.postprocess_single_notebook(write_results)
 
     def convert_notebooks(self):
-        """Convert the notebooks in the self.notebook traitlet"""
-        # check that the output base isn't specified if there is more than
-        # one notebook to convert
-        if self.output_base != "" and len(self.notebooks) > 1:
-            self.log.error(
-                """
-                UsageError: --output flag or `NbConvertApp.output_base` config option
-                cannot be used when converting multiple notebooks.
-                """
-            )
-            self.exit(1)
+        """Convert the notebooks in the self.notebooks traitlet"""
 
         # no notebooks to convert!
         if len(self.notebooks) == 0 and not self.from_stdin:
@@ -584,6 +576,12 @@ class NbConvertApp(JupyterApp):
         # initialize the exporter
         cls = get_exporter(self.export_format)
         self.exporter = cls(config=self.config)
+
+        # strip duplicate extension from output_base, to avoid Basename.ext.ext
+        if getattr(self.exporter, "file_extension", False):
+            base, ext = os.path.splitext(self.output_base)
+            if ext == self.exporter.file_extension:
+                self.output_base = base
 
         # convert each notebook
         if not self.from_stdin:

@@ -42,7 +42,7 @@ jobs:
           sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
-          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+          wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-1-amd64.deb && sudo dpkg -i pandoc-3.1.2-1-amd64.deb
 
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
@@ -54,10 +54,15 @@ jobs:
         run: |
           hatch run cov:test
 
-      - name: Code coverage
-        run: |
-          pip install codecov coverage[toml]
-          codecov
+      - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs:
+      - run-tests
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/report-coverage@v1
 
   test_lint:
     name: Test Lint
@@ -105,10 +110,18 @@ jobs:
         with:
           dependency_type: minimum
           only_create_file: 1
-      - name: Run the unit tests
+      - name: Install dependencies
         run: |
-          export NBFORMAT_VALIDATOR=jsonschema
-          hatch run test:nowarn || hatch run test:nowarn --lf
+          sudo apt-get update
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
+
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+
+      - name: Run tests
+        run: |
+          xvfb-run --auto-servernum hatch run test:nowarn || xvfb-run --auto-servernum hatch run test:nowarn --lf
 
   test_prereleases:
     name: Test Prereleases
@@ -145,7 +158,7 @@ jobs:
   tests_check: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
-      - run-tests
+      - coverage
       - test_lint
       - test_minimum_versions
       - test_prereleases
