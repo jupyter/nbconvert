@@ -122,7 +122,7 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mermaid_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.0.2/mermaid.esm.min.mjs",
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.esm.min.mjs",
         help="""
         URL to load MermaidJS from.
 
