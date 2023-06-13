@@ -39,6 +39,7 @@ def convert_pandoc(source, from_format, to_format, extra_args=None):
 # See https://github.com/jupyter/nbconvert/issues/1998
 class ConvertExplicitlyRelativePaths(NbConvertBase):
     """A converter that handles relative path references."""
+
     def __init__(self, texinputs=None, **kwargs):
         """Initialize the converter."""
         # texinputs should be the directory of the notebook file
