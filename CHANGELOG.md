@@ -2,6 +2,32 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.5.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.4.0...3dd3a67bf16474042efac25519ef257d708a8d7b))
+
+### Enhancements made
+
+- Add mermaidjs 10.2.3 [#1957](https://github.com/jupyter/nbconvert/pull/1957) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Bugs fixed
+
+- Fix pdf conversion with explicitly relative paths [#2005](https://github.com/jupyter/nbconvert/pull/2005) ([@tuncbkose](https://github.com/tuncbkose))
+- Ensure TEXINPUTS is an absolute path [#2002](https://github.com/jupyter/nbconvert/pull/2002) ([@tuncbkose](https://github.com/tuncbkose))
+
+### Maintenance and upkeep improvements
+
+- bump pandoc max version [#1997](https://github.com/jupyter/nbconvert/pull/1997) ([@tuncbkose](https://github.com/tuncbkose))
+- exclude bleach 5.0.0 from dependencies resolution [#1990](https://github.com/jupyter/nbconvert/pull/1990) ([@karlicoss](https://github.com/karlicoss))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-05-08&to=2023-06-13&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-05-08..2023-06-13&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-05-08..2023-06-13&type=Issues) | [@karlicoss](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akarlicoss+updated%3A2023-05-08..2023-06-13&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-05-08..2023-06-13&type=Issues) | [@tuncbkose](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atuncbkose+updated%3A2023-05-08..2023-06-13&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.4.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.3.1...32fcf7b26462f5d51d577f8beda9d49cd3a0f441))
@@ -27,8 +53,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-04-10&to=2023-05-08&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-04-10..2023-05-08&type=Issues) | [@krassowski](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2023-04-10..2023-05-08&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-04-10..2023-05-08&type=Issues) | [@tuncbkose](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atuncbkose+updated%3A2023-04-10..2023-05-08&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.3.1
 
