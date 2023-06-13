@@ -1,5 +1,6 @@
 {%- extends 'base.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
+{% from 'mermaidjs.html.j2' import mermaid_js %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {%- block header -%}
@@ -148,6 +149,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 {%- block html_head_js_mathjax -%}
 {{ mathjax(resources.mathjax_url) }}
 {%- endblock html_head_js_mathjax -%}
+
+{%- block html_head_js_mermaidjs -%}
+{{ mermaid_js(resources.mermaid_js_url) }}
+{%- endblock html_head_js_mermaidjs -%}
 
 {%- block html_head_css -%}
 {%- endblock html_head_css -%}

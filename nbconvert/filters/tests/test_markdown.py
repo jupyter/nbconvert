@@ -247,6 +247,19 @@ i.e. the $i^{th}$""",
                 tokens[index],
             )
 
+    def test_mermaid_markdown(self):
+        code = """flowchart LR
+            chicken --> egg --> chicken"""
+        case = f"""```mermaid\n  {code}\n```"""
+
+        output_check = (
+            """<div class="jp-Mermaid"><pre class="mermaid">\n"""
+            f"""{code.strip()}"""
+            """\n</pre></div>"""
+        )
+
+        self._try_markdown(markdown2html, case, output_check)
+
     def _try_markdown(self, method, test, tokens):
         results = method(test)
         if isinstance(tokens, (str,)):
