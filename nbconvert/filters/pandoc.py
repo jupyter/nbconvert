@@ -39,18 +39,21 @@ def convert_pandoc(source, from_format, to_format, extra_args=None):
 # See https://github.com/jupyter/nbconvert/issues/1998
 class ConvertExplicitlyRelativePaths(NbConvertBase):
     def __init__(self, texinputs=None, **kwargs):
+        """Initialize the converter."""
         # texinputs should be the directory of the notebook file
         self.nb_dir = os.path.abspath(texinputs) if texinputs else ""
         self.ancestor_dirs = self.nb_dir.split("/")
         super().__init__(**kwargs)
 
     def __call__(self, source):
+        """Invoke the converter."""
         # If this is not set for some reason, we can't do anything,
         if self.nb_dir:
             return applyJSONFilters([self.action], source)
         return source
 
     def action(self, key, value, frmt, meta):
+        """Perform the action."""
         # Convert explicitly relative paths:
         # ./path -> path  (This should be visible to the latex engine since TEXINPUTS already has .)
         # ../path -> /abs_path
