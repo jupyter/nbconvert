@@ -250,7 +250,7 @@ i.e. the $i^{th}$""",
     def test_mermaid_markdown(self):
         code = """flowchart LR
             chicken --> egg --> chicken"""
-        case = """```mermaid\n + """ f"""{code}""" + """\n```"""
+        case = """```mermaid\n  """ + f"""{code}""" + """\n```"""
 
         output_check = (
             """<div class="jp-Mermaid"><pre class="mermaid">\n"""
