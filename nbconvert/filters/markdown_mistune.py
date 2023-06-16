@@ -14,7 +14,7 @@ from functools import partial
 from html import escape
 
 import bs4
-from mistune import PLUGINS, BlockParser, HTMLRenderer, InlineParser, Markdown  # type:ignore
+from mistune import BlockParser, HTMLRenderer, InlineParser, Markdown, import_plugin
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
@@ -113,39 +113,6 @@ class MathInlineParser(InlineParser):
         """Parse a latex environment."""
         name, text = m.group(1), m.group(2)
         return "latex_environment", name, text
-
-
-class MarkdownWithMath(Markdown):
-    """Markdown text with math enabled."""
-
-    def __init__(self, renderer, block=None, inline=None, plugins=None):
-        """Initialize the parser."""
-        if block is None:
-            block = MathBlockParser()
-        if inline is None:
-            inline = MathInlineParser(renderer, hard_wrap=False)
-        if plugins is None:
-            plugins = [
-                # "abbr",
-                # 'footnotes',
-                "strikethrough",
-                "table",
-                "url",
-                "task_lists",
-                "def_list",
-            ]
-            _plugins = []
-            for p in plugins:
-                if isinstance(p, str):
-                    _plugins.append(PLUGINS[p])
-                else:
-                    _plugins.append(p)
-            plugins = _plugins
-        super().__init__(renderer, block, inline, plugins)
-
-    def render(self, s):
-        """Compatibility method with `mistune==0.8.4`."""
-        return self.parse(s)
 
 
 class IPythonRenderer(HTMLRenderer):
@@ -316,6 +283,32 @@ class IPythonRenderer(HTMLRenderer):
         return str(parsed_html)
 
 
+class MarkdownWithMath(Markdown):
+    """Markdown text with math enabled."""
+
+    DEFAULT_PLUGINS = (
+        # "abbr",  (see https://github.com/jupyter/nbconvert/pull/1853)
+        # "footnotes",
+        "strikethrough",
+        "table",
+        "url",
+        "task_lists",
+        "def_list",
+    )
+
+    def __init__(self, renderer, block=None, inline=None, plugins=None):
+        """Initialize the parser."""
+        if block is None:
+            block = MathBlockParser()
+        if inline is None:
+            inline = MathInlineParser(hard_wrap=False)
+        if plugins is None:
+            plugins = [import_plugin(p) for p in self.DEFAULT_PLUGINS]
+
+        super().__init__(renderer, block, inline, plugins)
+
+
 def markdown2html_mistune(source):
     """Convert a markdown string to HTML using mistune"""
-    return MarkdownWithMath(renderer=IPythonRenderer(escape=False)).render(source)
+    render = MarkdownWithMath(renderer=IPythonRenderer(escape=False))
+    return render(source)

@@ -217,7 +217,8 @@ class HTMLExporter(TemplateExporter):
             anchor_link_text=self.anchor_link_text,
             exclude_anchor_links=self.exclude_anchor_links,
         )
-        return MarkdownWithMath(renderer=renderer).render(source)
+        md = MarkdownWithMath(renderer=renderer)
+        return md(source)
 
     def default_filters(self):
         """Get the default filters."""
