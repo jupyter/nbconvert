@@ -14,7 +14,15 @@ from html import escape
 from typing import LiteralString, Match
 
 import bs4
-from mistune import BlockParser, BlockState, HTMLRenderer, InlineParser, Markdown, import_plugin
+from mistune import (
+    BlockParser,
+    BlockState,
+    HTMLRenderer,
+    InlineParser,
+    InlineState,
+    Markdown,
+    import_plugin,
+)
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
@@ -86,48 +94,70 @@ class MathInlineParser(InlineParser):
     delimiters from all these varieties, and extracts the type of environment
     in the last case (``foo`` in this example).
     """
-    BLOCK_MATH_TEX = _dotall(r"(?<!\\)\$\$(.*?)(?<!\\)\$\$")
-    BLOCK_MATH_LATEX = _dotall(r"(?<!\\)\\\\\[(.*?)(?<!\\)\\\\\]")
-    INLINE_MATH_TEX = _dotall(r"(?<![$\\])\$(.+?)(?<![$\\])\$")
-    INLINE_MATH_LATEX = _dotall(r"(?<!\\)\\\\\((.*?)(?<!\\)\\\\\)")
-    LATEX_ENVIRONMENT = _dotall(r"\\begin\{([a-z]*\*?)\}(.*?)\\end\{\1\}")
 
-    # The order is important here
-    RULE_NAMES = (
+    # Display math mode, using older TeX delimiter: $$ \pi $$
+    BLOCK_MATH_TEX = _dotall(r"(?<!\\)\$\$(?P<math_block_tex>.*?)(?<!\\)\$\$")
+    # Display math mode, using newer LaTeX delimiter: \[ \pi \]
+    BLOCK_MATH_LATEX = _dotall(r"(?<!\\)\\\\\[(?P<math_block_latex>.*?)(?<!\\)\\\\\]")
+    # Inline math mode, using older TeX delimiter: $ \pi $  (cannot be empty!)
+    INLINE_MATH_TEX = _dotall(r"(?<![$\\])\$(?P<math_inline_tex>.+?)(?<![$\\])\$")
+    # Inline math mode, using newer LaTeX delimiter: \( \pi \)
+    INLINE_MATH_LATEX = _dotall(r"(?<!\\)\\\\\((?P<math_inline_latex>.*?)(?<!\\)\\\\\)")
+    # LaTeX math environment: \begin{equation} \pi \end{equation}
+    LATEX_ENVIRONMENT = _dotall(
+        r"\\begin\{(?P<math_env_name>[a-z]*\*?)\}"
+        r"(?P<math_env_body>.*?)"
+        r"\\end\{(?P=math_env_name)\}"
+    )
+
+    SPECIFICATION = {
+        **InlineParser.SPECIFICATION,
+        "block_math_tex": BLOCK_MATH_TEX,
+        "block_math_latex": BLOCK_MATH_LATEX,
+        "inline_math_tex": INLINE_MATH_TEX,
+        "inline_math_latex": INLINE_MATH_LATEX,
+        "latex_environment": LATEX_ENVIRONMENT,
+    }
+
+    # Block math must be matched first, and all math must come before text
+    DEFAULT_RULES = (
         "block_math_tex",
         "block_math_latex",
         "inline_math_tex",
         "inline_math_latex",
         "latex_environment",
-        *InlineParser.RULE_NAMES,
+        *InlineParser.DEFAULT_RULES,  # type: ignore
     )
 
-    def parse_block_math_tex(self, m, state):
-        """Parse block text math."""
-        # sometimes the Scanner keeps the final '$$', so we use the
-        # full matched string and remove the math markers
-        text = m.group(0)[2:-2]
-        return "block_math", text
+    def parse_block_math_tex(self, m: Match[str], state: InlineState) -> int:
+        """Parse older TeX-style display math."""
+        body = m.group("math_block_tex")
+        state.append_token({"type": "block_math", "raw": body})
+        return m.end()
 
-    def parse_block_math_latex(self, m, state):
-        """Parse block latex math ."""
-        text = m.group(1)
-        return "block_math", text
+    def parse_block_math_latex(self, m: Match[str], state: InlineState) -> int:
+        """Parse newer LaTeX-style display math."""
+        body = m.group("math_block_latex")
+        state.append_token({"type": "block_math", "raw": body})
+        return m.end()
 
-    def parse_inline_math_tex(self, m, state):
-        """Parse inline tex math."""
-        text = m.group(1)
-        return "inline_math", text
+    def parse_inline_math_tex(self, m: Match[str], state: InlineState) -> int:
+        """Parse older TeX-style inline math."""
+        body = m.group("math_inline_tex")
+        state.append_token({"type": "inline_math", "raw": body})
+        return m.end()
 
-    def parse_inline_math_latex(self, m, state):
-        """Parse inline latex math."""
-        text = m.group(1)
-        return "inline_math", text
+    def parse_inline_math_latex(self, m: Match[str], state: InlineState) -> int:
+        """Parse newer LaTeX-style inline math."""
+        body = m.group("math_inline_latex")
+        state.append_token({"type": "inline_math", "raw": body})
+        return m.end()
 
-    def parse_latex_environment(self, m, state):
+    def parse_latex_environment(self, m: Match[str], state: InlineState) -> int:
         """Parse a latex environment."""
-        name, text = m.group(1), m.group(2)
-        return "latex_environment", name, text
+        attrs = {"name": m.group("math_env_name"), "body": m.group("math_env_body")}
+        state.append_token({"type": "latex_environment", "attrs": attrs})
+        return m.end()
 
 
 class IPythonRenderer(HTMLRenderer):
