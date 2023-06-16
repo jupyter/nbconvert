@@ -49,6 +49,8 @@ class MathBlockParser(BlockParser):
     is ignored here.
     """
 
+    AXT_HEADING_WITHOUT_LEADING_SPACES = r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
+
     MULTILINE_MATH = _dotall(
         # Display math mode, old TeX delimiter: $$ \sqrt{2} $$
         r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}"
@@ -62,6 +64,7 @@ class MathBlockParser(BlockParser):
 
     SPECIFICATION = {
         **BlockParser.SPECIFICATION,
+        "axt_heading": AXT_HEADING_WITHOUT_LEADING_SPACES,
         "multiline_math": MULTILINE_MATH,
     }
 
