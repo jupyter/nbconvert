@@ -9,12 +9,12 @@ Used from markdown.py
 import base64
 import mimetypes
 import os
-import re
 from functools import partial
 from html import escape
+from typing import LiteralString, Match
 
 import bs4
-from mistune import BlockParser, HTMLRenderer, InlineParser, Markdown, import_plugin
+from mistune import BlockParser, BlockState, HTMLRenderer, InlineParser, Markdown, import_plugin
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
@@ -31,36 +31,48 @@ class InvalidNotebook(Exception):  # noqa
     pass
 
 
+def _dotall(pattern: LiteralString) -> LiteralString:
+    """Makes the '.' special character match any character inside the pattern, including a newline.
+
+    This is implemented with the inline flag `(?s:...)` and is equivalent to using `re.DOTALL`.
+    It is useful for LaTeX environments, where line breaks may be present.
+    """
+    return f"(?s:{pattern})"
+
+
 class MathBlockParser(BlockParser):
     """This acts as a pass-through to the MathInlineParser. It is needed in
     order to avoid other block level rules splitting math sections apart.
+
+    It works by matching each multiline math environment as a single paragraph,
+    so that other rules don't think each section is its own paragraph. Inline
+    is ignored here.
     """
 
-    MULTILINE_MATH = re.compile(
-        r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}|"
-        r"\\\\\[.*?\\\\\]|"
-        r"\\begin\{([a-z]*\*?)\}.*?\\end\{\1\}",
-        re.DOTALL,
+    MULTILINE_MATH = _dotall(
+        # Display math mode, old TeX delimiter: $$ \sqrt{2} $$
+        r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}"
+        "|"
+        # Display math mode, new LaTeX delimiter: \[ \sqrt{2} \]
+        r"\\\\\[.*?\\\\\]"
+        "|"
+        # LaTeX environment: \begin{equation} \sqrt{2} \end{equation}
+        r"\\begin\{(?P<math_env_name>[a-z]*\*?)\}.*?\\end\{(?P=math_env_name)\}"
     )
 
-    RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)
+    SPECIFICATION = {
+        **BlockParser.SPECIFICATION,
+        "multiline_math": MULTILINE_MATH,
+    }
 
-    # Regex for header that doesn't require space after '#'
-    AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
+    # Multiline math must be searched before other rules
+    DEFAULT_RULES = ("multiline_math", *BlockParser.DEFAULT_RULES)  # type: ignore
 
-    def parse_multiline_math(self, m, state):
-        """Pass token through mutiline math."""
-        return {"type": "multiline_math", "text": m.group(0)}
-
-
-def _dotall(pattern):
-    """Make the '.' special character match any character inside the pattern, including a newline.
-
-    This is implemented with the inline flag `(?s:...)` and is equivalent to using `re.DOTALL` when
-    it is the only pattern used. It is necessary since `mistune>=2.0.0`, where the pattern is passed
-    to the undocumented `re.Scanner`.
-    """
-    return f"(?s:{pattern})"
+    def parse_multiline_math(self, m: Match[str], state: BlockState) -> int:
+        """Send mutiline math as a single paragraph to MathInlineParser."""
+        matched_text = m[0]
+        state.add_paragraph(matched_text)
+        return m.end()
 
 
 class MathInlineParser(InlineParser):
