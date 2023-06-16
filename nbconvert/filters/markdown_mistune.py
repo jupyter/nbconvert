@@ -9,9 +9,8 @@ Used from markdown.py
 import base64
 import mimetypes
 import os
-from functools import partial
 from html import escape
-from typing import Any, LiteralString, Match, Optional
+from typing import Any, Callable, Iterable, LiteralString, Match, Optional
 
 import bs4
 from mistune import (
@@ -25,12 +24,11 @@ from mistune import (
 )
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
+from pygments.lexer import Lexer
 from pygments.lexers import get_lexer_by_name
 from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
-
-html_escape = partial(escape, quote=False)
 
 
 class InvalidNotebook(Exception):  # noqa
@@ -165,13 +163,13 @@ class IPythonRenderer(HTMLRenderer):
 
     def __init__(  # noqa
         self,
-        escape=True,
-        allow_harmful_protocols=True,
-        embed_images=False,
-        exclude_anchor_links=False,
-        anchor_link_text="¶",
-        path="",
-        attachments=None,
+        escape: bool = True,
+        allow_harmful_protocols: bool = True,
+        embed_images: bool = False,
+        exclude_anchor_links: bool = False,
+        anchor_link_text: str = "¶",
+        path: str = "",
+        attachments: Optional[dict[str, dict[str, str]]] = None,
     ):
         """Initialize the renderer."""
         super().__init__(escape, allow_harmful_protocols)
@@ -186,22 +184,22 @@ class IPythonRenderer(HTMLRenderer):
 
     def block_code(self, code: str, info: Optional[str] = None) -> str:
         """Handle block code."""
-        lang = ""
-        lexer = None
-
-        if info and info.startswith("mermaid"):
-            return self.block_mermaidjs(code)
+        lang: Optional[str] = ""
+        lexer: Optional[Lexer] = None
 
         if info:
+            if info.startswith("mermaid"):
+                return self.block_mermaidjs(code)
+
             try:
-                lang = info.strip().split(None, 1)[0]
+                lang = info.strip().split(maxsplit=1)[0]
                 lexer = get_lexer_by_name(lang, stripall=True)
             except ClassNotFound:
-                code = lang + "\n" + code
-                lang = None  # type:ignore
+                code = f"{lang}\n{code}"
+                lang = None
 
         if not lang:
-            return super().block_code(code)
+            return super().block_code(code, info=info)
 
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
@@ -233,11 +231,11 @@ class IPythonRenderer(HTMLRenderer):
         html = super().heading(text, level, **attrs)
         if self.exclude_anchor_links:
             return html
-        return add_anchor(html, anchor_link_text=self.anchor_link_text)
+        return str(add_anchor(html, anchor_link_text=self.anchor_link_text))
 
     def escape_html(self, text: str) -> str:
         """Escape html content."""
-        return html_escape(text)
+        return escape(text, quote=False)
 
     def block_math(self, body: str) -> str:
         """Handle block math."""
@@ -260,7 +258,6 @@ class IPythonRenderer(HTMLRenderer):
         :param title: title text of the image.
         """
         attachment_prefix = "attachment:"
-
         if url.startswith(attachment_prefix):
             name = url[len(attachment_prefix) :]
 
@@ -270,15 +267,14 @@ class IPythonRenderer(HTMLRenderer):
 
             attachment = self.attachments[name]
             # we choose vector over raster, and lossless over lossy
-            preferred_mime_types = ["image/svg+xml", "image/png", "image/jpeg"]
-            for preferred_mime_type in preferred_mime_types:
-                if preferred_mime_type in attachment:
+            preferred_mime_types = ("image/svg+xml", "image/png", "image/jpeg")
+            for mime_type in preferred_mime_types:
+                if mime_type in attachment:
+                    url = f"data:{mime_type};base64,{attachment[mime_type]}"
                     break
             else:  # otherwise we choose the first mimetype we can find
-                preferred_mime_type = list(attachment.keys())[0]
-            mime_type = preferred_mime_type
-            data = attachment[mime_type]
-            url = "data:" + mime_type + ";base64," + data
+                default_mime_type = tuple(attachment.keys())[0]
+                url = f"data:{default_mime_type};base64,{attachment[default_mime_type]}"
 
         elif self.embed_images:
             base64_url = self._src_to_base64(url)
@@ -300,7 +296,7 @@ class IPythonRenderer(HTMLRenderer):
             return None
 
         with open(src_path, "rb") as fobj:
-            mime_type = mimetypes.guess_type(src_path)[0]
+            mime_type, _ = mimetypes.guess_type(src_path)
 
             base64_data = base64.b64encode(fobj.read())
             base64_str = base64_data.replace(b"\n", b"").decode("ascii")
@@ -309,19 +305,23 @@ class IPythonRenderer(HTMLRenderer):
 
     def _html_embed_images(self, html: str) -> str:
         parsed_html = bs4.BeautifulSoup(html, features="html.parser")
-        imgs = parsed_html.find_all("img")
+        imgs: bs4.ResultSet[bs4.Tag] = parsed_html.find_all("img")
 
         # Replace img tags's sources by base64 dataurls
         for img in imgs:
-            if "src" not in img.attrs:
+            src = img.attrs.get("src")
+            if src is None:
                 continue
 
             base64_url = self._src_to_base64(img.attrs["src"])
-
             if base64_url is not None:
                 img.attrs["src"] = base64_url
 
         return str(parsed_html)
+
+
+# Represents an already imported plugin for Mistune
+MarkdownPlugin = Callable[[Markdown], None]
 
 
 class MarkdownWithMath(Markdown):
@@ -337,19 +337,29 @@ class MarkdownWithMath(Markdown):
         "def_list",
     )
 
-    def __init__(self, renderer, block=None, inline=None, plugins=None):
+    def __init__(
+        self,
+        renderer: HTMLRenderer,
+        block: Optional[BlockParser] = None,
+        inline: Optional[InlineParser] = None,
+        plugins: Optional[Iterable[MarkdownPlugin]] = None,
+    ):
         """Initialize the parser."""
         if block is None:
             block = MathBlockParser()
         if inline is None:
             inline = MathInlineParser(hard_wrap=False)
         if plugins is None:
-            plugins = [import_plugin(p) for p in self.DEFAULT_PLUGINS]
+            plugins = (import_plugin(p) for p in self.DEFAULT_PLUGINS)
 
         super().__init__(renderer, block, inline, plugins)
 
+    def __call__(self, source: str) -> str:
+        """Render the HTML output for a Markdown source."""
+        return str(super().__call__(source))
 
-def markdown2html_mistune(source):
+
+def markdown2html_mistune(source: str) -> str:
     """Convert a markdown string to HTML using mistune"""
     render = MarkdownWithMath(renderer=IPythonRenderer(escape=False))
     return render(source)
