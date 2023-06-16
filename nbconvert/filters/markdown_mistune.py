@@ -11,7 +11,7 @@ import mimetypes
 import os
 from functools import partial
 from html import escape
-from typing import LiteralString, Match
+from typing import Any, LiteralString, Match, Optional
 
 import bs4
 from mistune import (
@@ -184,7 +184,7 @@ class IPythonRenderer(HTMLRenderer):
         else:
             self.attachments = {}
 
-    def block_code(self, code, info=None):
+    def block_code(self, code: str, info: Optional[str] = None) -> str:
         """Handle block code."""
         lang = ""
         lexer = None
@@ -206,7 +206,7 @@ class IPythonRenderer(HTMLRenderer):
         formatter = HtmlFormatter()
         return highlight(code, lexer, formatter)
 
-    def block_mermaidjs(self, code, info=None):
+    def block_mermaidjs(self, code: str) -> str:
         """Handle mermaid syntax."""
         return (
             """<div class="jp-Mermaid"><pre class="mermaid">\n"""
@@ -214,59 +214,55 @@ class IPythonRenderer(HTMLRenderer):
             """\n</pre></div>"""
         )
 
-    def block_html(self, html):
+    def block_html(self, html: str) -> str:
         """Handle block html."""
         if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().block_html(html)
 
-    def inline_html(self, html):
+    def inline_html(self, html: str) -> str:
         """Handle inline html."""
         if self.embed_images:
             html = self._html_embed_images(html)
 
         return super().inline_html(html)
 
-    def heading(self, text, level):
+    def heading(self, text: str, level: int, **attrs: dict[str, Any]) -> str:
         """Handle a heading."""
-        html = super().heading(text, level)
+        html = super().heading(text, level, **attrs)
         if self.exclude_anchor_links:
             return html
         return add_anchor(html, anchor_link_text=self.anchor_link_text)
 
-    def escape_html(self, text):
+    def escape_html(self, text: str) -> str:
         """Escape html content."""
         return html_escape(text)
 
-    def multiline_math(self, text):
-        """Handle mulitline math."""
-        return text
-
-    def block_math(self, text):
+    def block_math(self, body: str) -> str:
         """Handle block math."""
-        return f"$${self.escape_html(text)}$$"
+        return f"$${self.escape_html(body)}$$"
 
-    def latex_environment(self, name, text):
+    def latex_environment(self, name: str, body: str) -> str:
         """Handle a latex environment."""
-        name, text = self.escape_html(name), self.escape_html(text)
-        return f"\\begin{{{name}}}{text}\\end{{{name}}}"
+        name, body = self.escape_html(name), self.escape_html(body)
+        return f"\\begin{{{name}}}{body}\\end{{{name}}}"
 
-    def inline_math(self, text):
+    def inline_math(self, body: str) -> str:
         """Handle inline math."""
-        return f"${self.escape_html(text)}$"
+        return f"${self.escape_html(body)}$"
 
-    def image(self, src, text, title):
+    def image(self, text: str, url: str, title: Optional[str] = None) -> str:
         """Rendering a image with title and text.
 
-        :param src: source link of the image.
         :param text: alt text of the image.
+        :param url: source link of the image.
         :param title: title text of the image.
         """
         attachment_prefix = "attachment:"
 
-        if src.startswith(attachment_prefix):
-            name = src[len(attachment_prefix) :]
+        if url.startswith(attachment_prefix):
+            name = url[len(attachment_prefix) :]
 
             if name not in self.attachments:
                 msg = f"missing attachment: {name}"
@@ -282,17 +278,17 @@ class IPythonRenderer(HTMLRenderer):
                 preferred_mime_type = list(attachment.keys())[0]
             mime_type = preferred_mime_type
             data = attachment[mime_type]
-            src = "data:" + mime_type + ";base64," + data
+            url = "data:" + mime_type + ";base64," + data
 
         elif self.embed_images:
-            base64_url = self._src_to_base64(src)
+            base64_url = self._src_to_base64(url)
 
             if base64_url is not None:
-                src = base64_url
+                url = base64_url
 
-        return super().image(src, text, title)
+        return super().image(text, url, title=title)
 
-    def _src_to_base64(self, src):
+    def _src_to_base64(self, src: str) -> Optional[str]:
         """Turn the source file into a base64 url.
 
         :param src: source link of the file.
@@ -311,7 +307,7 @@ class IPythonRenderer(HTMLRenderer):
 
             return f"data:{mime_type};base64,{base64_str}"
 
-    def _html_embed_images(self, html):
+    def _html_embed_images(self, html: str) -> str:
         parsed_html = bs4.BeautifulSoup(html, features="html.parser")
         imgs = parsed_html.find_all("img")
 
