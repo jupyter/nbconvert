@@ -10,7 +10,7 @@ import base64
 import mimetypes
 import os
 from html import escape
-from typing import Any, Callable, Iterable, LiteralString, Match, Optional
+from typing import Any, Callable, Dict, Iterable, Match, Optional
 
 import bs4
 from mistune import (
@@ -37,7 +37,7 @@ class InvalidNotebook(Exception):  # noqa
     pass
 
 
-def _dotall(pattern: LiteralString) -> LiteralString:
+def _dotall(pattern: str) -> str:
     """Makes the '.' special character match any character inside the pattern, including a newline.
 
     This is implemented with the inline flag `(?s:...)` and is equivalent to using `re.DOTALL`.
@@ -169,7 +169,7 @@ class IPythonRenderer(HTMLRenderer):
         exclude_anchor_links: bool = False,
         anchor_link_text: str = "¶",
         path: str = "",
-        attachments: Optional[dict[str, dict[str, str]]] = None,
+        attachments: Optional[Dict[str, Dict[str, str]]] = None,
     ):
         """Initialize the renderer."""
         super().__init__(escape, allow_harmful_protocols)
@@ -226,7 +226,7 @@ class IPythonRenderer(HTMLRenderer):
 
         return super().inline_html(html)
 
-    def heading(self, text: str, level: int, **attrs: dict[str, Any]) -> str:
+    def heading(self, text: str, level: int, **attrs: Dict[str, Any]) -> str:
         """Handle a heading."""
         html = super().heading(text, level, **attrs)
         if self.exclude_anchor_links:
