@@ -165,7 +165,7 @@ filterwarnings = [
     # From jupyter_core
     "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
     # From dateutil
-    "ignore:*Use timezone-aware objects to represent datetimes in UTC:DeprecationWarning",
+    "ignore:.*Use timezone-aware objects to represent datetimes in UTC:DeprecationWarning",
 ]
 
 [tool.coverage.report]
