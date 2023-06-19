@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >=0.25"]
+requires = ["hatchling >=1.5"]
 build-backend = "hatchling.build"
 
 [project]
@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 urls = {Homepage = "https://jupyter.org"}
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "beautifulsoup4",
     "bleach!=5.0.0",
