@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 
 import nbformat
 import pytest
+from flaky import flaky
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
@@ -148,6 +149,7 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile("notebook with spaces.pdf")
 
+    @flaky
     @pytest.mark.network
     @pytest.mark.skipif(not PYPPETEER_INSTALLED, reason="Pyppeeter not installed")
     def test_webpdf_with_chromium(self):

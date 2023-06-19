@@ -65,6 +65,7 @@ test = [
     "ipykernel",
     "ipywidgets>=7",
     "pre-commit",
+    "flaky"
 ]
 serve = ["tornado>=6.1"]
 docs = [
@@ -163,6 +164,8 @@ filterwarnings = [
     "ignore:unclosed event loop:ResourceWarning",
     # From jupyter_core
     "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
+    # From dateutil
+    "ignore:Use timezone-aware objects to represent datetimes in UTCDeprecationWarning",
 ]
 
 [tool.coverage.report]
