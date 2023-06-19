@@ -126,6 +126,9 @@ class TestsBase(unittest.TestCase):
             files = glob.glob(os.path.join(files_path, pattern))
             assert files
             for match in files:
+                # Avoid copying the Julia file unless it is explicitly asked for.
+                if 'jl' in match and "jl" not in pattern:
+                    continue
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
     def _get_files_path(self):
