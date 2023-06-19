@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.6.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.5.0...60af6d897c083444586829c636f278d84ae81962))
+
+### Maintenance and upkeep improvements
+
+- Update to Mistune v3 [#1820](https://github.com/jupyter/nbconvert/pull/1820) ([@TiagodePAlves](https://github.com/TiagodePAlves))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-06-13&to=2023-06-19&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-06-13..2023-06-19&type=Issues) | [@kloczek](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akloczek+updated%3A2023-06-13..2023-06-19&type=Issues) | [@TiagodePAlves](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ATiagodePAlves+updated%3A2023-06-13..2023-06-19&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.5.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.4.0...3dd3a67bf16474042efac25519ef257d708a8d7b))
@@ -25,8 +41,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-05-08&to=2023-06-13&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-05-08..2023-06-13&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-05-08..2023-06-13&type=Issues) | [@karlicoss](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akarlicoss+updated%3A2023-05-08..2023-06-13&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-05-08..2023-06-13&type=Issues) | [@tuncbkose](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atuncbkose+updated%3A2023-05-08..2023-06-13&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.4.0
 
