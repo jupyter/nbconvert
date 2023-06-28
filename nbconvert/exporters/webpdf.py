@@ -74,7 +74,7 @@ class WebPDFExporter(HTMLExporter):
             """Run main playwright script."""
             args = ["--no-sandbox"] if self.disable_sandbox else []
             try:
-                from playwright.async_api import async_playwright
+                from playwright.async_api import async_playwright # type: ignore[import]
             except ModuleNotFoundError as e:
                 msg = (
                     "Playwright is not installed to support Web PDF conversion. "
