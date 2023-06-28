@@ -3,11 +3,11 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import subprocess
-import sys
 import asyncio
 import concurrent.futures
 import os
+import subprocess
+import sys
 import tempfile
 from importlib import util as importlib_util
 
@@ -67,7 +67,6 @@ class WebPDFExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
-
     def run_playwright(self, html):
         """Run playwright."""
 
@@ -98,10 +97,7 @@ class WebPDFExporter(HTMLExporter):
                 subprocess.check_call(cmd)
 
             browser = await chromium.launch(
-                handle_sigint=False,
-                handle_sigterm=False,
-                handle_sighup=False,
-                args=args
+                handle_sigint=False, handle_sigterm=False, handle_sighup=False, args=args
             )
 
             page = await browser.new_page()

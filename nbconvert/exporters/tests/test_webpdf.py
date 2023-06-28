@@ -10,8 +10,10 @@ import pytest
 from ..webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
 from .base import ExportersTestsBase
 
+
 class FakeBrowser:
     executable_path: str = ''
+
 
 @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
 class TestWebPDFExporter(ExportersTestsBase):
