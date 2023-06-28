@@ -10570,14 +10570,14 @@ ul#new-menu {
   }
 }
 @media print {
-  #texteditor-backdrop #texteditor-container .cm-gutter,
-  #texteditor-backdrop #texteditor-container .cm-gutters {
+  #texteditor-backdrop #texteditor-container .CodeMirror-gutter,
+  #texteditor-backdrop #texteditor-container .CodeMirror-gutters {
     background-color: #fff;
   }
 }
 @media not print {
-  #texteditor-backdrop #texteditor-container .cm-gutter,
-  #texteditor-backdrop #texteditor-container .cm-gutters {
+  #texteditor-backdrop #texteditor-container .CodeMirror-gutter,
+  #texteditor-backdrop #texteditor-container .CodeMirror-gutters {
     background-color: #fff;
   }
 }
@@ -10589,7 +10589,7 @@ ul#new-menu {
     box-shadow: 0px 0px 12px 1px rgba(87, 87, 87, 0.2);
   }
 }
-.cm-dialog {
+.CodeMirror-dialog {
   background-color: #fff;
 }
 /*!
@@ -11025,11 +11025,11 @@ div.input_area > div.highlight > pre {
  * respect to the rest of the text.  The user should select a better font.
  * See: https://github.com/ipython/ipython/issues/1503
  *
- * .cm-editor span {
+ * .CodeMirror span {
  *      vertical-align: bottom;
  * }
  */
-.cm-editor {
+.CodeMirror {
   line-height: 1.21429em;
   /* Changed from 1em to our global default */
   font-size: 14px;
@@ -11038,43 +11038,43 @@ div.input_area > div.highlight > pre {
   background: none;
   /* Changed from white to allow our bg to show through */
 }
-.cm-scroller {
+.CodeMirror-scroll {
   /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
   /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
   overflow-y: hidden;
   overflow-x: auto;
 }
-.cm-line {
+.CodeMirror-lines {
   /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
   /* we have set a different line-height and want this to scale with that. */
   /* Note that this should set vertical padding only, since CodeMirror assumes
-       that horizontal padding will be set on cm-editor pre */
+       that horizontal padding will be set on CodeMirror pre */
   padding: 0.4em 0;
 }
-.cm-lineNumbers {
+.CodeMirror-linenumber {
   padding: 0 8px 0 4px;
 }
-.cm-gutters {
+.CodeMirror-gutters {
   border-bottom-left-radius: 2px;
   border-top-left-radius: 2px;
 }
-.cm-editor pre {
+.CodeMirror pre {
   /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
-    use .cm-cursor for vertical */
+    use .CodeMirror-lines for vertical */
   padding: 0 0.4em;
   border: 0;
   border-radius: 0;
 }
-.cm-cursor {
+.CodeMirror-cursor {
   border-left: 1.4px solid black;
 }
 @media screen and (min-width: 2138px) and (max-width: 4319px) {
-  .cm-cursor {
+  .CodeMirror-cursor {
     border-left: 2px solid black;
   }
 }
 @media screen and (min-width: 4320px) {
-  .cm-cursor {
+  .CodeMirror-cursor {
     border-left: 4px solid black;
   }
 }
