@@ -31,13 +31,13 @@ class TestWebPDFExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
-    # @patch("playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser())
-    # def test_webpdf_without_chromium(self, mock_chromium):
-    #     """
-    #     Generate PDFs if chromium not present?
-    #     """
-    #     with pytest.raises(RuntimeError):
-    #         WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
+    @patch("playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser())
+    def test_webpdf_without_chromium(self, mock_chromium):
+        """
+        Generate PDFs if chromium not present?
+        """
+        with pytest.raises(RuntimeError):
+            WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
     def test_webpdf_without_playwright(self):
         """

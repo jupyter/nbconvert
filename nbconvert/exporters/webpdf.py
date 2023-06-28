@@ -82,23 +82,23 @@ class WebPDFExporter(HTMLExporter):
                 )
                 raise RuntimeError(msg) from e
 
+            if self.allow_chromium_download:
+                cmd = [sys.executable, "-m", "playwright", "install", "chromium"]
+                subprocess.check_call(cmd)
             playwright = await async_playwright().start()
             chromium = playwright.chromium
 
-            if not os.path.isfile(chromium.executable_path):
-                if not self.allow_chromium_download:
-                    msg = (
-                        "No suitable chromium executable found on the system. "
-                        "Please use '--allow-chromium-download' to allow downloading one,"
-                        "or install it using `playwright install chromium`."
-                    )
-                    raise RuntimeError(msg)
-                cmd = [sys.executable, "-m", "playwright", "install", "chromium"]
-                subprocess.check_call(cmd)
-
-            browser = await chromium.launch(
-                handle_sigint=False, handle_sigterm=False, handle_sighup=False, args=args
-            )
+            try:
+                browser = await chromium.launch(
+                    handle_sigint=False, handle_sigterm=False, handle_sighup=False, args=args
+                )
+            except:
+                msg = (
+                    "No suitable chromium executable found on the system. "
+                    "Please use '--allow-chromium-download' to allow downloading one,"
+                    "or install it using `playwright install chromium`."
+                )
+                raise RuntimeError(msg)
 
             page = await browser.new_page()
             await page.goto(f"file://{temp_file.name}", wait_until="networkidle")
