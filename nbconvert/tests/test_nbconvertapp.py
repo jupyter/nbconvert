@@ -11,7 +11,7 @@ import pytest
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
-from nbconvert.exporters.webpdf import PYPPETEER_INSTALLED
+from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED
 
 from ..postprocessors import PostProcessorBase
 from ..tests.utils import onlyif_cmds_exist
@@ -149,7 +149,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook with spaces.pdf")
 
     @pytest.mark.network
-    @pytest.mark.skipif(not PYPPETEER_INSTALLED, reason="Pyppeeter not installed")
+    @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
     def test_webpdf_with_chromium(self):
         """
         Generate PDFs if chromium allowed to be downloaded?
