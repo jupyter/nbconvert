@@ -8,18 +8,18 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 notebook_css_version = "5.4.0"
 notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
-jupyterlab_css_version = "3.6.1"
+jupyterlab_css_version = "4.0.2"
 jupyterlab_css_url = (
     "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
 )
 
-jupyterlab_theme_light_version = "3.6.1"
+jupyterlab_theme_light_version = "4.0.2"
 jupyterlab_theme_light_url = (
     "https://unpkg.com/@jupyterlab/theme-light-extension@%s/style/variables.css"
     % jupyterlab_theme_light_version
 )
 
-jupyterlab_theme_dark_version = "3.6.1"
+jupyterlab_theme_dark_version = "4.0.2"
 jupyterlab_theme_dark_url = (
     "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/style/variables.css"
     % jupyterlab_theme_dark_version
