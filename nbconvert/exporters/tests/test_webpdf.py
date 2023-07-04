@@ -3,16 +3,26 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import builtins
 from unittest.mock import patch
 
 import pytest
 
+from ..exporter import Exporter
 from ..webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
 from .base import ExportersTestsBase
+
+real_import = builtins.__import__
 
 
 class FakeBrowser:
     executable_path: str = ''
+
+
+def monkey_import_notfound(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == "playwright":
+        raise ModuleNotFoundError("Fake missing")
+    return real_import(name, globals=globals, locals=locals, fromlist=fromlist, level=level)
 
 
 @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
@@ -39,14 +49,15 @@ class TestWebPDFExporter(ExportersTestsBase):
         with pytest.raises(RuntimeError):
             WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
+    @patch("builtins.__import__", monkey_import_notfound)
     def test_webpdf_without_playwright(self):
         """
         Generate PDFs if playwright not installed?
         """
         with pytest.raises(RuntimeError):
+            base_exporter = Exporter()
             exporter = WebPDFExporter()
             with open(self._get_notebook(), encoding="utf-8") as f:
-                nb = exporter.from_file(f, resources={})
+                nb = base_exporter.from_file(f, resources={})[0]
                 # Have to do this as the very last action as traitlets do dynamic importing often
-                with patch("builtins.__import__", side_effect=ModuleNotFoundError("Fake missing")):
-                    exporter.from_notebook_node(nb)
+                exporter.from_notebook_node(nb)
