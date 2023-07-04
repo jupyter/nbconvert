@@ -151,7 +151,7 @@ class WebPDFExporter(HTMLExporter):
 
             pdf_data = pool.submit(run_coroutine, main(temp_file)).result()
         finally:
-            # Ensure the file is deleted even if pypeteer raises an exception
+            # Ensure the file is deleted even if playwright raises an exception
             os.unlink(temp_file.name)
         return pdf_data
 

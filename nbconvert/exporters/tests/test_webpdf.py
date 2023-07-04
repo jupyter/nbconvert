@@ -14,13 +14,12 @@ from .base import ExportersTestsBase
 
 real_import = builtins.__import__
 
-
 class FakeBrowser:
     executable_path: str = ''
 
 
 def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(), level=0):
-    if name == "playwright":
+    if name == "playwright.async_api":
         msg = 'Fake missing'
         raise ModuleNotFoundError(msg)
     return real_import(name, globals=globals_ctx, locals=locals_ctx, fromlist=fromlist, level=level)
