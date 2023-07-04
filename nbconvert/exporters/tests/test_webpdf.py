@@ -14,6 +14,7 @@ from .base import ExportersTestsBase
 
 real_import = builtins.__import__
 
+
 class FakeBrowser:
     executable_path: str = ''
 
