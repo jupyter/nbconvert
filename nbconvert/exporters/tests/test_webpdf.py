@@ -19,11 +19,11 @@ class FakeBrowser:
     executable_path: str = ''
 
 
-def monkey_import_notfound(name, globals=None, locals=None, fromlist=(), level=0):
+def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(), level=0):
     if name == "playwright":
         msg = 'Fake missing'
         raise ModuleNotFoundError(msg)
-    return real_import(name, globals=globals, locals=locals, fromlist=fromlist, level=level)
+    return real_import(name, globals=globals_ctx, locals=locals_ctx, fromlist=fromlist, level=level)
 
 
 @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
