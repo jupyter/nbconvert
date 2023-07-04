@@ -21,7 +21,8 @@ class FakeBrowser:
 
 def monkey_import_notfound(name, globals=None, locals=None, fromlist=(), level=0):
     if name == "playwright":
-        raise ModuleNotFoundError("Fake missing")
+        msg = 'Fake missing'
+        raise ModuleNotFoundError(msg)
     return real_import(name, globals=globals, locals=locals, fromlist=fromlist, level=level)
 
 
