@@ -16,7 +16,7 @@ from traitlets import Bool, default
 from .html import HTMLExporter
 
 PLAYWRIGHT_INSTALLED = importlib_util.find_spec("playwright") is not None
-
+IS_WINDOWS = os.name == 'nt'
 
 class WebPDFExporter(HTMLExporter):
     """Writer designed to write to PDF files.
@@ -145,7 +145,11 @@ class WebPDFExporter(HTMLExporter):
             # pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
             def run_coroutine(coro):
                 """Run an internal coroutine."""
-                loop = asyncio.new_event_loop()
+                if IS_WINDOWS:
+                    loop = asyncio.ProactorEventLoop()
+                else:
+                    loop = asyncio.new_event_loop()
+
                 asyncio.set_event_loop(loop)
                 return loop.run_until_complete(coro)
 
