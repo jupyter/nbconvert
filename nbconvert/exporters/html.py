@@ -13,7 +13,7 @@ from typing import Any, Dict, Optional, Tuple
 import jinja2
 import markupsafe
 from jupyter_core.paths import jupyter_path
-from traitlets import Bool, Unicode, default
+from traitlets import Bool, Unicode, default, validate
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
@@ -27,6 +27,7 @@ from nbformat import NotebookNode
 from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.filters.widgetsdatatypefilter import WidgetsDataTypeFilter
+from nbconvert.utils.iso639_1 import iso639_1
 
 from .templateexporter import TemplateExporter
 
@@ -202,6 +203,18 @@ class HTMLExporter(TemplateExporter):
             c = c2
         return c
 
+    language_code = Unicode(
+        "en", help="Language code of the content, should be one of the ISO639-1"
+    ).tag(config=True)
+
+    @validate("language_code")
+    def _valid_language_code(self, proposal):
+        if self.language_code not in iso639_1:
+            self.log.warn(f"\"{self.language_code}\" is not an ISO 639-1 language code. "
+                  "It has been replaced by the default value \"en\".")
+            return proposal["trait"].default_value
+        return proposal["value"]
+
     @contextfilter
     def markdown2html(self, context, source):
         """Markdown to HTML filter respecting the anchor_link_text setting"""
@@ -318,4 +331,5 @@ class HTMLExporter(TemplateExporter):
         resources["widget_renderer_url"] = self.widget_renderer_url
         resources["html_manager_semver_range"] = self.html_manager_semver_range
         resources["should_sanitize_html"] = self.sanitize_html
+        resources["language_code"] = self.language_code
         return resources
