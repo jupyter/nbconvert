@@ -211,8 +211,10 @@ class HTMLExporter(TemplateExporter):
     @validate("language_code")
     def _valid_language_code(self, proposal):
         if self.language_code not in iso639_1:
-            self.log.warn(f"\"{self.language_code}\" is not an ISO 639-1 language code. "
-                  "It has been replaced by the default value \"en\".")
+            self.log.warn(
+                f'"{self.language_code}" is not an ISO 639-1 language code. '
+                'It has been replaced by the default value "en".'
+            )
             return proposal["trait"].default_value
         return proposal["value"]
 
@@ -266,7 +268,6 @@ class HTMLExporter(TemplateExporter):
             elem.attrs["tabindex"] = "0"
 
         return str(soup), resources
-
 
     def _init_resources(self, resources):  # noqa
         def resources_include_css(name):
