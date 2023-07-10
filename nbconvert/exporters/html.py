@@ -12,6 +12,7 @@ from typing import Any, Dict, Optional, Tuple
 
 import jinja2
 import markupsafe
+from bs4 import BeautifulSoup
 from jupyter_core.paths import jupyter_path
 from traitlets import Bool, Unicode, default, validate
 from traitlets.config import Config
@@ -253,7 +254,12 @@ class HTMLExporter(TemplateExporter):
 
         self.register_filter("highlight_code", highlight_code)
         self.register_filter("filter_data_type", filter_data_type)
-        return super().from_notebook_node(nb, resources, **kw)
+        html, resources = super().from_notebook_node(nb, resources, **kw)
+        soup = BeautifulSoup(html, features="html.parser")
+        for elem in soup.select("img:not([alt])"):
+            elem.attrs["alt"] = "Image"
+        return str(soup), resources
+
 
     def _init_resources(self, resources):  # noqa
         def resources_include_css(name):
