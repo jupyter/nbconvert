@@ -341,7 +341,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook1.html")
             with open("notebook1.html", encoding="utf8") as f:
                 text2 = f.read()
-                assert "In [" in text2
+                assert "In [" in text2
                 assert "Out[6]" in text2
 
     def test_cell_tag_output(self):
@@ -382,7 +382,7 @@ class TestNbConvertApp(TestsBase):
 
                 with open("notebook1.html", encoding="utf8") as f:
                     text = f.read()
-                    assert no_input_flag == ("In [" not in text)
+                    assert no_input_flag == ("In [" not in text)
                     assert no_input_flag == ("Out[6]" not in text)
                     assert no_input_flag == (input_content_html not in text)
 
@@ -580,7 +580,7 @@ class TestNbConvertApp(TestsBase):
             with open("notebook5_embed_images.html", encoding="utf8") as f:
                 text = f.read()
                 assert "./containerized_deployments.jpeg" in text
-                assert "src=\"./containerized_deployments.jpeg\"" in text
+                assert 'src="./containerized_deployments.jpeg"' in text
                 assert text.count("data:image/jpeg;base64") == 0
 
     def test_embedding_images_htmlexporter(self):
