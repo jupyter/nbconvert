@@ -256,8 +256,15 @@ class HTMLExporter(TemplateExporter):
         self.register_filter("filter_data_type", filter_data_type)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         soup = BeautifulSoup(html, features="html.parser")
+        # Add image's alternative text
         for elem in soup.select("img:not([alt])"):
             elem.attrs["alt"] = "Image"
+        # Set input and output focusable
+        for elem in soup.select(".jp-Notebook div.jp-Cell-inputWrapper"):
+            elem.attrs["tabindex"] = "0"
+        for elem in soup.select(".jp-Notebook div.jp-OutputArea-output"):
+            elem.attrs["tabindex"] = "0"
+
         return str(soup), resources
 
 
