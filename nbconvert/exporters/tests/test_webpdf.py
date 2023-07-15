@@ -3,15 +3,30 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import builtins
 from unittest.mock import patch
 
 import pytest
 
-from ..webpdf import PYPPETEER_INSTALLED, WebPDFExporter
+from ..exporter import Exporter
+from ..webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
 from .base import ExportersTestsBase
 
+real_import = builtins.__import__
 
-@pytest.mark.skipif(not PYPPETEER_INSTALLED, reason="Pyppeteer not installed")
+
+class FakeBrowser:
+    executable_path: str = ''
+
+
+def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(), level=0):
+    if name == "playwright.async_api":
+        msg = 'Fake missing'
+        raise ModuleNotFoundError(msg)
+    return real_import(name, globals=globals_ctx, locals=locals_ctx, fromlist=fromlist, level=level)
+
+
+@pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 
@@ -27,22 +42,23 @@ class TestWebPDFExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
-    @patch("pyppeteer.util.check_chromium", return_value=False)
-    def test_webpdf_without_chromium(self, mock_check_chromium):
+    @patch("playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser())
+    def test_webpdf_without_chromium(self, mock_chromium):
         """
         Generate PDFs if chromium not present?
         """
         with pytest.raises(RuntimeError):
             WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
-    def test_webpdf_without_pyppeteer(self):
+    @patch("builtins.__import__", monkey_import_notfound)
+    def test_webpdf_without_playwright(self):
         """
-        Generate PDFs if chromium not present?
+        Generate PDFs if playwright not installed?
         """
         with pytest.raises(RuntimeError):
+            base_exporter = Exporter()
             exporter = WebPDFExporter()
             with open(self._get_notebook(), encoding="utf-8") as f:
-                nb = exporter.from_file(f, resources={})
+                nb = base_exporter.from_file(f, resources={})[0]
                 # Have to do this as the very last action as traitlets do dynamic importing often
-                with patch("builtins.__import__", side_effect=ModuleNotFoundError("Fake missing")):
-                    exporter.from_notebook_node(nb)
+                exporter.from_notebook_node(nb)

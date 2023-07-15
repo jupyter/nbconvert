@@ -58,7 +58,7 @@ script = "nbconvert.exporters:ScriptExporter"
 [project.optional-dependencies]
 qtpng = ["pyqtwebengine>=5.15"]
 qtpdf = ["nbconvert[qtpng]"]
-webpdf = ["pyppeteer>=1,<1.1"]
+webpdf = ["playwright"]
 test = [
     "pytest",
     "pytest-dependency",

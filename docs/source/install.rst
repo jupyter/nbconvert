@@ -29,7 +29,7 @@ The `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ and `Miniforge
 .. important::
 
     To unlock its full capabilities, nbconvert requires Pandoc, TeX
-    (specifically, XeLaTeX) and Pyppeteer. These must be installed separately.
+    (specifically, XeLaTeX) and playwright. These must be installed separately.
 
 Installing Pandoc
 -----------------
@@ -80,13 +80,13 @@ Installing Chromium
 -------------------
 
 For converting notebooks to PDF with ``--to webpdf``, nbconvert requires the
-`Pyppeteer <https://github.com/pyppeteer/pyppeteer>`_ Chromium automation library.
+`playwright <https://github.com/microsoft/playwright-python>`_ Chromium automation library.
 
-Pyppeteer makes use of a specific version of Chromium. If it does not find a suitable
+Playwright makes use of a specific version of Chromium. If it does not find a suitable
 installation of the web browser, it can automatically download it if the ``--allow-chromium-download``
 flag is passed to the command line.
 
-To install a suitable version of pyppeteer, you can pip install ``nbconvert[webpdf]``.
+To install a suitable version of playwright, you can pip install ``nbconvert[webpdf]``.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

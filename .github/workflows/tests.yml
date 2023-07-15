@@ -52,7 +52,7 @@ jobs:
       - name: Run tests on other platforms
         if: ${{ !startsWith(runner.os, 'linux')  }}
         run: |
-          hatch run cov:test
+          hatch run cov:nowarn
 
       - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
 
