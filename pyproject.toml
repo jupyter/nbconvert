@@ -154,6 +154,7 @@ testpaths = [
 filterwarnings = [
     "error",
     "ignore:nbconvert.utils.lexers is deprecated as of 5.0:UserWarning",
+    "module:unclosed transport:ResourceWarning",
     # https://github.com/pyppeteer/pyppeteer/issues/342
     "ignore:remove loop argument:DeprecationWarning:websockets",
     # https://github.com/mhammond/pywin32/issues/1802
