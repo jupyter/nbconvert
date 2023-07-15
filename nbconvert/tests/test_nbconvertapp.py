@@ -335,13 +335,13 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook1.html")
             with open("notebook1.html", encoding="utf8") as f:
                 text = f.read()
-                assert "In&nbsp;[" not in text
+                assert "In\xa0[" not in text
                 assert "Out[6]" not in text
             self.nbconvert("notebook1.ipynb --log-level 0 --to html")
             assert os.path.isfile("notebook1.html")
             with open("notebook1.html", encoding="utf8") as f:
                 text2 = f.read()
-                assert "In&nbsp;[" in text2
+                assert "In\xa0[" in text2
                 assert "Out[6]" in text2
 
     def test_cell_tag_output(self):
@@ -369,7 +369,7 @@ class TestNbConvertApp(TestsBase):
             '<span class="o">=</span> '
             '<span class="n">symbols</span>'
             '<span class="p">(</span>'
-            '<span class="s1">&#39;x y z&#39;</span>'
+            '<span class="s1">\'x y z\'</span>'
             '<span class="p">)</span>'
         )
         for no_input_flag in (False, True):
@@ -382,7 +382,7 @@ class TestNbConvertApp(TestsBase):
 
                 with open("notebook1.html", encoding="utf8") as f:
                     text = f.read()
-                    assert no_input_flag == ("In&nbsp;[" not in text)
+                    assert no_input_flag == ("In\xa0[" not in text)
                     assert no_input_flag == ("Out[6]" not in text)
                     assert no_input_flag == (input_content_html not in text)
 
@@ -580,7 +580,7 @@ class TestNbConvertApp(TestsBase):
             with open("notebook5_embed_images.html", encoding="utf8") as f:
                 text = f.read()
                 assert "./containerized_deployments.jpeg" in text
-                assert "src='./containerized_deployments.jpeg'" in text
+                assert 'src="./containerized_deployments.jpeg"' in text
                 assert text.count("data:image/jpeg;base64") == 0
 
     def test_embedding_images_htmlexporter(self):
