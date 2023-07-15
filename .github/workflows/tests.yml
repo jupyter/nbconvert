@@ -49,7 +49,7 @@ jobs:
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
         run: |
-          xvfb-run --auto-servernum hatch run cov:test
+          xvfb-run --auto-servernum hatch run test:test
 
       - name: Run tests on other platforms
         if: ${{ !startsWith(runner.os, 'linux')  }}

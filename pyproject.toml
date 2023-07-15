@@ -65,8 +65,7 @@ test = [
     "ipykernel",
     "ipywidgets>=7",
     "pre-commit",
-    "flaky",
-    "pytest-faulthandler"
+    "flaky"
 ]
 serve = ["tornado>=6.1"]
 docs = [
