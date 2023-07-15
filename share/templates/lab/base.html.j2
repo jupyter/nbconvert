@@ -26,7 +26,7 @@
 
 {% block input %}
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
+     <div class="cm-editor cm-s-jupyter">
 {{ cell.source | highlight_code(metadata=cell.metadata) | clean_html }}
      </div>
 </div>
@@ -164,7 +164,7 @@ unknown type  {{ cell.type }}
 {%- if output.svg_filename %}
 <img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
-{{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+<img src="data:image/svg+xml;base64,{{ output.data['image/svg+xml'] | text_base64 | escape_html }}">
 {%- endif %}
 </div>
 {%- endblock data_svg %}

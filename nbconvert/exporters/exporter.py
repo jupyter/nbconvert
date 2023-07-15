@@ -180,7 +180,7 @@ class Exporter(LoggingConfigurable):
         # Pull the metadata from the filesystem.
         if resources is None:
             resources = ResourcesDict()
-        if "metadata" not in resources or resources["metadata"] == "":  # noqa
+        if "metadata" not in resources or resources["metadata"] == "":
             resources["metadata"] = ResourcesDict()
         path, basename = os.path.split(filename)
         notebook_name = os.path.splitext(basename)[0]

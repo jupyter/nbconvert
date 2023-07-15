@@ -41,8 +41,6 @@ __all__ = [
     "text_base64",
 ]
 
-from nbconvert.filters.svg_constants import ALLOWED_SVG_ATTRIBUTES, ALLOWED_SVG_TAGS
-
 
 def wrap_text(text, width=100):
     """
@@ -91,11 +89,9 @@ def clean_html(element):
         kwargs['css_sanitizer'] = css_sanitizer
     return bleach.clean(
         element,
-        tags=[*bleach.ALLOWED_TAGS, *ALLOWED_SVG_TAGS, "div", "pre", "code", "span"],
-        strip_comments=False,
+        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span"],
         attributes={
             **bleach.ALLOWED_ATTRIBUTES,
-            **{svg_tag: list(ALLOWED_SVG_ATTRIBUTES) for svg_tag in ALLOWED_SVG_TAGS},
             "*": ["class", "id"],
         },
         **kwargs,

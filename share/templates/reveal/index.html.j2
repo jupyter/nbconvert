@@ -10,7 +10,7 @@
 
 {%- block header -%}
 <!DOCTYPE html>
-<html>
+<html lang="{{ resources.language_code }}">
 <head>
 
 {%- block html_head -%}
@@ -118,6 +118,7 @@ a.anchor-link {
 {% else %}
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% endif %}
+<main>
 <div class="reveal">
 <div class="slides">
 {%- endblock body_header -%}
@@ -125,6 +126,7 @@ a.anchor-link {
 {% block body_footer %}
 </div>
 </div>
+</main>
 </body>
 {% endblock body_footer %}
 
