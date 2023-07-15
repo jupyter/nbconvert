@@ -399,7 +399,7 @@ class NbConvertApp(JupyterApp):
         """Initialize the writer (which is stateless)"""
         self._writer_class_changed({"new": self.writer_class})
         self.writer = self.writer_factory(parent=self)
-        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":  # noqa
+        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
             self.use_output_suffix = False
 
     def init_postprocessor(self):
