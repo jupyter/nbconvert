@@ -149,7 +149,7 @@ class WebPDFExporter(HTMLExporter):
                 loop = (
                     asyncio.ProactorEventLoop()  # type:ignore
                     if IS_WINDOWS
-                    else asyncio.new_event_loop()  
+                    else asyncio.new_event_loop()
                 )
 
                 asyncio.set_event_loop(loop)
