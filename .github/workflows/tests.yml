@@ -23,12 +23,12 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-20.04", "macos-latest", "windows-latest"]
-        python-version: ["3.7", "3.10"]
+        python-version: ["3.8", "3.11"]
         include:
           - os: "windows-latest"
-            python-version: "3.8"
-          - os: "ubuntu-20.04"
             python-version: "3.9"
+          - os: "ubuntu-20.04"
+            python-version: "3.10"
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -55,6 +55,15 @@ jobs:
           hatch run cov:test
 
       - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
+
+  python312:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+        with:
+          python_version: "3.12"
+      - run: hatch run test:test
 
   coverage:
     runs-on: ubuntu-latest
