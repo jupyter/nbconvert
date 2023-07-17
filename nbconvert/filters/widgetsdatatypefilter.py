@@ -21,7 +21,7 @@ NbConvertBase.display_data_priority
 import os
 from warnings import warn
 
-from ..utils.base import NbConvertBase
+from nbconvert.utils.base import NbConvertBase
 
 __all__ = ["WidgetsDataTypeFilter"]
 
@@ -71,7 +71,8 @@ class WidgetsDataTypeFilter(NbConvertBase):
                 return [fmt]
         warn(
             "Your element with mimetype(s) {mimetypes}"
-            " is not able to be represented.".format(mimetypes=output.keys())
+            " is not able to be represented.".format(mimetypes=output.keys()),
+            stacklevel=2,
         )
 
         return []

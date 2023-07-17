@@ -95,6 +95,7 @@ class Exporter(LoggingConfigurable):
             "nbconvert.preprocessors.LatexPreprocessor",
             "nbconvert.preprocessors.HighlightMagicsPreprocessor",
             "nbconvert.preprocessors.ExtractOutputPreprocessor",
+            "nbconvert.preprocessors.ExtractAttachmentsPreprocessor",
             "nbconvert.preprocessors.ClearMetadataPreprocessor",
         ],
         help="""List of preprocessors available by default, by name, namespace,
@@ -186,7 +187,9 @@ class Exporter(LoggingConfigurable):
         resources["metadata"]["name"] = notebook_name
         resources["metadata"]["path"] = path
 
-        modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+        modified_date = datetime.datetime.fromtimestamp(
+            os.path.getmtime(filename), tz=datetime.timezone.utc
+        )
         # datetime.strftime date format for ipython
         if sys.platform == "win32":
             date_format = "%B %d, %Y"
@@ -235,7 +238,8 @@ class Exporter(LoggingConfigurable):
 
         """
         if preprocessor is None:
-            raise TypeError("preprocessor must not be None")
+            msg = "preprocessor must not be None"
+            raise TypeError(msg)
         isclass = isinstance(preprocessor, type)
         constructed = not isclass
 
@@ -289,7 +293,6 @@ class Exporter(LoggingConfigurable):
             self.register_preprocessor(preprocessor, enabled=True)
 
     def _init_resources(self, resources):
-
         # Make sure the resources dict is of ResourcesDict type.
         if resources is None:
             resources = ResourcesDict()
@@ -315,10 +318,7 @@ class Exporter(LoggingConfigurable):
 
     def _validate_preprocessor(self, nbc, preprocessor):
         try:
-            if not hasattr(validator, "normalize"):
-                nbformat.validate(nbc, relax_add_props=True)
-            else:
-                nbformat.validate(nbc)
+            nbformat.validate(nbc, relax_add_props=True)
         except nbformat.ValidationError:
             self.log.error("Notebook is invalid after preprocessor %s", preprocessor)
             raise

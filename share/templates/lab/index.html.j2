@@ -1,10 +1,11 @@
 {%- extends 'base.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
+{% from 'mermaidjs.html.j2' import mermaid_js %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {%- block header -%}
 <!DOCTYPE html>
-<html>
+<html lang="{{ resources.language_code }}">
 <head>
 {%- block html_head -%}
 <meta charset="utf-8" />
@@ -62,8 +63,8 @@ a.anchor-link {
   overflow: hidden;
 }
 
-.CodeMirror.cm-s-jupyter .highlight pre {
-/* weird, but --jp-code-padding defined to be 5px but 4px horizontal padding is hardcoded for pre.CodeMirror-line */
+.cm-editor.cm-s-jupyter .highlight pre {
+/* weird, but --jp-code-padding defined to be 5px but 4px horizontal padding is hardcoded for pre.cm-line */
   padding: var(--jp-code-padding) 4px;
   margin: 0;
 
@@ -84,44 +85,6 @@ a.anchor-link {
   font-size: var(--jp-code-font-size);
 }
 
-/* Using table instead of flexbox so that we can use break-inside property */
-/* CSS rules under this comment should not be required anymore after we move to the JupyterLab 4.0 CSS */
-
-
-.jp-CodeCell.jp-mod-outputsScrolled .jp-OutputArea-prompt {
-  min-width: calc(
-    var(--jp-cell-prompt-width) - var(--jp-private-cell-scrolling-output-offset)
-  );
-}
-
-.jp-OutputArea-child {
-  display: table;
-  width: 100%;
-}
-
-.jp-OutputPrompt {
-  display: table-cell;
-  vertical-align: top;
-  min-width: var(--jp-cell-prompt-width);
-}
-
-body[data-format='mobile'] .jp-OutputPrompt {
-  display: table-row;
-}
-
-.jp-OutputArea-output {
-  display: table-cell;
-  width: 100%;
-}
-
-body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
-  display: table-row;
-}
-
-.jp-OutputArea-output.jp-OutputArea-executeResult {
-  width: 100%;
-}
-
 /* Hiding the collapser by default */
 .jp-Collapser {
   display: none;
@@ -136,10 +99,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
   .jp-Cell-outputWrapper {
     display: block;
   }
-
-  .jp-OutputArea-child {
-    break-inside: avoid-page;
-  }
 }
 </style>
 
@@ -148,6 +107,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 {%- block html_head_js_mathjax -%}
 {{ mathjax(resources.mathjax_url) }}
 {%- endblock html_head_js_mathjax -%}
+
+{%- block html_head_js_mermaidjs -%}
+{{ mermaid_js(resources.mermaid_js_url) }}
+{%- endblock html_head_js_mermaidjs -%}
 
 {%- block html_head_css -%}
 {%- endblock html_head_css -%}
@@ -162,9 +125,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 {% else %}
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% endif %}
+<main>
 {%- endblock body_header -%}
 
 {% block body_footer %}
+</main>
 </body>
 {% endblock body_footer %}
 

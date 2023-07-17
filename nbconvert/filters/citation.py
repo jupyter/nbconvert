@@ -44,7 +44,7 @@ def citation2latex(s):
     for citation in parser.citelist:
         outtext += s[startpos : citation[1]]
         outtext += "\\cite{%s}" % citation[0]
-        startpos = citation[2] if len(citation) == 3 else -1
+        startpos = citation[2] if len(citation) == 3 else -1  # noqa
     outtext += s[startpos:] if startpos != -1 else ""
     return outtext
 

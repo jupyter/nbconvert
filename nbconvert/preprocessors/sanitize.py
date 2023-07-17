@@ -7,6 +7,8 @@ import warnings
 from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
+from .base import Preprocessor
+
 _USE_BLEACH_CSS_SANITIZER = False
 _USE_BLEACH_STYLES = False
 
@@ -28,6 +30,7 @@ except ImportError:
         warnings.warn(
             "Support for bleach <5 will be removed in a future version of nbconvert",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     except ImportError:
@@ -35,10 +38,9 @@ except ImportError:
             "The installed bleach/tinycss2 do not provide CSS sanitization, "
             "please upgrade to bleach >=5",
             UserWarning,
+            stacklevel=2,
         )
 
-
-from .base import Preprocessor
 
 __all__ = ["SanitizeHTML"]
 
@@ -109,7 +111,7 @@ class SanitizeHTML(Preprocessor):
           code:
             Sanitize outputs that could result in code execution
         """
-        if cell.cell_type == "raw":
+        if cell.cell_type == "raw":  # noqa
             # Sanitize all raw cells anyway.
             # Only ones with the text/html mimetype should be emitted
             # but erring on the side of safety maybe.
@@ -168,3 +170,8 @@ class SanitizeHTML(Preprocessor):
             kwargs.update(styles=self.styles)
 
         return clean(html_str, **kwargs)
+
+
+def _get_default_css_sanitizer():
+    if _USE_BLEACH_CSS_SANITIZER:
+        return CSSSanitizer(allowed_css_properties=ALLOWED_STYLES)

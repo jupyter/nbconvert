@@ -10,7 +10,7 @@
 
 {%- block header -%}
 <!DOCTYPE html>
-<html>
+<html lang="{{ resources.language_code }}">
 <head>
 
 {%- block html_head -%}
@@ -30,6 +30,12 @@
 {%- block html_head_js_requirejs -%}
 <script src="{{ resources.require_js_url }}"></script>
 {%- endblock html_head_js_requirejs -%}
+{%- block html_head_js_mermaidjs -%}
+<script type="module">
+  import mermaid from '{{ resources.mermaid_js_url }}';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+{%- endblock html_head_js_mermaidjs -%}
 {%- endblock html_head_js -%}
 
 {% block jupyter_widgets %}
@@ -112,6 +118,7 @@ a.anchor-link {
 {% else %}
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% endif %}
+<main>
 <div class="reveal">
 <div class="slides">
 {%- endblock body_header -%}
@@ -119,6 +126,7 @@ a.anchor-link {
 {% block body_footer %}
 </div>
 </div>
+</main>
 </body>
 {% endblock body_footer %}
 

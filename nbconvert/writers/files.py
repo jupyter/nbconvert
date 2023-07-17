@@ -3,13 +3,14 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import errno
 import glob
 import os
 from pathlib import Path
 
 from traitlets import Unicode, observe
 
-from nbconvert.utils.io import ensure_dir_exists, link_or_copy
+from nbconvert.utils.io import link_or_copy
 
 from .base import WriterBase
 
@@ -38,18 +39,43 @@ class FilesWriter(WriterBase):
     def _build_directory_changed(self, change):
         new = change["new"]
         if new:
-            ensure_dir_exists(new)
+            self._makedir(new)
 
     def __init__(self, **kw):
         """Initialize the writer."""
         super().__init__(**kw)
         self._build_directory_changed({"new": self.build_directory})
 
-    def _makedir(self, path):
-        """Make a directory if it doesn't already exist"""
-        if path:
+    def _makedir(self, path, mode=0o755):
+        """ensure that a directory exists
+
+        If it doesn't exist, try to create it and protect against a race condition
+        if another process is doing the same.
+
+        The default permissions are 755, which differ from os.makedirs default of 777.
+        """
+        if not os.path.exists(path):
             self.log.info("Making directory %s", path)
-            ensure_dir_exists(path)
+            try:
+                os.makedirs(path, mode=mode)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
+        elif not os.path.isdir(path):
+            raise OSError("%r exists but is not a directory" % path)
+
+    def _write_items(self, items, build_dir):
+        """Write a dict containing filename->binary data"""
+        for filename, data in items:
+            # Determine where to write the file to
+            dest = os.path.join(build_dir, filename)
+            path = os.path.dirname(dest)
+            self._makedir(path)
+
+            # Write file
+            self.log.debug("Writing %i bytes to %s", len(data), dest)
+            with open(dest, "wb") as f:
+                f.write(data)
 
     def write(self, output, resources, notebook_name=None, **kw):
         """
@@ -62,7 +88,8 @@ class FilesWriter(WriterBase):
 
         # Verify that a notebook name is provided.
         if notebook_name is None:
-            raise TypeError("notebook_name")
+            msg = "notebook_name"
+            raise TypeError(msg)
 
         # Pull the extension and subdir from the resources dict.
         output_extension = resources.get("output_extension", None)
@@ -72,7 +99,7 @@ class FilesWriter(WriterBase):
         relpath = self.relpath or resource_path
         build_directory = self.build_directory or resource_path
 
-        # Write all of the extracted resources to the destination directory.
+        # Write the extracted outputs to the destination directory.
         # NOTE: WE WRITE EVERYTHING AS-IF IT'S BINARY.  THE EXTRACT FIG
         # PREPROCESSOR SHOULD HANDLE UNIX/WINDOWS LINE ENDINGS...
 
@@ -82,25 +109,23 @@ class FilesWriter(WriterBase):
                 "Support files will be in %s",
                 os.path.join(resources.get("output_files_dir", ""), ""),
             )
-        for filename, data in items:
+            self._write_items(items, build_directory)
 
-            # Determine where to write the file to
-            dest = os.path.join(build_directory, filename)
-            path = os.path.dirname(dest)
-            self._makedir(path)
-
-            # Write file
-            self.log.debug("Writing %i bytes to support file %s", len(data), dest)
-            with open(dest, "wb") as f:
-                f.write(data)
+        # Write the extracted attachments
+        # if ExtractAttachmentsOutput specified a separate directory
+        attachs = resources.get("attachments", {}).items()
+        if attachs:
+            self.log.info(
+                "Attachments will be in %s",
+                os.path.join(resources.get("attachment_files_dir", ""), ""),
+            )
+            self._write_items(attachs, build_directory)
 
         # Copy referenced files to output directory
         if build_directory:
             for filename in self.files:
-
                 # Copy files that match search pattern
                 for matching_filename in glob.glob(filename):
-
                     # compute the relative path for the filename
                     if relpath != "":
                         dest_filename = os.path.relpath(matching_filename, relpath)
@@ -113,15 +138,12 @@ class FilesWriter(WriterBase):
                     self._makedir(path)
 
                     # Copy if destination is different.
-                    if not os.path.normpath(dest) == os.path.normpath(matching_filename):
+                    if os.path.normpath(dest) != os.path.normpath(matching_filename):
                         self.log.info("Copying %s -> %s", matching_filename, dest)
                         link_or_copy(matching_filename, dest)
 
         # Determine where to write conversion results.
-        if output_extension is not None:
-            dest = notebook_name + output_extension
-        else:
-            dest = notebook_name
+        dest = notebook_name + output_extension if output_extension is not None else notebook_name
         dest = Path(build_directory) / dest
 
         # Write conversion results.

@@ -8,10 +8,11 @@ from tempfile import TemporaryDirectory
 
 import nbformat
 import pytest
+from flaky import flaky  # type:ignore
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
-from nbconvert.exporters.webpdf import PYPPETEER_INSTALLED
+from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED
 
 from ..postprocessors import PostProcessorBase
 from ..tests.utils import onlyif_cmds_exist
@@ -148,8 +149,9 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile("notebook with spaces.pdf")
 
+    @flaky
     @pytest.mark.network
-    @pytest.mark.skipif(not PYPPETEER_INSTALLED, reason="Pyppeeter not installed")
+    @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
     def test_webpdf_with_chromium(self):
         """
         Generate PDFs if chromium allowed to be downloaded?
@@ -335,13 +337,13 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook1.html")
             with open("notebook1.html", encoding="utf8") as f:
                 text = f.read()
-                assert "In&nbsp;[" not in text
+                assert "In\xa0[" not in text
                 assert "Out[6]" not in text
             self.nbconvert("notebook1.ipynb --log-level 0 --to html")
             assert os.path.isfile("notebook1.html")
             with open("notebook1.html", encoding="utf8") as f:
                 text2 = f.read()
-                assert "In&nbsp;[" in text2
+                assert "In\xa0[" in text2
                 assert "Out[6]" in text2
 
     def test_cell_tag_output(self):
@@ -369,7 +371,7 @@ class TestNbConvertApp(TestsBase):
             '<span class="o">=</span> '
             '<span class="n">symbols</span>'
             '<span class="p">(</span>'
-            '<span class="s1">&#39;x y z&#39;</span>'
+            '<span class="s1">\'x y z\'</span>'
             '<span class="p">)</span>'
         )
         for no_input_flag in (False, True):
@@ -382,7 +384,7 @@ class TestNbConvertApp(TestsBase):
 
                 with open("notebook1.html", encoding="utf8") as f:
                     text = f.read()
-                    assert no_input_flag == ("In&nbsp;[" not in text)
+                    assert no_input_flag == ("In\xa0[" not in text)
                     assert no_input_flag == ("Out[6]" not in text)
                     assert no_input_flag == (input_content_html not in text)
 
@@ -431,7 +433,8 @@ class TestNbConvertApp(TestsBase):
             )
             assert 'print("Some text before the error")' in error_output
             assert 'raise RuntimeError("This is a deliberate exception")' in error_output
-            assert "RuntimeError: This is a deliberate exception" in error_output
+            assert "RuntimeError" in error_output
+            assert "This is a deliberate exception" in error_output
 
     def test_fenced_code_blocks_markdown(self):
         """
@@ -446,7 +449,6 @@ class TestNbConvertApp(TestsBase):
             assert "```" in output1  # but should have fenced blocks
 
         with self.create_temp_cwd(["notebook_jl*.ipynb"]):
-
             output2, _ = self.nbconvert("--to markdown --stdout notebook_jl.ipynb")
             assert "```julia" in output2  # shouldn't have language
             assert "```" in output2  # but should also plain ``` to close cell
@@ -580,7 +582,7 @@ class TestNbConvertApp(TestsBase):
             with open("notebook5_embed_images.html", encoding="utf8") as f:
                 text = f.read()
                 assert "./containerized_deployments.jpeg" in text
-                assert "src='./containerized_deployments.jpeg'" in text
+                assert 'src="./containerized_deployments.jpeg"' in text
                 assert text.count("data:image/jpeg;base64") == 0
 
     def test_embedding_images_htmlexporter(self):
@@ -597,39 +599,75 @@ class TestNbConvertApp(TestsBase):
                 assert "src='./containerized_deployments.jpeg'" not in text
                 assert text.count("data:image/jpeg;base64") == 3
 
-    def test_embedded_svg_remains(self):
-        """Check that the HTMLExporter doesn't scrub SVG"""
-
-        with self.create_temp_cwd(["issue1849_svg.ipynb"]):
-            self.nbconvert("issue1849_svg --log-level 0 --to html")
-            assert os.path.isfile("issue1849_svg.html")
-            with open("issue1849_svg.html", encoding="utf8") as f:
-                text = f.read()
-                assert '<g id="line2d_2">' in text  # Must not be escaped
-                # TODO: these currently break...
-                # assert '<use xlink:href=\"#m361cdeea3f\"' in text  # Must not be escaped
-                assert "<!-- 1.6 -->" in text  # Must not be stripped
-
     def test_execute_widgets_from_nbconvert(self):
         """Check jupyter widgets render"""
-        notebookName = "Unexecuted_widget"
-        with self.create_temp_cwd([f"{notebookName}.ipynb"]):
-            self.nbconvert(f"{notebookName}.ipynb --execute --log-level 0 --to html")
-            assert os.path.isfile(f"{notebookName}.html")
-            with open(f"{notebookName}.html", encoding="utf8") as f:
+        notebook_name = "Unexecuted_widget"
+        with self.create_temp_cwd([f"{notebook_name}.ipynb"]):
+            self.nbconvert(f"{notebook_name}.ipynb --execute --log-level 0 --to html")
+            assert os.path.isfile(f"{notebook_name}.html")
+            with open(f"{notebook_name}.html", encoding="utf8") as f:
                 text = f.read()
                 assert '<script type="application/vnd.jupyter.widget-view+json">' in text
                 assert '<script type="application/vnd.jupyter.widget-state+json">' in text
 
     def test_execute_multiple_notebooks(self):
         """Check jupyter widgets render in case of batch convert"""
-        notebookName = "Unexecuted_widget"
-        with self.create_temp_cwd([f"{notebookName}*.ipynb"]):
+        notebook_name = "Unexecuted_widget"
+        with self.create_temp_cwd([f"{notebook_name}*.ipynb"]):
             self.nbconvert("*.ipynb --execute --log-level 0 --to html")
 
-            for name in (notebookName, f"{notebookName}_2"):
+            for name in (notebook_name, f"{notebook_name}_2"):
                 assert os.path.isfile(f"{name}.html")
                 with open(f"{name}.html", encoding="utf8") as f:
                     text = f.read()
                     assert '<script type="application/vnd.jupyter.widget-view+json">' in text
                     assert '<script type="application/vnd.jupyter.widget-state+json">' in text
+
+    def test_output_base(self):
+        """
+        Check various configurations of output_base (--output)
+        """
+        notebook_names = [
+            "notebook1",
+            "notebook2",
+        ]
+        with self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --output '{notebook_name}_test_addition.asd' --to markdown")
+
+            for nbn in notebook_names:
+                assert os.path.isfile(f"{nbn}_test_addition.asd.md")
+
+        with self.create_temp_cwd([x + ".ipynb" for x in notebook_names]):
+            self.nbconvert("*.ipynb --to markdown")
+
+            for nbn in notebook_names:
+                assert os.path.isfile(f"{nbn}.md")
+
+        # Test single output with static output name
+        nbname = notebook_names[0]
+        with self.create_temp_cwd([nbname + ".ipynb"]):
+            self.nbconvert(f"{nbname}.ipynb --output notebook_test_name --to markdown")
+            assert os.path.isfile("notebook_test_name.md")
+
+            self.nbconvert(f"{nbname}.ipynb --to notebook")
+            assert os.path.isfile("notebook1.nbconvert.ipynb")
+
+            self.nbconvert(f"{nbname}.ipynb --to notebook --output out.ipynb")
+            assert os.path.isfile("out.ipynb")
+
+        # Test double extension fix
+        with self.create_temp_cwd([notebook_names[0] + ".ipynb"]):
+            self.nbconvert("*.ipynb --output notebook_test_name.md --to markdown")
+            assert os.path.isfile("notebook_test_name.md")
+            assert not os.path.isfile("notebook_test_name.md.md")
+
+    def test_same_filename_different_dir(self):
+        """
+        Check if files with same name in different directories pose a problem
+        """
+        with self.create_temp_cwd() as temp_wd:
+            self.copy_files_to(["notebook1.ipynb"], temp_wd + "/dir1")
+            self.copy_files_to(["notebook1.ipynb"], temp_wd + "/dir2")
+            self.nbconvert("dir1/notebook1.ipynb dir2/notebook1.ipynb --to markdown")
+            assert os.path.isfile("dir1/notebook1.md")
+            assert os.path.isfile("dir2/notebook1.md")

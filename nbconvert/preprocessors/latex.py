@@ -14,7 +14,7 @@ they are converted.
 # -----------------------------------------------------------------------------
 
 
-from traitlets import Unicode
+from traitlets import List, Unicode
 
 from .base import Preprocessor
 
@@ -26,9 +26,27 @@ from .base import Preprocessor
 class LatexPreprocessor(Preprocessor):
     """Preprocessor for latex destined documents.
 
-    Mainly populates the ``latex`` key in the resources dict,
+    Populates the ``latex`` key in the resources dict,
     adding definitions for pygments highlight styles.
+
+    Sets the authors, date and title of the latex document,
+    overriding the values given in the metadata.
     """
+
+    date = Unicode(
+        None,
+        help=("Date of the LaTeX document"),
+        allow_none=True,
+    ).tag(config=True)
+
+    title = Unicode(None, help=("Title of the LaTeX document"), allow_none=True).tag(config=True)
+
+    author_names = List(
+        Unicode(),
+        default_value=None,
+        help=("Author names to list in the LaTeX document"),
+        allow_none=True,
+    ).tag(config=True)
 
     style = Unicode("default", help="Name of the pygments style to use").tag(config=True)
 
@@ -51,4 +69,14 @@ class LatexPreprocessor(Preprocessor):
             "pygments_definitions", LatexFormatter(style=self.style).get_style_defs()
         )
         resources["latex"].setdefault("pygments_style_name", self.style)
+
+        if self.author_names is not None:
+            nb.metadata["authors"] = [{"name": author} for author in self.author_names]
+
+        if self.date is not None:
+            nb.metadata["date"] = self.date
+
+        if self.title is not None:
+            nb.metadata["title"] = self.title
+
         return nb, resources

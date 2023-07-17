@@ -3,12 +3,14 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import os
 
 from traitlets import default
 from traitlets.config import Config
 
 from nbconvert.filters.filter_links import resolve_references
 from nbconvert.filters.highlight import Highlight2Latex
+from nbconvert.filters.pandoc import ConvertExplicitlyRelativePaths
 
 from .templateexporter import TemplateExporter
 
@@ -54,6 +56,7 @@ class LatexExporter(TemplateExporter):
                         "text/plain",
                     ]
                 },
+                "ExtractAttachmentsPreprocessor": {"enabled": True},
                 "ExtractOutputPreprocessor": {"enabled": True},
                 "SVG2PDFPreprocessor": {"enabled": True},
                 "LatexPreprocessor": {"enabled": True},
@@ -61,7 +64,10 @@ class LatexExporter(TemplateExporter):
                 "HighlightMagicsPreprocessor": {"enabled": True},
             }
         )
-        c.merge(super().default_config)
+        if super().default_config:
+            c2 = super().default_config.copy()
+            c2.merge(c)
+            c = c2
         return c
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -72,6 +78,16 @@ class LatexExporter(TemplateExporter):
             "highlight_code", Highlight2Latex(pygments_lexer=lexer, parent=self)
         )
         self.register_filter("highlight_code", highlight_code)
+
+        # Need to make sure explicit relative paths are visible to latex for pdf conversion
+        # https://github.com/jupyter/nbconvert/issues/1998
+        nb_path = resources.get("metadata", {}).get("path") if resources else None
+        texinputs = os.path.abspath(nb_path) if nb_path else os.getcwd()
+        convert_explicitly_relative_paths = self.filters.get(
+            "convert_explicitly_relative_paths",
+            ConvertExplicitlyRelativePaths(texinputs=texinputs, parent=self),
+        )
+        self.register_filter("convert_explicitly_relative_paths", convert_explicitly_relative_paths)
 
         return super().from_notebook_node(nb, resources, **kw)
 

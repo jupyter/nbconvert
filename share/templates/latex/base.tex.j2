@@ -89,6 +89,7 @@ override this.-=))
     \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
     \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
                                 % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
     \usepackage{mathrsfs}
     ((* endblock packages *))
 
@@ -179,7 +180,11 @@ override this.-=))
     ((*- set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] -*))
     \title{((( nb_title | escape_latex )))}
     ((*- endblock title *))
-    ((* block date *))((* endblock date *))
+    ((* block date *))
+    ((* if 'date' in nb.metadata *))
+    \date{((( nb.metadata.date | escape_latex )))}
+    ((* endif *))
+    ((* endblock date *))
     ((* block author *))
     ((* if 'authors' in nb.metadata *))
     \author{((( nb.metadata.authors | join(', ', attribute='name') )))}

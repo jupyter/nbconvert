@@ -8,18 +8,18 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 notebook_css_version = "5.4.0"
 notebook_css_url = "https://cdn.jupyter.org/notebook/%s/style/style.min.css" % notebook_css_version
 
-jupyterlab_css_version = "3.1.11"
+jupyterlab_css_version = "4.0.2"
 jupyterlab_css_url = (
     "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
 )
 
-jupyterlab_theme_light_version = "3.1.11"
+jupyterlab_theme_light_version = "4.0.2"
 jupyterlab_theme_light_url = (
     "https://unpkg.com/@jupyterlab/theme-light-extension@%s/style/variables.css"
     % jupyterlab_theme_light_version
 )
 
-jupyterlab_theme_dark_version = "3.1.11"
+jupyterlab_theme_dark_version = "4.0.2"
 jupyterlab_theme_dark_url = (
     "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/style/variables.css"
     % jupyterlab_theme_dark_version
@@ -47,14 +47,15 @@ def _get_css_file(template_name, url, filename):
         os.makedirs(directory)
     print("Downloading CSS: %s" % url)
     try:
-        css = urlopen(url).read()
+        css = urlopen(url).read()  # noqa
     except Exception as e:
         msg = f"Failed to download css from {url}: {e}"
         print(msg, file=sys.stderr)
         if osp.exists(dest):
             print("Already have CSS: %s, moving on." % dest)
         else:
-            raise OSError("Need CSS to proceed.")
+            msg = "Need CSS to proceed."
+            raise OSError(msg) from None
         return
 
     with open(dest, "wb") as f:

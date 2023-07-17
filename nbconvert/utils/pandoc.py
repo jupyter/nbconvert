@@ -13,8 +13,8 @@ from nbconvert.utils.version import check_version
 
 from .exceptions import ConversionException
 
-_minimal_version = "1.12.1"
-_maximal_version = "3.0.0"
+_minimal_version = "2.14.2"
+_maximal_version = "4.0.0"
 
 
 def pandoc(source, fmt, to, extra_args=None, encoding="utf-8"):
@@ -51,7 +51,7 @@ def pandoc(source, fmt, to, extra_args=None, encoding="utf-8"):
     check_pandoc_version()
 
     # we can safely continue
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)  # noqa
     out, _ = p.communicate(source.encode())
     out_str = TextIOWrapper(BytesIO(out), encoding, "replace").read()
     return out_str.rstrip("\n")
@@ -69,13 +69,13 @@ def get_pandoc_version():
     PandocMissing
         If pandoc is unavailable.
     """
-    global __version
+    global __version  # noqa
 
     if __version is None:
         if not shutil.which("pandoc"):
             raise PandocMissing()
 
-        out = subprocess.check_output(["pandoc", "-v"])
+        out = subprocess.check_output(["pandoc", "-v"])  # noqa
         out_lines = out.splitlines()
         version_pattern = re.compile(r"^\d+(\.\d+){1,}$")
         for tok in out_lines[0].decode("ascii", "replace").split():
@@ -134,8 +134,8 @@ class PandocMissing(ConversionException):
         """Initialize the exception."""
         super().__init__(
             "Pandoc wasn't found.\n"
-            + "Please check that pandoc is installed:\n"
-            + "https://pandoc.org/installing.html"
+            "Please check that pandoc is installed:\n"
+            "https://pandoc.org/installing.html"
         )
 
 
@@ -144,7 +144,7 @@ class PandocMissing(ConversionException):
 # -----------------------------------------------------------------------------
 def clean_cache():
     """Clean the internal cache."""
-    global __version
+    global __version  # noqa
     __version = None
 
 

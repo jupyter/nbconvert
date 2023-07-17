@@ -8,7 +8,8 @@ from warnings import warn
 
 from traitlets import Bool, Unicode, default
 
-from ..preprocessors.base import Preprocessor
+from nbconvert.preprocessors.base import Preprocessor
+
 from .html import HTMLExporter
 
 
@@ -35,12 +36,12 @@ class _RevealMetadataPreprocessor(Preprocessor):
                 first_slide_ix = index
                 break
         else:
-            raise ValueError("All cells are hidden, cannot create slideshow")
+            msg = "All cells are hidden, cannot create slideshow"
+            raise ValueError(msg)
 
         in_fragment = False
 
         for index, cell in enumerate(nb.cells[first_slide_ix + 1 :], start=(first_slide_ix + 1)):
-
             previous_cell = nb.cells[index - 1]
 
             # Slides are <section> elements in the HTML, subslides (the vertically
@@ -123,7 +124,8 @@ class SlidesExporter(HTMLExporter):
         if "RevealHelpPreprocessor.url_prefix" in self.config:
             warn(
                 "Please update RevealHelpPreprocessor.url_prefix to "
-                "SlidesExporter.reveal_url_prefix in config files."
+                "SlidesExporter.reveal_url_prefix in config files.",
+                stacklevel=2,
             )
             return self.config.RevealHelpPreprocessor.url_prefix
         return "https://unpkg.com/reveal.js@4.0.2"

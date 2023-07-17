@@ -11,6 +11,7 @@ from .coalescestreams import coalesce_streams
 from .convertfigures import ConvertFiguresPreprocessor
 from .csshtmlheader import CSSHTMLHeaderPreprocessor
 from .execute import ExecutePreprocessor
+from .extractattachments import ExtractAttachmentsPreprocessor
 from .extractoutput import ExtractOutputPreprocessor
 from .highlightmagics import HighlightMagicsPreprocessor
 from .latex import LatexPreprocessor

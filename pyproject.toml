@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >=0.25"]
+requires = ["hatchling >=1.5"]
 build-backend = "hatchling.build"
 
 [project]
@@ -18,24 +18,24 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 urls = {Homepage = "https://jupyter.org"}
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "beautifulsoup4",
-    "bleach",
+    "bleach!=5.0.0",
     "defusedxml",
     "importlib_metadata>=3.6;python_version<\"3.10\"",
     "jinja2>=3.0",
     "jupyter_core>=4.7",
     "jupyterlab_pygments",
     "MarkupSafe>=2.0",
-    "mistune>=2.0.3,<3",
+    "mistune>=2.0.3,<4",
     "nbclient>=0.5.0",
-    "nbformat>=5.1",
+    "nbformat>=5.7",
     "packaging",
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
     "tinycss2",
-    "traitlets>=5.0",
+    "traitlets>=5.1",
 ]
 dynamic = ["version"]
 
@@ -58,13 +58,14 @@ script = "nbconvert.exporters:ScriptExporter"
 [project.optional-dependencies]
 qtpng = ["pyqtwebengine>=5.15"]
 qtpdf = ["nbconvert[qtpng]"]
-webpdf = ["pyppeteer>=1,<1.1"]
+webpdf = ["playwright"]
 test = [
     "pytest",
     "pytest-dependency",
     "ipykernel",
     "ipywidgets>=7",
     "pre-commit",
+    "flaky"
 ]
 serve = ["tornado>=6.1"]
 docs = [
@@ -113,7 +114,7 @@ nowarn = "test -W default {args}"
 
 [tool.hatch.envs.cov]
 features = ["all"]
-dependencies = ["coverage", "pytest-cov"]
+dependencies = ["coverage[toml]", "pytest-cov"]
 [tool.hatch.envs.cov.scripts]
 test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
 nowarn = "test -W default {args}"
@@ -126,10 +127,10 @@ test = "mypy --install-types --non-interactive {args:nbconvert}"
 
 [tool.hatch.envs.lint]
 dependencies = [
-  "black[jupyter]==22.12.0",
+  "black[jupyter]==23.3.0",
   "mdformat>0.7",
   "mdformat-gfm>=0.3.5",
-  "ruff==0.0.207"
+  "ruff==0.0.276"
 ]
 detached = true
 [tool.hatch.envs.lint.scripts]
@@ -153,8 +154,6 @@ testpaths = [
 filterwarnings = [
     "error",
     "ignore:nbconvert.utils.lexers is deprecated as of 5.0:UserWarning",
-    # Pending https://github.com/jupyter/nbformat/pull/256
-    "ignore:Passing a schema to Validator.iter_errors is deprecated:DeprecationWarning",
     # https://github.com/pyppeteer/pyppeteer/issues/342
     "ignore:remove loop argument:DeprecationWarning:websockets",
     # https://github.com/mhammond/pywin32/issues/1802
@@ -165,6 +164,8 @@ filterwarnings = [
     "ignore:unclosed event loop:ResourceWarning",
     # From jupyter_core
     "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
+    # From dateutil
+    "ignore:.*Use timezone-aware objects to represent datetimes in UTC:DeprecationWarning",
 ]
 
 [tool.coverage.report]
@@ -180,6 +181,10 @@ exclude_lines = [
   "class .*\bProtocol\\):",
 "@(abc\\.)?abstractmethod",
 ]
+
+[tool.coverage.run]
+relative_files = true
+source = ["nbconvert"]
 
 [tool.mypy]
 check_untyped_defs = true
@@ -207,40 +212,25 @@ extend-exclude = ".*notebook1.ipynb$"
 target-version = "py37"
 line-length = 100
 select = [
-  "A", "B", "C", "E", "F", "FBT", "I", "N", "Q", "RUF", "S", "T",
-  "UP", "W", "YTT",
+  "A", "B", "C", "DTZ", "E", "EM", "F", "FBT", "I", "ICN", "ISC", "N",
+  "PLC", "PLE", "PLR", "PLW", "Q", "RUF", "S", "SIM", "T", "TID", "UP",
+  "W", "YTT",
 ]
 ignore = [
-  # Allow non-abstract empty methods in abstract base classes
-  "B027",
-  # C417 Unnecessary `map` usage (rewrite using a generator expression)
-  "C417",
-  # Ignore McCabe complexity
-  "C901",
-  # Allow boolean positional values in function calls, like `dict.get(... True)`
-  "FBT003",
-  # Use of `assert` detected
-  "S101",
-  # Line too long
-  "E501",
-  # Relative imports are banned
-  "TID252",
-  # Boolean ... in function definition
-  "FBT001", "FBT002",
-  # Module level import not at top of file
-  "E402",
-  # A001/A002/A003 .. is shadowing a python builtin
-  "A001", "A002", "A003",
-  # Possible hardcoded password
-  "S105", "S106",
   # Q000 Single quotes found but double quotes preferred
   "Q000",
-  # N806 Variable `B` in function should be lowercase
-  "N806",
+  # FBT001 Boolean positional arg in function definition
+  "FBT001", "FBT002", "FBT003",
+  # E501 Line too long (158 > 100 characters)
+  "E501",
+  # SIM105 Use `contextlib.suppress(...)`
+  "SIM105",
   # T201 `print` found
   "T201",
   # N802 Function name `CreateWellKnownSid` should be lowercase
-  "N802", "N803"
+  "N802", "N803",
+  # RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
+  "RUF012",
 ]
 unfixable = [
   # Don't touch print statements
@@ -252,12 +242,17 @@ unfixable = [
 [tool.ruff.per-file-ignores]
  # B011: Do not call assert False since python -O removes these calls
 # F841 local variable 'foo' is assigned to but never used
-"nbconvert/*/tests/*" = ["B011", "F841"]
-"nbconvert/tests/*" = ["B011", "F841"]
+# S101 Use of `assert` detected
+# TID252 Relative imports from parent modules are banned
+# PLR2004 Magic value used in comparison
+"nbconvert/*/tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
+"nbconvert/tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
 # F401 'foo' imported but unused
 # F403 'x' used; unable to detect undefined names
 "nbconvert/*/__init__.py" = ["F401", "F403"]
 "nbconvert/__init__.py" = ["F401", "F403"]
+# PLR2004 Magic value used in comparison
+"nbconvert/filters/ansi.py" = ["PLR2004"]
 
 [tool.interrogate]
 ignore-init-module=true

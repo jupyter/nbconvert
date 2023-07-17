@@ -17,7 +17,6 @@ from ..pandoc import convert_pandoc
 
 
 class TestMarkdown(TestsBase):
-
     tests = [
         "*test",
         "**test",
@@ -69,7 +68,7 @@ class TestMarkdown(TestsBase):
         # sometimes pandoc uses $math$, sometimes it uses \(math\)
         expected = re.compile(r"(\$|\\\()\\alpha(\$|\\\)) latex math")
 
-        assertRegex = self.assertRegex
+        assertRegex = self.assertRegex  # noqa
 
         assertRegex(convert_pandoc(s, "markdown_strict+tex_math_dollars", "latex"), expected)
 
@@ -83,7 +82,7 @@ class TestMarkdown(TestsBase):
             ]
         )
         long_line = " ".join(["long"] * 30)
-        env = Environment()
+        env = Environment()  # noqa
         env.filters.update(
             {
                 "md2l": lambda code, extra_args: convert_pandoc(
@@ -125,7 +124,7 @@ class TestMarkdown(TestsBase):
         # all the "<", ">", "&" must be escaped correctly
         cases = [
             (
-                "\\begin{equation*}\n"
+                "\\begin{equation*}\n"  # noqa
                 + (
                     "\\left( \\sum_{k=1}^n a_k b_k \\right)^2 "
                     "\\leq \\left( \\sum_{k=1}^n a_k^2 \\right) "
@@ -247,6 +246,19 @@ i.e. the $i^{th}$""",
                 test,
                 tokens[index],
             )
+
+    def test_mermaid_markdown(self):
+        code = """flowchart LR
+            chicken --> egg --> chicken"""
+        case = f"""```mermaid\n  {code}\n```"""
+
+        output_check = (
+            """<div class="jp-Mermaid"><pre class="mermaid">\n"""
+            f"""{code.strip()}"""
+            """\n</pre></div>"""
+        )
+
+        self._try_markdown(markdown2html, case, output_check)
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)

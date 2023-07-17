@@ -76,12 +76,12 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = HTMLExporter(template_name="classic").from_filename(
             self._get_notebook(nb_name="pngmetadata.ipynb")
         )
-        check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
+        check_for_png = re.compile(r'<img alt="Image"([^>]*?)>')
         result = check_for_png.search(output)
         assert result
         attr_string = result.group(1)
-        assert "width" in attr_string
-        assert "height" in attr_string
+        assert "width=" in attr_string
+        assert "height=" in attr_string
 
     def test_javascript_output(self):
         nb = v4.new_notebook(
@@ -103,13 +103,12 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = HTMLExporter(template_name="classic").from_file(
             self._get_notebook(nb_name="attachment.ipynb")
         )
-        check_for_png = re.compile(r'<img src="[^"]*?"([^>]*?)>')
+        check_for_png = re.compile(r'<img alt="image.png" src="([^"]*?)"/>')
         result = check_for_png.search(output)
         assert result
-        self.assertTrue(result.group(0).strip().startswith('<img src="data:image/png;base64,iVBOR'))
-        self.assertTrue(result.group(1).strip().startswith('alt="image.png"'))
+        self.assertTrue(result.group(1).strip().startswith('data:image/png;base64,iVBOR'))
 
-        check_for_data = re.compile(r'<img src="(?P<url>[^"]*?)"')
+        check_for_data = re.compile(r'<img alt="image.png" src="(?P<url>[^"]*?)"')
         results = check_for_data.findall(output)
         assert results[0] != results[1], "attachments only need to be unique within a cell"
         assert "image/svg" in results[1], "second image should use svg"

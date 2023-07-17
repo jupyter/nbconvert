@@ -20,6 +20,8 @@ import bleach
 # defusedxml does safe(r) parsing of untrusted XML data
 from defusedxml import ElementTree  # type:ignore
 
+from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
+
 __all__ = [
     "wrap_text",
     "html2text",
@@ -39,8 +41,6 @@ __all__ = [
     "text_base64",
 ]
 
-from nbconvert.filters.svg_constants import ALLOWED_SVG_ATTRIBUTES, ALLOWED_SVG_TAGS
-
 
 def wrap_text(text, width=100):
     """
@@ -56,7 +56,7 @@ def wrap_text(text, width=100):
     """
 
     split_text = text.split("\n")
-    wrp = map(lambda x: textwrap.wrap(x, width), split_text)
+    wrp = map(lambda x: textwrap.wrap(x, width), split_text)  # noqa
     wrpd = map("\n".join, wrp)
     return "\n".join(wrpd)
 
@@ -82,19 +82,19 @@ def html2text(element):
 
 def clean_html(element):
     """Clean an html element."""
-    if isinstance(element, bytes):
-        element = element.decode()
-    else:
-        element = str(element)
+    element = element.decode() if isinstance(element, bytes) else str(element)
+    kwargs = {}
+    css_sanitizer = _get_default_css_sanitizer()
+    if css_sanitizer:
+        kwargs['css_sanitizer'] = css_sanitizer
     return bleach.clean(
         element,
-        tags=[*bleach.ALLOWED_TAGS, *ALLOWED_SVG_TAGS, "div", "pre", "code", "span"],
-        strip_comments=False,
+        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span"],
         attributes={
             **bleach.ALLOWED_ATTRIBUTES,
-            **{svg_tag: list(ALLOWED_SVG_ATTRIBUTES) for svg_tag in ALLOWED_SVG_TAGS},
             "*": ["class", "id"],
         },
+        **kwargs,
     )
 
 
@@ -230,7 +230,8 @@ def ipython2python(code):
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."
-            " Install ipython if you need this functionality."
+            " Install ipython if you need this functionality.",
+            stacklevel=2,
         )
         return code
     else:

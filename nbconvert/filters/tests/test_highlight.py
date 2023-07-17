@@ -66,12 +66,11 @@ class TestHighlight(TestsBase):
             self._try_highlight(highlight2latex, test, self.tokens[index])
 
     def test_parse_html_many_lang(self):
-
         ht = highlight2html(self.tests[0])
         rb = highlight2html_ruby(self.tests[0])
 
         for lang, tkns in [(ht, ("def",)), (rb, ("def", "end"))]:
-            root = xml.etree.ElementTree.fromstring(lang)
+            root = xml.etree.ElementTree.fromstring(lang)  # noqa
             self.assertEqual(self._extract_tokens(root, "k"), set(tkns))
 
     @pytest.mark.filterwarnings("ignore")
@@ -80,7 +79,7 @@ class TestHighlight(TestsBase):
         assert "<script>alert(1)</script>" not in out
 
     def _extract_tokens(self, root, cls):
-        return set(map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']")))  # type:ignore
+        return set(map(lambda x: x.text, root.findall(".//*[@class='" + cls + "']")))  # noqa
 
     def _try_highlight(self, method, test, tokens):
         """Try highlighting source, look for key tokens"""

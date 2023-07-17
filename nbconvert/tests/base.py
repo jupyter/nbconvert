@@ -24,7 +24,7 @@ class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
     functions."""
 
-    def fuzzy_compare(
+    def fuzzy_compare(  # noqa
         self,
         a,
         b,
@@ -126,10 +126,12 @@ class TestsBase(unittest.TestCase):
             files = glob.glob(os.path.join(files_path, pattern))
             assert files
             for match in files:
+                # Avoid copying the Julia file unless it is explicitly asked for.
+                if 'jl' in match and "jl" not in pattern:
+                    continue
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
     def _get_files_path(self):
-
         # Get the relative path to this module in the IPython directory.
         names = self.__module__.split(".")[1:-1]
         names.append("files")
@@ -162,7 +164,7 @@ class TestsBase(unittest.TestCase):
             if isinstance(parameters, (str,)):
                 parameters = shlex.split(parameters)
             cmd += parameters
-        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE)  # noqa
         stdout, stderr = p.communicate(input=stdin)
         if not (p.returncode == 0 or ignore_return_code):
             raise OSError(stderr.decode("utf8", "replace"))

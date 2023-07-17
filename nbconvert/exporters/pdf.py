@@ -11,7 +11,8 @@ from tempfile import TemporaryDirectory
 
 from traitlets import Bool, Instance, Integer, List, Unicode, default
 
-from ..utils import _contextlib_chdir
+from nbconvert.utils import _contextlib_chdir
+
 from .latex import LatexExporter
 
 
@@ -83,7 +84,9 @@ class PDFExporter(LatexExporter):
     def _template_extension_default(self):
         return ".tex.j2"
 
-    def run_command(self, command_list, filename, count, log_function, raise_on_failure=None):
+    def run_command(  # noqa
+        self, command_list, filename, count, log_function, raise_on_failure=None
+    ):
         """Run command_list count times.
 
         Parameters
@@ -111,11 +114,12 @@ class PDFExporter(LatexExporter):
         cmd = shutil.which(command_list[0])
         if cmd is None:
             link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
-            raise OSError(
+            msg = (
                 "{formatter} not found on PATH, if you have not installed "
                 "{formatter} you may need to do so. Find further instructions "
                 "at {link}.".format(formatter=command_list[0], link=link)
             )
+            raise OSError(msg)
 
         times = "time" if count == 1 else "times"
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
@@ -136,12 +140,12 @@ class PDFExporter(LatexExporter):
                     stdout=stdout,
                     stderr=subprocess.STDOUT,
                     stdin=null,
-                    shell=shell,
+                    shell=shell,  # noqa
                     env=env,
                 )
                 out, _ = p.communicate()
                 if p.returncode:
-                    if self.verbose:
+                    if self.verbose:  # noqa
                         # verbose means I didn't capture stdout with PIPE,
                         # so it's already been displayed and `out` is None.
                         out_str = ""
@@ -150,7 +154,8 @@ class PDFExporter(LatexExporter):
                     log_function(command, out)
                     self._captured_output.append(out_str)
                     if raise_on_failure:
-                        raise raise_on_failure(f'Failed to run "{command}" command:\n{out_str}')
+                        msg = f'Failed to run "{command}" command:\n{out_str}'
+                        raise raise_on_failure(msg)
                     return False  # failure
         return True  # success
 
@@ -181,7 +186,7 @@ class PDFExporter(LatexExporter):
         latex, resources = super().from_notebook_node(nb, resources=resources, **kw)
         # set texinputs directory, so that local files will be found
         if resources and resources.get("metadata", {}).get("path"):
-            self.texinputs = resources["metadata"]["path"]
+            self.texinputs = os.path.abspath(resources["metadata"]["path"])
         else:
             self.texinputs = os.getcwd()
 
@@ -205,8 +210,9 @@ class PDFExporter(LatexExporter):
         # convert output extension to pdf
         # the writer above required it to be tex
         resources["output_extension"] = ".pdf"
-        # clear figure outputs, extracted by latex export,
+        # clear figure outputs and attachments, extracted by latex export,
         # so we don't claim to be a multi-file export.
         resources.pop("outputs", None)
+        resources.pop("attachments", None)
 
         return pdf_data, resources
