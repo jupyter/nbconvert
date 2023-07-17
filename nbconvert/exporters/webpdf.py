@@ -103,6 +103,7 @@ class WebPDFExporter(HTMLExporter):
                 raise RuntimeError(msg) from e
 
             page = await browser.new_page()
+            await page.emulate_media(media="print")
             await page.goto(f"file://{temp_file.name}", wait_until="networkidle")
 
             pdf_params = {"print_background": True}
