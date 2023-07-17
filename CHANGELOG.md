@@ -2,6 +2,34 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.7.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.6.0...f2fc3e13fe8e8836324550dac5286bbb0e4315bb))
+
+### Enhancements made
+
+- \[Accessibility\] some accessibility improvements [#2021](https://github.com/jupyter/nbconvert/pull/2021) ([@brichet](https://github.com/brichet))
+- Adopt playwright [#2013](https://github.com/jupyter/nbconvert/pull/2013) ([@brichet](https://github.com/brichet))
+- Update to Jupyterlab 4 [#2012](https://github.com/jupyter/nbconvert/pull/2012) ([@brichet](https://github.com/brichet))
+
+### Bugs fixed
+
+- html: write image/svg+xml data as base64 and skip clean_html [#2018](https://github.com/jupyter/nbconvert/pull/2018) ([@jstorrs](https://github.com/jstorrs))
+- Remove HTML escaping JSON-encoded widget state [#1934](https://github.com/jupyter/nbconvert/pull/1934) ([@manzt](https://github.com/manzt))
+
+### Maintenance and upkeep improvements
+
+- Fix lint error [#2010](https://github.com/jupyter/nbconvert/pull/2010) ([@blink1073](https://github.com/blink1073))
+- Support Python 3.8-3.12 [#2008](https://github.com/jupyter/nbconvert/pull/2008) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-06-19&to=2023-07-17&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-06-19..2023-07-17&type=Issues) | [@brichet](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abrichet+updated%3A2023-06-19..2023-07-17&type=Issues) | [@jstorrs](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ajstorrs+updated%3A2023-06-19..2023-07-17&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amaartenbreddels+updated%3A2023-06-19..2023-07-17&type=Issues) | [@manzt](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amanzt+updated%3A2023-06-19..2023-07-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AmartinRenou+updated%3A2023-06-19..2023-07-17&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-06-19..2023-07-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.6.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.5.0...60af6d897c083444586829c636f278d84ae81962))
@@ -15,8 +43,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-06-13&to=2023-06-19&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-06-13..2023-06-19&type=Issues) | [@kloczek](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akloczek+updated%3A2023-06-13..2023-06-19&type=Issues) | [@TiagodePAlves](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ATiagodePAlves+updated%3A2023-06-13..2023-06-19&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.5.0
 
