@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.7.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.0...86cebfc16920fcdddef557620a7b8a23d84072d6))
+
+### Bugs fixed
+
+- Restore 'media=print' option [#2022](https://github.com/jupyter/nbconvert/pull/2022) ([@brichet](https://github.com/brichet))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-17&to=2023-07-17&type=c))
+
+[@brichet](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abrichet+updated%3A2023-07-17..2023-07-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.7.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.6.0...f2fc3e13fe8e8836324550dac5286bbb0e4315bb))
@@ -27,8 +43,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-06-19&to=2023-07-17&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-06-19..2023-07-17&type=Issues) | [@brichet](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abrichet+updated%3A2023-06-19..2023-07-17&type=Issues) | [@jstorrs](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ajstorrs+updated%3A2023-06-19..2023-07-17&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amaartenbreddels+updated%3A2023-06-19..2023-07-17&type=Issues) | [@manzt](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amanzt+updated%3A2023-06-19..2023-07-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AmartinRenou+updated%3A2023-06-19..2023-07-17&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-06-19..2023-07-17&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.6.0
 
