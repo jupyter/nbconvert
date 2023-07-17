@@ -72,6 +72,7 @@ default_filters = {
     # For removing any HTML
     "escape_html": lambda s: html.escape(str(s)),
     "escape_html_keep_quotes": lambda s: html.escape(str(s), quote=False),
+    "escape_html_script": lambda s: s.replace("/", "\\/"),
     # For sanitizing HTML for any XSS
     "clean_html": filters.clean_html,
     "strip_trailing_newline": filters.strip_trailing_newline,
