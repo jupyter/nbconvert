@@ -259,8 +259,12 @@ class HTMLExporter(TemplateExporter):
         html, resources = super().from_notebook_node(nb, resources, **kw)
         soup = BeautifulSoup(html, features="html.parser")
         # Add image's alternative text
+        missing_alt = 0
         for elem in soup.select("img:not([alt])"):
-            elem.attrs["alt"] = "Image"
+            elem.attrs["alt"] = "No description has been provided for this image"
+            missing_alt += 1
+        if missing_alt:
+            self.log.warn(f"alternative text is missing on {missing_alt} image(s)")
         # Set input and output focusable
         for elem in soup.select(".jp-Notebook div.jp-Cell-inputWrapper"):
             elem.attrs["tabindex"] = "0"
