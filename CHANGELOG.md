@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.7.2
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.1...1cbb0a46d97f9f0b2a6a0d359ebf9b4b50178c25))
+
+### Bugs fixed
+
+- Show a warning if an image has no alternative text [#2024](https://github.com/jupyter/nbconvert/pull/2024) ([@brichet](https://github.com/brichet))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-17&to=2023-07-19&type=c))
+
+[@brichet](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abrichet+updated%3A2023-07-17..2023-07-19&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.7.1
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.0...86cebfc16920fcdddef557620a7b8a23d84072d6))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-17&to=2023-07-17&type=c))
 
 [@brichet](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abrichet+updated%3A2023-07-17..2023-07-17&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.7.0
 
