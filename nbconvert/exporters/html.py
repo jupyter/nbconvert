@@ -211,7 +211,7 @@ class HTMLExporter(TemplateExporter):
     @validate("language_code")
     def _valid_language_code(self, proposal):
         if self.language_code not in iso639_1:
-            self.log.warn(
+            self.log.warning(
                 f'"{self.language_code}" is not an ISO 639-1 language code. '
                 'It has been replaced by the default value "en".'
             )
@@ -264,7 +264,7 @@ class HTMLExporter(TemplateExporter):
             elem.attrs["alt"] = "No description has been provided for this image"
             missing_alt += 1
         if missing_alt:
-            self.log.warn(f"alternative text is missing on {missing_alt} image(s)")
+            self.log.warning(f"Alternative text is missing on {missing_alt} image(s)")
         # Set input and output focusable
         for elem in soup.select(".jp-Notebook div.jp-Cell-inputWrapper"):
             elem.attrs["tabindex"] = "0"

@@ -73,10 +73,15 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         Does HTMLExporter with the 'classic' template treat pngs with width/height metadata correctly?
         """
-        (output, resources) = HTMLExporter(template_name="classic").from_filename(
-            self._get_notebook(nb_name="pngmetadata.ipynb")
-        )
-        check_for_png = re.compile(r'<img alt="Image"([^>]*?)>')
+        exporter = HTMLExporter(template_name="classic")
+        with self.assertLogs(exporter.log, level="WARN") as log:
+            (output, resources) = exporter.from_filename(
+                self._get_notebook(nb_name="pngmetadata.ipynb")
+            )
+            assert len(log.output) == 1
+            assert "Alternative text is missing on 1 image(s)" in log.output[0]
+
+        check_for_png = re.compile(r'<img alt="No description has been provided for this image"([^>]*?)>')
         result = check_for_png.search(output)
         assert result
         attr_string = result.group(1)
