@@ -81,7 +81,9 @@ class TestHTMLExporter(ExportersTestsBase):
             assert len(log.output) == 1
             assert "Alternative text is missing on 1 image(s)." in log.output[0]
 
-        check_for_png = re.compile(r'<img alt="No description has been provided for this image"([^>]*?)>')
+        check_for_png = re.compile(
+            r'<img alt="No description has been provided for this image"([^>]*?)>'
+        )
         result = check_for_png.search(output)
         assert result
         attr_string = result.group(1)
@@ -208,18 +210,18 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = HTMLExporter(template_name="classic").from_filename(
             self._get_notebook()
         )
-        assert "<html lang=\"en\">" in output
+        assert '<html lang="en">' in output
 
     def test_set_language_code(self):
         exporter = HTMLExporter(template_name="classic", language_code="fr")
         (output, resources) = exporter.from_filename(self._get_notebook())
-        assert "<html lang=\"fr\">" in output
+        assert '<html lang="fr">' in output
 
     def test_language_code_error(self):
         with self.assertLogs(level="WARN") as log:
             exporter = HTMLExporter(template_name="classic", language_code="zz")
             assert len(log.output) == 1
-            assert "\"zz\" is not an ISO 639-1 language code." in log.output[0]
+            assert '"zz" is not an ISO 639-1 language code.' in log.output[0]
         (output, resources) = exporter.from_filename(self._get_notebook())
 
-        assert "<html lang=\"en\">" in output
+        assert '<html lang="en">' in output
