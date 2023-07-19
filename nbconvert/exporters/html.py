@@ -264,7 +264,7 @@ class HTMLExporter(TemplateExporter):
             elem.attrs["alt"] = "No description has been provided for this image"
             missing_alt += 1
         if missing_alt:
-            self.log.warning(f"Alternative text is missing on {missing_alt} image(s)")
+            self.log.warning(f"Alternative text is missing on {missing_alt} image(s).")
         # Set input and output focusable
         for elem in soup.select(".jp-Notebook div.jp-Cell-inputWrapper"):
             elem.attrs["tabindex"] = "0"
