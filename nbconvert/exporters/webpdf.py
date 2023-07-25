@@ -104,7 +104,9 @@ class WebPDFExporter(HTMLExporter):
 
             page = await browser.new_page()
             await page.emulate_media(media="print")
+            await page.wait_for_timeout(100)
             await page.goto(f"file://{temp_file.name}", wait_until="networkidle")
+            await page.wait_for_timeout(100)
 
             pdf_params = {"print_background": True}
             if not self.paginate:
