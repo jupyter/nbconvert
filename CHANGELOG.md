@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.7.3
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.2...73fd3b9eb5e364bc86f9407e027d5577c5c8db9e))
+
+### Bugs fixed
+
+- Restore pauses during webpdf render [#2025](https://github.com/jupyter/nbconvert/pull/2025) ([@jstorrs](https://github.com/jstorrs))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-19&to=2023-07-25&type=c))
+
+[@jstorrs](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ajstorrs+updated%3A2023-07-19..2023-07-25&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.7.2
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.1...1cbb0a46d97f9f0b2a6a0d359ebf9b4b50178c25))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-17&to=2023-07-19&type=c))
 
 [@brichet](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abrichet+updated%3A2023-07-17..2023-07-19&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.7.1
 
