@@ -39,7 +39,7 @@ class ScriptExporter(TemplateExporter):
         if lang_name not in self._lang_exporters:
             try:
                 exporters = entry_points(group="nbconvert.exporters.script")
-                exporter = [e for e in exporters if e.name == lang_name][0].load()
+                exporter = [e for e in exporters if e.name == lang_name][0].load()  # noqa
             except (KeyError, IndexError):
                 self._lang_exporters[lang_name] = None
             else:

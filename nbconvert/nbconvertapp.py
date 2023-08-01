@@ -237,12 +237,12 @@ class NbConvertApp(JupyterApp):
     ).tag(config=True)
 
     examples = Unicode(
-        """
+        f"""
         The simplest way to use nbconvert is
 
         > jupyter nbconvert mynotebook.ipynb --to html
 
-        Options include {formats}.
+        Options include {get_export_names()}.
 
         > jupyter nbconvert --to latex mynotebook.ipynb
 
@@ -275,9 +275,7 @@ class NbConvertApp(JupyterApp):
             c.NbConvertApp.notebooks = ["my_notebook.ipynb"]
 
         > jupyter nbconvert --config mycfg.py
-        """.format(
-            formats=get_export_names()
-        )
+        """
     )
 
     # Writer specific variables
@@ -331,12 +329,10 @@ class NbConvertApp(JupyterApp):
 
     export_format = Unicode(
         allow_none=False,
-        help="""The export format to be used, either one of the built-in formats
-        {formats}
+        help=f"""The export format to be used, either one of the built-in formats
+        {get_export_names()}
         or a dotted object name that represents the import path for an
-        ``Exporter`` class""".format(
-            formats=get_export_names()
-        ),
+        ``Exporter`` class""",
     ).tag(config=True)
 
     notebooks = List(
