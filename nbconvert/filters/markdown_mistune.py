@@ -398,7 +398,7 @@ class IPythonRenderer(HTMLRenderer):
                 if mime_type in attachment:
                     return f"data:{mime_type};base64,{attachment[mime_type]}"
             # otherwise we choose the first mimetype we can find
-            default_mime_type = tuple(attachment.keys())[0]
+            default_mime_type = next(iter(attachment.keys()))
             return f"data:{default_mime_type};base64,{attachment[default_mime_type]}"
 
         elif self.embed_images:
