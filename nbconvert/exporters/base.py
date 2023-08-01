@@ -106,7 +106,8 @@ def get_exporter(name, config=get_config()):  # noqa
 
     try:
         exporters = entry_points(group="nbconvert.exporters")
-        exporter = next(e for e in exporters if e.name == name or e.name == name.lower()).load()  # noqa
+        items = list(e for e in exporters if e.name == name or e.name == name.lower())
+        exporter = items[0].load()
         if getattr(exporter(config=config), "enabled", True):
             return exporter
         else:
