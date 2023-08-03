@@ -8,6 +8,7 @@ Module with tests for templateexporter.py
 import json
 import os
 from concurrent.futures import ProcessPoolExecutor
+from contextlib import contextmanager
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -30,6 +31,20 @@ raw_template = """{%- extends 'index.rst.j2' -%}
 blah
 {%- endblock in_prompt -%}
 """
+
+
+@contextmanager
+def temp_environ(**env):
+    for key, value in env.items():
+        if value is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = value
+    try:
+        yield
+    finally:
+        for key, _ in env.items():
+            os.environ.pop(key, None)
 
 
 class SampleExporter(TemplateExporter):
@@ -267,6 +282,24 @@ class TestExporter(ExportersTestsBase):
             assert exporter.template.filename == template_file
             assert exporter.template_name == template
             assert os.path.join(td, template) in exporter.template_paths
+
+    def test_env_var_template_dir(self):
+        with TemporaryDirectory() as td:
+            template = "env-var"
+            template_file = os.path.join(td, template, "index.py.j2")
+            template_dir = os.path.dirname(template_file)
+            os.mkdir(template_dir)
+            test_output = "env-var!"
+            with open(template_file, "w") as f:
+                f.write(test_output)
+            with temp_environ(NBCONVERT_EXTRA_TEMPLATE_BASEDIRS=template_dir):
+                config = Config()
+                config.TemplateExporter.template_name = template
+                config.TemplateExporter.extra_template_basedirs = [td, template_dir]
+                exporter = self._make_exporter(config=config)
+                assert exporter.template.filename == template_file
+                assert exporter.template_name == template
+                assert template_dir in exporter.template_paths
 
     def test_local_template_dir(self):
         with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):  # noqa

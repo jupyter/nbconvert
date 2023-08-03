@@ -260,7 +260,13 @@ class TemplateExporter(Exporter):
 
     @default("extra_template_basedirs")
     def _default_extra_template_basedirs(self):
-        return [os.getcwd()]
+        basedirs = [os.getcwd()]
+        env = os.environ
+        if "NBCONVERT_EXTRA_TEMPLATE_BASEDIR" in env:
+            extra_template_path = env["NBCONVERT_EXTRA_TEMPLATE_BASEDIR"]
+            if os.path.exists(extra_template_path):
+                basedirs.append(extra_template_path)
+        return basedirs
 
     # Extension that the template files use.
     template_extension = Unicode().tag(config=True, affects_environment=True)
