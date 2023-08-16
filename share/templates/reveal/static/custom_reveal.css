@@ -65,6 +65,10 @@ div.jp-OutputPrompt {
   box-shadow: none;
 }
 
+main {
+  height: 100%;
+}
+
 /* Reveal navigation controls */
 
 .reveal .controls .navigate-left,
