@@ -2,6 +2,24 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.7.4
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.3...bbb095ba24c005ce26f0e8b47f4ddf19a5debe68))
+
+### Bugs fixed
+
+- Give main tag a height of 100% in css for reveal html [#2032](https://github.com/jupyter/nbconvert/pull/2032) ([@lkeegan](https://github.com/lkeegan))
+
+### Maintenance and upkeep improvements
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-25&to=2023-08-16&type=c))
+
+[@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-07-25..2023-08-16&type=Issues) | [@lkeegan](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Alkeegan+updated%3A2023-07-25..2023-08-16&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-07-25..2023-08-16&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.7.3
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.2...73fd3b9eb5e364bc86f9407e027d5577c5c8db9e))
@@ -15,8 +33,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-19&to=2023-07-25&type=c))
 
 [@jstorrs](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ajstorrs+updated%3A2023-07-19..2023-07-25&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.7.2
 
