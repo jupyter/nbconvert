@@ -123,7 +123,6 @@ class TestHTMLExporter(ExportersTestsBase):
         self.assertIn("""<div class="jp-Mermaid">""", output)
         self.assertIn("""<pre class="mermaid">""", output)
 
-
     def test_mermaid_prerendered_output(self):
         nb = v4.new_notebook(
             cells=[
