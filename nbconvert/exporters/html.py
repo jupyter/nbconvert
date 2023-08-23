@@ -189,6 +189,7 @@ class HTMLExporter(TemplateExporter):
                         "text/html",
                         "text/markdown",
                         "image/svg+xml",
+                        "text/vnd.mermaid",
                         "text/latex",
                         "image/png",
                         "image/jpeg",

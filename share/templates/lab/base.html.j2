@@ -169,6 +169,14 @@ unknown type  {{ cell.type }}
 </div>
 {%- endblock data_svg %}
 
+{% block data_mermaid scoped -%}
+<div class="jp-Mermaid">
+<pre class="mermaid">
+{{ output.data['text/vnd.mermaid'].strip() }}
+</pre>
+</div>
+{%- endblock data_mermaid %}
+
 {% block data_html scoped -%}
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output {{ extra_class }}" data-mime-type="text/html">
 {%- if resources.should_sanitize_html %}
