@@ -106,6 +106,22 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = HTMLExporter(template_name="classic").from_notebook_node(nb)
         self.assertIn("javascript_output", output)
 
+    def test_mermaid_output(self):
+        nb = v4.new_notebook(
+            cells=[
+                v4.new_code_cell(
+                    outputs=[
+                        v4.new_output(
+                            output_type="display_data",
+                            data={"text/vnd.mermaid": "flowchart LR\na --> b"},
+                        )
+                    ]
+                )
+            ]
+        )
+        (output, resources) = HTMLExporter(template_name="lab").from_notebook_node(nb)
+        self.assertIn("""<div class="jp-Mermaid"><pre class="mermaid">""", output)
+
     def test_attachments(self):
         (output, resources) = HTMLExporter(template_name="classic").from_file(
             self._get_notebook(nb_name="attachment.ipynb")
