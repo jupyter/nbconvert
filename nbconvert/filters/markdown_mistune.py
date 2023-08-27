@@ -299,8 +299,9 @@ class IPythonRenderer(HTMLRenderer):
                 return self.block_mermaidjs(code)
 
             try:
-                lang = info.strip().split(maxsplit=1)[0]
-                lexer = get_lexer_by_name(lang, stripall=True)
+                if info.strip().split(None, 1):
+                    lang = info.strip().split(maxsplit=1)[0]
+                    lexer = get_lexer_by_name(lang, stripall=True)
             except ClassNotFound:
                 code = f"{lang}\n{code}"
                 lang = None
