@@ -29,6 +29,9 @@
         {%- elif type == 'text/latex' -%}
             {%- block data_latex -%}
             {%- endblock -%}
+        {%- elif type == 'text/vnd.mermaid' -%}
+            {%- block data_mermaid -%}
+            {%- endblock -%}
         {%- elif type == 'application/javascript' -%}
             {%- block data_javascript -%}
             {%- endblock -%}
