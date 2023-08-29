@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.8.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.4...9e8d252f2bf5b4177bbbeb007fd1a489356926ec))
+
+### Enhancements made
+
+- MermaidJS 10.3.1, accessibility features, handle MIME [#2034](https://github.com/jupyter/nbconvert/pull/2034) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Bugs fixed
+
+- Fix: Prevent error from all whitespace lang string [#2036](https://github.com/jupyter/nbconvert/pull/2036) ([@Adamtaranto](https://github.com/Adamtaranto))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-08-16&to=2023-08-29&type=c))
+
+[@Adamtaranto](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAdamtaranto+updated%3A2023-08-16..2023-08-29&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-08-16..2023-08-29&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.7.4
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.3...bbb095ba24c005ce26f0e8b47f4ddf19a5debe68))
@@ -17,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-25&to=2023-08-16&type=c))
 
 [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-07-25..2023-08-16&type=Issues) | [@lkeegan](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Alkeegan+updated%3A2023-07-25..2023-08-16&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-07-25..2023-08-16&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.7.3
 
