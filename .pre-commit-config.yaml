@@ -19,12 +19,12 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.23.3
+    rev: 0.26.3
     hooks:
       - id: check-github-workflows
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.16
+    rev: 0.7.17
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -36,7 +36,7 @@ repos:
       - id: black
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.281
+    rev: v0.0.287
     hooks:
       - id: ruff
         args: ["--fix"]
