@@ -115,9 +115,9 @@ class PDFExporter(LatexExporter):
         if cmd is None:
             link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
             msg = (
-                "{formatter} not found on PATH, if you have not installed "
-                "{formatter} you may need to do so. Find further instructions "
-                "at {link}.".format(formatter=command_list[0], link=link)
+                f"{command_list[0]} not found on PATH, if you have not installed "
+                f"{command_list[0]} you may need to do so. Find further instructions "
+                f"at {link}."
             )
             raise OSError(msg)
 
