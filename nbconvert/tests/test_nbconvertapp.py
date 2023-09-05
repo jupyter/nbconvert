@@ -527,7 +527,7 @@ class TestNbConvertApp(TestsBase):
             path = os.path.join(output_dir.name, "files")
             self.nbconvert(
                 "--log-level 0 notebook4_jpeg.ipynb --to rst "
-                "--NbConvertApp.output_files_dir={}".format(path)
+                f"--NbConvertApp.output_files_dir={path}"
             )
             assert fig_exists(path)
             output_dir.cleanup()
