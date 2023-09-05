@@ -39,7 +39,7 @@ class DataTypeFilter(NbConvertBase):
             if fmt in output:
                 return [fmt]
         warn(
-            f"Your element with mimetype(s) {output.keys()}"
+            f"Your element with mimetype(s) {output.keys()}"  # noqa: ISC001
             " is not able to be represented.",
             stacklevel=2,
         )
