@@ -100,7 +100,7 @@ class TestExporter(ExportersTestsBase):
         Can a preprocessor be added to the preprocessors list by dotted object name?
         """
         config = Config(
-            {"Exporter": {"preprocessors": ["nbconvert.exporters.tests.cheese.CheesePreprocessor"]}}
+            {"Exporter": {"preprocessors": ["tests.exporters.cheese.CheesePreprocessor"]}}
         )
         exporter = self._make_exporter(config=config)
         (output, resources) = exporter.from_filename(self._get_notebook())
