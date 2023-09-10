@@ -4,4 +4,6 @@ from .base import PostProcessorBase
 try:
     from .serve import ServePostProcessor
 except ImportError:
-    pass
+    ServePostProcessor = None
+
+__all__ = ["PostProcessorBase", "ServePostProcessor"]
