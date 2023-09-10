@@ -70,7 +70,7 @@ class TestExport(ExportersTestsBase):
 
     def test_export_using_exporter(self):
         """
-        Can a notebook be exported using an instanciated exporter?
+        Can a notebook be exported using an instantiated exporter?
         """
         (output, resources) = export(PythonExporter(), self._get_notebook())
         assert len(output) > 0

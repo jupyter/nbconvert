@@ -602,7 +602,7 @@ class NbConvertApp(JupyterApp):
     def document_alias_help(self):
         """Return a string containing all of the aliases"""
 
-        aliases = "The folowing aliases are defined:\n\n"
+        aliases = "The following aliases are defined:\n\n"
         for alias, longname in self.aliases.items():
             aliases += f"\t**{alias}** ({longname})\n\n"
         return aliases
