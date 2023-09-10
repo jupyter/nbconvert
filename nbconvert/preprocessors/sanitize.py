@@ -23,7 +23,7 @@ try:
 except ImportError:
     try:
         # bleach <5
-        from bleach import ALLOWED_STYLES  # type:ignore
+        from bleach import ALLOWED_STYLES  # type:ignore[attr-defined, no-redef]
 
         _USE_BLEACH_CSS_SANITIZER = False
         _USE_BLEACH_STYLES = True

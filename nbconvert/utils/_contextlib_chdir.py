@@ -5,7 +5,7 @@ import os
 from contextlib import AbstractContextManager
 
 
-class chdir(AbstractContextManager):  # noqa
+class chdir(AbstractContextManager):  # type:ignore[type-arg] # noqa
     """Non thread-safe context manager to change the current working directory."""
 
     def __init__(self, path):

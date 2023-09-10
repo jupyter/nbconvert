@@ -18,7 +18,7 @@ from xml.etree.ElementTree import Element
 import bleach
 
 # defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import ElementTree  # type:ignore
+from defusedxml import ElementTree  # type:ignore[import]
 
 from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
 

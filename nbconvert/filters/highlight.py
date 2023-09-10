@@ -13,8 +13,7 @@ from within Jinja templates.
 from html import escape
 from warnings import warn
 
-from traitlets import observe
-from traitlets.config import Dict
+from traitlets import Dict, observe
 
 from nbconvert.utils.base import NbConvertBase
 

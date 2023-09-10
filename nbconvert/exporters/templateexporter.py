@@ -4,7 +4,7 @@ that uses Jinja2 to export notebook files into different formats.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import html
 import json
@@ -227,7 +227,7 @@ class TemplateExporter(Exporter):
     def _template_file_changed(self, change):
         new = change["new"]
         if new == "default":
-            self.template_file = self.default_template  # type:ignore
+            self.template_file = self.default_template  # type:ignore[attr-defined]
             return
         # check if template_file is a file path
         # rather than a name already on template_path
@@ -382,21 +382,21 @@ class TemplateExporter(Exporter):
         self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
         return self.environment.get_template(template_file)
 
-    def from_filename(  # type:ignore
-        self, filename: str, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:
+    def from_filename(  # type:ignore[override]
+        self, filename: str, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """Convert a notebook from a filename."""
-        return super().from_filename(filename, resources, **kw)  # type:ignore
+        return super().from_filename(filename, resources, **kw)  # type:ignore[return-value]
 
-    def from_file(  # type:ignore
-        self, file_stream: t.Any, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:
+    def from_file(  # type:ignore[override]
+        self, file_stream: t.Any, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """Convert a notebook from a file."""
-        return super().from_file(file_stream, resources, **kw)  # type:ignore
+        return super().from_file(file_stream, resources, **kw)  # type:ignore[return-value]
 
-    def from_notebook_node(  # type:ignore
-        self, nb: NotebookNode, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:
+    def from_notebook_node(  # type:ignore[explicit-override, override]
+        self, nb: NotebookNode, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook node instance.
 
@@ -551,7 +551,7 @@ class TemplateExporter(Exporter):
                 self.register_preprocessor(preprocessor)
 
     def _get_conf(self):
-        conf: dict = {}  # the configuration once all conf files are merged
+        conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         for path in map(Path, self.template_paths):
             conf_path = path / "conf.json"
             if conf_path.exists():
@@ -608,10 +608,10 @@ class TemplateExporter(Exporter):
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
         base_template = self.template_name
-        merged_conf: dict = {}  # the configuration once all conf files are merged
+        merged_conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         while base_template is not None:
             template_names.append(base_template)
-            conf: dict = {}
+            conf: dict[str, t.Any] = {}
             found_at_least_one = False
             for base_dir in self.extra_template_basedirs:
                 template_dir = os.path.join(base_dir, base_template)

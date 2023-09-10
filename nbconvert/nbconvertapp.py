@@ -6,13 +6,14 @@ Command-line interface for the NbConvert conversion utility.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import asyncio
 import glob
 import logging
 import os
 import sys
+import typing as t
 from textwrap import dedent, fill
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
@@ -195,11 +196,11 @@ class NbConvertApp(JupyterApp):
     def _log_level_default(self):
         return logging.INFO
 
-    classes = List()  # type:ignore
+    classes = List()  # type:ignore[assignment]
 
     @default("classes")
     def _classes_default(self):
-        classes: list = [NbConvertBase]
+        classes: list[type[t.Any]] = [NbConvertBase]
         for pkg in (exporters, preprocessors, writers, postprocessors):
             for name in dir(pkg):
                 cls = getattr(pkg, name)
@@ -208,7 +209,7 @@ class NbConvertApp(JupyterApp):
 
         return classes
 
-    description = Unicode(  # type:ignore
+    description = Unicode(  # type:ignore[assignment]
         """This application is used to convert notebook files (*.ipynb)
         to various other formats.
 

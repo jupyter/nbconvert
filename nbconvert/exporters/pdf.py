@@ -126,7 +126,7 @@ class PDFExporter(LatexExporter):
 
         shell = sys.platform == "win32"
         if shell:
-            command = subprocess.list2cmdline(command)  # type:ignore
+            command = subprocess.list2cmdline(command)  # type:ignore[assignment]
         env = os.environ.copy()
         prepend_to_env_search_path("TEXINPUTS", self.texinputs, env)
         prepend_to_env_search_path("BIBINPUTS", self.texinputs, env)

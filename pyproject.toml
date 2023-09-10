@@ -91,12 +91,6 @@ path = "nbconvert/_version.py"
 [tool.hatch.build.targets.sdist]
 artifacts = ["share/templates"]
 
-[tool.hatch.build.targets.wheel]
-exclude = [
-    "nbconvert/tests/",
-    "nbconvert/**/tests/",
-]
-
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
 
@@ -154,7 +148,7 @@ addopts = [
 ]
 markers = "network: marks tests which require network connection"
 testpaths = [
-    "nbconvert/"
+    "tests/"
 ]
 filterwarnings = [
     "error",
@@ -197,6 +191,7 @@ python_version = "3.8"
 strict = true
 show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+disable_error_code = ["no-untyped-def", "no-untyped-call"]
 warn_unreachable = true
 
 [tool.black]
@@ -242,8 +237,7 @@ unfixable = [
 # S101 Use of `assert` detected
 # TID252 Relative imports from parent modules are banned
 # PLR2004 Magic value used in comparison
-"nbconvert/*/tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
-"nbconvert/tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
+"tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
 # F401 'foo' imported but unused
 # F403 'x' used; unable to detect undefined names
 "nbconvert/*/__init__.py" = ["F401", "F403"]
@@ -259,7 +253,7 @@ ignore-property-decorators=true
 ignore-nested-functions=true
 ignore-nested-classes=true
 fail-under=100
-exclude = ["*/tests", "docs"]
+exclude = ["tests", "docs"]
 
 [tool.repo-review]
 ignore = ["PY007", "PP308", "GH102", "PC140"]
