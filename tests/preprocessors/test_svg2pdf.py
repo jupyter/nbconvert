@@ -7,9 +7,9 @@ from unittest.mock import patch
 
 from nbformat import v4 as nbformat
 
-from tests.svg2pdf import SVG2PDFPreprocessor
+from nbconvert.preprocessors.svg2pdf import SVG2PDFPreprocessor
+from tests.testutils import onlyif_cmds_exist
 
-from ...tests.utils import onlyif_cmds_exist
 from .base import PreprocessorTestsBase
 
 

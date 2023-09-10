@@ -7,8 +7,8 @@ from base64 import b64encode
 
 from nbformat import v4 as nbformat
 
-from ...exporters.exporter import ResourcesDict
-from ...tests.base import TestsBase
+from nbconvert.exporters.exporter import ResourcesDict
+from tests.base import TestsBase
 
 
 class PreprocessorTestsBase(TestsBase):

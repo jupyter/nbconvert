@@ -12,9 +12,9 @@ from jinja2 import DictLoader
 from nbformat import v4, write
 from traitlets.config import Config
 
-from tests.latex import LatexExporter
+from nbconvert.exporters.latex import LatexExporter
+from tests.testutils import onlyif_cmds_exist
 
-from ...tests.utils import onlyif_cmds_exist
 from .base import ExportersTestsBase
 
 current_dir = os.path.dirname(__file__)

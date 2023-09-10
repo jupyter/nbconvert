@@ -17,9 +17,8 @@ Module with tests for stdout
 import sys
 from io import StringIO
 
-from tests.stdout import StdoutWriter
-
-from ...tests.base import TestsBase
+from nbconvert.writers.stdout import StdoutWriter
+from tests.base import TestsBase
 
 # -----------------------------------------------------------------------------
 # Class

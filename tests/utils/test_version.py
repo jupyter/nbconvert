@@ -1,8 +1,8 @@
-from tests.version import check_version
+from nbconvert.utils.version import check_version
 
 
 def test_check_version():
-    """Test the behaviour of check_versionself.
+    """Test the behaviour of check_version.
 
     This is mostly used to make sure the pandoc version is appropriate for the library.
     """

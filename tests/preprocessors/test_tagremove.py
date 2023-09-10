@@ -7,9 +7,8 @@ Module with tests for the TagRemovePreprocessor.
 
 from nbformat import v4 as nbformat
 
-from tests.tagremove import TagRemovePreprocessor
-
-from .base import PreprocessorTestsBase
+from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
+from tests.preprocessors.base import PreprocessorTestsBase
 
 
 class TestTagRemove(PreprocessorTestsBase):

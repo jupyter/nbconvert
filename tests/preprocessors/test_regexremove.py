@@ -9,7 +9,7 @@ import re
 
 from nbformat import v4 as nbformat
 
-from tests.regexremove import RegexRemovePreprocessor
+from nbconvert.preprocessors.regexremove import RegexRemovePreprocessor
 
 from .base import PreprocessorTestsBase
 

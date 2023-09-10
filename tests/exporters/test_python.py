@@ -3,7 +3,7 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from tests.python import PythonExporter
+from nbconvert.exporters.python import PythonExporter
 
 from .base import ExportersTestsBase
 

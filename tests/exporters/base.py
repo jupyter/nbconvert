@@ -5,7 +5,7 @@
 
 import os
 
-from ...tests.base import TestsBase
+from tests.base import TestsBase
 
 all_raw_mimetypes = {
     "text/x-python",

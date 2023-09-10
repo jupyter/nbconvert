@@ -4,6 +4,6 @@ from .base import PostProcessorBase
 try:
     from .serve import ServePostProcessor
 except ImportError:
-    ServePostProcessor = None
+    ServePostProcessor = None  # type:ignore[misc,assignment]
 
 __all__ = ["PostProcessorBase", "ServePostProcessor"]

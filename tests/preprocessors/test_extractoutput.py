@@ -5,7 +5,7 @@
 
 import json
 
-from tests.extractoutput import ExtractOutputPreprocessor
+from nbconvert.preprocessors.extractoutput import ExtractOutputPreprocessor
 
 from .base import PreprocessorTestsBase
 

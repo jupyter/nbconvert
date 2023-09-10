@@ -6,7 +6,7 @@
 import os
 from base64 import b64decode
 
-from tests.extractattachments import ExtractAttachmentsPreprocessor
+from nbconvert.preprocessors.extractattachments import ExtractAttachmentsPreprocessor
 
 from .base import PreprocessorTestsBase
 

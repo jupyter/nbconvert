@@ -13,7 +13,7 @@ Contains CheesePreprocessor
 # Imports
 # -----------------------------------------------------------------------------
 
-from ...preprocessors.base import Preprocessor
+from nbconvert.preprocessors.base import Preprocessor
 
 # -----------------------------------------------------------------------------
 # Classes

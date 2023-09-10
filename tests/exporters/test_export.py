@@ -12,16 +12,16 @@ import nbformat
 import pytest
 from traitlets.config import Config
 
-import nbconvert.tests
-from tests.base import (
+import tests
+from nbconvert.exporters import (
     ExporterDisabledError,
     ExporterNameError,
     export,
     get_export_names,
     get_exporter,
 )
-from tests.exporter import Exporter
-from tests.python import PythonExporter
+from nbconvert.exporters.exporter import Exporter
+from nbconvert.exporters.python import PythonExporter
 
 from .base import ExportersTestsBase
 
@@ -106,7 +106,7 @@ class TestExport(ExportersTestsBase):
 
 
 def test_get_exporter_entrypoint():
-    p = os.path.join(os.path.dirname(nbconvert.tests.__file__), "exporter_entrypoint")
+    p = os.path.join(os.path.dirname(tests.__file__), "exporter_entrypoint")
     sys.path.insert(0, p)
     assert "entrypoint_test" in get_export_names()
     try:

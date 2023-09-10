@@ -7,8 +7,8 @@ import json
 
 from nbformat import validate
 
-from nbconvert.tests.base import assert_big_text_equal
-from tests.notebook import NotebookExporter
+from nbconvert.exporters.notebook import NotebookExporter
+from tests.base import assert_big_text_equal
 
 from .base import ExportersTestsBase
 

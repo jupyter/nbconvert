@@ -15,9 +15,7 @@ from tempfile import TemporaryDirectory
 
 from nbformat import v4, write
 
-import nbconvert
-
-from ..utils import _contextlib_chdir
+from nbconvert.utils import _contextlib_chdir
 
 
 class TestsBase(unittest.TestCase):
@@ -136,9 +134,9 @@ class TestsBase(unittest.TestCase):
         names = self.__module__.split(".")[1:-1]
         names.append("files")
 
-        # Build a path using the nbconvert directory and the relative path we just
+        # Build a path using the tests directory and the relative path we just
         # found.
-        path = os.path.dirname(nbconvert.__file__)
+        path = os.path.dirname(__file__)
         return os.path.join(path, *names)
 
     def nbconvert(self, parameters, ignore_return_code=False, stdin=None):

@@ -14,9 +14,8 @@ Module with tests for Latex
 # Imports
 # -----------------------------------------------------------------------------
 
-from tests.latex import escape_latex
-
-from ...tests.base import TestsBase
+from nbconvert.filters.latex import escape_latex
+from tests.base import TestsBase
 
 # -----------------------------------------------------------------------------
 # Class

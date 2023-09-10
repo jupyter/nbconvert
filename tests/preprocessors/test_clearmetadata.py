@@ -5,7 +5,7 @@ Module with tests for the clearmetadata preprocessor.
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from tests.clearmetadata import ClearMetadataPreprocessor
+from nbconvert.preprocessors.clearmetadata import ClearMetadataPreprocessor
 
 from .base import PreprocessorTestsBase
 

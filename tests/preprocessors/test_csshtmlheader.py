@@ -14,7 +14,7 @@ Module with tests for the csshtmlheader preprocessor
 # Imports
 # -----------------------------------------------------------------------------
 
-from tests.csshtmlheader import CSSHTMLHeaderPreprocessor
+from nbconvert.preprocessors.csshtmlheader import CSSHTMLHeaderPreprocessor
 
 from .base import PreprocessorTestsBase
 

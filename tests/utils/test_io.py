@@ -7,7 +7,7 @@ import io as stdlib_io
 import sys
 from io import StringIO
 
-from tests.io import unicode_std_stream
+from nbconvert.utils.io import unicode_std_stream
 
 
 def test_UnicodeStdStream():

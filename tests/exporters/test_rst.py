@@ -8,9 +8,9 @@ import re
 import nbformat
 from nbformat import v4
 
-from tests.rst import RSTExporter
+from nbconvert.exporters.rst import RSTExporter
+from tests.testutils import onlyif_cmds_exist
 
-from ...tests.utils import onlyif_cmds_exist
 from .base import ExportersTestsBase
 
 

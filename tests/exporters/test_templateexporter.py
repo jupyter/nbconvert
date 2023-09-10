@@ -17,12 +17,12 @@ from nbformat import v4
 from traitlets import default
 from traitlets.config import Config
 
-from tests.html import HTMLExporter
-from tests.markdown import MarkdownExporter
-from tests.rst import RSTExporter
-from tests.templateexporter import TemplateExporter
+from nbconvert.exporters.html import HTMLExporter
+from nbconvert.exporters.markdown import MarkdownExporter
+from nbconvert.exporters.rst import RSTExporter
+from nbconvert.exporters.templateexporter import TemplateExporter
+from nbconvert.utils import _contextlib_chdir
 
-from ...utils import _contextlib_chdir
 from .base import ExportersTestsBase
 from .cheese import CheesePreprocessor
 

@@ -10,11 +10,10 @@ from html import unescape
 
 from jinja2 import Environment
 
-from tests.markdown import markdown2html
-from tests.pandoc import convert_pandoc
-
-from ...tests.base import TestsBase
-from ...tests.utils import onlyif_cmds_exist
+from nbconvert.filters.markdown import markdown2html
+from nbconvert.filters.pandoc import convert_pandoc
+from tests.base import TestsBase
+from tests.testutils import onlyif_cmds_exist
 
 
 class TestMarkdown(TestsBase):

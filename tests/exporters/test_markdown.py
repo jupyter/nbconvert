@@ -12,7 +12,7 @@
 # Imports
 # -----------------------------------------------------------------------------
 
-from tests.markdown import MarkdownExporter
+from nbconvert.exporters.markdown import MarkdownExporter
 
 from .base import ExportersTestsBase
 

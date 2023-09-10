@@ -2,7 +2,7 @@
 
 from nbformat import v4 as nbformat
 
-from tests.sanitize import SanitizeHTML
+from nbconvert.preprocessors.sanitize import SanitizeHTML
 
 from .base import PreprocessorTestsBase
 

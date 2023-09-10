@@ -5,7 +5,7 @@
 
 from nbformat import v4 as nbformat
 
-from tests.slides import SlidesExporter, _RevealMetadataPreprocessor
+from nbconvert.exporters.slides import SlidesExporter, _RevealMetadataPreprocessor
 
 from .base import ExportersTestsBase
 

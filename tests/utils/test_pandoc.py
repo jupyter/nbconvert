@@ -12,10 +12,9 @@
 import os
 import warnings
 
-from nbconvert.tests.base import TestsBase
-from tests import pandoc
-
-from ...tests.utils import onlyif_cmds_exist
+from nbconvert.utils import pandoc
+from tests.base import TestsBase
+from tests.testutils import onlyif_cmds_exist
 
 # -----------------------------------------------------------------------------
 # Classes and functions

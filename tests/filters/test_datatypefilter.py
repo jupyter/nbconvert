@@ -4,9 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 import pytest
 
-from tests.datatypefilter import DataTypeFilter
-
-from ...tests.base import TestsBase
+from nbconvert.filters.datatypefilter import DataTypeFilter
+from tests.base import TestsBase
 
 
 class TestDataTypeFilter(TestsBase):

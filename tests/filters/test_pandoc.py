@@ -7,10 +7,9 @@ Module with tests for Pandoc filters
 
 import json
 
-from tests.pandoc import ConvertExplicitlyRelativePaths, convert_pandoc
-
-from ...tests.base import TestsBase
-from ...tests.utils import onlyif_cmds_exist
+from nbconvert.filters.pandoc import ConvertExplicitlyRelativePaths, convert_pandoc
+from tests.base import TestsBase
+from tests.testutils import onlyif_cmds_exist
 
 
 class TestPandocFilters(TestsBase):

@@ -16,7 +16,7 @@ Module with tests for Strings
 import os
 import re
 
-from tests.strings import (
+from nbconvert.filters.strings import (
     add_anchor,
     add_prompts,
     ascii_only,
@@ -30,8 +30,7 @@ from tests.strings import (
     strip_files_prefix,
     wrap_text,
 )
-
-from ...tests.base import TestsBase
+from tests.base import TestsBase
 
 # -----------------------------------------------------------------------------
 # Class

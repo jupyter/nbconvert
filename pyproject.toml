@@ -144,7 +144,9 @@ xfail_strict = true
 log_cli_level = "info"
 addopts = [
   "-raXs", "--durations=10", "--color=yes", "--doctest-modules",
-   "--showlocals", "--strict-markers", "--strict-config"
+   "--showlocals", "--strict-markers", "--strict-config",
+   "--ignore=tests/files/jupyter_nbconvert_config.py",
+   "--ignore=tests/files/override.py",
 ]
 markers = "network: marks tests which require network connection"
 testpaths = [

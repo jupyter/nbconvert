@@ -18,9 +18,8 @@ import xml
 
 import pytest
 
-from tests.highlight import Highlight2HTML, Highlight2Latex
-
-from ...tests.base import TestsBase
+from nbconvert.filters.highlight import Highlight2HTML, Highlight2Latex
+from tests.base import TestsBase
 
 # -----------------------------------------------------------------------------
 # Class

@@ -1,6 +1,6 @@
 """Tests for the HighlightMagics preprocessor"""
 
-from tests.highlightmagics import HighlightMagicsPreprocessor
+from nbconvert.preprocessors.highlightmagics import HighlightMagicsPreprocessor
 
 from .base import PreprocessorTestsBase
 

@@ -3,7 +3,7 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from tests.latex import LatexPreprocessor
+from nbconvert.preprocessors.latex import LatexPreprocessor
 
 from .base import PreprocessorTestsBase
 

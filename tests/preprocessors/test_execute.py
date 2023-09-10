@@ -11,7 +11,7 @@ from copy import deepcopy
 import nbformat
 import pytest
 
-from tests.execute import ExecutePreprocessor, executenb
+from nbconvert.preprocessors.execute import ExecutePreprocessor, executenb
 
 addr_pat = re.compile(r"0x[0-9a-f]{7,9}")
 

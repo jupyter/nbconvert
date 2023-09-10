@@ -16,9 +16,9 @@ import re
 
 from traitlets.config import Config
 
-from tests.asciidoc import ASCIIDocExporter
+from nbconvert.exporters.asciidoc import ASCIIDocExporter
+from tests.testutils import onlyif_cmds_exist
 
-from ...tests.utils import onlyif_cmds_exist
 from .base import ExportersTestsBase
 
 # -----------------------------------------------------------------------------

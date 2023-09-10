@@ -8,8 +8,8 @@ import sys
 
 from nbformat import v4
 
-import nbconvert
-from tests.script import ScriptExporter
+import tests
+from nbconvert.exporters.script import ScriptExporter
 
 from .base import ExportersTestsBase
 
@@ -68,7 +68,7 @@ def test_script_exporter_entrypoint():
         "mimetype": "text/x-dummy",
     }
 
-    p = os.path.join(os.path.dirname(nbconvert.tests.__file__), "exporter_entrypoint")
+    p = os.path.join(os.path.dirname(tests.__file__), "exporter_entrypoint")
     sys.path.insert(0, p)
     try:
         output, _ = ScriptExporter().from_notebook_node(nb)

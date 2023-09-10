@@ -1,5 +1,5 @@
 from .asciidoc import ASCIIDocExporter
-from .base import ExporterNameError, export, get_export_names, get_exporter
+from .base import ExporterDisabledError, ExporterNameError, export, get_export_names, get_exporter
 from .exporter import Exporter, FilenameExtension
 from .html import HTMLExporter
 from .latex import LatexExporter
@@ -18,6 +18,7 @@ from .webpdf import WebPDFExporter
 __all__ = [
     "ASCIIDocExporter",
     "ExporterNameError",
+    "ExporterDisabledError",
     "export",
     "get_export_names",
     "get_exporter",

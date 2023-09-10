@@ -8,7 +8,7 @@ import re
 from nbformat import v4
 from traitlets.config import Config
 
-from tests.html import HTMLExporter
+from nbconvert.exporters.html import HTMLExporter
 
 from .base import ExportersTestsBase
 

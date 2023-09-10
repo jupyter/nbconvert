@@ -7,10 +7,10 @@ import os
 import shutil
 from tempfile import TemporaryDirectory
 
-from tests.pdf import PDFExporter
+from nbconvert.exporters.pdf import PDFExporter
+from nbconvert.utils import _contextlib_chdir
+from tests.testutils import onlyif_cmds_exist
 
-from ...tests.utils import onlyif_cmds_exist
-from ...utils import _contextlib_chdir
 from .base import ExportersTestsBase
 
 # -----------------------------------------------------------------------------

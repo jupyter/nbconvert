@@ -7,9 +7,8 @@ Module with tests for files
 
 import os
 
-from tests.files import FilesWriter
-
-from ...tests.base import TestsBase
+from nbconvert.writers.files import FilesWriter
+from tests.base import TestsBase
 
 
 class Testfiles(TestsBase):

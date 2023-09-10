@@ -7,8 +7,8 @@ import os
 
 import pytest
 
-from tests.qt_screenshot import QT_INSTALLED
-from tests.qtpng import QtPNGExporter
+from nbconvert.exporters.qt_screenshot import QT_INSTALLED
+from nbconvert.exporters.qtpng import QtPNGExporter
 
 from .base import ExportersTestsBase
 

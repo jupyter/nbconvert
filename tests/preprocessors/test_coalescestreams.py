@@ -5,7 +5,7 @@
 
 from nbformat import v4 as nbformat
 
-from tests.coalescestreams import coalesce_streams
+from nbconvert.preprocessors.coalescestreams import coalesce_streams
 
 from .base import PreprocessorTestsBase
 

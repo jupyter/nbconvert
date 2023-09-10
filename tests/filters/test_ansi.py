@@ -6,9 +6,8 @@ Module with tests for ansi filters
 # Distributed under the terms of the Modified BSD License.
 
 
-from tests.ansi import ansi2html, ansi2latex, strip_ansi
-
-from ...tests.base import TestsBase
+from nbconvert.filters.ansi import ansi2html, ansi2latex, strip_ansi
+from tests.base import TestsBase
 
 
 class TestAnsi(TestsBase):

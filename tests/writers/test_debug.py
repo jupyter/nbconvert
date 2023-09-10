@@ -17,9 +17,8 @@ Module with tests for debug
 import sys
 from io import StringIO
 
-from tests.debug import DebugWriter
-
-from ...tests.base import TestsBase
+from nbconvert.writers.debug import DebugWriter
+from tests.base import TestsBase
 
 # -----------------------------------------------------------------------------
 # Class

@@ -13,10 +13,10 @@ from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
 from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED
+from nbconvert.postprocessors import PostProcessorBase
 
-from ..postprocessors import PostProcessorBase
-from ..tests.utils import onlyif_cmds_exist
 from .base import TestsBase
+from .testutils import onlyif_cmds_exist
 
 # -----------------------------------------------------------------------------
 # Classes and functions
@@ -78,7 +78,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd():
             self.copy_files_to(["notebook*.ipynb"], "subdir")
             self.nbconvert(
-                "--to nbconvert.tests.fake_exporters.MyExporter --log-level 0 "
+                "--to tests.fake_exporters.MyExporter --log-level 0 "
                 + os.path.join("subdir", "*.ipynb")
             )
             assert os.path.isfile(os.path.join("subdir", "notebook1.test_ext"))
@@ -178,7 +178,7 @@ class TestNbConvertApp(TestsBase):
         """Do post processors work?"""
         with self.create_temp_cwd(["notebook1.ipynb"]):
             out, err = self.nbconvert(
-                "--log-level 0 --to python notebook1 --post nbconvert.tests.test_nbconvertapp.DummyPost"
+                "--log-level 0 --to python notebook1 --post tests.test_nbconvertapp.DummyPost"
             )
             self.assertIn("Dummy:notebook1.py", out)
 

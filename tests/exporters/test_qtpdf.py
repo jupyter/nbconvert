@@ -5,8 +5,8 @@
 
 import pytest
 
-from tests.qt_screenshot import QT_INSTALLED
-from tests.qtpdf import QtPDFExporter
+from nbconvert.exporters.qt_screenshot import QT_INSTALLED
+from nbconvert.exporters.qtpdf import QtPDFExporter
 
 from .base import ExportersTestsBase
 

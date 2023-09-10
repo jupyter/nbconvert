@@ -18,10 +18,9 @@ from unittest.mock import patch
 
 from traitlets.config import Config
 
-from tests import Exporter, TemplateExporter
-from tests.base import get_export_names
+from nbconvert.exporters import Exporter, TemplateExporter, get_export_names
+from nbconvert.preprocessors.base import Preprocessor
 
-from ...preprocessors.base import Preprocessor
 from .base import ExportersTestsBase
 
 # -----------------------------------------------------------------------------

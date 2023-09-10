@@ -7,7 +7,7 @@ Module with tests for the serve post-processor
 
 import pytest
 
-from ...tests.base import TestsBase
+from tests.base import TestsBase
 
 
 class TestServe(TestsBase):
@@ -17,7 +17,7 @@ class TestServe(TestsBase):
         """Can a ServePostProcessor be constructed?"""
         pytest.importorskip("tornado")
         try:
-            from tests.serve import ServePostProcessor
+            from nbconvert.preprocessors.serve import ServePostProcessor
         except ImportError:
             print("Something weird is happening.\nTornado is sometimes present, sometimes not.")
             raise

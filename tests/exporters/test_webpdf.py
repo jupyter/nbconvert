@@ -8,8 +8,8 @@ from unittest.mock import patch
 
 import pytest
 
-from tests.exporter import Exporter
-from tests.webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
+from nbconvert.exporters.exporter import Exporter
+from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
 
 from .base import ExportersTestsBase
 
