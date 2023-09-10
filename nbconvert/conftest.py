@@ -4,5 +4,5 @@ import os
 
 if os.name == "nt":
     asyncio.set_event_loop_policy(
-        asyncio.WindowsSelectorEventLoopPolicy()
-    )  # type:ignore[attr-defined]
+        asyncio.WindowsSelectorEventLoopPolicy()  # type:ignore[attr-defined]
+    )
