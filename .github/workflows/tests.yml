@@ -79,8 +79,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      -  name: Run Linters
-         run: |
+      - name: Run Linters
+        run: |
           hatch run typing:test
           hatch run lint:style
           pipx run interrogate -v .
@@ -106,7 +106,7 @@ jobs:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
         with:
-          ignore_links: 'https://ipywidgets.readthedocs.io/en/latest/examples/Output'
+          ignore_links: "https://ipywidgets.readthedocs.io/en/latest/examples/Output"
 
   test_minimum_versions:
     name: Test Minimum Versions
@@ -140,7 +140,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
         with:
-         dependency_type: pre
+          dependency_type: pre
       - name: Run the tests
         run: |
           export NBFORMAT_VALIDATOR=jsonschema

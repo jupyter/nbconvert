@@ -1,5 +1,5 @@
 # Class base Preprocessors
-# Backwards compatability for imported name
+# Backwards compatibility for imported name
 from nbclient.exceptions import CellExecutionError
 
 from .base import Preprocessor

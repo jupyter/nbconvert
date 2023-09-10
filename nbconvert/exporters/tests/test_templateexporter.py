@@ -473,7 +473,7 @@ class TestExporter(ExportersTestsBase):
     def test_fail_to_find_template_file(self):
         # Create exporter with invalid template file, check that it doesn't
         # exist in the environment, try to convert empty notebook. Failure is
-        # expected due to nonexistant template file.
+        # expected due to nonexistent template file.
 
         template = "does_not_exist.tpl"
         exporter = TemplateExporter(template_file=template)

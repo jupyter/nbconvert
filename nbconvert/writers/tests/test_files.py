@@ -36,7 +36,7 @@ class Testfiles(TestsBase):
 
         # Work in a temporary directory.
         with self.create_temp_cwd():
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res = {"output_extension": ".txt"}
 
             # Create files writer, test output
@@ -168,7 +168,7 @@ class Testfiles(TestsBase):
             with open(os.path.join("sub", "d"), "w") as f:
                 f.write("e")
 
-            # Create the resoruces dictionary
+            # Create the resources dictionary
             res: dict = {}
 
             # Create files writer, test output

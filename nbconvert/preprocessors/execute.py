@@ -6,7 +6,7 @@ from jupyter_client.manager import KernelManager
 from nbclient import NotebookClient
 from nbclient import execute as _execute
 
-# Backwards compatability for imported name
+# Backwards compatibility for imported name
 from nbclient.exceptions import CellExecutionError  # noqa
 
 # Copyright (c) IPython Development Team.

@@ -47,7 +47,7 @@ class TestClearMetadata(PreprocessorTestsBase):
         nb, res = preprocessor(nb, res)
 
         assert not nb.cells[0].metadata
-        # By default we only perserve the langauge name
+        # By default we only preserve the language name
         assert nb.metadata == {"language_info": {"name": "python"}}
 
     def test_cell_only(self):

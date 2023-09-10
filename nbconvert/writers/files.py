@@ -113,13 +113,13 @@ class FilesWriter(WriterBase):
 
         # Write the extracted attachments
         # if ExtractAttachmentsOutput specified a separate directory
-        attachs = resources.get("attachments", {}).items()
-        if attachs:
+        attachments = resources.get("attachments", {}).items()
+        if attachments:
             self.log.info(
                 "Attachments will be in %s",
                 os.path.join(resources.get("attachment_files_dir", ""), ""),
             )
-            self._write_items(attachs, build_directory)
+            self._write_items(attachments, build_directory)
 
         # Copy referenced files to output directory
         if build_directory:

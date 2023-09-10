@@ -12,7 +12,7 @@ Dejavu works exactly the same as nbconvert and you can use all command line opti
 
     jupyter dejavu notebook.ipynb
 
-In case you want to show code in adition to its output use the flag ``--show-input``.
+In case you want to show code in addition to its output use the flag ``--show-input``.
 
 
 Configuring the Notebook for slides presentations

@@ -157,7 +157,7 @@ class TestLatexExporter(ExportersTestsBase):
     @onlyif_cmds_exist("pandoc", "inkscape")
     def test_svg(self):
         """
-        Can a LatexExporter export when it recieves raw binary strings form svg?
+        Can a LatexExporter export when it receives raw binary strings form svg?
         """
         filename = os.path.join(current_dir, "files", "svg.ipynb")
 

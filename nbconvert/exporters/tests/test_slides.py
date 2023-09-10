@@ -65,7 +65,7 @@ class TestSlidesExporter(ExportersTestsBase):
         for cell in cells:
             assert "slide_type" in cell.metadata
 
-        # Make sure slide end is only applied to the cells preceeding slide
+        # Make sure slide end is only applied to the cells preceding slide
         # cells.
         assert not cells[1].metadata.get("slide_end", False)
 
