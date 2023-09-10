@@ -64,7 +64,6 @@ test = [
     "pytest-dependency",
     "ipykernel",
     "ipywidgets>=7",
-    "pre-commit",
     "flaky"
 ]
 serve = ["tornado>=6.1"]
@@ -121,9 +120,9 @@ nowarn = "test -W default {args}"
 
 [tool.hatch.envs.typing]
 features = ["test"]
-dependencies = ["mypy>=0.990"]
+dependencies = ["mypy>=1.5.1"]
 [tool.hatch.envs.typing.scripts]
-test = "mypy --install-types --non-interactive {args:nbconvert}"
+test = "mypy --install-types --non-interactive {args}"
 
 [tool.hatch.envs.lint]
 dependencies = [
@@ -146,8 +145,14 @@ fmt = [
 ]
 
 [tool.pytest.ini_options]
+minversion = "6.0"
+xfail_strict = true
+log_cli_level = "info"
+addopts = [
+  "-raXs", "--durations=10", "--color=yes", "--doctest-modules",
+   "--showlocals", "--strict-markers", "--strict-config"
+]
 markers = "network: marks tests which require network connection"
-addopts = "-raXs --durations 10 --color=yes --doctest-modules --ignore=nbconvert/tests/files/override.py --ignore=nbconvert/tests/files/jupyter_nbconvert_config.py"
 testpaths = [
     "nbconvert/"
 ]
@@ -187,20 +192,12 @@ relative_files = true
 source = ["nbconvert"]
 
 [tool.mypy]
-check_untyped_defs = true
-disallow_incomplete_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-no_implicit_reexport = false
-pretty = true
-show_error_context = true
+files = "nbconvert"
+python_version = "3.8"
+strict = true
 show_error_codes = true
-strict_equality = true
-strict_optional = true
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_unused_ignores = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
 
 [tool.black]
 line-length = 100
@@ -263,3 +260,6 @@ ignore-nested-functions=true
 ignore-nested-classes=true
 fail-under=100
 exclude = ["*/tests", "docs"]
+
+[tool.repo-review]
+ignore = ["PY007", "PP308", "GH102", "PC140"]
