@@ -18,7 +18,7 @@ class QtPDFExporter(QtExporter):
     export_from_notebook = "PDF via HTML"
     format = "pdf"  # noqa
 
-    paginate = Bool(
+    paginate = Bool(  # type:ignore[assignment]
         True,
         help="""
         Split generated notebook into multiple pages.

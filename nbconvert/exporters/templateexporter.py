@@ -236,7 +236,7 @@ class TemplateExporter(Exporter):
             directory, self.template_file = os.path.split(full_path)
             self.extra_template_paths = [directory, *self.extra_template_paths]
             # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
-            if self.template_file.endswith(".tpl"):
+            if self.template_file and self.template_file.endswith(".tpl"):
                 warnings.warn(
                     f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                     DeprecationWarning,
@@ -365,7 +365,7 @@ class TemplateExporter(Exporter):
 
         # this gives precedence to a raw_template if present
         with self.hold_trait_notifications():
-            if self.template_file != self._raw_template_key:
+            if self.template_file and (self.template_file != self._raw_template_key):
                 self._last_template_file = self.template_file
             if self.raw_template:
                 self.template_file = self._raw_template_key
@@ -607,7 +607,7 @@ class TemplateExporter(Exporter):
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
-        base_template = self.template_name
+        base_template: str | None = self.template_name
         merged_conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         while base_template is not None:
             template_names.append(base_template)
@@ -645,14 +645,14 @@ class TemplateExporter(Exporter):
                         )
                         self.template_file = compatibility_file
                         conf = self.get_compatibility_base_template_conf(base_template)
-                        self.template_name = conf.get("base_template")
+                        self.template_name = t.cast(str, conf.get("base_template"))
                         break
                 if not found_at_least_one:
                     paths = "\n\t".join(root_dirs)
                     msg = f"No template sub-directory with name {base_template!r} found in the following paths:\n\t{paths}"
                     raise ValueError(msg)
             merged_conf = recursive_update(dict(conf), merged_conf)
-            base_template = conf.get("base_template")
+            base_template = t.cast(t.Any, conf.get("base_template"))
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
