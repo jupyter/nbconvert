@@ -29,7 +29,7 @@ class ResourcesDict(collections.defaultdict):  # type:ignore[type-arg]
         return ""
 
 
-class FilenameExtension(Unicode[str, str]):
+class FilenameExtension(Unicode):  # type:ignore[type-arg]
     """A trait for filename extensions."""
 
     default_value = ""
