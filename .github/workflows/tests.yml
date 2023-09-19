@@ -119,7 +119,6 @@ jobs:
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
         with:
           dependency_type: minimum
-          only_create_file: 1
       - name: Install dependencies
         run: |
           sudo apt-get update
