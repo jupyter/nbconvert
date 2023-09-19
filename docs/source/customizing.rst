@@ -102,12 +102,12 @@ template, exports text/html, and enables two preprocessors called "100-pygments"
 Inheritance
 ~~~~~~~~~~~
 
-Nbconvert walks up the inheritance structure determined by ``conf.json`` and produces an agregated
+Nbconvert walks up the inheritance structure determined by ``conf.json`` and produces an aggregated
 configuration, merging the dictionaries of registered preprocessors.
 The lexical ordering of the preprocessors by name determines the order in which they will be run.
 
 Besides the ``conf.json`` file, nbconvert templates most typically include jinja templates files,
-although any other resource from the base template can be overriden in the derived template.
+although any other resource from the base template can be overridden in the derived template.
 
 For example, inspecting the content of the ``classic`` template located in
 ``share/jupyter/nbconvert/templates/classic``, we find the following content:
@@ -133,13 +133,13 @@ for HTML exporters) as well as CSS and a base template file in ``base.html.j2``.
 Inheritance in Jinja
 ~~~~~~~~~~~~~~~~~~~~
 
-In nbconvert, jinja templates can inherrit from any other jinja template available in its current directory
+In nbconvert, jinja templates can inherit from any other jinja template available in its current directory
 or base template directory by name. Jinja templates of other directories can be addressed by their relative path
 from the Jupyter data directory.
 
 For example, in the reveal template, ``index.html.j2`` extends ``base.html.j2`` which is in the same directory, and
 ``base.html.j2`` extends ``lab/base.html.j2``. This approach allows using content that is available in other templates
-or may be overriden in the current template.
+or may be overridden in the current template.
 
 A practical example
 ~~~~~~~~~~~~~~~~~~~

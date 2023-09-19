@@ -438,7 +438,7 @@
   [#1761](https://github.com/jupyter/nbconvert/pull/1761)
 - WebPDFExporter: Emulate media print by @martinRenou in
   [#1791](https://github.com/jupyter/nbconvert/pull/1791)
-- Fix fonts overriden by user stylesheet by inheriting styles by
+- Fix fonts overridden by user stylesheet by inheriting styles by
   @dakoop in [#1793](https://github.com/jupyter/nbconvert/pull/1793)
 - Fix lab template output alignment by @dakoop in
   [#1795](https://github.com/jupyter/nbconvert/pull/1795)
@@ -628,7 +628,7 @@ The following 31 authors contributed 81 commits.
 
 ## 6.0.7
 
-Primarly a release addressing template extensions issues reported since
+Primarily a release addressing template extensions issues reported since
 6.0 launched.
 
 ### Comprehensive notes
@@ -1182,7 +1182,7 @@ Thanks to the following 11 authors who contributed 57 commits.
 #### Fixing Problems
 
 - Mathjax.tpl fix for rendering Latex in html [#932](https://github.com/jupyter/nbconvert/pull/932)
-- Backwards compatbility for empty kernel names
+- Backwards compatibility for empty kernel names
   [#927](https://github.com/jupyter/nbconvert/pull/927) [#924](https://github.com/jupyter/nbconvert/pull/924)
 
 #### Testing, Docs, and Builds
@@ -1282,6 +1282,8 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
+
+
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
 assert "raw template" in output_attr
@@ -1623,7 +1625,7 @@ Many thanks to the following individuals who contributed to this release
 - doc improvements [#489](https://github.com/jupyter/nbconvert/pull/489)
   [#500](https://github.com/jupyter/nbconvert/pull/500) [#493](https://github.com/jupyter/nbconvert/pull/493) [#506](https://github.com/jupyter/nbconvert/pull/506)
 - newly customizable: output prompt [#500](https://github.com/jupyter/nbconvert/pull/500)
-- more python2/3 compatibile unicode handling [#502](https://github.com/jupyter/nbconvert/pull/502)
+- more python2/3 compatible unicode handling [#502](https://github.com/jupyter/nbconvert/pull/502)
 
 ## 5.0
 

@@ -5,7 +5,7 @@
 import sys
 
 if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points
+    from importlib_metadata import entry_points  # type:ignore[import]
 else:
     from importlib.metadata import entry_points
 from traitlets import Dict, default

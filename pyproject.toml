@@ -64,8 +64,7 @@ test = [
     "pytest-dependency",
     "ipykernel",
     "ipywidgets>=7",
-    "pre-commit",
-    "flaky"
+    "flaky",
 ]
 serve = ["tornado>=6.1"]
 docs = [
@@ -92,12 +91,6 @@ path = "nbconvert/_version.py"
 [tool.hatch.build.targets.sdist]
 artifacts = ["share/templates"]
 
-[tool.hatch.build.targets.wheel]
-exclude = [
-    "nbconvert/tests/",
-    "nbconvert/**/tests/",
-]
-
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
 
@@ -121,9 +114,9 @@ nowarn = "test -W default {args}"
 
 [tool.hatch.envs.typing]
 features = ["test"]
-dependencies = ["mypy>=0.990"]
+dependencies = ["mypy>=1.5.1", "traitlets>=5.10"]
 [tool.hatch.envs.typing.scripts]
-test = "mypy --install-types --non-interactive {args:nbconvert}"
+test = "mypy --install-types --non-interactive {args}"
 
 [tool.hatch.envs.lint]
 dependencies = [
@@ -146,10 +139,18 @@ fmt = [
 ]
 
 [tool.pytest.ini_options]
+minversion = "6.0"
+xfail_strict = true
+log_cli_level = "info"
+addopts = [
+  "-raXs", "--durations=10", "--color=yes", "--doctest-modules",
+   "--showlocals", "--strict-markers", "--strict-config",
+   "--ignore=tests/files/jupyter_nbconvert_config.py",
+   "--ignore=tests/files/override.py",
+]
 markers = "network: marks tests which require network connection"
-addopts = "-raXs --durations 10 --color=yes --doctest-modules --ignore=nbconvert/tests/files/override.py --ignore=nbconvert/tests/files/jupyter_nbconvert_config.py"
 testpaths = [
-    "nbconvert/"
+    "tests/"
 ]
 filterwarnings = [
     "error",
@@ -187,20 +188,13 @@ relative_files = true
 source = ["nbconvert"]
 
 [tool.mypy]
-check_untyped_defs = true
-disallow_incomplete_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-no_implicit_reexport = false
-pretty = true
-show_error_context = true
+files = "nbconvert"
+python_version = "3.8"
+strict = true
 show_error_codes = true
-strict_equality = true
-strict_optional = true
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_unused_ignores = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+disable_error_code = ["no-untyped-def", "no-untyped-call"]
+warn_unreachable = true
 
 [tool.black]
 line-length = 100
@@ -245,8 +239,7 @@ unfixable = [
 # S101 Use of `assert` detected
 # TID252 Relative imports from parent modules are banned
 # PLR2004 Magic value used in comparison
-"nbconvert/*/tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
-"nbconvert/tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
+"tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
 # F401 'foo' imported but unused
 # F403 'x' used; unable to detect undefined names
 "nbconvert/*/__init__.py" = ["F401", "F403"]
@@ -262,4 +255,11 @@ ignore-property-decorators=true
 ignore-nested-functions=true
 ignore-nested-classes=true
 fail-under=100
-exclude = ["*/tests", "docs"]
+exclude = ["tests", "docs"]
+
+[tool.repo-review]
+ignore = ["PY007", "PP308", "GH102", "PC140"]
+
+
+[tool.codespell]
+skip = "*.ipynb,*.css,*.tex.j2,*iso639_1.py,*html.j2,*test_ansi.py"

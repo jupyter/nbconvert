@@ -18,7 +18,7 @@ from traitlets import Bool, Unicode, default, validate
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
-    from jinja2 import contextfilter  # type:ignore
+    from jinja2 import contextfilter  # type:ignore[attr-defined]
 else:
     from jinja2 import pass_context as contextfilter
 
@@ -241,9 +241,9 @@ class HTMLExporter(TemplateExporter):
         yield from super().default_filters()
         yield ("markdown2html", self.markdown2html)
 
-    def from_notebook_node(  # type:ignore
-        self, nb: NotebookNode, resources: Optional[Dict] = None, **kw: Any
-    ) -> Tuple[str, Dict]:
+    def from_notebook_node(  # type:ignore[explicit-override, override]
+        self, nb: NotebookNode, resources: Optional[Dict[str, Any]] = None, **kw: Any
+    ) -> Tuple[str, Dict[str, Any]]:
         """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))

@@ -2,10 +2,11 @@
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import os
 import threading
+import typing as t
 import webbrowser
 
 from tornado import gen, httpserver, ioloop, log, web
@@ -63,7 +64,7 @@ class ServePostProcessor(PostProcessorBase):
     def postprocess(self, input):  # noqa
         """Serve the build directory with a webserver."""
         dirname, filename = os.path.split(input)
-        handlers: list = [
+        handlers: list[tuple[t.Any, ...]] = [
             (r"/(.+)", web.StaticFileHandler, {"path": dirname}),
             (r"/", web.RedirectHandler, {"url": "/%s" % filename}),
         ]
@@ -79,7 +80,7 @@ class ServePostProcessor(PostProcessorBase):
             handlers.insert(0, (r"/(%s)/(.*)" % self.reveal_prefix, ProxyHandler))
 
         app = web.Application(
-            handlers,
+            handlers,  # type:ignore[arg-type]
             cdn=self.reveal_cdn,
             client=AsyncHTTPClient(),
         )

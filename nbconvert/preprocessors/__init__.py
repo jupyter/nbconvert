@@ -1,5 +1,5 @@
 # Class base Preprocessors
-# Backwards compatability for imported name
+# Backwards compatibility for imported name
 from nbclient.exceptions import CellExecutionError
 
 from .base import Preprocessor
@@ -18,3 +18,20 @@ from .latex import LatexPreprocessor
 from .regexremove import RegexRemovePreprocessor
 from .svg2pdf import SVG2PDFPreprocessor
 from .tagremove import TagRemovePreprocessor
+
+__all__ = [
+    "CellExecutionError",
+    "Preprocessor",
+    "ClearMetadataPreprocessor",
+    "ClearOutputPreprocessor",
+    "ConvertFiguresPreprocessor",
+    "CSSHTMLHeaderPreprocessor",
+    "ExecutePreprocessor",
+    "ExtractAttachmentsPreprocessor",
+    "ExtractOutputPreprocessor",
+    "HighlightMagicsPreprocessor",
+    "LatexPreprocessor",
+    "RegexRemovePreprocessor",
+    "SVG2PDFPreprocessor",
+    "TagRemovePreprocessor",
+]

@@ -150,7 +150,7 @@ class WebPDFExporter(HTMLExporter):
             def run_coroutine(coro):
                 """Run an internal coroutine."""
                 loop = (
-                    asyncio.ProactorEventLoop()  # type:ignore
+                    asyncio.ProactorEventLoop()  # type:ignore[attr-defined]
                     if IS_WINDOWS
                     else asyncio.new_event_loop()
                 )

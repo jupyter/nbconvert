@@ -113,13 +113,13 @@ class FilesWriter(WriterBase):
 
         # Write the extracted attachments
         # if ExtractAttachmentsOutput specified a separate directory
-        attachs = resources.get("attachments", {}).items()
-        if attachs:
+        attachments = resources.get("attachments", {}).items()
+        if attachments:
             self.log.info(
                 "Attachments will be in %s",
                 os.path.join(resources.get("attachment_files_dir", ""), ""),
             )
-            self._write_items(attachs, build_directory)
+            self._write_items(attachments, build_directory)
 
         # Copy referenced files to output directory
         if build_directory:
@@ -144,15 +144,15 @@ class FilesWriter(WriterBase):
 
         # Determine where to write conversion results.
         dest = notebook_name + output_extension if output_extension is not None else notebook_name
-        dest = Path(build_directory) / dest
+        dest_path = Path(build_directory) / dest
 
         # Write conversion results.
-        self.log.info("Writing %i bytes to %s", len(output), dest)
+        self.log.info("Writing %i bytes to %s", len(output), dest_path)
         if isinstance(output, str):
-            with open(dest, "w", encoding="utf-8") as f:
+            with open(dest_path, "w", encoding="utf-8") as f:
                 f.write(output)
         else:
-            with open(dest, "wb") as f:
+            with open(dest_path, "wb") as f:
                 f.write(output)
 
-        return dest
+        return dest_path
