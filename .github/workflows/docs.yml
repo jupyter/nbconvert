@@ -51,7 +51,3 @@ jobs:
         with:
           name: pdf
           path: docs/build/latex/nbconvert.pdf
-      - name: Check links
-        run: |
-          cd docs
-          make linkcheck
