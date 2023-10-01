@@ -114,7 +114,7 @@ nowarn = "test -W default {args}"
 
 [tool.hatch.envs.typing]
 features = ["test"]
-dependencies = ["mypy>=1.5.1", "traitlets>=5.10"]
+dependencies = ["mypy>=1.5.1", "traitlets>=5.10.1", "jupyter_core>=5.3.2"]
 [tool.hatch.envs.typing.scripts]
 test = "mypy --install-types --non-interactive {args}"
 

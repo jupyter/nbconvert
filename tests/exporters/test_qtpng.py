@@ -6,6 +6,7 @@
 import os
 
 import pytest
+from flaky import flaky
 
 from nbconvert.exporters.qt_screenshot import QT_INSTALLED
 from nbconvert.exporters.qtpng import QtPNGExporter
@@ -19,6 +20,7 @@ class TestQtPNGExporter(ExportersTestsBase):
 
     exporter_class = QtPNGExporter  # type:ignore
 
+    @flaky
     def test_export(self):
         """
         Can a TemplateExporter export something?

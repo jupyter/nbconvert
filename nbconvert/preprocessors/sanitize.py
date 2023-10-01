@@ -49,7 +49,7 @@ class SanitizeHTML(Preprocessor):
     """A preprocessor to sanitize html."""
 
     # Bleach config.
-    attributes = Any(  # type:ignore[call-overload]
+    attributes = Any(
         config=True,
         default_value=ALLOWED_ATTRIBUTES,
         help="Allowed HTML tag attributes",
