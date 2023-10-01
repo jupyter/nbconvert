@@ -189,8 +189,8 @@ class NbConvertApp(JupyterApp):
 
     version = __version__
     name = "jupyter-nbconvert"
-    aliases = nbconvert_aliases
-    flags = nbconvert_flags
+    aliases = nbconvert_aliases  # type:ignore[assignment]
+    flags = nbconvert_flags  # type:ignore[assignment]
 
     @default("log_level")
     def _log_level_default(self):
@@ -597,7 +597,7 @@ class NbConvertApp(JupyterApp):
         Return a string containing descriptions of all the flags.
         """
         flags = "The following flags are defined:\n\n"
-        for flag, (cfg, fhelp) in self.flags.items():
+        for flag, (cfg, fhelp) in self.flags.items():  # type:ignore[has-type]
             flags += f"{flag}\n"
             flags += indent(fill(fhelp, 80)) + "\n\n"
             flags += indent(fill("Long Form: " + str(cfg), 80)) + "\n\n"
@@ -607,7 +607,7 @@ class NbConvertApp(JupyterApp):
         """Return a string containing all of the aliases"""
 
         aliases = "The following aliases are defined:\n\n"
-        for alias, longname in self.aliases.items():
+        for alias, longname in self.aliases.items():  # type:ignore[has-type]
             aliases += f"\t**{alias}** ({longname})\n\n"
         return aliases
 
