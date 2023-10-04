@@ -113,7 +113,7 @@ $1 < 2$ is true, but $3 > 4$ is false
 
 
 @pytest.mark.parametrize(
-    ["in_arg", "out_arg"], [(in_arg, out_arg) for (in_arg, out_arg) in test_md.items()]
+    ["in_arg", "out_arg"], list(test_md.items())
 )
 def test_citation2latex(in_arg, out_arg):
     """Are citations parsed properly?"""
