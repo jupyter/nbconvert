@@ -189,8 +189,8 @@ class NbConvertApp(JupyterApp):
 
     version = __version__
     name = "jupyter-nbconvert"
-    aliases = nbconvert_aliases  # type:ignore[assignment]
-    flags = nbconvert_flags  # type:ignore[assignment]
+    aliases = nbconvert_aliases
+    flags = nbconvert_flags
 
     @default("log_level")
     def _log_level_default(self):
@@ -395,15 +395,16 @@ class NbConvertApp(JupyterApp):
     def init_writer(self):
         """Initialize the writer (which is stateless)"""
         self._writer_class_changed({"new": self.writer_class})
-        self.writer = self.writer_factory(parent=self)  # type:ignore[operator]
-        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
-            self.use_output_suffix = False
+        if self.writer_factory:
+            self.writer = self.writer_factory(parent=self)
+            if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
+                self.use_output_suffix = False
 
     def init_postprocessor(self):
         """Initialize the postprocessor (which is stateless)"""
         self._postprocessor_class_changed({"new": self.postprocessor_class})
         if self.postprocessor_factory:
-            self.postprocessor = self.postprocessor_factory(parent=self)  # type:ignore[operator]
+            self.postprocessor = self.postprocessor_factory(parent=self)
 
     def start(self):
         """Run start after initialization process has completed"""
@@ -597,7 +598,7 @@ class NbConvertApp(JupyterApp):
         Return a string containing descriptions of all the flags.
         """
         flags = "The following flags are defined:\n\n"
-        for flag, (cfg, fhelp) in self.flags.items():  # type:ignore[has-type]
+        for flag, (cfg, fhelp) in self.flags.items():
             flags += f"{flag}\n"
             flags += indent(fill(fhelp, 80)) + "\n\n"
             flags += indent(fill("Long Form: " + str(cfg), 80)) + "\n\n"
@@ -607,7 +608,7 @@ class NbConvertApp(JupyterApp):
         """Return a string containing all of the aliases"""
 
         aliases = "The following aliases are defined:\n\n"
-        for alias, longname in self.aliases.items():  # type:ignore[has-type]
+        for alias, longname in self.aliases.items():
             aliases += f"\t**{alias}** ({longname})\n\n"
         return aliases
 
