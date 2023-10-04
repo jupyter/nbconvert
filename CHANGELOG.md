@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.9.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.0...6d679efebf8b6b7c65c4ab0dcb0dec97f6d389b9))
+
+### Maintenance and upkeep improvements
+
+- Include tests in sdist [#2053](https://github.com/jupyter/nbconvert/pull/2053) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-04&to=2023-10-04&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-04..2023-10-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.9.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.8.0...0e36347f31ee0b06d461aaa845e458eb7c9f8fc0))
@@ -21,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-08-29&to=2023-10-04&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-08-29..2023-10-04&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-08-29..2023-10-04&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2023-08-29..2023-10-04&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-08-29..2023-10-04&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.8.0
 
@@ -1302,7 +1316,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
