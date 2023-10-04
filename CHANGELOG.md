@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.9.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.8.0...0e36347f31ee0b06d461aaa845e458eb7c9f8fc0))
+
+### Maintenance and upkeep improvements
+
+- Update to mermaidjs 10.5.0 [#2051](https://github.com/jupyter/nbconvert/pull/2051) ([@bollwyvl](https://github.com/bollwyvl))
+- Update typing for traitlets 5.11 [#2050](https://github.com/jupyter/nbconvert/pull/2050) ([@blink1073](https://github.com/blink1073))
+- chore: update pre-commit hooks [#2049](https://github.com/jupyter/nbconvert/pull/2049) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- Fixup typings [#2048](https://github.com/jupyter/nbconvert/pull/2048) ([@blink1073](https://github.com/blink1073))
+- Remove redundant link check in CI [#2044](https://github.com/jupyter/nbconvert/pull/2044) ([@blink1073](https://github.com/blink1073))
+- Bump actions/checkout from 3 to 4 [#2042](https://github.com/jupyter/nbconvert/pull/2042) ([@dependabot](https://github.com/dependabot))
+- Adopt sp-repo-review [#2040](https://github.com/jupyter/nbconvert/pull/2040) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-08-29&to=2023-10-04&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-08-29..2023-10-04&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-08-29..2023-10-04&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2023-08-29..2023-10-04&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-08-29..2023-10-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.8.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.4...9e8d252f2bf5b4177bbbeb007fd1a489356926ec))
@@ -19,8 +41,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-08-16&to=2023-08-29&type=c))
 
 [@Adamtaranto](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAdamtaranto+updated%3A2023-08-16..2023-08-29&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-08-16..2023-08-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.7.4
 
@@ -1282,7 +1302,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
