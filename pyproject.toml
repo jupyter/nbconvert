@@ -89,7 +89,7 @@ path = "nbconvert/_version.py"
 [tool.hatch.build.hooks.custom]
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["share/templates"]
+artifacts = ["share/templates", "tests"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
