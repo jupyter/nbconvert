@@ -1,6 +1,6 @@
 from .asciidoc import ASCIIDocExporter
 from .base import ExporterDisabledError, ExporterNameError, export, get_export_names, get_exporter
-from .exporter import Exporter, FilenameExtension
+from .exporter import Exporter, FilenameExtension, ResourcesDict
 from .html import HTMLExporter
 from .latex import LatexExporter
 from .markdown import MarkdownExporter
@@ -32,6 +32,7 @@ __all__ = [
     "PythonExporter",
     "QtPDFExporter",
     "QtPNGExporter",
+    "ResourcesDict",
     "RSTExporter",
     "ScriptExporter",
     "SlidesExporter",
