@@ -4,12 +4,10 @@ import os
 try:
     from PyQt5 import QtCore  # type:ignore[import-not-found]
     from PyQt5.QtGui import QPageLayout, QPageSize  # type:ignore[import-not-found]
-    from PyQt5.QtWebEngineWidgets import (
+    from PyQt5.QtWebEngineWidgets import (  # type:ignore[import-not-found]
         QWebEngineSettings,
         QWebEngineView,
     )
-
-    # type:ignore[import-not-found]
     from PyQt5.QtWidgets import QApplication  # type:ignore[import-not-found]
 
     QT_INSTALLED = True
