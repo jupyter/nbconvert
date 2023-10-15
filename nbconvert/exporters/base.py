@@ -7,7 +7,7 @@ import os
 import sys
 
 if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points  # type:ignore[import]
+    from importlib_metadata import entry_points  # type:ignore[import-not-found]
 else:
     from importlib.metadata import entry_points
 from nbformat import NotebookNode
