@@ -73,7 +73,6 @@ py.test --pyargs nbconvert
 - [Documentation for Jupyter nbconvert](https://nbconvert.readthedocs.io/en/latest/)
 - [nbconvert examples on GitHub](https://github.com/jupyter/nbconvert-examples)
 - [Documentation for Project Jupyter](https://jupyter.readthedocs.io/en/latest/index.html)
-  \[[PDF](https://media.readthedocs.org/pdf/jupyter/latest/jupyter.pdf)\]
 
 ## Technical Support
 
