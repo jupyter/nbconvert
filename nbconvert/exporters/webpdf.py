@@ -16,7 +16,7 @@ from traitlets import Bool, default
 from .html import HTMLExporter
 
 PLAYWRIGHT_INSTALLED = importlib_util.find_spec("playwright") is not None
-IS_WINDOWS = os.name == 'nt'
+IS_WINDOWS = os.name == "nt"
 
 
 class WebPDFExporter(HTMLExporter):

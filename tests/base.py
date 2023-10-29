@@ -125,7 +125,7 @@ class TestsBase(unittest.TestCase):
             assert files
             for match in files:
                 # Avoid copying the Julia file unless it is explicitly asked for.
-                if 'jl' in match and "jl" not in pattern:
+                if "jl" in match and "jl" not in pattern:
                     continue
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 

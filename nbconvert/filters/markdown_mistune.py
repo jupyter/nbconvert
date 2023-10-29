@@ -47,7 +47,7 @@ except ImportError:  # for Mistune >= 2.0
 
     MISTUNE_V3 = False
 
-    def import_plugin(name: str) -> 'MarkdownPlugin':  # type: ignore[misc]
+    def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3's import_plugin for V2."""
         return PLUGINS[name]  # type: ignore[no-any-return]
 
