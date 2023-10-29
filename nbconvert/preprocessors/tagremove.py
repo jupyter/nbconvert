@@ -65,9 +65,7 @@ class TagRemovePreprocessor(Preprocessor):
             "matches tags in ``cell.metadata.tags``."
         ),
     ).tag(config=True)
-    remove_metadata_fields: set[str] = Set({"collapsed", "scrolled"}).tag(
-        config=True
-    )  # type:ignore[assignment]
+    remove_metadata_fields: set[str] = Set({"collapsed", "scrolled"}).tag(config=True)  # type:ignore[assignment]
 
     def check_cell_conditions(self, cell, resources, index):
         """

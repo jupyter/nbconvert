@@ -371,7 +371,7 @@ class TestNbConvertApp(TestsBase):
             '<span class="o">=</span> '
             '<span class="n">symbols</span>'
             '<span class="p">(</span>'
-            '<span class="s1">\'x y z\'</span>'
+            "<span class=\"s1\">'x y z'</span>"
             '<span class="p">)</span>'
         )
         for no_input_flag in (False, True):

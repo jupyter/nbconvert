@@ -23,9 +23,7 @@ class TestHighlightMagics(PreprocessorTestsBase):
         nb = self.build_notebook()
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
-        nb.cells[
-            0
-        ].source = """%%R -i x,y -o XYcoef
+        nb.cells[0].source = """%%R -i x,y -o XYcoef
             lm.fit <- lm(y~x)
             par(mfrow=c(2,2))
             print(summary(lm.fit))
@@ -43,9 +41,7 @@ class TestHighlightMagics(PreprocessorTestsBase):
         nb = self.build_notebook()
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
-        nb.cells[
-            0
-        ].source = """# this should not be detected
+        nb.cells[0].source = """# this should not be detected
                 print(\"""
                 %%R -i x, y
                 \""")"""
