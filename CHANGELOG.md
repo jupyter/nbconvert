@@ -2,6 +2,32 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.10.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.2...48599a4bba00819e4e626fe098eb204977590ee4))
+
+### Enhancements made
+
+- Update to mermaid 10.6.0, docs keyboard navigation [#2058](https://github.com/jupyter/nbconvert/pull/2058) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Maintenance and upkeep improvements
+
+- Fix typing for traitlets 5.13 [#2060](https://github.com/jupyter/nbconvert/pull/2060) ([@blink1073](https://github.com/blink1073))
+- Adopt ruff format [#2059](https://github.com/jupyter/nbconvert/pull/2059) ([@blink1073](https://github.com/blink1073))
+- Update typings and remove dead link [#2056](https://github.com/jupyter/nbconvert/pull/2056) ([@blink1073](https://github.com/blink1073))
+
+### Documentation improvements
+
+- Update to mermaid 10.6.0, docs keyboard navigation [#2058](https://github.com/jupyter/nbconvert/pull/2058) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-05&to=2023-10-30&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-05..2023-10-30&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-10-05..2023-10-30&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.9.2
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.1...8e85303e530013f9e6d29be85f25e9602a443194))
@@ -15,8 +41,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-04&to=2023-10-05&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-04..2023-10-05&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.9.1
 
@@ -1330,7 +1354,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
