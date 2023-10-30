@@ -2,6 +2,7 @@
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
 import shutil
@@ -74,7 +75,7 @@ class PDFExporter(LatexExporter):
 
     output_mimetype = "application/pdf"
 
-    _captured_output = List()
+    _captured_output: List[str] = List()
 
     @default("file_extension")
     def _file_extension_default(self):

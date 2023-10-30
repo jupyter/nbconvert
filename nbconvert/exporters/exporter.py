@@ -78,13 +78,15 @@ class Exporter(LoggingConfigurable):
     export_from_notebook: str = None  # type:ignore[assignment]
 
     # Configurability, allows the user to easily add filters and preprocessors.
-    preprocessors = List(help="""List of preprocessors, by name or namespace, to enable.""").tag(
+    preprocessors: List[str] = List(
+        help="""List of preprocessors, by name or namespace, to enable."""
+    ).tag(  # type:ignore[assignment]
         config=True
     )
 
-    _preprocessors = List()
+    _preprocessors: List[str] = List()
 
-    default_preprocessors = List(
+    default_preprocessors: List[t.Any] = List(
         [
             "nbconvert.preprocessors.TagRemovePreprocessor",
             "nbconvert.preprocessors.RegexRemovePreprocessor",
@@ -349,7 +351,7 @@ class Exporter(LoggingConfigurable):
         # Run each preprocessor on the notebook.  Carry the output along
         # to each preprocessor
         for preprocessor in self._preprocessors:
-            nbc, resc = preprocessor(nbc, resc)
+            nbc, resc = preprocessor(nbc, resc)  # type:ignore[operator]
             if not self.optimistic_validation:
                 self._validate_preprocessor(nbc, preprocessor)
 
