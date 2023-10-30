@@ -163,7 +163,7 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
     lexer = None
     if language == "ipython2":
         try:
-            from IPython.lib.lexers import IPythonLexer  # type:ignore[attr-defined]
+            from IPython.lib.lexers import IPythonLexer
         except ImportError:
             warn("IPython lexer unavailable, falling back on Python", stacklevel=2)
             language = "python"
