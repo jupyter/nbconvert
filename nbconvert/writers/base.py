@@ -4,6 +4,7 @@ Contains writer base class.
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 from traitlets import List
 
