@@ -38,7 +38,7 @@ class RegexRemovePreprocessor(Preprocessor):
     documentation in python.
     """
 
-    patterns = List(Unicode(), default_value=[]).tag(config=True)
+    patterns: List[str] = List(Unicode(), default_value=[]).tag(config=True)  # type:ignore[misc]
 
     def check_conditions(self, cell):
         """

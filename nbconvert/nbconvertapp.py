@@ -336,7 +336,7 @@ class NbConvertApp(JupyterApp):
         ``Exporter`` class""",
     ).tag(config=True)
 
-    notebooks = List(
+    notebooks: List[str] = List(  # type:ignore[assignment]
         [],
         help="""List of notebooks to convert.
                      Wildcards are supported.

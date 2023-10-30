@@ -57,13 +57,13 @@ class SanitizeHTML(Preprocessor):
     tags = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_TAGS,
+        default_value=ALLOWED_TAGS,  # type:ignore[arg-type]
         help="List of HTML tags to allow",
     )
     styles = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_STYLES,
+        default_value=ALLOWED_STYLES,  # type:ignore[arg-type]
         help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(

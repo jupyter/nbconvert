@@ -255,8 +255,8 @@ class TemplateExporter(Exporter):
         self._invalidate_template_cache()
 
     template_paths = List(["."]).tag(config=True, affects_environment=True)
-    extra_template_basedirs = List().tag(config=True, affects_environment=True)
-    extra_template_paths = List([]).tag(config=True, affects_environment=True)
+    extra_template_basedirs: List[str] = List().tag(config=True, affects_environment=True)  # type:ignore[assignment]
+    extra_template_paths: List[str] = List([]).tag(config=True, affects_environment=True)  # type:ignore[assignment]
 
     @default("extra_template_basedirs")
     def _default_extra_template_basedirs(self):
@@ -317,7 +317,7 @@ class TemplateExporter(Exporter):
         False, help="This allows you to exclude unknown cells from all templates if set to True."
     ).tag(config=True)
 
-    extra_loaders = List(
+    extra_loaders: List[t.Any] = List(
         help="Jinja loaders to find templates. Will be tried in order "
         "before the default FileSystem ones.",
     ).tag(affects_environment=True)
@@ -327,7 +327,7 @@ class TemplateExporter(Exporter):
         environment."""
     ).tag(config=True, affects_environment=True)
 
-    raw_mimetypes = List(
+    raw_mimetypes: List[str] = List(  # type:ignore[assignment]
         help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
 

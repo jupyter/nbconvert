@@ -74,7 +74,7 @@ class PDFExporter(LatexExporter):
 
     output_mimetype = "application/pdf"
 
-    _captured_output = List()
+    _captured_output: List[str] = List()
 
     @default("file_extension")
     def _file_extension_default(self):

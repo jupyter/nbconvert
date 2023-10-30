@@ -14,7 +14,7 @@ class WriterBase(NbConvertBase):
     """Consumes output from nbconvert export...() methods and writes to a
     useful location."""
 
-    files = List(
+    files: List[str] = List(  # type:ignore[assignment]
         [],
         help="""
         List of the files that the notebook references.  Files will be
