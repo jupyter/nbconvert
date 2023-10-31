@@ -61,7 +61,6 @@ qtpdf = ["nbconvert[qtpng]"]
 webpdf = ["playwright"]
 test = [
     "pytest",
-    "pytest-dependency",
     "ipykernel",
     "ipywidgets>=7",
     "flaky",
