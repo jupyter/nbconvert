@@ -304,10 +304,10 @@ class HTMLExporter(TemplateExporter):
             code = """<style type="text/css">\n%s</style>""" % data
             return markupsafe.Markup(code)
 
-        def resources_include_js(name):
-            """Get the resources include JS for a name."""
+        def resources_include_js(name, module=False):
+            """Get the resources include JS for a name. If module=True, import as ES module"""
             env = self.environment
-            code = """<script>\n%s</script>""" % (env.loader.get_source(env, name)[0])
+            code = f"""<script {'type="module"' if module else ""}>\n{env.loader.get_source(env, name)[0]}</script>"""
             return markupsafe.Markup(code)
 
         def resources_include_url(name):
