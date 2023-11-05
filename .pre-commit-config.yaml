@@ -21,7 +21,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.27.0
+    rev: 0.27.1
     hooks:
       - id: check-github-workflows
 
@@ -50,6 +50,29 @@ repos:
       - id: codespell
         args: ["-L", "sur,nd"]
 
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.6.1"
+    hooks:
+      - id: mypy
+        files: "^nbconvert"
+        stages: [manual]
+        args: ["--install-types", "--non-interactive"]
+        additional_dependencies:
+          [
+            "traitlets>=5.13",
+            "jupyter_core>=5.3",
+            "jinja2",
+            "nbformat",
+            "markupsafe",
+            "mistune",
+            "nbclient",
+            "defusedxml",
+            "ipython",
+            "packaging",
+            "pandocfilters",
+            "jupyterlab_pygments",
+          ]
+
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: "v1.10.0"
     hooks:
@@ -58,7 +81,7 @@ repos:
       - id: rst-inline-touching-normal
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.3
+    rev: v0.1.4
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes"]

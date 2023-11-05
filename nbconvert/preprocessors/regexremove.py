@@ -39,7 +39,7 @@ class RegexRemovePreprocessor(Preprocessor):
     documentation in python.
     """
 
-    patterns: List[str] = List(Unicode(), default_value=[]).tag(config=True)  # type:ignore[misc]
+    patterns = List(Unicode()).tag(config=True)
 
     def check_conditions(self, cell):
         """
