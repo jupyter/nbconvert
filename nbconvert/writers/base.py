@@ -6,7 +6,7 @@ Contains writer base class.
 # Distributed under the terms of the Modified BSD License.
 from __future__ import annotations
 
-from traitlets import List
+from traitlets import List, Unicode
 
 from nbconvert.utils.base import NbConvertBase
 
@@ -15,8 +15,8 @@ class WriterBase(NbConvertBase):
     """Consumes output from nbconvert export...() methods and writes to a
     useful location."""
 
-    files: List[str] = List(  # type:ignore[assignment]
-        [],
+    files = List(
+        Unicode(),
         help="""
         List of the files that the notebook references.  Files will be
         included with written output.""",

@@ -255,8 +255,8 @@ class TemplateExporter(Exporter):
         self._invalidate_template_cache()
 
     template_paths = List(["."]).tag(config=True, affects_environment=True)
-    extra_template_basedirs: List[str] = List().tag(config=True, affects_environment=True)  # type:ignore[assignment]
-    extra_template_paths: List[str] = List([]).tag(config=True, affects_environment=True)  # type:ignore[assignment]
+    extra_template_basedirs = List(Unicode()).tag(config=True, affects_environment=True)
+    extra_template_paths = List(Unicode()).tag(config=True, affects_environment=True)
 
     @default("extra_template_basedirs")
     def _default_extra_template_basedirs(self):
@@ -327,8 +327,8 @@ class TemplateExporter(Exporter):
         environment."""
     ).tag(config=True, affects_environment=True)
 
-    raw_mimetypes: List[str] = List(  # type:ignore[assignment]
-        help="""formats of raw cells to be included in this Exporter's output."""
+    raw_mimetypes = List(
+        Unicode(), help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
 
     @default("raw_mimetypes")
