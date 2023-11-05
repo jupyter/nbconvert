@@ -349,7 +349,7 @@ class Exporter(LoggingConfigurable):
         # Run each preprocessor on the notebook.  Carry the output along
         # to each preprocessor
         for preprocessor in self._preprocessors:
-            nbc, resc = preprocessor(nbc, resc)  # type:ignore[operator]
+            nbc, resc = preprocessor(nbc, resc)
             if not self.optimistic_validation:
                 self._validate_preprocessor(nbc, preprocessor)
 
