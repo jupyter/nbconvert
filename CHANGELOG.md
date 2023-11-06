@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.11.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.10.0...422dd2a1697b191dc8e11806ddeca314df66c282))
+
+### Enhancements made
+
+- Support es modules in js includes [#2063](https://github.com/jupyter/nbconvert/pull/2063) ([@timkpaine](https://github.com/timkpaine))
+
+### Maintenance and upkeep improvements
+
+- Clean up lint handling and list generics [#2065](https://github.com/jupyter/nbconvert/pull/2065) ([@blink1073](https://github.com/blink1073))
+- Remove not needed pytest-dependency test requirement [#2062](https://github.com/jupyter/nbconvert/pull/2062) ([@danigm](https://github.com/danigm))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-30&to=2023-11-06&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-30..2023-11-06&type=Issues) | [@danigm](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adanigm+updated%3A2023-10-30..2023-11-06&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atimkpaine+updated%3A2023-10-30..2023-11-06&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.10.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.2...48599a4bba00819e4e626fe098eb204977590ee4))
@@ -25,8 +46,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-05&to=2023-10-30&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-05..2023-10-30&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-10-05..2023-10-30&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.9.2
 
@@ -1354,7 +1373,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
