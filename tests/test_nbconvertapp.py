@@ -364,14 +364,14 @@ class TestNbConvertApp(TestsBase):
         """
         input_content_html = (
             '<span class="n">x</span>'
-            '<span class="p">,</span>'
+            '<span class="p">,</span> '
             '<span class="n">y</span>'
-            '<span class="p">,</span>'
+            '<span class="p">,</span> '
             '<span class="n">z</span> '
             '<span class="o">=</span> '
             '<span class="n">symbols</span>'
             '<span class="p">(</span>'
-            "<span class=\"s1\">'x y z'</span>"
+            '<span class="s2">"x y z"</span>'
             '<span class="p">)</span>'
         )
         for no_input_flag in (False, True):

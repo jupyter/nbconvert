@@ -65,7 +65,7 @@ repos:
             "nbformat",
             "markupsafe",
             "mistune",
-            "nbclient",
+            "nbclient>=0.9",
             "defusedxml",
             "ipython",
             "packaging",
@@ -84,8 +84,10 @@ repos:
     rev: v0.1.4
     hooks:
       - id: ruff
+        types_or: [python, jupyter]
         args: ["--fix", "--show-fixes"]
       - id: ruff-format
+        types_or: [python, jupyter]
 
   - repo: https://github.com/scientific-python/cookie
     rev: "2023.10.27"
