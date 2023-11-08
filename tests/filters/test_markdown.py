@@ -82,7 +82,7 @@ class TestMarkdown(TestsBase):
             ]
         )
         long_line = " ".join(["long"] * 30)
-        env = Environment()  # noqa
+        env = Environment()
         env.filters.update(
             {
                 "md2l": lambda code, extra_args: convert_pandoc(

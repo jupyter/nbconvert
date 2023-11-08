@@ -70,7 +70,7 @@ class TestHighlight(TestsBase):
         rb = highlight2html_ruby(self.tests[0])
 
         for lang, tkns in [(ht, ("def",)), (rb, ("def", "end"))]:
-            root = xml.etree.ElementTree.fromstring(lang)  # noqa
+            root = xml.etree.ElementTree.fromstring(lang)
             self.assertEqual(self._extract_tokens(root, "k"), set(tkns))
 
     @pytest.mark.filterwarnings("ignore")
