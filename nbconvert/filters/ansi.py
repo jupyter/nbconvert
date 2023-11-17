@@ -203,7 +203,7 @@ def _ansi2anything(text, converter):  # noqa
 
         if chunk:
             starttag, endtag = converter(
-                fg + 8 if bold and fg in range(8) else fg,  # type:ignore
+                fg + 8 if bold and fg in range(8) else fg,  # type:ignore[operator]
                 bg,
                 bold,
                 underline,

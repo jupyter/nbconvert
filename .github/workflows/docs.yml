@@ -17,7 +17,7 @@ jobs:
         python-version: ["3.8", "3.11"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -51,7 +51,3 @@ jobs:
         with:
           name: pdf
           path: docs/build/latex/nbconvert.pdf
-      - name: Check links
-        run: |
-          cd docs
-          make linkcheck

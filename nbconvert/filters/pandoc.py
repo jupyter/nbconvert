@@ -4,10 +4,12 @@ and related filters
 """
 import os
 
-from pandocfilters import Image, applyJSONFilters  # type:ignore
+from pandocfilters import Image, applyJSONFilters  # type:ignore[import-untyped]
 
 from nbconvert.utils.base import NbConvertBase
 from nbconvert.utils.pandoc import pandoc
+
+__all__ = ["ConvertExplicitlyRelativePaths", "convert_pandoc"]
 
 
 def convert_pandoc(source, from_format, to_format, extra_args=None):

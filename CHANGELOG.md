@@ -2,6 +2,117 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.11.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.10.0...422dd2a1697b191dc8e11806ddeca314df66c282))
+
+### Enhancements made
+
+- Support es modules in js includes [#2063](https://github.com/jupyter/nbconvert/pull/2063) ([@timkpaine](https://github.com/timkpaine))
+
+### Maintenance and upkeep improvements
+
+- Clean up lint handling and list generics [#2065](https://github.com/jupyter/nbconvert/pull/2065) ([@blink1073](https://github.com/blink1073))
+- Remove not needed pytest-dependency test requirement [#2062](https://github.com/jupyter/nbconvert/pull/2062) ([@danigm](https://github.com/danigm))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-30&to=2023-11-06&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-30..2023-11-06&type=Issues) | [@danigm](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adanigm+updated%3A2023-10-30..2023-11-06&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atimkpaine+updated%3A2023-10-30..2023-11-06&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
+## 7.10.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.2...48599a4bba00819e4e626fe098eb204977590ee4))
+
+### Enhancements made
+
+- Update to mermaid 10.6.0, docs keyboard navigation [#2058](https://github.com/jupyter/nbconvert/pull/2058) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Maintenance and upkeep improvements
+
+- Fix typing for traitlets 5.13 [#2060](https://github.com/jupyter/nbconvert/pull/2060) ([@blink1073](https://github.com/blink1073))
+- Adopt ruff format [#2059](https://github.com/jupyter/nbconvert/pull/2059) ([@blink1073](https://github.com/blink1073))
+- Update typings and remove dead link [#2056](https://github.com/jupyter/nbconvert/pull/2056) ([@blink1073](https://github.com/blink1073))
+
+### Documentation improvements
+
+- Update to mermaid 10.6.0, docs keyboard navigation [#2058](https://github.com/jupyter/nbconvert/pull/2058) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-05&to=2023-10-30&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-05..2023-10-30&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-10-05..2023-10-30&type=Issues)
+
+## 7.9.2
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.1...8e85303e530013f9e6d29be85f25e9602a443194))
+
+### Bugs fixed
+
+- Restore ResourcesDict to the public API [#2055](https://github.com/jupyter/nbconvert/pull/2055) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-04&to=2023-10-05&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-04..2023-10-05&type=Issues)
+
+## 7.9.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.9.0...6d679efebf8b6b7c65c4ab0dcb0dec97f6d389b9))
+
+### Maintenance and upkeep improvements
+
+- Include tests in sdist [#2053](https://github.com/jupyter/nbconvert/pull/2053) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-04&to=2023-10-04&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-04..2023-10-04&type=Issues)
+
+## 7.9.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.8.0...0e36347f31ee0b06d461aaa845e458eb7c9f8fc0))
+
+### Maintenance and upkeep improvements
+
+- Update to mermaidjs 10.5.0 [#2051](https://github.com/jupyter/nbconvert/pull/2051) ([@bollwyvl](https://github.com/bollwyvl))
+- Update typing for traitlets 5.11 [#2050](https://github.com/jupyter/nbconvert/pull/2050) ([@blink1073](https://github.com/blink1073))
+- chore: update pre-commit hooks [#2049](https://github.com/jupyter/nbconvert/pull/2049) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- Fixup typings [#2048](https://github.com/jupyter/nbconvert/pull/2048) ([@blink1073](https://github.com/blink1073))
+- Remove redundant link check in CI [#2044](https://github.com/jupyter/nbconvert/pull/2044) ([@blink1073](https://github.com/blink1073))
+- Bump actions/checkout from 3 to 4 [#2042](https://github.com/jupyter/nbconvert/pull/2042) ([@dependabot](https://github.com/dependabot))
+- Adopt sp-repo-review [#2040](https://github.com/jupyter/nbconvert/pull/2040) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-08-29&to=2023-10-04&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-08-29..2023-10-04&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-08-29..2023-10-04&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2023-08-29..2023-10-04&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-08-29..2023-10-04&type=Issues)
+
+## 7.8.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.4...9e8d252f2bf5b4177bbbeb007fd1a489356926ec))
+
+### Enhancements made
+
+- MermaidJS 10.3.1, accessibility features, handle MIME [#2034](https://github.com/jupyter/nbconvert/pull/2034) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Bugs fixed
+
+- Fix: Prevent error from all whitespace lang string [#2036](https://github.com/jupyter/nbconvert/pull/2036) ([@Adamtaranto](https://github.com/Adamtaranto))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-08-16&to=2023-08-29&type=c))
+
+[@Adamtaranto](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAdamtaranto+updated%3A2023-08-16..2023-08-29&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2023-08-16..2023-08-29&type=Issues)
+
 ## 7.7.4
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.7.3...bbb095ba24c005ce26f0e8b47f4ddf19a5debe68))
@@ -17,8 +128,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-07-25&to=2023-08-16&type=c))
 
 [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-07-25..2023-08-16&type=Issues) | [@lkeegan](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Alkeegan+updated%3A2023-07-25..2023-08-16&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-07-25..2023-08-16&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.7.3
 
@@ -420,7 +529,7 @@
   [#1761](https://github.com/jupyter/nbconvert/pull/1761)
 - WebPDFExporter: Emulate media print by @martinRenou in
   [#1791](https://github.com/jupyter/nbconvert/pull/1791)
-- Fix fonts overriden by user stylesheet by inheriting styles by
+- Fix fonts overridden by user stylesheet by inheriting styles by
   @dakoop in [#1793](https://github.com/jupyter/nbconvert/pull/1793)
 - Fix lab template output alignment by @dakoop in
   [#1795](https://github.com/jupyter/nbconvert/pull/1795)
@@ -610,7 +719,7 @@ The following 31 authors contributed 81 commits.
 
 ## 6.0.7
 
-Primarly a release addressing template extensions issues reported since
+Primarily a release addressing template extensions issues reported since
 6.0 launched.
 
 ### Comprehensive notes
@@ -1164,7 +1273,7 @@ Thanks to the following 11 authors who contributed 57 commits.
 #### Fixing Problems
 
 - Mathjax.tpl fix for rendering Latex in html [#932](https://github.com/jupyter/nbconvert/pull/932)
-- Backwards compatbility for empty kernel names
+- Backwards compatibility for empty kernel names
   [#927](https://github.com/jupyter/nbconvert/pull/927) [#924](https://github.com/jupyter/nbconvert/pull/924)
 
 #### Testing, Docs, and Builds
@@ -1264,6 +1373,8 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
+
+
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
 assert "raw template" in output_attr
@@ -1605,7 +1716,7 @@ Many thanks to the following individuals who contributed to this release
 - doc improvements [#489](https://github.com/jupyter/nbconvert/pull/489)
   [#500](https://github.com/jupyter/nbconvert/pull/500) [#493](https://github.com/jupyter/nbconvert/pull/493) [#506](https://github.com/jupyter/nbconvert/pull/506)
 - newly customizable: output prompt [#500](https://github.com/jupyter/nbconvert/pull/500)
-- more python2/3 compatibile unicode handling [#502](https://github.com/jupyter/nbconvert/pull/502)
+- more python2/3 compatible unicode handling [#502](https://github.com/jupyter/nbconvert/pull/502)
 
 ## 5.0
 

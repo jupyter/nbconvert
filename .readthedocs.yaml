@@ -20,4 +20,4 @@ python:
 build:
   os: ubuntu-22.04
   tools:
-     python: "3.11"
+    python: "3.11"

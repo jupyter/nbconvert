@@ -16,7 +16,7 @@ from traitlets import Bool, default
 from .html import HTMLExporter
 
 PLAYWRIGHT_INSTALLED = importlib_util.find_spec("playwright") is not None
-IS_WINDOWS = os.name == 'nt'
+IS_WINDOWS = os.name == "nt"
 
 
 class WebPDFExporter(HTMLExporter):
@@ -75,7 +75,7 @@ class WebPDFExporter(HTMLExporter):
             """Run main playwright script."""
             args = ["--no-sandbox"] if self.disable_sandbox else []
             try:
-                from playwright.async_api import async_playwright  # type: ignore[import]
+                from playwright.async_api import async_playwright  # type: ignore[import-not-found]
             except ModuleNotFoundError as e:
                 msg = (
                     "Playwright is not installed to support Web PDF conversion. "
@@ -150,7 +150,7 @@ class WebPDFExporter(HTMLExporter):
             def run_coroutine(coro):
                 """Run an internal coroutine."""
                 loop = (
-                    asyncio.ProactorEventLoop()  # type:ignore
+                    asyncio.ProactorEventLoop()  # type:ignore[attr-defined]
                     if IS_WINDOWS
                     else asyncio.new_event_loop()
                 )

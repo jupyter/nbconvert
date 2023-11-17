@@ -1,12 +1,14 @@
 """Module containing a preprocessor that executes the code cells
 and updates outputs"""
+from __future__ import annotations
+
 import typing as t
 
 from jupyter_client.manager import KernelManager
-from nbclient import NotebookClient
-from nbclient import execute as _execute
+from nbclient.client import NotebookClient
+from nbclient.client import execute as _execute
 
-# Backwards compatability for imported name
+# Backwards compatibility for imported name
 from nbclient.exceptions import CellExecutionError  # noqa
 
 # Copyright (c) IPython Development Team.
@@ -50,8 +52,8 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             self.resources = resources
 
     def preprocess(
-        self, nb: NotebookNode, resources: t.Any = None, km: t.Optional[KernelManager] = None
-    ) -> t.Tuple[NotebookNode, dict]:
+        self, nb: NotebookNode, resources: t.Any = None, km: KernelManager | None = None
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Preprocess notebook executing each code cell.
 

@@ -6,13 +6,14 @@ Command-line interface for the NbConvert conversion utility.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import asyncio
 import glob
 import logging
 import os
 import sys
+import typing as t
 from textwrap import dedent, fill
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
@@ -195,11 +196,11 @@ class NbConvertApp(JupyterApp):
     def _log_level_default(self):
         return logging.INFO
 
-    classes = List()  # type:ignore
+    classes = List()  # type:ignore[assignment]
 
     @default("classes")
     def _classes_default(self):
-        classes: list = [NbConvertBase]
+        classes: list[type[t.Any]] = [NbConvertBase]
         for pkg in (exporters, preprocessors, writers, postprocessors):
             for name in dir(pkg):
                 cls = getattr(pkg, name)
@@ -208,7 +209,7 @@ class NbConvertApp(JupyterApp):
 
         return classes
 
-    description = Unicode(  # type:ignore
+    description = Unicode(  # type:ignore[assignment]
         """This application is used to convert notebook files (*.ipynb)
         to various other formats.
 
@@ -327,7 +328,7 @@ class NbConvertApp(JupyterApp):
         if new:
             self.postprocessor_factory = import_item(new)
 
-    export_format = Unicode(
+    export_format = Unicode(  # type:ignore[call-overload]
         allow_none=False,
         help=f"""The export format to be used, either one of the built-in formats
         {get_export_names()}
@@ -336,7 +337,7 @@ class NbConvertApp(JupyterApp):
     ).tag(config=True)
 
     notebooks = List(
-        [],
+        Unicode(),
         help="""List of notebooks to convert.
                      Wildcards are supported.
                      Filenames passed positionally will be added to the list.
@@ -394,9 +395,10 @@ class NbConvertApp(JupyterApp):
     def init_writer(self):
         """Initialize the writer (which is stateless)"""
         self._writer_class_changed({"new": self.writer_class})
-        self.writer = self.writer_factory(parent=self)
-        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
-            self.use_output_suffix = False
+        if self.writer_factory:
+            self.writer = self.writer_factory(parent=self)
+            if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
+                self.use_output_suffix = False
 
     def init_postprocessor(self):
         """Initialize the postprocessor (which is stateless)"""
@@ -510,6 +512,9 @@ class NbConvertApp(JupyterApp):
         if self.use_output_suffix and self.output_base == "{notebook_name}":
             notebook_name += resources.get("output_suffix", "")
 
+        if not self.writer:
+            msg = "No writer object defined!"
+            raise ValueError(msg)
         write_results = self.writer.write(output, resources, notebook_name=notebook_name)
         return write_results
 
@@ -602,7 +607,7 @@ class NbConvertApp(JupyterApp):
     def document_alias_help(self):
         """Return a string containing all of the aliases"""
 
-        aliases = "The folowing aliases are defined:\n\n"
+        aliases = "The following aliases are defined:\n\n"
         for alias, longname in self.aliases.items():
             aliases += f"\t**{alias}** ({longname})\n\n"
         return aliases

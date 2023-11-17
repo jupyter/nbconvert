@@ -22,7 +22,7 @@ from pygments.util import ClassNotFound
 from nbconvert.filters.strings import add_anchor
 
 try:  # for Mistune >= 3.0
-    from mistune import (
+    from mistune import (  # type:ignore[attr-defined]
         BlockParser,
         BlockState,
         HTMLRenderer,
@@ -47,7 +47,7 @@ except ImportError:  # for Mistune >= 2.0
 
     MISTUNE_V3 = False
 
-    def import_plugin(name: str) -> 'MarkdownPlugin':  # type: ignore[misc]
+    def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3's import_plugin for V2."""
         return PLUGINS[name]  # type: ignore[no-any-return]
 
@@ -202,7 +202,7 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
         AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
 
         # Multiline math must be searched before other rules
-        RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)  # type: ignore
+        RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)  # type: ignore[attr-defined]
 
         def parse_multiline_math(self, m: Match[str], state: Any) -> Dict[str, str]:
             """Pass token through mutiline math."""
@@ -234,7 +234,7 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
             "inline_math_tex",
             "inline_math_latex",
             "latex_environment",
-            *InlineParser.RULE_NAMES,  # type: ignore
+            *InlineParser.RULE_NAMES,  # type: ignore[attr-defined]
         )
 
         def parse_block_math_tex(self, m: Match[str], state: Any) -> Tuple[str, str]:
@@ -476,7 +476,7 @@ class MarkdownWithMath(Markdown):
             if MISTUNE_V3:
                 inline = MathInlineParser(hard_wrap=False)
             else:
-                inline = MathInlineParser(renderer, hard_wrap=False)  # type: ignore
+                inline = MathInlineParser(renderer, hard_wrap=False)  # type: ignore[arg-type,misc]
         if plugins is None:
             plugins = (import_plugin(p) for p in self.DEFAULT_PLUGINS)
 

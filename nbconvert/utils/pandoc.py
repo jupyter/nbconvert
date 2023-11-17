@@ -80,7 +80,7 @@ def get_pandoc_version():
         version_pattern = re.compile(r"^\d+(\.\d+){1,}$")
         for tok in out_lines[0].decode("ascii", "replace").split():
             if version_pattern.match(tok):
-                __version = tok  # type:ignore
+                __version = tok  # type:ignore[assignment]
                 break
     return __version
 
@@ -93,8 +93,8 @@ def check_pandoc_version():
     PandocMissing
         If pandoc is unavailable.
     """
-    if check_pandoc_version._cached is not None:  # type:ignore
-        return check_pandoc_version._cached  # type:ignore
+    if check_pandoc_version._cached is not None:  # type:ignore[attr-defined]
+        return check_pandoc_version._cached  # type:ignore[attr-defined]
 
     v = get_pandoc_version()
     if v is None:
@@ -107,7 +107,7 @@ def check_pandoc_version():
         )
         return False
     ok = check_version(v, _minimal_version, max_v=_maximal_version)
-    check_pandoc_version._cached = ok  # type:ignore
+    check_pandoc_version._cached = ok  # type:ignore[attr-defined]
     if not ok:
         warnings.warn(
             "You are using an unsupported version of pandoc (%s).\n" % v
@@ -120,7 +120,7 @@ def check_pandoc_version():
     return ok
 
 
-check_pandoc_version._cached = None  # type:ignore
+check_pandoc_version._cached = None  # type:ignore[attr-defined]
 
 # -----------------------------------------------------------------------------
 # Exception handling

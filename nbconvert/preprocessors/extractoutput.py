@@ -137,10 +137,10 @@ class ExtractOutputPreprocessor(Preprocessor):
                             "with them. Nbconvert saves these outputs to "
                             "external files using this filename metadata. "
                             "Filenames need to be unique across the notebook, "
-                            "or images will be overwritten. The filename {} is "
+                            f"or images will be overwritten. The filename {filename} is "
                             "associated with more than one output. The second "
                             "output associated with this filename is in cell "
-                            "{}.".format(filename, cell_index)
+                            f"{cell_index}."
                         )
                         raise ValueError(msg)
                     # In the resources, make the figure available via

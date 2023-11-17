@@ -18,7 +18,7 @@ from traitlets import Bool, Unicode, default, validate
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
-    from jinja2 import contextfilter  # type:ignore
+    from jinja2 import contextfilter  # type:ignore[attr-defined]
 else:
     from jinja2 import pass_context as contextfilter
 
@@ -124,7 +124,7 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mermaid_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.1/mermaid.esm.min.mjs",
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.0/mermaid.esm.min.mjs",
         help="""
         URL to load MermaidJS from.
 
@@ -241,9 +241,9 @@ class HTMLExporter(TemplateExporter):
         yield from super().default_filters()
         yield ("markdown2html", self.markdown2html)
 
-    def from_notebook_node(  # type:ignore
-        self, nb: NotebookNode, resources: Optional[Dict] = None, **kw: Any
-    ) -> Tuple[str, Dict]:
+    def from_notebook_node(  # type:ignore[explicit-override, override]
+        self, nb: NotebookNode, resources: Optional[Dict[str, Any]] = None, **kw: Any
+    ) -> Tuple[str, Dict[str, Any]]:
         """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))
@@ -304,10 +304,10 @@ class HTMLExporter(TemplateExporter):
             code = """<style type="text/css">\n%s</style>""" % data
             return markupsafe.Markup(code)
 
-        def resources_include_js(name):
-            """Get the resources include JS for a name."""
+        def resources_include_js(name, module=False):
+            """Get the resources include JS for a name. If module=True, import as ES module"""
             env = self.environment
-            code = """<script>\n%s</script>""" % (env.loader.get_source(env, name)[0])
+            code = f"""<script {'type="module"' if module else ""}>\n{env.loader.get_source(env, name)[0]}</script>"""
             return markupsafe.Markup(code)
 
         def resources_include_url(name):

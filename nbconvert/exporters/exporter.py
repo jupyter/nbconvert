@@ -4,7 +4,7 @@ see templateexporter.py.
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import collections
 import copy
@@ -21,7 +21,7 @@ from traitlets.config.configurable import LoggingConfigurable
 from traitlets.utils.importstring import import_item
 
 
-class ResourcesDict(collections.defaultdict):
+class ResourcesDict(collections.defaultdict):  # type:ignore[type-arg]
     """A default dict for resources."""
 
     def __missing__(self, key):
@@ -29,7 +29,7 @@ class ResourcesDict(collections.defaultdict):
         return ""
 
 
-class FilenameExtension(Unicode):
+class FilenameExtension(Unicode):  # type:ignore[type-arg]
     """A trait for filename extensions."""
 
     default_value = ""
@@ -75,16 +75,16 @@ class Exporter(LoggingConfigurable):
 
     # Should this converter be accessible from the notebook front-end?
     # If so, should be a friendly name to display (and possibly translated).
-    export_from_notebook: str = None  # type:ignore
+    export_from_notebook: str = None  # type:ignore[assignment]
 
     # Configurability, allows the user to easily add filters and preprocessors.
-    preprocessors = List(help="""List of preprocessors, by name or namespace, to enable.""").tag(
-        config=True
-    )
+    preprocessors: List[t.Any] = List(
+        help="""List of preprocessors, by name or namespace, to enable."""
+    ).tag(config=True)
 
-    _preprocessors = List()
+    _preprocessors: List[t.Any] = List()
 
-    default_preprocessors = List(
+    default_preprocessors: List[t.Any] = List(
         [
             "nbconvert.preprocessors.TagRemovePreprocessor",
             "nbconvert.preprocessors.RegexRemovePreprocessor",
@@ -128,8 +128,8 @@ class Exporter(LoggingConfigurable):
         return Config()
 
     def from_notebook_node(
-        self, nb: NotebookNode, resources: t.Optional[t.Any] = None, **kw: t.Any
-    ) -> t.Tuple[NotebookNode, t.Dict]:
+        self, nb: NotebookNode, resources: t.Any | None = None, **kw: t.Any
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook node instance.
 
@@ -161,8 +161,8 @@ class Exporter(LoggingConfigurable):
         return nb_copy, resources
 
     def from_filename(
-        self, filename: str, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[NotebookNode, t.Dict]:
+        self, filename: str, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook file.
 
@@ -201,8 +201,8 @@ class Exporter(LoggingConfigurable):
             return self.from_file(f, resources=resources, **kw)
 
     def from_file(
-        self, file_stream: t.Any, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[NotebookNode, dict]:
+        self, file_stream: t.Any, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook file.
 

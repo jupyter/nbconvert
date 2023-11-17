@@ -4,8 +4,9 @@ Contains writer base class.
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
-from traitlets import List
+from traitlets import List, Unicode
 
 from nbconvert.utils.base import NbConvertBase
 
@@ -15,7 +16,7 @@ class WriterBase(NbConvertBase):
     useful location."""
 
     files = List(
-        [],
+        Unicode(),
         help="""
         List of the files that the notebook references.  Files will be
         included with written output.""",

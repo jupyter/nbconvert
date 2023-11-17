@@ -5,6 +5,7 @@ one or more regular expression.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import re
 
@@ -38,7 +39,7 @@ class RegexRemovePreprocessor(Preprocessor):
     documentation in python.
     """
 
-    patterns = List(Unicode(), default_value=[]).tag(config=True)
+    patterns = List(Unicode()).tag(config=True)
 
     def check_conditions(self, cell):
         """

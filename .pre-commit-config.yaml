@@ -1,9 +1,10 @@
 ci:
   autoupdate_schedule: monthly
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-case-conflict
       - id: check-ast
@@ -15,28 +16,81 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-yaml
+      - id: debug-statements
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.23.3
+    rev: 0.27.1
     hooks:
       - id: check-github-workflows
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.16
+    rev: 0.7.17
     hooks:
       - id: mdformat
         additional_dependencies:
           [mdformat-gfm, mdformat-frontmatter, mdformat-footnote]
 
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.3"
     hooks:
-      - id: black
+      - id: prettier
+        types_or: [yaml, html, json]
+
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: "1.16.0"
+    hooks:
+      - id: blacken-docs
+        additional_dependencies: [black==23.7.0]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.2.6"
+    hooks:
+      - id: codespell
+        args: ["-L", "sur,nd"]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.6.1"
+    hooks:
+      - id: mypy
+        files: "^nbconvert"
+        stages: [manual]
+        args: ["--install-types", "--non-interactive"]
+        additional_dependencies:
+          [
+            "traitlets>=5.13",
+            "jupyter_core>=5.3",
+            "jinja2",
+            "nbformat",
+            "markupsafe",
+            "mistune",
+            "nbclient>=0.9",
+            "defusedxml",
+            "ipython",
+            "packaging",
+            "pandocfilters",
+            "jupyterlab_pygments",
+          ]
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: "v1.10.0"
+    hooks:
+      - id: rst-backticks
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.281
+    rev: v0.1.4
     hooks:
       - id: ruff
-        args: ["--fix"]
+        types_or: [python, jupyter]
+        args: ["--fix", "--show-fixes"]
+      - id: ruff-format
+        types_or: [python, jupyter]
+
+  - repo: https://github.com/scientific-python/cookie
+    rev: "2023.10.27"
+    hooks:
+      - id: sp-repo-review
+        additional_dependencies: ["repo-review[cli]"]

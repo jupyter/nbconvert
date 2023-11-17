@@ -2,6 +2,7 @@
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
 import shutil
@@ -74,7 +75,7 @@ class PDFExporter(LatexExporter):
 
     output_mimetype = "application/pdf"
 
-    _captured_output = List()
+    _captured_output = List(Unicode())
 
     @default("file_extension")
     def _file_extension_default(self):
@@ -115,9 +116,9 @@ class PDFExporter(LatexExporter):
         if cmd is None:
             link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
             msg = (
-                "{formatter} not found on PATH, if you have not installed "
-                "{formatter} you may need to do so. Find further instructions "
-                "at {link}.".format(formatter=command_list[0], link=link)
+                f"{command_list[0]} not found on PATH, if you have not installed "
+                f"{command_list[0]} you may need to do so. Find further instructions "
+                f"at {link}."
             )
             raise OSError(msg)
 
@@ -126,7 +127,7 @@ class PDFExporter(LatexExporter):
 
         shell = sys.platform == "win32"
         if shell:
-            command = subprocess.list2cmdline(command)  # type:ignore
+            command = subprocess.list2cmdline(command)  # type:ignore[assignment]
         env = os.environ.copy()
         prepend_to_env_search_path("TEXINPUTS", self.texinputs, env)
         prepend_to_env_search_path("BIBINPUTS", self.texinputs, env)

@@ -39,8 +39,7 @@ class DataTypeFilter(NbConvertBase):
             if fmt in output:
                 return [fmt]
         warn(
-            "Your element with mimetype(s) {mimetypes}"
-            " is not able to be represented.".format(mimetypes=output.keys()),
+            f"Your element with mimetype(s) {output.keys()} is not able to be represented.",
             stacklevel=2,
         )
 

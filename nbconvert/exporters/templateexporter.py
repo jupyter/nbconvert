@@ -4,7 +4,7 @@ that uses Jinja2 to export notebook files into different formats.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import html
 import json
@@ -227,7 +227,7 @@ class TemplateExporter(Exporter):
     def _template_file_changed(self, change):
         new = change["new"]
         if new == "default":
-            self.template_file = self.default_template  # type:ignore
+            self.template_file = self.default_template  # type:ignore[attr-defined]
             return
         # check if template_file is a file path
         # rather than a name already on template_path
@@ -236,7 +236,7 @@ class TemplateExporter(Exporter):
             directory, self.template_file = os.path.split(full_path)
             self.extra_template_paths = [directory, *self.extra_template_paths]
             # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
-            if self.template_file.endswith(".tpl"):
+            if self.template_file and self.template_file.endswith(".tpl"):
                 warnings.warn(
                     f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                     DeprecationWarning,
@@ -255,8 +255,8 @@ class TemplateExporter(Exporter):
         self._invalidate_template_cache()
 
     template_paths = List(["."]).tag(config=True, affects_environment=True)
-    extra_template_basedirs = List().tag(config=True, affects_environment=True)
-    extra_template_paths = List([]).tag(config=True, affects_environment=True)
+    extra_template_basedirs = List(Unicode()).tag(config=True, affects_environment=True)
+    extra_template_paths = List(Unicode()).tag(config=True, affects_environment=True)
 
     @default("extra_template_basedirs")
     def _default_extra_template_basedirs(self):
@@ -317,7 +317,7 @@ class TemplateExporter(Exporter):
         False, help="This allows you to exclude unknown cells from all templates if set to True."
     ).tag(config=True)
 
-    extra_loaders = List(
+    extra_loaders: List[t.Any] = List(
         help="Jinja loaders to find templates. Will be tried in order "
         "before the default FileSystem ones.",
     ).tag(affects_environment=True)
@@ -328,7 +328,7 @@ class TemplateExporter(Exporter):
     ).tag(config=True, affects_environment=True)
 
     raw_mimetypes = List(
-        help="""formats of raw cells to be included in this Exporter's output."""
+        Unicode(), help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
 
     @default("raw_mimetypes")
@@ -365,7 +365,7 @@ class TemplateExporter(Exporter):
 
         # this gives precedence to a raw_template if present
         with self.hold_trait_notifications():
-            if self.template_file != self._raw_template_key:
+            if self.template_file and (self.template_file != self._raw_template_key):
                 self._last_template_file = self.template_file
             if self.raw_template:
                 self.template_file = self._raw_template_key
@@ -382,21 +382,21 @@ class TemplateExporter(Exporter):
         self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
         return self.environment.get_template(template_file)
 
-    def from_filename(  # type:ignore
-        self, filename: str, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:
+    def from_filename(  # type:ignore[override]
+        self, filename: str, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """Convert a notebook from a filename."""
-        return super().from_filename(filename, resources, **kw)  # type:ignore
+        return super().from_filename(filename, resources, **kw)  # type:ignore[return-value]
 
-    def from_file(  # type:ignore
-        self, file_stream: t.Any, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:
+    def from_file(  # type:ignore[override]
+        self, file_stream: t.Any, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """Convert a notebook from a file."""
-        return super().from_file(file_stream, resources, **kw)  # type:ignore
+        return super().from_file(file_stream, resources, **kw)  # type:ignore[return-value]
 
-    def from_notebook_node(  # type:ignore
-        self, nb: NotebookNode, resources: t.Optional[dict] = None, **kw: t.Any
-    ) -> t.Tuple[str, dict]:
+    def from_notebook_node(  # type:ignore[explicit-override, override]
+        self, nb: NotebookNode, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook node instance.
 
@@ -551,7 +551,7 @@ class TemplateExporter(Exporter):
                 self.register_preprocessor(preprocessor)
 
     def _get_conf(self):
-        conf: dict = {}  # the configuration once all conf files are merged
+        conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         for path in map(Path, self.template_paths):
             conf_path = path / "conf.json"
             if conf_path.exists():
@@ -607,11 +607,11 @@ class TemplateExporter(Exporter):
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
-        base_template = self.template_name
-        merged_conf: dict = {}  # the configuration once all conf files are merged
+        base_template: str | None = self.template_name
+        merged_conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         while base_template is not None:
             template_names.append(base_template)
-            conf: dict = {}
+            conf: dict[str, t.Any] = {}
             found_at_least_one = False
             for base_dir in self.extra_template_basedirs:
                 template_dir = os.path.join(base_dir, base_template)
@@ -645,14 +645,14 @@ class TemplateExporter(Exporter):
                         )
                         self.template_file = compatibility_file
                         conf = self.get_compatibility_base_template_conf(base_template)
-                        self.template_name = conf.get("base_template")
+                        self.template_name = t.cast(str, conf.get("base_template"))
                         break
                 if not found_at_least_one:
                     paths = "\n\t".join(root_dirs)
                     msg = f"No template sub-directory with name {base_template!r} found in the following paths:\n\t{paths}"
                     raise ValueError(msg)
             merged_conf = recursive_update(dict(conf), merged_conf)
-            base_template = conf.get("base_template")
+            base_template = t.cast(t.Any, conf.get("base_template"))
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:

@@ -18,7 +18,7 @@ from xml.etree.ElementTree import Element
 import bleach
 
 # defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import ElementTree  # type:ignore
+from defusedxml import ElementTree  # type:ignore[import-untyped]
 
 from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
 
@@ -86,7 +86,7 @@ def clean_html(element):
     kwargs = {}
     css_sanitizer = _get_default_css_sanitizer()
     if css_sanitizer:
-        kwargs['css_sanitizer'] = css_sanitizer
+        kwargs["css_sanitizer"] = css_sanitizer
     return bleach.clean(
         element,
         tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span"],

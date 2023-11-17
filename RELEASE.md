@@ -6,7 +6,7 @@ The recommended way to make a release is to use [`jupyter_releaser`](https://git
 
 - Run the ["Step 1: Prep Release"](https://github.com/jupyter/nbconvert/actions/workflows/prep-release.yml) workflow with the appropriate inputs.
   - You can usually use the following values for the workflow:
-    - branch : 'main' when releasing fro teh main branch
+    - branch : 'main' when releasing from the main branch
     - "Post Version Specifier" empty unless you do a beta or rc release
     - keep `since_last_stable` unchecked
     - "Use PRs with activity since this date or git reference"

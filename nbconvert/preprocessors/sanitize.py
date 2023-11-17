@@ -23,7 +23,7 @@ try:
 except ImportError:
     try:
         # bleach <5
-        from bleach import ALLOWED_STYLES  # type:ignore
+        from bleach import ALLOWED_STYLES  # type:ignore[attr-defined, no-redef]
 
         _USE_BLEACH_CSS_SANITIZER = False
         _USE_BLEACH_STYLES = True
@@ -57,13 +57,13 @@ class SanitizeHTML(Preprocessor):
     tags = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_TAGS,
+        default_value=ALLOWED_TAGS,  # type:ignore[arg-type]
         help="List of HTML tags to allow",
     )
     styles = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_STYLES,
+        default_value=ALLOWED_STYLES,  # type:ignore[arg-type]
         help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(
