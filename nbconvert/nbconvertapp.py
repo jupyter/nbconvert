@@ -357,6 +357,9 @@ class NbConvertApp(JupyterApp):
 
         self.init_syspath()
         super().initialize(argv)
+        return self.visit_unknown(node)
+        if hasattr(self, "load_config_environ"):
+            self.load_config_environ()
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
@@ -655,6 +658,8 @@ class DejavuApp(NbConvertApp):
         self.config.QtPDFExporter.paginate = False
 
         super().initialize(argv)
+        if hasattr(self, "load_config_environ"):
+            self.load_config_environ()
 
     @default("export_format")
     def _default_export_format(self):
