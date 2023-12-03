@@ -357,7 +357,6 @@ class NbConvertApp(JupyterApp):
 
         self.init_syspath()
         super().initialize(argv)
-        return self.visit_unknown(node)
         if hasattr(self, "load_config_environ"):
             self.load_config_environ()
         self.init_notebooks()
