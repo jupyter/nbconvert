@@ -2,6 +2,30 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.12.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.11.0...4f6ab6583de771e74874e72ec88c7fe09a5d4b6b))
+
+### Enhancements made
+
+- Allow to load config from env. [#2075](https://github.com/jupyter/nbconvert/pull/2075) ([@Carreau](https://github.com/Carreau))
+
+### Maintenance and upkeep improvements
+
+- Use ruff on notebooks and update typings [#2068](https://github.com/jupyter/nbconvert/pull/2068) ([@blink1073](https://github.com/blink1073))
+
+### Documentation improvements
+
+- update Python version support in docs [#2037](https://github.com/jupyter/nbconvert/pull/2037) ([@minrk](https://github.com/minrk))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-11-06&to=2023-12-04&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-11-06..2023-12-04&type=Issues) | [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-11-06..2023-12-04&type=Issues) | [@gnestor](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Agnestor+updated%3A2023-11-06..2023-12-04&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2023-11-06..2023-12-04&type=Issues) | [@mpacer](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ampacer+updated%3A2023-11-06..2023-12-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.11.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.10.0...422dd2a1697b191dc8e11806ddeca314df66c282))
@@ -20,8 +44,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-10-30&to=2023-11-06&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-10-30..2023-11-06&type=Issues) | [@danigm](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adanigm+updated%3A2023-10-30..2023-11-06&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atimkpaine+updated%3A2023-10-30..2023-11-06&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.10.0
 
@@ -1373,7 +1395,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
