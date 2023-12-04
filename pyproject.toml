@@ -179,7 +179,6 @@ source = ["nbconvert"]
 files = "nbconvert"
 python_version = "3.8"
 strict = true
-show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 disable_error_code = ["no-untyped-def", "no-untyped-call"]
 warn_unreachable = true
@@ -250,7 +249,7 @@ fail-under=100
 exclude = ["tests", "docs"]
 
 [tool.repo-review]
-ignore = ["PY007", "GH102"]
+ignore = ["GH102"]
 
 
 [tool.codespell]
