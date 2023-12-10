@@ -12,7 +12,7 @@ class QtExporter(HTMLExporter):
     """A qt exporter."""
 
     paginate = None
-    format = ""  # noqa
+    format = ""
 
     @default("file_extension")
     def _file_extension_default(self):
@@ -41,7 +41,7 @@ class QtExporter(HTMLExporter):
         with temp_file:
             temp_file.write(html.encode("utf-8"))
         try:
-            QtScreenshot = self._check_launch_reqs()  # noqa
+            QtScreenshot = self._check_launch_reqs()
             s = QtScreenshot()
             s.capture(f"file://{temp_file.name}", filename, self.paginate)
         finally:
@@ -54,9 +54,9 @@ class QtExporter(HTMLExporter):
         self._check_launch_reqs()
         html, resources = super().from_notebook_node(nb, resources=resources, **kw)
 
-        self.log.info(f"Building {self.format.upper()}")
+        self.log.info("Building %s", self.format.upper())
         data = self._run_pyqtwebengine(html)
-        self.log.info(f"{self.format.upper()} successfully created")
+        self.log.info("%s successfully created", self.format.upper())
 
         # convert output extension
         # the writer above required it to be html

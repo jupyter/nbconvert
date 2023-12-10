@@ -16,7 +16,7 @@ class QtPDFExporter(QtExporter):
     """
 
     export_from_notebook = "PDF via HTML"
-    format = "pdf"  # noqa
+    format = "pdf"
 
     paginate = Bool(  # type:ignore[assignment]
         True,

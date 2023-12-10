@@ -33,13 +33,9 @@ __all__ = [
 class ExporterNameError(NameError):
     """An exporter name error."""
 
-    pass
-
 
 class ExporterDisabledError(ValueError):
     """An exporter disabled error."""
-
-    pass
 
 
 def export(exporter, nb, **kw):
@@ -74,7 +70,7 @@ def export(exporter, nb, **kw):
     if exporter is None:
         msg = "Exporter is None"
         raise TypeError(msg)
-    elif not isinstance(exporter, Exporter) and not issubclass(exporter, Exporter):
+    if not isinstance(exporter, Exporter) and not issubclass(exporter, Exporter):
         msg = "exporter does not inherit from Exporter (base)"
         raise TypeError(msg)
     if nb is None:
@@ -95,7 +91,7 @@ def export(exporter, nb, **kw):
     return output, resources
 
 
-def get_exporter(name, config=get_config()):  # noqa
+def get_exporter(name, config=get_config()):  # noqa: B008
     """Given an exporter name or import path, return a class ready to be instantiated
 
     Raises ExporterName if exporter is not found or ExporterDisabledError if not enabled
@@ -110,8 +106,7 @@ def get_exporter(name, config=get_config()):  # noqa
         exporter = items[0].load()
         if getattr(exporter(config=config), "enabled", True):
             return exporter
-        else:
-            raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
+        raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
     except IndexError:
         pass
 
@@ -120,11 +115,10 @@ def get_exporter(name, config=get_config()):  # noqa
             exporter = import_item(name)
             if getattr(exporter(config=config), "enabled", True):
                 return exporter
-            else:
-                raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
+            raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
         except ImportError:
             log = get_logger()
-            log.error("Error importing %s" % name, exc_info=True)
+            log.error("Error importing %s", name, exc_info=True)  # noqa: G201
 
     msg = 'Unknown exporter "{}", did you mean one of: {}?'.format(
         name, ", ".join(get_export_names())
@@ -132,7 +126,7 @@ def get_exporter(name, config=get_config()):  # noqa
     raise ExporterNameError(msg)
 
 
-def get_export_names(config=get_config()):  # noqa
+def get_export_names(config=get_config()):  # noqa: B008
     """Return a list of the currently supported export targets
 
     Exporters can be found in external packages by registering

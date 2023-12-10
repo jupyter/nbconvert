@@ -22,7 +22,7 @@ def unicode_std_stream(stream="stdout"):
 
         unicode_std_stream().write(u'ł@e¶ŧ←')
     """
-    assert stream in ("stdout", "stderr")  # noqa
+    assert stream in ("stdout", "stderr")
     stream = getattr(sys, stream)
 
     try:
@@ -104,7 +104,7 @@ def link_or_copy(src, dst):
             # anyway, we get duplicate files - see http://bugs.python.org/issue21876
             return
 
-        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"  # noqa
+        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"  # noqa: S311
         try:
             link_or_copy(src, new_dst)
         except BaseException:

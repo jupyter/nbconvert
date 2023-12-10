@@ -657,5 +657,4 @@ class TestExporter(ExportersTestsBase):
         assert "(100,)" not in nb
 
     def _make_exporter(self, config=None):
-        exporter = SampleExporter(config=config)
-        return exporter
+        return SampleExporter(config=config)

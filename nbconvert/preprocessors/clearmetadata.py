@@ -41,11 +41,10 @@ class ClearMetadataPreprocessor(Preprocessor):
         """Get the current key for a mask key."""
         if isinstance(mask_key, str):
             return mask_key
-        elif len(mask_key) == 0:
+        if len(mask_key) == 0:
             # Safeguard
             return None
-        else:
-            return mask_key[0]
+        return mask_key[0]
 
     def current_mask(self, mask):
         """Get the current mask for a mask."""
@@ -76,7 +75,7 @@ class ClearMetadataPreprocessor(Preprocessor):
         """
         All the code cells are returned with an empty metadata field.
         """
-        if self.clear_cell_metadata and cell.cell_type == "code":  # noqa
+        if self.clear_cell_metadata and cell.cell_type == "code":  # noqa: SIM102
             # Remove metadata
             if "metadata" in cell:
                 cell.metadata = dict(

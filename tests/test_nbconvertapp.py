@@ -150,7 +150,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook with spaces.pdf")
 
     @flaky
-    @pytest.mark.network
+    @pytest.mark.network()
     @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
     def test_webpdf_with_chromium(self):
         """
@@ -419,7 +419,7 @@ class TestNbConvertApp(TestsBase):
             assert "42" in output3
 
             # Executing the notebook should raise an exception if --allow-errors is not specified
-            with pytest.raises(OSError):
+            with pytest.raises(OSError):  # noqa
                 self.nbconvert("--execute --to markdown --stdout notebook3*.ipynb")
 
     def test_errors_print_traceback(self):

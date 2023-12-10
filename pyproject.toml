@@ -191,26 +191,34 @@ line-length = 100
 exclude = [".*notebook1.ipynb$"]
 
 [tool.ruff.lint]
-select = [
-  "A", "B", "C", "DTZ", "E", "EM", "F", "FBT", "I", "ICN", "N",
-  "PLC", "PLE", "PLR", "PLW", "Q", "RUF", "S", "SIM", "T", "TID", "UP",
-  "W", "YTT",
+extend-select = [
+  "B",           # flake8-bugbear
+  "I",           # isort
+  "C4",          # flake8-comprehensions
+  "EM",          # flake8-errmsg
+  "ICN",         # flake8-import-conventions
+  "G",           # flake8-logging-format
+  "PGH",         # pygrep-hooks
+  "PIE",         # flake8-pie
+  "PL",          # pylint
+  #"PTH",         # flake8-use-pathlib
+  "PT",          # flake8-pytest-style
+  "RET",         # flake8-return
+  "RUF",         # Ruff-specific
+  "SIM",         # flake8-simplify
+  "T20",         # flake8-print
+  "UP",          # pyupgrade
+  "YTT",         # flake8-2020
+  "EXE",         # flake8-executable
+  "PYI",         # flake8-pyi
+  "S",           # flake8-bandit
 ]
 ignore = [
-  # Q000 Single quotes found but double quotes preferred
-  "Q000",
-  # FBT001 Boolean positional arg in function definition
-  "FBT001", "FBT002", "FBT003",
-  # E501 Line too long (158 > 100 characters)
-  "E501",
-  # SIM105 Use `contextlib.suppress(...)`
-  "SIM105",
-  # T201 `print` found
-  "T201",
-  # N802 Function name `CreateWellKnownSid` should be lowercase
-  "N802", "N803",
-  # RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
-  "RUF012",
+  "PLR",    # Design related pylint codes
+  "S101",   # Use of `assert` detected
+  "SIM105", # Use `contextlib.suppress(...)`
+  "T201",   # `print` found
+  "RUF012", # Mutable class attributes should be annotated
 ]
 unfixable = [
   # Don't touch print statements
@@ -220,12 +228,15 @@ unfixable = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
- # B011: Do not call assert False since python -O removes these calls
 # F841 local variable 'foo' is assigned to but never used
 # S101 Use of `assert` detected
 # TID252 Relative imports from parent modules are banned
-# PLR2004 Magic value used in comparison
-"tests/*" = ["B011", "F841", "S101", "TID252", "PLR2004"]
+# PT009 Use a regular `assert` instead of unittest-style
+# PGH003 Use specific rule codes when ignoring type issues
+# PT027 Use `pytest.raises` instead of unittest-style
+# PGH004 Use specific rule codes when using `noqa`
+"tests/*" = ["F841", "S101", "TID252", "PT009", "PTH", "PGH003", "PT027",
+              "PGH004"]
 "tests/*/*.ipynb" = [
   "EM", "B018", "E402", "F405", "SIM", "F403", "F821",
   "RUF100", "ICN001", "S605", "S607"

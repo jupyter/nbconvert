@@ -145,7 +145,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
                 full_cmd = self.command.format(*template_vars)
-            subprocess.call(full_cmd, shell=isinstance(full_cmd, str))  # noqa
+            subprocess.call(full_cmd, shell=isinstance(full_cmd, str))  # noqa: S603
 
             # Read output from drive
             # return value expects a filename

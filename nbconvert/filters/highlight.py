@@ -133,8 +133,7 @@ class Highlight2Latex(NbConvertBase):
         if strip_verbatim:
             latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")
             return latex.replace("\n\\end{Verbatim}\n", "")
-        else:
-            return latex
+        return latex
 
 
 def _pygments_highlight(source, output_formatter, language="ipython", metadata=None):

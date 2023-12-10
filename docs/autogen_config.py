@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 autogen_config.py
 

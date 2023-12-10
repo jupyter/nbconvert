@@ -56,7 +56,7 @@ def wrap_text(text, width=100):
     """
 
     split_text = text.split("\n")
-    wrp = map(lambda x: textwrap.wrap(x, width), split_text)  # noqa
+    wrp = map(lambda x: textwrap.wrap(x, width), split_text)  # noqa: C417
     wrpd = map("\n".join, wrp)
     return "\n".join(wrpd)
 
@@ -174,7 +174,7 @@ def strip_files_prefix(text):
     """
     cleaned_text = files_url_pattern.sub(r"\1=\2", text)
     cleaned_text = markdown_url_pattern.sub(r"\1[\2](\3)", cleaned_text)
-    return cleaned_text
+    return cleaned_text  # noqa: RET504
 
 
 def comment_lines(text, prefix="# "):
@@ -269,7 +269,7 @@ def prevent_list_blocks(s):
     out = re.sub(r"(^\s*)\-", r"\1\-", out)
     out = re.sub(r"(^\s*)\+", r"\1\+", out)
     out = re.sub(r"(^\s*)\*", r"\1\*", out)
-    return out
+    return out  # noqa: RET504
 
 
 def strip_trailing_newline(text):

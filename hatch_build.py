@@ -47,7 +47,7 @@ def _get_css_file(template_name, url, filename):
         os.makedirs(directory)
     print("Downloading CSS: %s" % url)
     try:
-        css = urlopen(url).read()  # noqa
+        css = urlopen(url).read()  # noqa: S310
     except Exception as e:
         msg = f"Failed to download css from {url}: {e}"
         print(msg, file=sys.stderr)

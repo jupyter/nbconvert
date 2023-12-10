@@ -71,7 +71,7 @@ def ansi2latex(text):
     return _ansi2anything(text, _latexconverter)
 
 
-def _htmlconverter(fg, bg, bold, underline, inverse):  # noqa
+def _htmlconverter(fg, bg, bold, underline, inverse):
     """
     Return start and end tags for given foreground/background/bold/underline.
 
@@ -114,7 +114,7 @@ def _htmlconverter(fg, bg, bold, underline, inverse):  # noqa
     return starttag, "</span>"
 
 
-def _latexconverter(fg, bg, bold, underline, inverse):  # noqa
+def _latexconverter(fg, bg, bold, underline, inverse):
     """
     Return start and end markup given foreground/background/bold/underline.
 
@@ -165,7 +165,7 @@ def _latexconverter(fg, bg, bold, underline, inverse):  # noqa
     return starttag, endtag
 
 
-def _ansi2anything(text, converter):  # noqa
+def _ansi2anything(text, converter):
     r"""
     Convert ANSI colors to HTML or LaTeX.
 
@@ -275,10 +275,10 @@ def _get_extended_color(numbers):
         idx = numbers.pop(0)
         if idx < 0:
             raise ValueError()
-        elif idx < 16:
+        if idx < 16:
             # 16 default terminal colors
             return idx
-        elif idx < 232:
+        if idx < 232:
             # 6x6x6 color cube, see http://stackoverflow.com/a/27165165/500098
             r = (idx - 16) // 36
             r = 55 + r * 40 if r > 0 else 0
