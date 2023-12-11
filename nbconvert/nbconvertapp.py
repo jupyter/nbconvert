@@ -591,6 +591,7 @@ class NbConvertApp(JupyterApp):
             input_buffer = unicode_stdin_stream()
             # default name when conversion from stdin
             self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
+            input_buffer.close()
 
     def document_flag_help(self):
         """
