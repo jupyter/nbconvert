@@ -17,7 +17,7 @@ from nbconvert.utils import _contextlib_chdir
 from .latex import LatexExporter
 
 
-class LatexFailed(IOError):  # noqa
+class LatexFailed(IOError):
     """Exception for failed latex run
 
     Captured latex output is in error.output.
@@ -33,8 +33,7 @@ class LatexFailed(IOError):  # noqa
 
     def __str__(self):
         """String representation."""
-        u = self.__unicode__()
-        return u
+        return self.__unicode__()
 
 
 def prepend_to_env_search_path(varname, value, envdict):
@@ -85,9 +84,7 @@ class PDFExporter(LatexExporter):
     def _template_extension_default(self):
         return ".tex.j2"
 
-    def run_command(  # noqa
-        self, command_list, filename, count, log_function, raise_on_failure=None
-    ):
+    def run_command(self, command_list, filename, count, log_function, raise_on_failure=None):
         """Run command_list count times.
 
         Parameters
@@ -141,12 +138,12 @@ class PDFExporter(LatexExporter):
                     stdout=stdout,
                     stderr=subprocess.STDOUT,
                     stdin=null,
-                    shell=shell,  # noqa
+                    shell=shell,  # noqa: S603
                     env=env,
                 )
                 out, _ = p.communicate()
                 if p.returncode:
-                    if self.verbose:  # noqa
+                    if self.verbose:  # noqa: SIM108
                         # verbose means I didn't capture stdout with PIPE,
                         # so it's already been displayed and `out` is None.
                         out_str = ""

@@ -19,7 +19,8 @@ def test_UnicodeStdStream():
     sys.stdout = stdout
     try:
         sample = "@łe¶ŧ←"
-        unicode_std_stream().write(sample)
+        stream = unicode_std_stream()
+        stream.write(sample)
 
         output = stdoutb.getvalue().decode("utf-8")
         assert output == sample

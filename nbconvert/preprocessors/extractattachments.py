@@ -80,7 +80,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
         """
         if "attachments" in cell:
             for fname in cell.attachments:
-                self.log.debug(f"Encountered attachment {fname}")
+                self.log.debug("Encountered attachment %s", fname)
 
                 # Add file for writer
 

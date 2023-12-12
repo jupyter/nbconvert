@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # nbconvert documentation build configuration file, created by
 # sphinx-quickstart on Tue Jun  9 17:11:30 2015.
 #
@@ -25,7 +23,7 @@ HERE = os.path.dirname(__file__)
 
 # Automatically generate config_options.rst
 with open(os.path.join(HERE, "..", "autogen_config.py")) as f:
-    exec(compile(f.read(), "autogen_config.py", "exec"), {})  # noqa
+    exec(compile(f.read(), "autogen_config.py", "exec"), {})  # noqa: S102
     print("Created docs for config options")
 
 # -- General configuration ------------------------------------------------
@@ -47,7 +45,7 @@ extensions = [
 ]
 
 try:
-    import enchant  # type:ignore  # noqa
+    import enchant  # noqa: F401
 
     extensions += ["sphinxcontrib.spelling"]
 except ImportError:
@@ -74,7 +72,7 @@ project = "nbconvert"
 
 
 year = datetime.now(tz=timezone.utc).date().year
-copyright = "2015-%s, Jupyter Development Team" % year  # noqa
+copyright = "2015-%s, Jupyter Development Team" % year
 author = "Jupyter Development Team"
 
 extlinks = {"ghpull": ("https://github.com/jupyter/nbconvert/pull/%s", "PR #%s")}
@@ -90,7 +88,7 @@ linkcheck_ignore = [
 # Get information from _version.py and use it to generate version and release
 _version_py = os.path.join(HERE, "../../nbconvert/_version.py")
 version_ns = {}
-exec(compile(open(_version_py).read(), _version_py, "exec"), version_ns)  # noqa
+exec(compile(open(_version_py).read(), _version_py, "exec"), version_ns)  # noqa: SIM115, S102
 # The short X.Y version.
 version = "%i.%i" % version_ns["version_info"][:2]
 # The full version, including alpha/beta/rc tags.

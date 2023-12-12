@@ -25,7 +25,6 @@ from nbconvert import __version__, exporters, postprocessors, preprocessors, wri
 from nbconvert.utils.text import indent
 
 from .exporters.base import get_export_names, get_exporter
-from .filters.markdown_mistune import InvalidNotebook  # noqa For backward compatibility
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 from .utils.io import unicode_stdin_stream
@@ -46,8 +45,7 @@ class DottedOrNone(DottedObjectName):
         """Validate an input."""
         if value is not None and len(value) > 0:
             return super().validate(obj, value)
-        else:
-            return value
+        return value
 
 
 nbconvert_aliases = {}
@@ -422,7 +420,7 @@ class NbConvertApp(JupyterApp):
         notebook_name = basename[: basename.rfind(".")]
         notebook_name = self.output_base.format(notebook_name=notebook_name)
 
-        return notebook_name
+        return notebook_name  # noqa: RET504
 
     def init_single_notebook_resources(self, notebook_filename):
         """Step 1: Initialize resources
@@ -482,7 +480,7 @@ class NbConvertApp(JupyterApp):
                     notebook_filename, resources=resources
                 )
         except ConversionException:
-            self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)
+            self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)  # noqa: G201
             self.exit(1)
 
         return output, resources
@@ -517,8 +515,7 @@ class NbConvertApp(JupyterApp):
         if not self.writer:
             msg = "No writer object defined!"
             raise ValueError(msg)
-        write_results = self.writer.write(output, resources, notebook_name=notebook_name)
-        return write_results
+        return self.writer.write(output, resources, notebook_name=notebook_name)
 
     def postprocess_single_notebook(self, write_results):
         """Step 4: Post-process the written file
@@ -594,6 +591,7 @@ class NbConvertApp(JupyterApp):
             input_buffer = unicode_stdin_stream()
             # default name when conversion from stdin
             self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
+            input_buffer.close()
 
     def document_flag_help(self):
         """

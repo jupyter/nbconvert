@@ -77,8 +77,7 @@ class HighlightMagicsPreprocessor(Preprocessor):
             # By construction of the re, the matched language must be in the
             # languages dictionary
             return self.default_languages[m.group(1)]
-        else:
-            return None
+        return None
 
     def preprocess_cell(self, cell, resources, cell_index):
         """

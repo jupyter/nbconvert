@@ -52,10 +52,8 @@ except ImportError:  # for Mistune >= 2.0
         return PLUGINS[name]  # type: ignore[no-any-return]
 
 
-class InvalidNotebook(Exception):  # noqa
+class InvalidNotebook(Exception):
     """An invalid notebook model."""
-
-    pass
 
 
 def _dotall(pattern: str) -> str:
@@ -268,7 +266,7 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
 class IPythonRenderer(HTMLRenderer):
     """An ipython html renderer."""
 
-    def __init__(  # noqa
+    def __init__(
         self,
         escape: bool = True,
         allow_harmful_protocols: bool = True,
@@ -402,7 +400,7 @@ class IPythonRenderer(HTMLRenderer):
             default_mime_type = next(iter(attachment.keys()))
             return f"data:{default_mime_type};base64,{attachment[default_mime_type]}"
 
-        elif self.embed_images:
+        if self.embed_images:
             base64_url = self._src_to_base64(src)
             if base64_url is not None:
                 return base64_url

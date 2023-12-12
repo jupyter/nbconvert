@@ -87,7 +87,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
 
     def _hash(self, filename):
         """Compute the hash of a file."""
-        md5 = hashlib.md5()  # noqa
+        md5 = hashlib.md5()  # noqa: S324
         with open(filename, "rb") as f:
             md5.update(f.read())
         return md5.digest()

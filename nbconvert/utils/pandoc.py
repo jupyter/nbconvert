@@ -51,7 +51,7 @@ def pandoc(source, fmt, to, extra_args=None, encoding="utf-8"):
     check_pandoc_version()
 
     # we can safely continue
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)  # noqa
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)  # noqa: S603
     out, _ = p.communicate(source.encode())
     out_str = TextIOWrapper(BytesIO(out), encoding, "replace").read()
     return out_str.rstrip("\n")
@@ -69,13 +69,13 @@ def get_pandoc_version():
     PandocMissing
         If pandoc is unavailable.
     """
-    global __version  # noqa
+    global __version  # noqa: PLW0603
 
     if __version is None:
         if not shutil.which("pandoc"):
             raise PandocMissing()
 
-        out = subprocess.check_output(["pandoc", "-v"])  # noqa
+        out = subprocess.check_output(["pandoc", "-v"])  # noqa: S607, S603
         out_lines = out.splitlines()
         version_pattern = re.compile(r"^\d+(\.\d+){1,}$")
         for tok in out_lines[0].decode("ascii", "replace").split():
@@ -144,7 +144,7 @@ class PandocMissing(ConversionException):
 # -----------------------------------------------------------------------------
 def clean_cache():
     """Clean the internal cache."""
-    global __version  # noqa
+    global __version  # noqa: PLW0603
     __version = None
 
 

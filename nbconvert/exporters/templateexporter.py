@@ -151,7 +151,7 @@ class TemplateExporter(Exporter):
     """
 
     # finish the docstring
-    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))  # noqa
+    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))
 
     _template_cached = None
 
@@ -247,6 +247,7 @@ class TemplateExporter(Exporter):
     def _template_file_default(self):
         if self.template_extension:
             return "index" + self.template_extension
+        return None
 
     @observe("raw_template")
     def _raw_template_changed(self, change):
@@ -269,15 +270,11 @@ class TemplateExporter(Exporter):
         jupyter_path("nbconvert", "templates"), help="Path where templates can be installed too."
     ).tag(affects_environment=True)
 
-    # Extension that the template files use.
-    template_extension = Unicode().tag(config=True, affects_environment=True)
-
     @default("template_extension")
     def _template_extension_default(self):
         if self.file_extension:
             return self.file_extension + ".j2"
-        else:
-            return self.file_extension
+        return self.file_extension
 
     exclude_input = Bool(
         False, help="This allows you to exclude code cell inputs from all templates if set to True."
@@ -453,27 +450,28 @@ class TemplateExporter(Exporter):
             filter_cls = import_item(jinja_filter)
             return self._register_filter(environ, name, filter_cls)
 
-        if constructed and hasattr(jinja_filter, "__call__"):  # noqa
+        if constructed and callable(jinja_filter):
             # filter is a function, no need to construct it.
             environ.filters[name] = jinja_filter
             return jinja_filter
 
-        elif isclass and issubclass(jinja_filter, HasTraits):
+        if isclass and issubclass(jinja_filter, HasTraits):
             # filter is configurable.  Make sure to pass in new default for
             # the enabled flag if one was specified.
             filter_instance = jinja_filter(parent=self)
             self._register_filter(environ, name, filter_instance)
+            return None
 
-        elif isclass:
+        if isclass:
             # filter is not configurable, construct it
             filter_instance = jinja_filter()
             self._register_filter(environ, name, filter_instance)
+            return None
 
-        else:
-            # filter is an instance of something without a __call__
-            # attribute.
-            msg = "filter"
-            raise TypeError(msg)
+        # filter is an instance of something without a __call__
+        # attribute.
+        msg = "filter"
+        raise TypeError(msg)
 
     def register_filter(self, name, jinja_filter):
         """
@@ -513,7 +511,7 @@ class TemplateExporter(Exporter):
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
             DictLoader({self._raw_template_key: self.raw_template}),
         ]
-        environment = Environment(  # noqa
+        environment = Environment(  # noqa: S701
             loader=ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS,
             enable_async=self.enable_async,
@@ -547,7 +545,7 @@ class TemplateExporter(Exporter):
                 preprocessor_cls = import_item(preprocessor_cls)
                 if preprocessor_cls.__name__ in self.config:
                     kwargs.update(self.config[preprocessor_cls.__name__])
-                preprocessor = preprocessor_cls(**kwargs)  # noqa
+                preprocessor = preprocessor_cls(**kwargs)  # noqa: PLW2901
                 self.register_preprocessor(preprocessor)
 
     def _get_conf(self):
@@ -602,8 +600,9 @@ class TemplateExporter(Exporter):
             return {"base_template": "base"}
         if name == "full":
             return {"base_template": "classic", "mimetypes": {"text/html": True}}
+        return None
 
-    def get_template_names(self):  # noqa
+    def get_template_names(self):
         """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()

@@ -9,8 +9,6 @@ from nbclient.client import NotebookClient
 from nbclient.client import execute as _execute
 
 # Backwards compatibility for imported name
-from nbclient.exceptions import CellExecutionError  # noqa
-
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 from nbformat import NotebookNode
@@ -94,9 +92,9 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         self._check_assign_resources(resources)
 
         with self.setup_kernel():
-            assert self.kc  # noqa
+            assert self.kc
             info_msg = self.wait_for_reply(self.kc.kernel_info())
-            assert info_msg  # noqa
+            assert info_msg
             self.nb.metadata["language_info"] = info_msg["content"]["language_info"]
             for index, cell in enumerate(self.nb.cells):
                 self.preprocess_cell(cell, resources, index)

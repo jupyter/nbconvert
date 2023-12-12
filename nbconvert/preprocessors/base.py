@@ -46,8 +46,7 @@ class Preprocessor(NbConvertBase):
         if self.enabled:
             self.log.debug("Applying preprocessor: %s", self.__class__.__name__)
             return self.preprocess(nb, resources)
-        else:
-            return nb, resources
+        return nb, resources
 
     def preprocess(self, nb, resources):
         """

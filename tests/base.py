@@ -22,7 +22,7 @@ class TestsBase(unittest.TestCase):
     """Base tests class.  Contains useful fuzzy comparison and nbconvert
     functions."""
 
-    def fuzzy_compare(  # noqa
+    def fuzzy_compare(
         self,
         a,
         b,
@@ -184,7 +184,7 @@ def assert_big_text_equal(a, b, chunk_size=80):
         raise AssertionError(
             "Length doesn't match (%i > %i). Extra text:\n%r" % (len(a), len(b), a[len(b) :])
         )
-    elif len(a) < len(b):
+    if len(a) < len(b):
         raise AssertionError(
             "Length doesn't match (%i < %i). Extra text:\n%r" % (len(a), len(b), a[len(b) :])
         )

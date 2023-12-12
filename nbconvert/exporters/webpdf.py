@@ -85,7 +85,7 @@ class WebPDFExporter(HTMLExporter):
 
             if self.allow_chromium_download:
                 cmd = [sys.executable, "-m", "playwright", "install", "chromium"]
-                subprocess.check_call(cmd)  # noqa
+                subprocess.check_call(cmd)  # noqa: S603
 
             playwright = await async_playwright().start()
             chromium = playwright.chromium

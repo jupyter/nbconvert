@@ -253,7 +253,7 @@ class Exporter(LoggingConfigurable):
             preprocessor_cls = import_item(preprocessor)
             return self.register_preprocessor(preprocessor_cls, enabled)
 
-        if constructed and hasattr(preprocessor, "__call__"):  # noqa
+        if constructed and callable(preprocessor):
             # Preprocessor is a function, no need to construct it.
             # Register and return the preprocessor.
             if enabled:
@@ -261,21 +261,22 @@ class Exporter(LoggingConfigurable):
             self._preprocessors.append(preprocessor)
             return preprocessor
 
-        elif isclass and issubclass(preprocessor, HasTraits):
+        if isclass and issubclass(preprocessor, HasTraits):
             # Preprocessor is configurable.  Make sure to pass in new default for
             # the enabled flag if one was specified.
             self.register_preprocessor(preprocessor(parent=self), enabled)
+            return None
 
-        elif isclass:
+        if isclass:
             # Preprocessor is not configurable, construct it
             self.register_preprocessor(preprocessor(), enabled)
+            return None
 
-        else:
-            # Preprocessor is an instance of something without a __call__
-            # attribute.
-            raise TypeError(
-                "preprocessor must be callable or an importable constructor, got %r" % preprocessor
-            )
+        # Preprocessor is an instance of something without a __call__
+        # attribute.
+        raise TypeError(
+            "preprocessor must be callable or an importable constructor, got %r" % preprocessor
+        )
 
     def _init_preprocessors(self):
         """

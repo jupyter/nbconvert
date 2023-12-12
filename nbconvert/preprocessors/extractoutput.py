@@ -53,7 +53,7 @@ class ExtractOutputPreprocessor(Preprocessor):
         config=True
     )
 
-    def preprocess_cell(self, cell, resources, cell_index):  # noqa
+    def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
 

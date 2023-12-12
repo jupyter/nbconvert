@@ -68,7 +68,7 @@ class TestMarkdown(TestsBase):
         # sometimes pandoc uses $math$, sometimes it uses \(math\)
         expected = re.compile(r"(\$|\\\()\\alpha(\$|\\\)) latex math")
 
-        assertRegex = self.assertRegex  # noqa
+        assertRegex = self.assertRegex
 
         assertRegex(convert_pandoc(s, "markdown_strict+tex_math_dollars", "latex"), expected)
 

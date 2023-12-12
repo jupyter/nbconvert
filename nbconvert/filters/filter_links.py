@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """A pandoc filter used in converting notebooks to Latex.
 Converts links between notebooks to Latex cross-references.
 """
@@ -37,5 +36,5 @@ def resolve_one_reference(key, val, fmt, meta):
             label = re.sub(r"[^\w-]+", "", label)  # Strip HTML entities
             text = re.sub(r"_", r"\_", text)  # Escape underscores in display text
             return RawInline("tex", rf"\hyperref[{label}]{{{text}}}")
-
+    return None
     # Other elements will be returned unchanged.

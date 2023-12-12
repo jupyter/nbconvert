@@ -213,8 +213,9 @@ class HTMLExporter(TemplateExporter):
     def _valid_language_code(self, proposal):
         if self.language_code not in iso639_1:
             self.log.warning(
-                f'"{self.language_code}" is not an ISO 639-1 language code. '
-                'It has been replaced by the default value "en".'
+                '"%s" is not an ISO 639-1 language code. '
+                'It has been replaced by the default value "en".',
+                self.language_code,
             )
             return proposal["trait"].default_value
         return proposal["value"]
@@ -265,7 +266,7 @@ class HTMLExporter(TemplateExporter):
             elem.attrs["alt"] = "No description has been provided for this image"
             missing_alt += 1
         if missing_alt:
-            self.log.warning(f"Alternative text is missing on {missing_alt} image(s).")
+            self.log.warning("Alternative text is missing on %s image(s).", missing_alt)
         # Set input and output focusable
         for elem in soup.select(".jp-Notebook div.jp-Cell-inputWrapper"):
             elem.attrs["tabindex"] = "0"
@@ -274,7 +275,7 @@ class HTMLExporter(TemplateExporter):
 
         return str(soup), resources
 
-    def _init_resources(self, resources):  # noqa
+    def _init_resources(self, resources):
         def resources_include_css(name):
             env = self.environment
             code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])

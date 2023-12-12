@@ -61,7 +61,7 @@ class ServePostProcessor(PostProcessorBase):
     ip = Unicode("127.0.0.1", help="The IP address to listen on.").tag(config=True)
     port = Int(8000, help="port for the server to listen on.").tag(config=True)
 
-    def postprocess(self, input):  # noqa
+    def postprocess(self, input):
         """Serve the build directory with a webserver."""
         dirname, filename = os.path.split(input)
         handlers: list[tuple[t.Any, ...]] = [
@@ -96,10 +96,10 @@ class ServePostProcessor(PostProcessorBase):
         if self.open_in_browser:
             try:
                 browser = webbrowser.get(self.browser or None)
-                b = lambda: browser.open(url, new=2)  # noqa
+                b = lambda: browser.open(url, new=2)  # noqa: E731
                 threading.Thread(target=b).start()
             except webbrowser.Error as e:
-                self.log.warning("No web browser found: %s." % e)
+                self.log.warning("No web browser found: %s.", e)
                 browser = None
 
         try:

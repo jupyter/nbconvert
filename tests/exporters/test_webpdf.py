@@ -33,7 +33,7 @@ class TestWebPDFExporter(ExportersTestsBase):
 
     exporter_class = WebPDFExporter  # type:ignore
 
-    @pytest.mark.network
+    @pytest.mark.network()
     def test_export(self):
         """
         Can a TemplateExporter export something?
@@ -56,7 +56,7 @@ class TestWebPDFExporter(ExportersTestsBase):
         """
         Generate PDFs if playwright not installed?
         """
-        with pytest.raises(RuntimeError):
+        with pytest.raises(RuntimeError):  # noqa
             base_exporter = Exporter()
             exporter = WebPDFExporter()
             with open(self._get_notebook(), encoding="utf-8") as f:
