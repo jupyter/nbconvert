@@ -22,4 +22,3 @@ class StdoutWriter(WriterBase):
         """
         stream = io.unicode_std_stream()
         stream.write(output)
-        stream.close()
