@@ -62,7 +62,7 @@ webpdf = ["playwright"]
 test = [
     "pytest",
     "ipykernel",
-    "ipywidgets>=7",
+    "ipywidgets>=7.5",
     "flaky",
 ]
 serve = ["tornado>=6.1"]
