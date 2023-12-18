@@ -89,7 +89,7 @@ def clean_html(element):
         kwargs["css_sanitizer"] = css_sanitizer
     return bleach.clean(
         element,
-        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span"],
+        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span", "table", "tr", "td"],
         attributes={
             **bleach.ALLOWED_ATTRIBUTES,
             "*": ["class", "id"],
