@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.13.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.12.0...c72ad76251d50c9cf3139e23922e9ef3441e9860))
+
+### Enhancements made
+
+- Add table, td, tr to allowed list of tags [#2083](https://github.com/jupyter/nbconvert/pull/2083) ([@yuvipanda](https://github.com/yuvipanda))
+
+### Maintenance and upkeep improvements
+
+- Remove twitter links that cause linkcheck to fail [#2084](https://github.com/jupyter/nbconvert/pull/2084) ([@yuvipanda](https://github.com/yuvipanda))
+- Update ruff config [#2079](https://github.com/jupyter/nbconvert/pull/2079) ([@blink1073](https://github.com/blink1073))
+- chore: update pre-commit hooks [#2076](https://github.com/jupyter/nbconvert/pull/2076) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-12-04&to=2023-12-18&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-12-04..2023-12-18&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-12-04..2023-12-18&type=Issues) | [@yuvipanda](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ayuvipanda+updated%3A2023-12-04..2023-12-18&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.12.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.11.0...4f6ab6583de771e74874e72ec88c7fe09a5d4b6b))
@@ -23,8 +45,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-11-06&to=2023-12-04&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-11-06..2023-12-04&type=Issues) | [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2023-11-06..2023-12-04&type=Issues) | [@gnestor](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Agnestor+updated%3A2023-11-06..2023-12-04&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2023-11-06..2023-12-04&type=Issues) | [@mpacer](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ampacer+updated%3A2023-11-06..2023-12-04&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.11.0
 
@@ -1395,7 +1415,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
