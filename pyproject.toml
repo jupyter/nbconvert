@@ -221,10 +221,9 @@ ignore = [
   "RUF012", # Mutable class attributes should be annotated
 ]
 unfixable = [
-  # Don't touch print statements
-  "T201",
-  # Don't touch noqa lines
-  "RUF100",
+  "T201",   # Don't touch print statements
+  "RUF100", # Don't touch noqa lines
+  "F401",    # Unused imports
 ]
 
 [tool.ruff.lint.per-file-ignores]

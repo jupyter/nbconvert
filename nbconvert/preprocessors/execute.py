@@ -7,6 +7,7 @@ import typing as t
 from jupyter_client.manager import KernelManager
 from nbclient.client import NotebookClient
 from nbclient.client import execute as _execute
+from nbclient.exceptions import CellExecutionError  # noqa: F401
 
 # Backwards compatibility for imported name
 # Copyright (c) IPython Development Team.
