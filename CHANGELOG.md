@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.13.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.13.0...15b2bc2e215bc3d0ab37508eeeb624ede5da0d36))
+
+### Bugs fixed
+
+- Restore removed import [#2086](https://github.com/jupyter/nbconvert/pull/2086) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-12-18&to=2023-12-21&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-12-18..2023-12-21&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.13.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.12.0...c72ad76251d50c9cf3139e23922e9ef3441e9860))
@@ -21,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-12-04&to=2023-12-18&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-12-04..2023-12-18&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-12-04..2023-12-18&type=Issues) | [@yuvipanda](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ayuvipanda+updated%3A2023-12-04..2023-12-18&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.12.0
 
@@ -1415,7 +1429,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
