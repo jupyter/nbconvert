@@ -1,3 +1,6 @@
+# Copyright (c) IPython Development Team.
+# Distributed under the terms of the Modified BSD License.
+
 """Module containing a preprocessor that executes the code cells
 and updates outputs"""
 from __future__ import annotations
@@ -7,11 +10,9 @@ import typing as t
 from jupyter_client.manager import KernelManager
 from nbclient.client import NotebookClient
 from nbclient.client import execute as _execute
-from nbclient.exceptions import CellExecutionError  # noqa: F401
 
 # Backwards compatibility for imported name
-# Copyright (c) IPython Development Team.
-# Distributed under the terms of the Modified BSD License.
+from nbclient.exceptions import CellExecutionError  # noqa: F401
 from nbformat import NotebookNode
 
 from .base import Preprocessor
