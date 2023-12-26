@@ -43,10 +43,12 @@ Metadata and header control
 
 .. autoclass:: CSSHTMLHeaderPreprocessor
 
-Removing cells, inputs, and outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Removing/Manipulating cells, inputs, and outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ClearOutputPreprocessor
+
+.. autoclass:: CoalesceStreamsPreprocessor
 
 .. autoclass:: RegexRemovePreprocessor
 
@@ -59,5 +61,3 @@ Executing Notebooks
     :members:
 
 .. autoclass:: CellExecutionError
-
-.. autofunction:: coalesce_streams

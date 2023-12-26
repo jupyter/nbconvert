@@ -118,6 +118,14 @@ nbconvert_flags.update(
             """Clear output of current file and save in place,
         overwriting the existing notebook. """,
         ),
+        "coalesce-streams": (
+            {
+                "NbConvertApp": {"use_output_suffix": False, "export_format": "notebook"},
+                "FilesWriter": {"build_directory": ""},
+                "CoalesceStreamsPreprocessor": {"enabled": True},
+            },
+            """Coalesce consecutive stdout and stderr outputs into one stream (within each cell).""",
+        ),
         "no-prompt": (
             {
                 "TemplateExporter": {
