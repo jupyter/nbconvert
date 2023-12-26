@@ -100,6 +100,7 @@ class WebPDFExporter(HTMLExporter):
                     "Please use '--allow-chromium-download' to allow downloading one,"
                     "or install it using `playwright install chromium`."
                 )
+                await playwright.stop()
                 raise RuntimeError(msg) from e
 
             page = await browser.new_page()
@@ -133,6 +134,7 @@ class WebPDFExporter(HTMLExporter):
             pdf_data = await page.pdf(**pdf_params)
 
             await browser.close()
+            await playwright.stop()
             return pdf_data
 
         pool = concurrent.futures.ThreadPoolExecutor()
