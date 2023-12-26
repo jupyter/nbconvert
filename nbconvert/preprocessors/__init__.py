@@ -5,9 +5,7 @@ from nbclient.exceptions import CellExecutionError
 from .base import Preprocessor
 from .clearmetadata import ClearMetadataPreprocessor
 from .clearoutput import ClearOutputPreprocessor
-
-# decorated function Preprocessors
-from .coalescestreams import coalesce_streams
+from .coalescestreams import CoalesceStreamsPreprocessor
 from .convertfigures import ConvertFiguresPreprocessor
 from .csshtmlheader import CSSHTMLHeaderPreprocessor
 from .execute import ExecutePreprocessor
@@ -24,6 +22,7 @@ __all__ = [
     "Preprocessor",
     "ClearMetadataPreprocessor",
     "ClearOutputPreprocessor",
+    "CoalesceStreamsPreprocessor",
     "ConvertFiguresPreprocessor",
     "CSSHTMLHeaderPreprocessor",
     "ExecutePreprocessor",
