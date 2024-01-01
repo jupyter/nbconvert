@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.14.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.13.1...0f17b3069d320565af12a4a12da7d9ce3c18dac4))
+
+### Enhancements made
+
+- Convert `coalescese_streams` function to `CoalesceStreamsPreprocessor` [#2089](https://github.com/jupyter/nbconvert/pull/2089) ([@ryan-williams](https://github.com/ryan-williams))
+
+### Maintenance and upkeep improvements
+
+- chore: update pre-commit hooks [#2090](https://github.com/jupyter/nbconvert/pull/2090) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- Fix webpdf test on Python 3.12 [#2088](https://github.com/jupyter/nbconvert/pull/2088) ([@blink1073](https://github.com/blink1073))
+- Clean up import [#2087](https://github.com/jupyter/nbconvert/pull/2087) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-12-21&to=2024-01-01&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-12-21..2024-01-01&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-12-21..2024-01-01&type=Issues) | [@ryan-williams](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aryan-williams+updated%3A2023-12-21..2024-01-01&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.13.1
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.13.0...15b2bc2e215bc3d0ab37508eeeb624ede5da0d36))
@@ -15,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-12-18&to=2023-12-21&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-12-18..2023-12-21&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.13.0
 
@@ -1429,7 +1449,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
