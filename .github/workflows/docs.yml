@@ -38,7 +38,7 @@ jobs:
           cd docs
           make html SPHINXOPTS="-W"
       - name: Upload HTML
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html
           path: build/sphinx/html
@@ -47,7 +47,7 @@ jobs:
           cd docs
           make latexpdf
       - name: Upload PDF
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: pdf
+          name: pdf-python-${{matrix.python-version}}
           path: docs/build/latex/nbconvert.pdf
