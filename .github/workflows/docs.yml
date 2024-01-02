@@ -49,5 +49,5 @@ jobs:
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: pdf
+          name: pdf-python-${{matrix.python-version}}
           path: docs/build/latex/nbconvert.pdf
