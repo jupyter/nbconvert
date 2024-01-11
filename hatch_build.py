@@ -43,6 +43,9 @@ def _get_css_file(template_name, url, filename):
     """Get a css file and download it to the templates dir"""
     directory = osp.join(templates_dir, template_name, "static")
     dest = osp.join(directory, filename)
+    if osp.exists(dest):
+        print("Already have CSS: %s, moving on." % dest)
+        return
     if not osp.exists(directory):
         os.makedirs(directory)
     print("Downloading CSS: %s" % url)
@@ -51,11 +54,8 @@ def _get_css_file(template_name, url, filename):
     except Exception as e:
         msg = f"Failed to download css from {url}: {e}"
         print(msg, file=sys.stderr)
-        if osp.exists(dest):
-            print("Already have CSS: %s, moving on." % dest)
-        else:
-            msg = "Need CSS to proceed."
-            raise OSError(msg) from None
+        msg = "Need CSS to proceed."
+        raise OSError(msg) from None
         return
 
     with open(dest, "wb") as f:
