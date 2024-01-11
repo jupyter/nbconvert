@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.14.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.14.0...dedd81acdde7c96204d01f1392af896d2e6dbe1b))
+
+### Bugs fixed
+
+- Fix broken image scaling in case a custom width or height is provided for the image [#2094](https://github.com/jupyter/nbconvert/pull/2094) ([@AndSte01](https://github.com/AndSte01))
+
+### Maintenance and upkeep improvements
+
+- Allow pre-fetch of css files without attempting download [#2095](https://github.com/jupyter/nbconvert/pull/2095) ([@AlexanderRichert-NOAA](https://github.com/AlexanderRichert-NOAA))
+- Bump the actions group with 1 update [#2091](https://github.com/jupyter/nbconvert/pull/2091) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-01-01&to=2024-01-11&type=c))
+
+[@AlexanderRichert-NOAA](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAlexanderRichert-NOAA+updated%3A2024-01-01..2024-01-11&type=Issues) | [@AndSte01](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAndSte01+updated%3A2024-01-01..2024-01-11&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2024-01-01..2024-01-11&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.14.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.13.1...0f17b3069d320565af12a4a12da7d9ce3c18dac4))
@@ -21,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2023-12-21&to=2024-01-01&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2023-12-21..2024-01-01&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2023-12-21..2024-01-01&type=Issues) | [@ryan-williams](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aryan-williams+updated%3A2023-12-21..2024-01-01&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.13.1
 
@@ -1449,7 +1468,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
