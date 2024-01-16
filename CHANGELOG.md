@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.14.2
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.14.1...9d8a7a8771d0349e49328efb7fc2b8fb99c7cc1f))
+
+### Maintenance and upkeep improvements
+
+- update to mermaid 10.7.0 [#2098](https://github.com/jupyter/nbconvert/pull/2098) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-01-11&to=2024-01-16&type=c))
+
+[@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2024-01-11..2024-01-16&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.14.1
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.14.0...dedd81acdde7c96204d01f1392af896d2e6dbe1b))
@@ -20,8 +36,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-01-01&to=2024-01-11&type=c))
 
 [@AlexanderRichert-NOAA](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAlexanderRichert-NOAA+updated%3A2024-01-01..2024-01-11&type=Issues) | [@AndSte01](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AAndSte01+updated%3A2024-01-01..2024-01-11&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adependabot+updated%3A2024-01-01..2024-01-11&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.14.0
 
@@ -1468,7 +1482,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
