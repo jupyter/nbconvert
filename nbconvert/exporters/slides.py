@@ -204,4 +204,6 @@ class SlidesExporter(HTMLExporter):
         resources["reveal"]["transition"] = self.reveal_transition
         resources["reveal"]["scroll"] = self.reveal_scroll
         resources["reveal"]["number"] = self.reveal_number
+        resources["reveal"]["height"] = self.reveal_height
+        resources["reveal"]["width"] = self.reveal_width
         return resources
