@@ -171,7 +171,7 @@ class SlidesExporter(HTMLExporter):
     reveal_width = Unicode(
         "",
         help="""
-        width used to determine the aspect ratio of your presentation. 
+        width used to determine the aspect ratio of your presentation.
         Use the horizontal pixels available on your inteded presentation
         equpment.
         """,
@@ -180,7 +180,7 @@ class SlidesExporter(HTMLExporter):
     reveal_height = Unicode(
         "",
         help="""
-        height used to determine the aspect ratio of your presentation. 
+        height used to determine the aspect ratio of your presentation.
         Use the horizontal pixels available on your inteded presentation
         equpment.
         """,
