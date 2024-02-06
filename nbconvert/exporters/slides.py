@@ -168,6 +168,24 @@ class SlidesExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
+    reveal_width = Unicode(
+        "",
+        help="""
+        width used to determine the aspect ratio of your presentation.
+        Use the horizontal pixels available on your inteded presentation
+        equpment.
+        """,
+    ).tag(config=True)
+
+    reveal_height = Unicode(
+        "",
+        help="""
+        height used to determine the aspect ratio of your presentation.
+        Use the horizontal pixels available on your inteded presentation
+        equpment.
+        """,
+    ).tag(config=True)
+
     font_awesome_url = Unicode(
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css",
         help="""
@@ -186,4 +204,6 @@ class SlidesExporter(HTMLExporter):
         resources["reveal"]["transition"] = self.reveal_transition
         resources["reveal"]["scroll"] = self.reveal_scroll
         resources["reveal"]["number"] = self.reveal_number
+        resources["reveal"]["height"] = self.reveal_height
+        resources["reveal"]["width"] = self.reveal_width
         return resources

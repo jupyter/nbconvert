@@ -6,6 +6,8 @@
 {% set reveal_theme = resources.reveal.theme | default('white', true) %}
 {% set reveal_transition = resources.reveal.transition | default('slide', true) %}
 {% set reveal_number = resources.reveal.number | default('', true) %}
+{% set reveal_width = resources.reveal.width | default('960', true) %}
+{% set reveal_height = resources.reveal.height | default('700', true) %}
 {% set reveal_scroll = resources.reveal.scroll | default(false, true) | json_dumps %}
 
 {%- block header -%}
@@ -154,7 +156,10 @@ require(
             history: true,
             transition: "{{reveal_transition}}",
             slideNumber: "{{reveal_number}}",
-            plugins: [RevealNotes]
+            plugins: [RevealNotes],
+            width: {{reveal_width}},
+			      height: {{reveal_height}},
+
         });
 
         var update = function(event){
