@@ -172,8 +172,8 @@ class SlidesExporter(HTMLExporter):
         "",
         help="""
         width used to determine the aspect ratio of your presentation.
-        Use the horizontal pixels available on your inteded presentation
-        equpment.
+        Use the horizontal pixels available on your intended presentation
+        equipment.
         """,
     ).tag(config=True)
 
@@ -181,8 +181,8 @@ class SlidesExporter(HTMLExporter):
         "",
         help="""
         height used to determine the aspect ratio of your presentation.
-        Use the horizontal pixels available on your inteded presentation
-        equpment.
+        Use the horizontal pixels available on your intended presentation
+        equipment.
         """,
     ).tag(config=True)
 

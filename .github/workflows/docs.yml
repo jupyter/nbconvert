@@ -40,7 +40,7 @@ jobs:
       - name: Upload HTML
         uses: actions/upload-artifact@v4
         with:
-          name: html
+          name: html-${{ github.job }}-${{ strategy.job-index }}
           path: build/sphinx/html
       - name: Build PDF docs
         run: |
@@ -49,5 +49,5 @@ jobs:
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: pdf-python-${{matrix.python-version}}
+          name: pdf-python-${{matrix.python-version}}-${{ github.job }}-${{ strategy.job-index }}
           path: docs/build/latex/nbconvert.pdf
