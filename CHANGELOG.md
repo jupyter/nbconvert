@@ -8,7 +8,7 @@
 
 ### Enhancements made
 
-- Support configureable width and height of reveal presentations [#2104](https://github.com/jupyter/nbconvert/pull/2104) ([@franzhaas](https://github.com/franzhaas))
+- Support configurable width and height of reveal presentations [#2104](https://github.com/jupyter/nbconvert/pull/2104) ([@franzhaas](https://github.com/franzhaas))
 
 ### Maintenance and upkeep improvements
 
@@ -440,7 +440,7 @@
 
 ### Maintenance and upkeep improvements
 
-- Clean up license  [#1949](https://github.com/jupyter/nbconvert/pull/1949) ([@dcsaba89](https://github.com/dcsaba89))
+- Clean up license [#1949](https://github.com/jupyter/nbconvert/pull/1949) ([@dcsaba89](https://github.com/dcsaba89))
 - Add more linting [#1943](https://github.com/jupyter/nbconvert/pull/1943) ([@blink1073](https://github.com/blink1073))
 
 ### Contributors to this release
@@ -564,7 +564,7 @@
 
 ### Bugs fixed
 
-- clean_html: allow SVG tags and SVG attributes  [#1890](https://github.com/jupyter/nbconvert/pull/1890) ([@akx](https://github.com/akx))
+- clean_html: allow SVG tags and SVG attributes [#1890](https://github.com/jupyter/nbconvert/pull/1890) ([@akx](https://github.com/akx))
 
 ### Maintenance and upkeep improvements
 
@@ -1501,6 +1501,7 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
+
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)

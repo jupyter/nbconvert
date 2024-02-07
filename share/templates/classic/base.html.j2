@@ -132,7 +132,11 @@ unknown type  {{ cell.type }}
 {%- if output.svg_filename %}
 <img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
-<img src="data:image/svg+xml;base64,{{ output.data['image/svg+xml'] | text_base64 | escape_html }}">
+    {%- if resources.should_not_encode_svg %}
+        {{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+    {%- else %}
+        <img src="data:image/svg+xml;base64,{{ output.data['image/svg+xml'] | text_base64 | escape_html }}">
+    {%- endif %}
 {%- endif %}
 </div>
 {%- endblock data_svg %}

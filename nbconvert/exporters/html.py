@@ -172,6 +172,11 @@ class HTMLExporter(TemplateExporter):
         ),
     ).tag(config=True)
 
+    skip_svg_encoding = Bool(
+        False,
+        help=("Whether the svg to image data attribute encoding should occur"),
+    ).tag(config=True)
+
     embed_images = Bool(
         False, help="Whether or not to embed images as base64 in markdown cells."
     ).tag(config=True)
@@ -352,4 +357,5 @@ class HTMLExporter(TemplateExporter):
         resources["html_manager_semver_range"] = self.html_manager_semver_range
         resources["should_sanitize_html"] = self.sanitize_html
         resources["language_code"] = self.language_code
+        resources["should_not_encode_svg"] = self.skip_svg_encoding
         return resources
