@@ -174,9 +174,7 @@ class HTMLExporter(TemplateExporter):
 
     skip_svg_encoding = Bool(
         False,
-        help=(
-            "Whether the svg to image data attribute encoding should occur"
-        ),
+        help=("Whether the svg to image data attribute encoding should occur"),
     ).tag(config=True)
 
     embed_images = Bool(
