@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.16.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.15.0...87db94d2d31d77ad16eef2285bb764e97a6f3c11))
+
+### Enhancements made
+
+- Add a toggle to skip the svg encoding of images [#2106](https://github.com/jupyter/nbconvert/pull/2106) ([@gwincr11](https://github.com/gwincr11))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-02-06&to=2024-02-07&type=c))
+
+[@gwincr11](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Agwincr11+updated%3A2024-02-06..2024-02-07&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.15.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.14.2...dff141e8c8b392b89eed0adbf035f33810706750))
@@ -20,8 +36,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-01-16&to=2024-02-06&type=c))
 
 [@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2024-01-16..2024-02-06&type=Issues) | [@franzhaas](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Afranzhaas+updated%3A2024-01-16..2024-02-06&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2024-01-16..2024-02-06&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.14.2
 
@@ -1501,7 +1515,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
