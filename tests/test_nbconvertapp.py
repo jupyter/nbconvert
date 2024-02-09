@@ -77,6 +77,7 @@ class TestNbConvertApp(TestsBase):
         """
         with self.create_temp_cwd():
             self.copy_files_to(["notebook*.ipynb"], "subdir")
+            self.copy_files_to(["../fake_exporters.py"], "tests")
             self.nbconvert(
                 "--to tests.fake_exporters.MyExporter --log-level 0 "
                 + os.path.join("subdir", "*.ipynb")
@@ -177,6 +178,7 @@ class TestNbConvertApp(TestsBase):
     def test_post_processor(self):
         """Do post processors work?"""
         with self.create_temp_cwd(["notebook1.ipynb"]):
+            self.copy_files_to(["../*.py"], "tests")
             out, err = self.nbconvert(
                 "--log-level 0 --to python notebook1 --post tests.test_nbconvertapp.DummyPost"
             )
