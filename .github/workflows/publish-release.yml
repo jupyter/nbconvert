@@ -40,7 +40,6 @@ jobs:
       - name: Finalize Release
         id: finalize-release
         env:
-          TWINE_USERNAME: __token__
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         uses: jupyter-server/jupyter-releaser/.github/actions/finalize-release@v2
         with:
