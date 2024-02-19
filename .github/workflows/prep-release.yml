@@ -29,7 +29,7 @@ jobs:
         id: prep-release
         uses: jupyter-server/jupyter_releaser/.github/actions/prep-release@v2
         with:
-          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           version_spec: ${{ github.event.inputs.version_spec }}
           post_version_spec: ${{ github.event.inputs.post_version_spec }}
           target: ${{ github.event.inputs.target }}
