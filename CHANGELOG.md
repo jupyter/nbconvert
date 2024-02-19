@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.16.1
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.0...443b30703078e6f7d5b1044f25fb77e219136aac))
+
+### Maintenance and upkeep improvements
+
+- Fix permissions for prep release workflow [#2112](https://github.com/jupyter/nbconvert/pull/2112) ([@blink1073](https://github.com/blink1073))
+- Update publish workflow [#2111](https://github.com/jupyter/nbconvert/pull/2111) ([@blink1073](https://github.com/blink1073))
+- fix for tests/ dir not in sys.path, closes #2066 [#2108](https://github.com/jupyter/nbconvert/pull/2108) ([@ivanov](https://github.com/ivanov))
+
+### Documentation improvements
+
+- Update project description [#2107](https://github.com/jupyter/nbconvert/pull/2107) ([@ivanov](https://github.com/ivanov))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-02-07&to=2024-02-19&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2024-02-07..2024-02-19&type=Issues) | [@ivanov](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aivanov+updated%3A2024-02-07..2024-02-19&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.16.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.15.0...87db94d2d31d77ad16eef2285bb764e97a6f3c11))
@@ -15,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-02-06&to=2024-02-07&type=c))
 
 [@gwincr11](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Agwincr11+updated%3A2024-02-06..2024-02-07&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.15.0
 
@@ -1515,7 +1535,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
