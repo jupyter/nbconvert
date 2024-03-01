@@ -257,6 +257,8 @@ class HTMLExporter(TemplateExporter):
             "highlight_code", Highlight2HTML(pygments_lexer=lexer, parent=self)
         )
 
+        resources = self._init_resources(resources)
+
         filter_data_type = WidgetsDataTypeFilter(
             notebook_metadata=self._nb_metadata, parent=self, resources=resources
         )
