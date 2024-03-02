@@ -33,10 +33,6 @@
 <script src="{{ resources.require_js_url }}"></script>
 {%- endblock html_head_js_requirejs -%}
 {%- block html_head_js_mermaidjs -%}
-<script type="module">
-  import mermaid from '{{ resources.mermaid_js_url }}';
-  mermaid.initialize({ startOnLoad: true });
-</script>
 {%- endblock html_head_js_mermaidjs -%}
 {%- endblock html_head_js -%}
 
@@ -145,10 +141,11 @@ require(
     },
     [
       "{{ reveal_url_prefix }}/dist/reveal.js",
-      "{{ reveal_url_prefix }}/plugin/notes/notes.js"
+      "{{ reveal_url_prefix }}/plugin/notes/notes.js",
+      "https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@2.2.0/plugin/mermaid/mermaid.js"
     ],
 
-    function(Reveal, RevealNotes){
+    function(Reveal, RevealNotes, RevealMermaid){
         // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
         Reveal.initialize({
             controls: true,
@@ -156,10 +153,9 @@ require(
             history: true,
             transition: "{{reveal_transition}}",
             slideNumber: "{{reveal_number}}",
-            plugins: [RevealNotes],
+            plugins: [RevealNotes, RevealMermaid],
             width: {{reveal_width}},
-			      height: {{reveal_height}},
-
+            height: {{reveal_height}},
         });
 
         var update = function(event){
