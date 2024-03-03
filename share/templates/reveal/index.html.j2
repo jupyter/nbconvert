@@ -142,7 +142,7 @@ require(
     [
       "{{ reveal_url_prefix }}/dist/reveal.js",
       "{{ reveal_url_prefix }}/plugin/notes/notes.js",
-      "https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@2.2.0/plugin/mermaid/mermaid.js"
+      {% if reveal_mermaid_js_url %}"{{ reveal_mermaid_js_url }}",{% endif %},
     ],
 
     function(Reveal, RevealNotes, RevealMermaid){
@@ -153,7 +153,10 @@ require(
             history: true,
             transition: "{{reveal_transition}}",
             slideNumber: "{{reveal_number}}",
-            plugins: [RevealNotes, RevealMermaid],
+            plugins: [
+                      RevealNotes,
+                      {% if reveal_mermaid_js_url %}RevealMermaid,{% endif %}
+                     ],
             width: {{reveal_width}},
             height: {{reveal_height}},
         });
