@@ -119,12 +119,6 @@ class SlidesExporter(HTMLExporter):
         """
     ).tag(config=True)
 
-    reveal_mermaid_js_url = Unicode(
-        help="specifies the mermaid reveal plugin url. defaults to https://unpkg.com/reveal.js-mermaid-plugin@2.2.0",
-    ).tag(
-        config=True,
-    )
-
     @default("reveal_url_prefix")
     def _reveal_url_prefix_default(self):
         if "RevealHelpPreprocessor.url_prefix" in self.config:
@@ -135,6 +129,16 @@ class SlidesExporter(HTMLExporter):
             )
             return self.config.RevealHelpPreprocessor.url_prefix
         return "https://unpkg.com/reveal.js@4.0.2"
+
+    reveal_mermaid_js_url = Unicode(
+        help="Specifies the mermaid reveal plugin url.",
+    ).tag(
+        config=True,
+    )
+
+    @default("reveal_mermaid_js_url")
+    def _reveal_mermaid_js_url(self):
+        return "https://unpkg.com/reveal.js-mermaid-plugin@2.2.0"
 
     reveal_theme = Unicode(
         "simple",
