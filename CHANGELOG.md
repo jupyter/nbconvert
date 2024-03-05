@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.16.2
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.1...8dac97afa73d59e6afcad04ca076355576b6eb51))
+
+### Bugs fixed
+
+- \[HTMLExporter\] Initialize resources before widget filtering [#2118](https://github.com/jupyter/nbconvert/pull/2118) ([@yuvipanda](https://github.com/yuvipanda))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-02-19&to=2024-03-04&type=c))
+
+[@yuvipanda](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ayuvipanda+updated%3A2024-02-19..2024-03-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.16.1
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.0...443b30703078e6f7d5b1044f25fb77e219136aac))
@@ -21,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-02-07&to=2024-02-19&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2024-02-07..2024-02-19&type=Issues) | [@ivanov](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aivanov+updated%3A2024-02-07..2024-02-19&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.16.0
 
@@ -1535,7 +1549,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
