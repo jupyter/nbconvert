@@ -120,10 +120,9 @@ class SlidesExporter(HTMLExporter):
     ).tag(config=True)
 
     reveal_mermaid_js_url = Unicode(
-        help="specifies the mermaid reveal plugin url. defaults to cdn 2.2.0",
+        help="specifies the mermaid reveal plugin url. defaults to https://unpkg.com/reveal.js-mermaid-plugin@2.2.0",
     ).tag(
         config=True,
-        default="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@2.2.0/plugin/mermaid/mermaid.js",
     )
 
     @default("reveal_url_prefix")
@@ -213,4 +212,5 @@ class SlidesExporter(HTMLExporter):
         resources["reveal"]["number"] = self.reveal_number
         resources["reveal"]["height"] = self.reveal_height
         resources["reveal"]["width"] = self.reveal_width
+        resources["reveal"]["reveal_mermaid_js_url"] = self.reveal_mermaid_js_url
         return resources

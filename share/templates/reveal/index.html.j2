@@ -3,6 +3,8 @@
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {% set reveal_url_prefix = resources.reveal.url_prefix | default('https://unpkg.com/reveal.js@4.0.2', true) %}
+{% set reveal_mermaid_js_url = resources.reveal.reveal_mermaid_js_url | default("https://unpkg.com/reveal.js-mermaid-plugin@2.2.0", true) %}
+
 {% set reveal_theme = resources.reveal.theme | default('white', true) %}
 {% set reveal_transition = resources.reveal.transition | default('slide', true) %}
 {% set reveal_number = resources.reveal.number | default('', true) %}
@@ -145,7 +147,9 @@ require(
       {% if reveal_mermaid_js_url %}"{{ reveal_mermaid_js_url }}",{% endif %},
     ],
 
-    function(Reveal, RevealNotes, RevealMermaid){
+    function(Reveal,
+             RevealNotes,
+             {% if reveal_mermaid_js_url %}RevealMermaid,{% endif %}){
         // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
         Reveal.initialize({
             controls: true,
