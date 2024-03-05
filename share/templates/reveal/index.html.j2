@@ -3,7 +3,7 @@
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {% set reveal_url_prefix = resources.reveal.url_prefix | default('https://unpkg.com/reveal.js@4.0.2', true) %}
-{% set reveal_mermaid_js_url = resources.reveal.reveal_mermaid_js_url | default("https://unpkg.com/reveal.js-mermaid-plugin@2.2.0", true) %}
+{% set reveal_mermaid_js_url = resources.reveal.reveal_mermaid_js_url | default("https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@2.2.0", true) %}
 
 {% set reveal_theme = resources.reveal.theme | default('white', true) %}
 {% set reveal_transition = resources.reveal.transition | default('slide', true) %}
@@ -144,7 +144,7 @@ require(
     [
       "{{ reveal_url_prefix }}/dist/reveal.js",
       "{{ reveal_url_prefix }}/plugin/notes/notes.js",
-      {% if reveal_mermaid_js_url %}"{{ reveal_mermaid_js_url }}",{% endif %},
+      {% if reveal_mermaid_js_url %}"{{ reveal_mermaid_js_url }}",{% endif %}
     ],
 
     function(Reveal,

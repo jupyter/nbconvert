@@ -138,7 +138,7 @@ class SlidesExporter(HTMLExporter):
 
     @default("reveal_mermaid_js_url")
     def _reveal_mermaid_js_url(self):
-        return "https://unpkg.com/reveal.js-mermaid-plugin@2.2.0"
+        return "https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@2.2.0"
 
     reveal_theme = Unicode(
         "simple",
