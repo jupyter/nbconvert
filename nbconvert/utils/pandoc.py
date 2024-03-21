@@ -13,7 +13,7 @@ from nbconvert.utils.version import check_version
 
 from .exceptions import ConversionException
 
-_minimal_version = "2.14.2"
+_minimal_version = "2.9.2"
 _maximal_version = "4.0.0"
 
 
