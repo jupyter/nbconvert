@@ -3,6 +3,8 @@
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
 {% set reveal_url_prefix = resources.reveal.url_prefix | default('https://unpkg.com/reveal.js@4.0.2', true) %}
+{% set reveal_mermaid_js_url = resources.reveal.reveal_mermaid_js_url | default("https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@2.2.0", true) %}
+
 {% set reveal_theme = resources.reveal.theme | default('white', true) %}
 {% set reveal_transition = resources.reveal.transition | default('slide', true) %}
 {% set reveal_number = resources.reveal.number | default('', true) %}
@@ -33,10 +35,6 @@
 <script src="{{ resources.require_js_url }}"></script>
 {%- endblock html_head_js_requirejs -%}
 {%- block html_head_js_mermaidjs -%}
-<script type="module">
-  import mermaid from '{{ resources.mermaid_js_url }}';
-  mermaid.initialize({ startOnLoad: true });
-</script>
 {%- endblock html_head_js_mermaidjs -%}
 {%- endblock html_head_js -%}
 
@@ -145,10 +143,13 @@ require(
     },
     [
       "{{ reveal_url_prefix }}/dist/reveal.js",
-      "{{ reveal_url_prefix }}/plugin/notes/notes.js"
+      "{{ reveal_url_prefix }}/plugin/notes/notes.js",
+      {% if reveal_mermaid_js_url %}"{{ reveal_mermaid_js_url }}",{% endif %}
     ],
 
-    function(Reveal, RevealNotes){
+    function(Reveal,
+             RevealNotes,
+             {% if reveal_mermaid_js_url %}RevealMermaid,{% endif %}){
         // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
         Reveal.initialize({
             controls: true,
@@ -156,10 +157,12 @@ require(
             history: true,
             transition: "{{reveal_transition}}",
             slideNumber: "{{reveal_number}}",
-            plugins: [RevealNotes],
+            plugins: [
+                      RevealNotes,
+                      {% if reveal_mermaid_js_url %}RevealMermaid,{% endif %}
+                     ],
             width: {{reveal_width}},
-			      height: {{reveal_height}},
-
+            height: {{reveal_height}},
         });
 
         var update = function(event){
