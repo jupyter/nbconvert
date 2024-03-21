@@ -2,6 +2,24 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.16.3
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.2...9019037e300dfdbac5a8cb330d0b09eb82e12f62))
+
+### Maintenance and upkeep improvements
+
+- Remove pytest pin [#2129](https://github.com/jupyter/nbconvert/pull/2129) ([@blink1073](https://github.com/blink1073))
+- Add Compatibility with Pandoc 2.9.2 [#2128](https://github.com/jupyter/nbconvert/pull/2128) ([@blink1073](https://github.com/blink1073))
+- Pin to Pytest 7 [#2124](https://github.com/jupyter/nbconvert/pull/2124) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-03-04&to=2024-03-21&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2024-03-04..2024-03-21&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.16.2
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.1...8dac97afa73d59e6afcad04ca076355576b6eb51))
@@ -15,8 +33,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-02-19&to=2024-03-04&type=c))
 
 [@yuvipanda](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ayuvipanda+updated%3A2024-02-19..2024-03-04&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.16.1
 
@@ -1549,7 +1565,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
