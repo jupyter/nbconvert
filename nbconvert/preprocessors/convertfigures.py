@@ -6,7 +6,6 @@ Converts all of the outputs in a notebook from one format to another.
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-
 from traitlets import Unicode
 
 from .base import Preprocessor

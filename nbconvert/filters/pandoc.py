@@ -2,6 +2,7 @@
 Convert between any two formats using pandoc,
 and related filters
 """
+
 import os
 
 from pandocfilters import Image, applyJSONFilters  # type:ignore[import-untyped]

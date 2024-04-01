@@ -7,7 +7,6 @@ filter.
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-
 import re
 
 from traitlets import Dict
