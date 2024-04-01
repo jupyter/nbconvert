@@ -3,6 +3,7 @@
 
 """Module containing a preprocessor that executes the code cells
 and updates outputs"""
+
 from __future__ import annotations
 
 import typing as t

@@ -1,4 +1,5 @@
 """nbconvert version info."""
+
 import re
 from typing import List
 

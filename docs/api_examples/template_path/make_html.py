@@ -3,6 +3,7 @@ this script builds html files with either classic or classic_clone templates
 
 Note: nbconvert 6.0 changed ``template_path`` to ``template_paths``
 """
+
 import nbformat
 from traitlets.config import Config
 

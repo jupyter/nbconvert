@@ -1,4 +1,5 @@
 """Custom build script for hatch backend"""
+
 import os
 import sys
 from urllib.request import urlopen
