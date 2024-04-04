@@ -266,6 +266,8 @@ class HTMLExporter(TemplateExporter):
         self.register_filter("highlight_code", highlight_code)
         self.register_filter("filter_data_type", filter_data_type)
         html, resources = super().from_notebook_node(nb, resources, **kw)
+
+        return html, resources
         soup = BeautifulSoup(html, features="html.parser")
         # Add image's alternative text
         missing_alt = 0
