@@ -26,21 +26,21 @@ classifiers = [
 urls = {Homepage = "https://jupyter.org"}
 requires-python = ">=3.8"
 dependencies = [
-    "beautifulsoup4",
+    "beautifulsoup4>=4.12.1",
     "bleach!=5.0.0",
-    "defusedxml",
+    "defusedxml>=0.7.1",
     "importlib_metadata>=3.6;python_version<\"3.10\"",
     "jinja2>=3.0",
     "jupyter_core>=4.7",
-    "jupyterlab_pygments",
+    "jupyterlab_pygments>=0.3",
     "MarkupSafe>=2.0",
     "mistune>=2.0.3,<4",
     "nbclient>=0.5.0",
     "nbformat>=5.7",
-    "packaging",
+    "packaging>=22.0",
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
-    "tinycss2",
+    "tinycss2>=0.4",
     "traitlets>=5.1",
 ]
 dynamic = ["version"]
