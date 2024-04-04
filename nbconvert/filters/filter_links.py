@@ -1,6 +1,7 @@
 """A pandoc filter used in converting notebooks to Latex.
 Converts links between notebooks to Latex cross-references.
 """
+
 import re
 
 from pandocfilters import RawInline, applyJSONFilters, stringify  # type:ignore[import-untyped]

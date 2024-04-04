@@ -1,4 +1,4 @@
-""" List of ISO639-1 language code"""
+"""List of ISO639-1 language code"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
