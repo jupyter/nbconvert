@@ -15,7 +15,9 @@
 {%- if not resources.global_content_filter.include_input -%}
 {%- set no_input_class="jp-mod-noInput" -%}
 {%- endif -%}
-<div {{ cell_id_anchor(cell) }} class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}">
+<div id="{{loop.index}}" role="listitem" class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}" aria-labelledby="jp-cellNumber-{{loop.index}} jp-cellType-{{loop.index}}">
+<div class="jp-cellType" id="jp-cellType-{{loop.index}}" hidden>Code</div>
+{# the kernel name could also be the label here.  #}
 {{ super() }}
 </div>
 {%- endblock codecell %}
@@ -100,8 +102,10 @@
 {% endblock output %}
 
 {% block markdowncell scoped %}
-<div {{ cell_id_anchor(cell) }} class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div id="{{loop.index}}" class="jp-Cell jp-MarkdownCell jp-Notebook-cell" role="listitem" aria-labelledby="jp-cellNumber-{{loop.index}} jp-cellType-{{loop.index}}">
+<div class="jp-cellType" id="jp-cellType-{{loop.index}}" hidden>Markdown</div>
 <div class="jp-Cell-inputWrapper">
+<a href="{{loop.index}}" class="jp-cellNumber visually-hidden" id="jp-cellNumber-{{loop.index}}" aria-describedby="jp-cellType-{{loop.index}}">Cell {{loop.index}}</a>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
