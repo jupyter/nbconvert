@@ -5,7 +5,6 @@ Used from markdown.py
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-
 import base64
 import mimetypes
 import os

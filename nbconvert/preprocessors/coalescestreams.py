@@ -1,4 +1,5 @@
 """Preprocessor for merging consecutive stream outputs for easier handling."""
+
 import re
 
 # Copyright (c) IPython Development Team.

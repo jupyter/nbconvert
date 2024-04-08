@@ -66,7 +66,7 @@ qtpng = ["pyqtwebengine>=5.15"]
 qtpdf = ["nbconvert[qtpng]"]
 webpdf = ["playwright"]
 test = [
-    "pytest>=7,<8",
+    "pytest>=7",
     "ipykernel",
     "ipywidgets>=7.5",
     "flaky",
@@ -190,7 +190,6 @@ disable_error_code = ["no-untyped-def", "no-untyped-call"]
 warn_unreachable = true
 
 [tool.ruff]
-target-version = "py38"
 line-length = 100
 
 [tool.ruff.format]

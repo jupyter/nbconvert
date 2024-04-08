@@ -1,4 +1,5 @@
 """A qt screenshot exporter."""
+
 import os
 
 try:

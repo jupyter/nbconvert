@@ -5,7 +5,6 @@ Module with tests for ansi filters
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-
 from nbconvert.filters.ansi import ansi2html, ansi2latex, strip_ansi
 from tests.base import TestsBase
 

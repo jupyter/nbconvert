@@ -1,5 +1,4 @@
-"""Module that pre-processes the notebook for export to HTML.
-"""
+"""Module that pre-processes the notebook for export to HTML."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.

@@ -13,7 +13,6 @@ they are converted.
 # Imports
 # -----------------------------------------------------------------------------
 
-
 from traitlets import List, Unicode
 
 from .base import Preprocessor
