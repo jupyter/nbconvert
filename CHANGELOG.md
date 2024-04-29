@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.16.4
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.3...71fde294f623083f364bf68e14f07459dee952e6))
+
+### Bugs fixed
+
+- rst exporter: Re-enable coalescing streams [#2142](https://github.com/jupyter/nbconvert/pull/2142) ([@mgeier](https://github.com/mgeier))
+
+### Maintenance and upkeep improvements
+
+- Revert "Set all min deps" [#2138](https://github.com/jupyter/nbconvert/pull/2138) ([@blink1073](https://github.com/blink1073))
+- Set all min deps [#2136](https://github.com/jupyter/nbconvert/pull/2136) ([@blink1073](https://github.com/blink1073))
+- chore: update pre-commit hooks [#2134](https://github.com/jupyter/nbconvert/pull/2134) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-03-21&to=2024-04-29&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2024-03-21..2024-04-29&type=Issues) | [@mgeier](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amgeier+updated%3A2024-03-21..2024-04-29&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2024-03-21..2024-04-29&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.16.3
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.2...9019037e300dfdbac5a8cb330d0b09eb82e12f62))
@@ -17,8 +39,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-03-04&to=2024-03-21&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2024-03-04..2024-03-21&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.16.2
 
@@ -1565,7 +1585,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
