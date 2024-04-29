@@ -29,6 +29,7 @@ class RSTExporter(TemplateExporter):
     def default_config(self):
         c = Config(
             {
+                "CoalesceStreamsPreprocessor": {"enabled": True},
                 "ExtractOutputPreprocessor": {"enabled": True},
                 "HighlightMagicsPreprocessor": {"enabled": True},
             }
