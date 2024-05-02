@@ -47,7 +47,6 @@ except ImportError:  # for Mistune >= 2.0
 
     MISTUNE_V3 = False
 
-
     def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3's import_plugin for V2."""
         return PLUGINS[name]  # type: ignore[no-any-return]
@@ -106,7 +105,6 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
             matched_text = m[0]
             state.add_paragraph(matched_text)
             return m.end()
-
 
     class MathInlineParser(InlineParser):
         r"""This interprets the content of LaTeX style math objects.
@@ -208,7 +206,6 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
             """Pass token through mutiline math."""
             return {"type": "multiline_math", "text": m.group(0)}
 
-
     class MathInlineParser(InlineParser):  # type: ignore[no-redef]
         r"""This interprets the content of LaTeX style math objects.
 
@@ -270,14 +267,14 @@ class IPythonRenderer(HTMLRenderer):
     """An ipython html renderer."""
 
     def __init__(
-            self,
-            escape: bool = True,
-            allow_harmful_protocols: bool = True,
-            embed_images: bool = False,
-            exclude_anchor_links: bool = False,
-            anchor_link_text: str = "¶",
-            path: str = "",
-            attachments: Optional[Dict[str, Dict[str, str]]] = None,
+        self,
+        escape: bool = True,
+        allow_harmful_protocols: bool = True,
+        embed_images: bool = False,
+        exclude_anchor_links: bool = False,
+        anchor_link_text: str = "¶",
+        path: str = "",
+        attachments: Optional[Dict[str, Dict[str, str]]] = None,
     ):
         """Initialize the renderer."""
         super().__init__(escape, allow_harmful_protocols)
@@ -387,7 +384,7 @@ class IPythonRenderer(HTMLRenderer):
 
         attachment_prefix = "attachment:"
         if src.startswith(attachment_prefix):
-            name = unquote(src[len(attachment_prefix):])
+            name = unquote(src[len(attachment_prefix) :])
 
             if name not in self.attachments:
                 msg = f"missing attachment: {name}"
@@ -464,11 +461,11 @@ class MarkdownWithMath(Markdown):
     )
 
     def __init__(
-            self,
-            renderer: HTMLRenderer,
-            block: Optional[BlockParser] = None,
-            inline: Optional[InlineParser] = None,
-            plugins: Optional[Iterable[MarkdownPlugin]] = None,
+        self,
+        renderer: HTMLRenderer,
+        block: Optional[BlockParser] = None,
+        inline: Optional[InlineParser] = None,
+        plugins: Optional[Iterable[MarkdownPlugin]] = None,
     ):
         """Initialize the parser."""
         if block is None:
