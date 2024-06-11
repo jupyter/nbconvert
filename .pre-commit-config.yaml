@@ -48,7 +48,7 @@ repos:
     rev: "v2.3.0"
     hooks:
       - id: codespell
-        args: ["-L", "sur,nd"]
+        args: ["-L", "sur,nd,assertin"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.10.0"
@@ -81,7 +81,7 @@ repos:
       - id: rst-inline-touching-normal
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.7
+    rev: v0.4.8
     hooks:
       - id: ruff
         types_or: [python, jupyter]
