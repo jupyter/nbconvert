@@ -8,6 +8,10 @@ markdown within Jinja templates.
 
 import re
 
+from packaging.version import Version
+
+from nbconvert.utils.pandoc import get_pandoc_version
+
 try:
     from .markdown_mistune import markdown2html_mistune
 
@@ -66,7 +70,16 @@ def markdown2html_pandoc(source, extra_args=None):
 
 def markdown2asciidoc(source, extra_args=None):
     """Convert a markdown string to asciidoc via pandoc"""
-    extra_args = extra_args or ["--atx-headers"]
+
+    # Prior to version 3.0, pandoc supported the --atx-headers flag.
+    # For later versions, we must instead pass --markdown-headings=atx.
+    # See https://pandoc.org/releases.html#pandoc-3.0-2023-01-18
+    atx_args = ["--atx-headers"]
+    pandoc_version = get_pandoc_version()
+    if pandoc_version and Version(pandoc_version) >= Version("3.0"):
+        atx_args = ["--markdown-headings=atx"]
+
+    extra_args = extra_args or atx_args
     asciidoc = convert_pandoc(source, "markdown", "asciidoc", extra_args=extra_args)
     # workaround for https://github.com/jgm/pandoc/issues/3068
     if "__" in asciidoc:
