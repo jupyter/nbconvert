@@ -224,6 +224,8 @@ ignore = [
   "SIM105", # Use `contextlib.suppress(...)`
   "T201",   # `print` found
   "RUF012", # Mutable class attributes should be annotated
+  "UP031",  # Use format specifiers instead of percent format
+
 ]
 unfixable = [
   "T201",   # Don't touch print statements
