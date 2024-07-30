@@ -27,6 +27,7 @@ class RSTExporter(TemplateExporter):
     export_from_notebook = "reST"
 
     def default_filters(self):
+        """Override filter_data_type to use native rst outputs"""
         dtf = DataTypeFilter()
         dtf.display_data_priority = [self.output_mimetype, *dtf.display_data_priority]
         filters = dict(super().default_filters())
