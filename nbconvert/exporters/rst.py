@@ -6,6 +6,7 @@
 from traitlets import default
 from traitlets.config import Config
 
+from ..filters import DataTypeFilter
 from .templateexporter import TemplateExporter
 
 
@@ -24,6 +25,13 @@ class RSTExporter(TemplateExporter):
 
     output_mimetype = "text/restructuredtext"
     export_from_notebook = "reST"
+
+    def default_filters(self):
+        dtf = DataTypeFilter()
+        dtf.display_data_priority = [self.output_mimetype] + dtf.display_data_priority
+        filters = dict(super().default_filters())
+        filters["filter_data_type"] = dtf
+        return filters.items()
 
     @property
     def default_config(self):
