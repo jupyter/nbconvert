@@ -28,7 +28,7 @@ class RSTExporter(TemplateExporter):
 
     def default_filters(self):
         dtf = DataTypeFilter()
-        dtf.display_data_priority = [self.output_mimetype] + dtf.display_data_priority
+        dtf.display_data_priority = [self.output_mimetype, *dtf.display_data_priority]
         filters = dict(super().default_filters())
         filters["filter_data_type"] = dtf
         return filters.items()
