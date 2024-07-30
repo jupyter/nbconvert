@@ -122,6 +122,8 @@ jobs:
 
       - name: Run tests
         run: |
+          # Attempt to work around https://github.com/pypa/pip/issues/12781
+          PIP_CONSTRAINT= hatch env run -e test -- pip install 'pip>=24.2'
           xvfb-run --auto-servernum hatch run test:nowarn || xvfb-run --auto-servernum hatch run test:nowarn --lf
 
   test_prereleases:
