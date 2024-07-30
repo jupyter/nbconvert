@@ -77,5 +77,5 @@ class TestRSTExporter(ExportersTestsBase):
             self._get_notebook(nb_name="rst_output.ipynb")
         )
         assert len(output) > 0
-        assert ".. note::" in output
+        assert "\n.. note::" in output
         assert ".. raw:: html" not in output  # rst should shadow html output
