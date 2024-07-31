@@ -407,6 +407,7 @@ class TemplateExporter(Exporter):
         """
         nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
         resources.setdefault("raw_mimetypes", self.raw_mimetypes)
+        resources.setdefault("output_mimetype", self.output_mimetype)
         resources["global_content_filter"] = {
             "include_code": not self.exclude_code_cell,
             "include_markdown": not self.exclude_markdown,

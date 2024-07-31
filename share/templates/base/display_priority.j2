@@ -38,6 +38,9 @@
         {%- elif type == 'application/vnd.jupyter.widget-view+json' -%}
             {%- block data_widget_view -%}
             {%- endblock -%}
+        {%- elif type == resources.output_mimetype -%}
+            {%- block data_native -%}
+            {%- endblock -%}
         {%- else -%}
             {%- block data_other -%}
             {%- endblock -%}
