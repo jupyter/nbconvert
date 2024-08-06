@@ -50,6 +50,10 @@ class TestASCIIDocExporter(ExportersTestsBase):
         assert re.findall(in_regex, output)
         assert re.findall(out_regex, output)
 
+        # Assert that the Markdown header from our test notebook made it into the output.
+        # This can fail when nbconvert invokes pandoc incorrectly, as in issue #2017.
+        assert "== NumPy and Matplotlib examples" in output
+
     @onlyif_cmds_exist("pandoc")
     def test_export_no_prompt(self):
         """
