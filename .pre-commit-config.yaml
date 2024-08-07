@@ -21,7 +21,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.28.4
+    rev: 0.29.1
     hooks:
       - id: check-github-workflows
 
@@ -39,7 +39,7 @@ repos:
         types_or: [yaml, html, json]
 
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: "1.16.0"
+    rev: "1.18.0"
     hooks:
       - id: blacken-docs
         additional_dependencies: [black==23.7.0]
@@ -51,7 +51,7 @@ repos:
         args: ["-L", "sur,nd,assertin"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.10.0"
+    rev: "v1.11.1"
     hooks:
       - id: mypy
         files: "^nbconvert"
@@ -81,7 +81,7 @@ repos:
       - id: rst-inline-touching-normal
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.8
+    rev: v0.5.6
     hooks:
       - id: ruff
         types_or: [python, jupyter]
