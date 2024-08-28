@@ -6,6 +6,7 @@
 from traitlets import default
 from traitlets.config import Config
 
+from ..filters import DataTypeFilter
 from .templateexporter import TemplateExporter
 
 
@@ -22,8 +23,23 @@ class RSTExporter(TemplateExporter):
     def _template_name_default(self):
         return "rst"
 
-    output_mimetype = "text/restructuredtext"
+    @default("raw_mimetypes")
+    def _raw_mimetypes_default(self):
+        # Up to summer 2024, nbconvert had a mistaken output_mimetype.
+        # Listing that as an extra option here maintains compatibility for
+        # notebooks with raw cells marked as that mimetype.
+        return [self.output_mimetype, "text/restructuredtext", ""]
+
+    output_mimetype = "text/x-rst"
     export_from_notebook = "reST"
+
+    def default_filters(self):
+        """Override filter_data_type to use native rst outputs"""
+        dtf = DataTypeFilter()
+        dtf.display_data_priority = [self.output_mimetype, *dtf.display_data_priority]
+        filters = dict(super().default_filters())
+        filters["filter_data_type"] = dtf
+        return filters.items()
 
     @property
     def default_config(self):
