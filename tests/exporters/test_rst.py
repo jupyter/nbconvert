@@ -71,7 +71,7 @@ class TestRSTExporter(ExportersTestsBase):
 
     def test_rst_output(self):
         """
-        Is native text/restructuredtext output included when converting
+        Is native text/x-rst output included when converting
         """
         (output, resources) = RSTExporter().from_filename(
             self._get_notebook(nb_name="rst_output.ipynb")

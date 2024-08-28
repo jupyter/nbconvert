@@ -23,7 +23,14 @@ class RSTExporter(TemplateExporter):
     def _template_name_default(self):
         return "rst"
 
-    output_mimetype = "text/restructuredtext"
+    @default("raw_mimetypes")
+    def _raw_mimetypes_default(self):
+        # Up to summer 2024, nbconvert had a mistaken output_mimetype.
+        # Listing that as an extra option here maintains compatibility for
+        # notebooks with raw cells marked as that mimetype.
+        return [self.output_mimetype, "text/restructuredtext", ""]
+
+    output_mimetype = "text/x-rst"
     export_from_notebook = "reST"
 
     def default_filters(self):

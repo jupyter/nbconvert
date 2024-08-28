@@ -1,6 +1,6 @@
 {
   "base_template": "base",
   "mimetypes": {
-    "text/restructuredtext": true
+    "text/x-rst": true
   }
 }
