@@ -276,8 +276,6 @@ class HTMLExporter(TemplateExporter):
                 markdown_collection = markdown_collection + cell.source + "\n"
 
         resources = self._init_resources(resources)
-        if resources is None:
-            resources = {}
         resources.update(
             {"tableofcontents": extract_titles_from_markdown_input(markdown_collection)}
         )
@@ -366,8 +364,11 @@ class HTMLExporter(TemplateExporter):
             data = data.replace(b"\n", b"").decode("ascii")
             src = f"data:{mime_type};base64,{data}"
             return markupsafe.Markup(src)
+  
 
         resources = super()._init_resources(resources)
+        if resources is None:
+            resources = {}
         resources["theme"] = self.theme
         resources["include_css"] = resources_include_css
         resources["include_lab_theme"] = resources_include_lab_theme
