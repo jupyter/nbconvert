@@ -60,7 +60,8 @@ class PDFExporter(LatexExporter):
     latex_count = Integer(3, help="How many times latex will be called.").tag(config=True)
 
     latex_command = List(
-        ["xelatex", "-shell-escape", "{filename}", "-quiet"], help="Shell command used to compile latex."
+        ["xelatex", "-shell-escape", "{filename}", "-quiet"],
+        help="Shell command used to compile latex.",
     ).tag(config=True)
 
     bib_command = List(["bibtex", "{filename}"], help="Shell command used to run bibtex.").tag(
