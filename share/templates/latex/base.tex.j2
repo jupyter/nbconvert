@@ -100,7 +100,7 @@ override this.-=))
     \def\svgextension{svg}
     \filename@parse{#2}%
     \ifx\filename@ext\svgextension
-      \includesvg[#1]{#2}
+      \includesvg[width=\textwidth,#1]{#2}
     \else
       \includegraphics@original[#1]{#2}
     \fi
