@@ -46,7 +46,7 @@
 
 ### Bugs fixed
 
-- \[HTMLExporter\] Initialize resources before widget filtering [#2118](https://github.com/jupyter/nbconvert/pull/2118) ([@yuvipanda](https://github.com/yuvipanda))
+- [HTMLExporter] Initialize resources before widget filtering [#2118](https://github.com/jupyter/nbconvert/pull/2118) ([@yuvipanda](https://github.com/yuvipanda))
 
 ### Contributors to this release
 
@@ -389,7 +389,7 @@
 
 ### Enhancements made
 
-- \[Accessibility\] some accessibility improvements [#2021](https://github.com/jupyter/nbconvert/pull/2021) ([@brichet](https://github.com/brichet))
+- [Accessibility] some accessibility improvements [#2021](https://github.com/jupyter/nbconvert/pull/2021) ([@brichet](https://github.com/brichet))
 - Adopt playwright [#2013](https://github.com/jupyter/nbconvert/pull/2013) ([@brichet](https://github.com/brichet))
 - Update to Jupyterlab 4 [#2012](https://github.com/jupyter/nbconvert/pull/2012) ([@brichet](https://github.com/brichet))
 
