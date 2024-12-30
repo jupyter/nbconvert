@@ -75,8 +75,8 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
         is ignored here.
         """
 
-        AXT_HEADING_WITHOUT_LEADING_SPACES = (
-            r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
+        ATX_HEADING_WITHOUT_LEADING_SPACES = (
+            r"^ {0,3}(?P<atx_1>#{1,6})(?!#+)(?P<atx_2>[ \t]*(.*?)?)$"
         )
 
         MULTILINE_MATH = _dotall(
@@ -92,7 +92,7 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
 
         SPECIFICATION = {
             **BlockParser.SPECIFICATION,
-            "axt_heading": AXT_HEADING_WITHOUT_LEADING_SPACES,
+            "atx_heading": ATX_HEADING_WITHOUT_LEADING_SPACES,
             "multiline_math": MULTILINE_MATH,
         }
 
@@ -196,7 +196,7 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
         )
 
         # Regex for header that doesn't require space after '#'
-        AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
+        ATX_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
 
         # Multiline math must be searched before other rules
         RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)  # type: ignore[attr-defined]
