@@ -32,6 +32,7 @@ try:  # for Mistune >= 3.0
     )
 
     MISTUNE_V3 = True
+    MISTUNE_V3_ATX = "atx_heading" in BlockParser.SPECIFICATIONS
 
 except ImportError:  # for Mistune >= 2.0
     import re
@@ -45,6 +46,7 @@ except ImportError:  # for Mistune >= 2.0
     )
 
     MISTUNE_V3 = False
+    MISTUNE_V3_ATX = False
 
     def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3's import_plugin for V2."""
@@ -75,8 +77,9 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
         is ignored here.
         """
 
-        AXT_HEADING_WITHOUT_LEADING_SPACES = (
-            r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
+        ATX_HEADING_WITHOUT_LEADING_SPACES = (
+            r"^ {0,3}(?P<atx_1>#{1,6})(?!#+)(?P<atx_2>[ \t]*(.*?)?)$"
+            if MISTUNE_V2_ATX else r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
         )
 
         MULTILINE_MATH = _dotall(
@@ -92,7 +95,7 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
 
         SPECIFICATION = {
             **BlockParser.SPECIFICATION,
-            "axt_heading": AXT_HEADING_WITHOUT_LEADING_SPACES,
+            ("atx_heading" if MISTUNE_V3_ATX else "axt_heading"): ATX_HEADING_WITHOUT_LEADING_SPACES,
             "multiline_math": MULTILINE_MATH,
         }
 
