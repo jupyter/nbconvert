@@ -79,7 +79,7 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
 
         ATX_HEADING_WITHOUT_LEADING_SPACES = (
             r"^ {0,3}(?P<atx_1>#{1,6})(?!#+)(?P<atx_2>[ \t]*(.*?)?)$"
-            if MISTUNE_V2_ATX else r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
+            if MISTUNE_V3_ATX else r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
         )
 
         MULTILINE_MATH = _dotall(
