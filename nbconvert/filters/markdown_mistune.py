@@ -32,7 +32,7 @@ try:  # for Mistune >= 3.0
     )
 
     MISTUNE_V3 = True
-    MISTUNE_V3_ATX = "atx_heading" in BlockParser.SPECIFICATIONS
+    MISTUNE_V3_ATX = "atx_heading" in BlockParser.SPECIFICATION
 
 except ImportError:  # for Mistune >= 2.0
     import re
