@@ -79,7 +79,8 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
 
         ATX_HEADING_WITHOUT_LEADING_SPACES = (
             r"^ {0,3}(?P<atx_1>#{1,6})(?!#+)(?P<atx_2>[ \t]*(.*?)?)$"
-            if MISTUNE_V3_ATX else r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
+            if MISTUNE_V3_ATX
+            else r"^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*(.*?)?)$"
         )
 
         MULTILINE_MATH = _dotall(
@@ -95,7 +96,9 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
 
         SPECIFICATION = {
             **BlockParser.SPECIFICATION,
-            ("atx_heading" if MISTUNE_V3_ATX else "axt_heading"): ATX_HEADING_WITHOUT_LEADING_SPACES,
+            (
+                "atx_heading" if MISTUNE_V3_ATX else "axt_heading"
+            ): ATX_HEADING_WITHOUT_LEADING_SPACES,
             "multiline_math": MULTILINE_MATH,
         }
 
