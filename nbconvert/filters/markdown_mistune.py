@@ -9,7 +9,7 @@ import base64
 import mimetypes
 import os
 from html import escape
-from typing import Any, Callable, Dict, Iterable, Match, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Match, Optional, Tuple
 
 import bs4
 from pygments import highlight
@@ -51,6 +51,14 @@ except ImportError:  # for Mistune >= 2.0
     def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3's import_plugin for V2."""
         return PLUGINS[name]  # type: ignore[no-any-return]
+
+
+if TYPE_CHECKING:
+    try:
+        from mistune.plugins import Plugin
+    except ImportError:
+        class Plugin(Protocol):
+            def __call__(self, markdown: "Markdown") -> None: ...
 
 
 class InvalidNotebook(Exception):
@@ -103,7 +111,7 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
         }
 
         # Multiline math must be searched before other rules
-        DEFAULT_RULES: Tuple[str, ...] = ("multiline_math", *BlockParser.DEFAULT_RULES)  # type: ignore[assignment]
+        DEFAULT_RULES: ClassVar[Iterable[str]] = ("multiline_math", *BlockParser.DEFAULT_RULES)  # type: ignore[assignment]
 
         def parse_multiline_math(self, m: Match[str], state: BlockState) -> int:
             """Send mutiline math as a single paragraph to MathInlineParser."""
@@ -145,7 +153,7 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
         }
 
         # Block math must be matched first, and all math must come before text
-        DEFAULT_RULES: Tuple[str, ...] = (
+        DEFAULT_RULES: ClassVar[Iterable[str]] = (
             "block_math_tex",
             "block_math_latex",
             "inline_math_tex",
@@ -448,10 +456,6 @@ class IPythonRenderer(HTMLRenderer):
         return str(parsed_html)
 
 
-# Represents an already imported plugin for Mistune
-MarkdownPlugin = Callable[[Markdown], None]
-
-
 class MarkdownWithMath(Markdown):
     """Markdown text with math enabled."""
 
@@ -470,7 +474,7 @@ class MarkdownWithMath(Markdown):
         renderer: HTMLRenderer,
         block: Optional[BlockParser] = None,
         inline: Optional[InlineParser] = None,
-        plugins: Optional[Iterable[MarkdownPlugin]] = None,
+        plugins: Optional[Iterable["Plugin"]] = None,
     ):
         """Initialize the parser."""
         if block is None:
