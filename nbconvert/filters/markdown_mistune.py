@@ -9,7 +9,7 @@ import base64
 import mimetypes
 import os
 from html import escape
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Match, Optional, Tuple
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, Match, Optional, Protocol, Tuple
 
 import bs4
 from pygments import highlight
@@ -19,6 +19,16 @@ from pygments.lexers import get_lexer_by_name
 from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
+
+
+if TYPE_CHECKING:
+    try:
+        from mistune.plugins import Plugin
+    except ImportError:
+
+        class Plugin(Protocol):
+            def __call__(self, markdown: "Markdown") -> None: ...
+
 
 try:  # for Mistune >= 3.0
     from mistune import (  # type:ignore[attr-defined]
@@ -48,18 +58,9 @@ except ImportError:  # for Mistune >= 2.0
     MISTUNE_V3 = False
     MISTUNE_V3_ATX = False
 
-    def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
+    def import_plugin(name: str) -> "Plugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3's import_plugin for V2."""
         return PLUGINS[name]  # type: ignore[no-any-return]
-
-
-if TYPE_CHECKING:
-    try:
-        from mistune.plugins import Plugin
-    except ImportError:
-
-        class Plugin(Protocol):
-            def __call__(self, markdown: "Markdown") -> None: ...
 
 
 class InvalidNotebook(Exception):
