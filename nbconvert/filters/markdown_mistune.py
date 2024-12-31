@@ -25,7 +25,7 @@ if TYPE_CHECKING:
         from mistune.plugins import Plugin
     except ImportError:
 
-        class Plugin(Protocol):
+        class Plugin(Protocol):  # type: ignore[no-redef]
             def __call__(self, markdown: "Markdown") -> None: ...
 
 
