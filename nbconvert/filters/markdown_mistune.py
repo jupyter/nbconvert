@@ -26,7 +26,10 @@ if TYPE_CHECKING:
     except ImportError:
 
         class Plugin(Protocol):  # type: ignore[no-redef]
-            def __call__(self, markdown: "Markdown") -> None: ...
+            """Mistune plugin interface."""
+            def __call__(self, markdown: "Markdown") -> None:
+                """Apply the plugin on the markdown document."""
+                ...
 
 
 try:  # for Mistune >= 3.0
