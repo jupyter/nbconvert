@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 
         class Plugin(Protocol):  # type: ignore[no-redef]
             """Mistune plugin interface."""
+
             def __call__(self, markdown: "Markdown") -> None:
                 """Apply the plugin on the markdown document."""
                 ...
