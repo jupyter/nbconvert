@@ -20,7 +20,6 @@ from pygments.util import ClassNotFound
 
 from nbconvert.filters.strings import add_anchor
 
-
 if TYPE_CHECKING:
     try:
         from mistune.plugins import Plugin
