@@ -2,6 +2,35 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.16.5
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.4...18e10f6484afdfee39105248c28abe5ef0835b22))
+
+### Enhancements made
+
+- Add support for mistune 3.1.0 [#2199](https://github.com/jupyter/nbconvert/pull/2199) ([@fcollonval](https://github.com/fcollonval))
+- Allow including `text/x-rst` outputs in rst conversion, transition away from `text/restructuredtext` [#2167](https://github.com/jupyter/nbconvert/pull/2167) ([@takluyver](https://github.com/takluyver))
+
+### Bugs fixed
+
+- Do not display mathjax overlay [#2181](https://github.com/jupyter/nbconvert/pull/2181) ([@timkpaine](https://github.com/timkpaine))
+- Work around pip 24.1 bug which prevents installing pandocfilters 1.4.1 [#2168](https://github.com/jupyter/nbconvert/pull/2168) ([@takluyver](https://github.com/takluyver))
+- Don't die if template path cannot be read [#2162](https://github.com/jupyter/nbconvert/pull/2162) ([@stuaxo](https://github.com/stuaxo))
+- Fix markdown2asciidoc function for pandoc >= 3.0 (closes #2017) [#2152](https://github.com/jupyter/nbconvert/pull/2152) ([@thomasjm](https://github.com/thomasjm))
+
+### Maintenance and upkeep improvements
+
+- enhancement dep-chain: directly depend on bleach[css], instead of pulling in tinycss2. [#2166](https://github.com/jupyter/nbconvert/pull/2166) ([@xiacunshun](https://github.com/xiacunshun))
+- chore: update pre-commit hooks [#2146](https://github.com/jupyter/nbconvert/pull/2146) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-04-29&to=2025-01-02&type=c))
+
+[@bollwyvl](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2024-04-29..2025-01-02&type=Issues) | [@fcollonval](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Afcollonval+updated%3A2024-04-29..2025-01-02&type=Issues) | [@krassowski](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2024-04-29..2025-01-02&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2024-04-29..2025-01-02&type=Issues) | [@stuaxo](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Astuaxo+updated%3A2024-04-29..2025-01-02&type=Issues) | [@t-makaro](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3At-makaro+updated%3A2024-04-29..2025-01-02&type=Issues) | [@takluyver](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atakluyver+updated%3A2024-04-29..2025-01-02&type=Issues) | [@thomasjm](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Athomasjm+updated%3A2024-04-29..2025-01-02&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atimkpaine+updated%3A2024-04-29..2025-01-02&type=Issues) | [@xiacunshun](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Axiacunshun+updated%3A2024-04-29..2025-01-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.16.4
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.3...71fde294f623083f364bf68e14f07459dee952e6))
@@ -21,8 +50,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2024-03-21&to=2024-04-29&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ablink1073+updated%3A2024-03-21..2024-04-29&type=Issues) | [@mgeier](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amgeier+updated%3A2024-03-21..2024-04-29&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apre-commit-ci+updated%3A2024-03-21..2024-04-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.16.3
 
@@ -1585,7 +1612,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
