@@ -293,6 +293,7 @@ class IPythonRenderer(HTMLRenderer):
         anchor_link_text: str = "¶",
         path: str = "",
         attachments: Optional[Dict[str, Dict[str, str]]] = None,
+        **lexer_options,
     ):
         """Initialize the renderer."""
         super().__init__(escape, allow_harmful_protocols)
@@ -300,6 +301,7 @@ class IPythonRenderer(HTMLRenderer):
         self.exclude_anchor_links = exclude_anchor_links
         self.anchor_link_text = anchor_link_text
         self.path = path
+        self.lexer_options = lexer_options
         if attachments is not None:
             self.attachments = attachments
         else:
@@ -317,7 +319,7 @@ class IPythonRenderer(HTMLRenderer):
             try:
                 if info.strip().split(None, 1):
                     lang = info.strip().split(maxsplit=1)[0]
-                    lexer = get_lexer_by_name(lang, stripall=False)
+                    lexer = get_lexer_by_name(lang, **self.lexer_options)
             except ClassNotFound:
                 code = f"{lang}\n{code}"
                 lang = None

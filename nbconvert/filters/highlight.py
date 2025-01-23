@@ -136,7 +136,9 @@ class Highlight2Latex(NbConvertBase):
         return latex
 
 
-def _pygments_highlight(source, output_formatter, language="ipython", metadata=None):
+def _pygments_highlight(
+    source, output_formatter, language="ipython", metadata=None, **lexer_options
+):
     """
     Return a syntax-highlighted version of the input source
 
@@ -149,6 +151,10 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
         language to highlight the syntax of
     metadata : NotebookNode cell metadata
         metadata of the cell to highlight
+    lexer_options : dict
+        Options to pass to the pygments lexer. See
+        https://pygments.org/docs/lexers/#available-lexers for more information about
+        valid lexer options
     """
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name
@@ -179,7 +185,7 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
 
     if lexer is None:
         try:
-            lexer = get_lexer_by_name(language, stripall=False)
+            lexer = get_lexer_by_name(language, **lexer_options)
         except ClassNotFound:
             warn("No lexer found for language %r. Treating as plain text." % language, stacklevel=2)
             from pygments.lexers.special import TextLexer
