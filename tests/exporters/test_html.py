@@ -5,6 +5,7 @@
 
 import re
 
+import pytest
 from nbformat import v4
 from traitlets.config import Config
 
@@ -262,3 +263,50 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, resources) = exporter.from_filename(self._get_notebook())
 
         assert '<html lang="en">' in output
+
+
+@pytest.mark.parametrize(
+    ("lexer_options"),
+    [
+        {"stripall": True},
+        {"stripall": False},
+        {},
+    ],
+)
+def test_syntax_highlight_leading_whitespace(lexer_options):
+    """Test that syntax highlight doesn't strip leading spaces."""
+    nb = v4.reads(r"""
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "29da71a9-ae40-4098-8c3b-31a98e79fc12",
+   "metadata": {},
+   "source": [
+    "```APL\n",
+    "      1+2×⍳3\n",
+    "3 5 7\n",
+    "```\n",
+    "\n",
+    "```\n",
+    "      1+2×⍳3\n",
+    "3 5 7\n",
+    "```"
+   ]
+  }
+ ],
+ "metadata": {},
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
+    """)
+    output, _ = HTMLExporter(lexer_options=lexer_options).from_notebook_node(nb)
+    # Check that the second code block has the leading spaces
+    assert "<pre><code>      1+2×⍳3\n3 5 7\n</code></pre>" in output
+
+    if lexer_options.get("stripall"):
+        # Check that the APL-formatted code block has leading spaces stripped
+        assert '<span class="w">      </span>' not in output
+    else:
+        # Check that the APL-formatted code block has the leading spaces
+        assert '<span class="w">      </span>' in output

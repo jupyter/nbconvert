@@ -7671,9 +7671,6 @@ button.close {
 .fa-bar-chart:before {
   content: "\f080";
 }
-.fa-twitter-square:before {
-  content: "\f081";
-}
 .fa-facebook-square:before {
   content: "\f082";
 }
@@ -7740,9 +7737,6 @@ button.close {
 }
 .fa-phone-square:before {
   content: "\f098";
-}
-.fa-twitter:before {
-  content: "\f099";
 }
 .fa-facebook-f:before,
 .fa-facebook:before {
