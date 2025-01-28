@@ -411,6 +411,7 @@ class TemplateExporter(Exporter):
         """
         nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
         resources.setdefault("raw_mimetypes", self.raw_mimetypes)
+        resources.setdefault("output_mimetype", self.output_mimetype)
         resources["global_content_filter"] = {
             "include_code": not self.exclude_code_cell,
             "include_markdown": not self.exclude_markdown,
@@ -569,13 +570,19 @@ class TemplateExporter(Exporter):
         for template_name in template_names:
             for base_dir in self.extra_template_basedirs:
                 path = os.path.join(base_dir, template_name)
-                if not prune or os.path.exists(path):
-                    paths.append(path)
+                try:
+                    if not prune or os.path.exists(path):
+                        paths.append(path)
+                except PermissionError:
+                    pass
             for root_dir in root_dirs:
                 base_dir = os.path.join(root_dir, "nbconvert", "templates")
                 path = os.path.join(base_dir, template_name)
-                if not prune or os.path.exists(path):
-                    paths.append(path)
+                try:
+                    if not prune or os.path.exists(path):
+                        paths.append(path)
+                except PermissionError:
+                    pass
 
         for root_dir in root_dirs:
             # we include root_dir for when we want to be very explicit, e.g.

@@ -15,6 +15,7 @@ import markupsafe
 from bs4 import BeautifulSoup
 from jupyter_core.paths import jupyter_path
 from traitlets import Bool, Unicode, default, validate
+from traitlets import Dict as TraitletsDict
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
@@ -183,6 +184,14 @@ class HTMLExporter(TemplateExporter):
 
     output_mimetype = "text/html"
 
+    lexer_options = TraitletsDict(
+        {},
+        help=(
+            "Options to be passed to the pygments lexer for highlighting markdown code blocks. "
+            "See https://pygments.org/docs/lexers/#available-lexers for available options."
+        ),
+    ).tag(config=True)
+
     @property
     def default_config(self):
         c = Config(
@@ -239,6 +248,7 @@ class HTMLExporter(TemplateExporter):
             path=path,
             anchor_link_text=self.anchor_link_text,
             exclude_anchor_links=self.exclude_anchor_links,
+            **self.lexer_options,
         )
         return MarkdownWithMath(renderer=renderer).render(source)
 
