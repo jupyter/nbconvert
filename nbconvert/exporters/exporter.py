@@ -97,6 +97,7 @@ class Exporter(LoggingConfigurable):
             "nbconvert.preprocessors.ExtractOutputPreprocessor",
             "nbconvert.preprocessors.ExtractAttachmentsPreprocessor",
             "nbconvert.preprocessors.ClearMetadataPreprocessor",
+            "nbconvert.preprocessors.NumberedHeadingsPreprocessor",
         ],
         help="""List of preprocessors available by default, by name, namespace,
         instance, or type.""",

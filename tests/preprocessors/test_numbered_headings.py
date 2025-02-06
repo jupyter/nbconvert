@@ -47,10 +47,29 @@ MARKDOWN_2_POST = """
 
 ## 2.1 Sub-heading
 
-
 some more content
 
 ### 2.1.1 Third heading
+"""
+
+MARKDOWN_3 = """
+# HEADING
+
+```
+# this is not a heading
+
+## this neither
+```
+"""
+
+MARKDOWN_3_POST = """
+# 3 HEADING
+
+```
+# this is not a heading
+
+## this neither
+```
 """
 
 
@@ -61,6 +80,7 @@ class TestNumberedHeadings(PreprocessorTestsBase):
             nbformat.new_markdown_cell(source=MARKDOWN_1),
             nbformat.new_code_cell(source="$ e $", execution_count=1),
             nbformat.new_markdown_cell(source=MARKDOWN_2),
+            nbformat.new_markdown_cell(source=MARKDOWN_3),
         ]
 
         return nbformat.new_notebook(cells=cells)
@@ -72,7 +92,7 @@ class TestNumberedHeadings(PreprocessorTestsBase):
         return preprocessor
 
     def test_constructor(self):
-        """Can a ClearOutputPreprocessor be constructed?"""
+        """Can a NumberedHeadingsPreprocessor be constructed?"""
         self.build_preprocessor()
 
     def test_output(self):
@@ -81,6 +101,6 @@ class TestNumberedHeadings(PreprocessorTestsBase):
         res = self.build_resources()
         preprocessor = self.build_preprocessor()
         nb, res = preprocessor(nb, res)
-        print(nb.cells[1].source)
         assert nb.cells[1].source.strip() == MARKDOWN_1_POST.strip()
         assert nb.cells[3].source.strip() == MARKDOWN_2_POST.strip()
+        assert nb.cells[4].source.strip() == MARKDOWN_3_POST.strip()
