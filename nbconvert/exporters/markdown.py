@@ -34,17 +34,25 @@ class MarkdownExporter(TemplateExporter):
     def default_config(self):
         c = Config(
             {
-                "ExtractAttachmentsPreprocessor": {"enabled": True},
+                "Base64ImageExtractor": {
+                    "enabled": True,
+                    "use_separate_dir": False
+                },
                 "ExtractOutputPreprocessor": {
                     "enabled": True,
-                    "extract_output_prefix": "{unique_key}_output_"
+                    "output_filename_template": "{unique_key}_{cell_index}_{index}_{timestamp}{extension}"
                 },
-                "Base64ImageExtractor": {"enabled": True},
+                "ExtractAttachmentsPreprocessor": {
+                    "enabled": True,
+                    "use_separate_dir": False
+                },
+                "FilesWriter": {
+                    "build_directory": "",
+                    "files_dir_template": "{unique_key}_files"
+                },
                 "Exporter": {
                     "preprocessors": [
                         "nbconvert.preprocessors.Base64ImageExtractor",
-                        "nbconvert.preprocessors.TagRemovePreprocessor",
-                        "nbconvert.preprocessors.RegexRemovePreprocessor",
                         "nbconvert.preprocessors.ExtractAttachmentsPreprocessor",
                         "nbconvert.preprocessors.ExtractOutputPreprocessor",
                     ]
