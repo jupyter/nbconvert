@@ -41,6 +41,7 @@ def platform_utf_8_encode(data):
 
 import time
 
+
 class ExtractOutputPreprocessor(Preprocessor):
     """
     Extracts all of the outputs from the notebook file.  The extracted
@@ -125,7 +126,7 @@ class ExtractOutputPreprocessor(Preprocessor):
                             cell_index=cell_index,
                             index=index,
                             timestamp=str(int(time.time() * 1000)),  # Add millisecond timestamp
-                            extension=ext
+                            extension=ext,
                         )
 
                     # On the cell, make the figure available via

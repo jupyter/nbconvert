@@ -5,13 +5,13 @@ Preprocessor to extract base64 encoded images from markdown cells and save them 
 import os
 import re
 from base64 import b64decode
+from typing import Any, Dict, Tuple
 from uuid import uuid4
-from typing import Dict, Any, Tuple
 
-from traitlets import Bool, Unicode, Set
+from nbformat.notebooknode import NotebookNode
+from traitlets import Bool, Set, Unicode
 
 from nbconvert.preprocessors import Preprocessor
-from nbformat.notebooknode import NotebookNode
 
 
 class Base64ImageExtractor(Preprocessor):
@@ -20,18 +20,16 @@ class Base64ImageExtractor(Preprocessor):
     """
 
     use_separate_dir = Bool(
-        False,
-        help="Whether to use a separate directory for base64 images"
+        False, help="Whether to use a separate directory for base64 images"
     ).tag(config=True)
 
     output_directory_template = Unicode(
-        "{notebook_name}_files",
-        help="Directory to place base64 images if use_separate_dir is True"
+        "{notebook_name}_files", help="Directory to place base64 images if use_separate_dir is True"
     ).tag(config=True)
 
     supported_image_types = Set(
         {"png", "jpeg", "jpg", "gif", "bmp", "svg"},
-        help="Set of supported image types for extraction"
+        help="Set of supported image types for extraction",
     ).tag(config=True)
 
     def __init__(self, **kw):
@@ -39,7 +37,9 @@ class Base64ImageExtractor(Preprocessor):
         self.path_name = ""
         self.resources_item_key = "base64_images"  # default value
 
-    def preprocess(self, nb: NotebookNode, resources: Dict[str, Any]) -> Tuple[NotebookNode, Dict[str, Any]]:
+    def preprocess(
+        self, nb: NotebookNode, resources: Dict[str, Any]
+    ) -> Tuple[NotebookNode, Dict[str, Any]]:
         """
         Preprocess the notebook and initialize the output directory for base64 images.
         """
@@ -62,14 +62,16 @@ class Base64ImageExtractor(Preprocessor):
 
         return super().preprocess(nb, resources)
 
-    def preprocess_cell(self, cell: NotebookNode, resources: Dict[str, Any], index: int) -> Tuple[NotebookNode, Dict[str, Any]]:
+    def preprocess_cell(
+        self, cell: NotebookNode, resources: Dict[str, Any], index: int
+    ) -> Tuple[NotebookNode, Dict[str, Any]]:
         """
         Extract base64 images from Markdown cells and save them to files.
         """
         if cell.cell_type != "markdown":
             return cell, resources
 
-        pattern = r'!\[([^\]]*)\]\(data:image/([^;]+);base64,([^\)]+)\)'
+        pattern = r"!\[([^\]]*)\]\(data:image/([^;]+);base64,([^\)]+)\)"
 
         def replace_base64(match: re.Match) -> str:
             alt_text, img_type, b64_data = match.groups()
@@ -78,7 +80,7 @@ class Base64ImageExtractor(Preprocessor):
                 return match.group(0)
 
             try:
-                img_data = b64decode(b64_data.encode('utf-8'))
+                img_data = b64decode(b64_data.encode("utf-8"))
                 filename = f"base64_image_{index}_{uuid4().hex[:8]}.{img_type}"
                 filepath = os.path.join(self.path_name, filename)
 

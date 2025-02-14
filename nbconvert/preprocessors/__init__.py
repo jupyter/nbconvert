@@ -10,13 +10,13 @@ from .convertfigures import ConvertFiguresPreprocessor
 from .csshtmlheader import CSSHTMLHeaderPreprocessor
 from .execute import ExecutePreprocessor
 from .extractattachments import ExtractAttachmentsPreprocessor
+from .extractbase64images import Base64ImageExtractor
 from .extractoutput import ExtractOutputPreprocessor
 from .highlightmagics import HighlightMagicsPreprocessor
 from .latex import LatexPreprocessor
 from .regexremove import RegexRemovePreprocessor
 from .svg2pdf import SVG2PDFPreprocessor
 from .tagremove import TagRemovePreprocessor
-from .extractbase64images import Base64ImageExtractor
 
 __all__ = [
     "CellExecutionError",
