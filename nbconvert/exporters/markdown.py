@@ -35,7 +35,20 @@ class MarkdownExporter(TemplateExporter):
         c = Config(
             {
                 "ExtractAttachmentsPreprocessor": {"enabled": True},
-                "ExtractOutputPreprocessor": {"enabled": True},
+                "ExtractOutputPreprocessor": {
+                    "enabled": True,
+                    "extract_output_prefix": "{unique_key}_output_"
+                },
+                "Base64ImageExtractor": {"enabled": True},
+                "Exporter": {
+                    "preprocessors": [
+                        "nbconvert.preprocessors.Base64ImageExtractor",
+                        "nbconvert.preprocessors.TagRemovePreprocessor",
+                        "nbconvert.preprocessors.RegexRemovePreprocessor",
+                        "nbconvert.preprocessors.ExtractAttachmentsPreprocessor",
+                        "nbconvert.preprocessors.ExtractOutputPreprocessor",
+                    ]
+                },
                 "NbConvertBase": {
                     "display_data_priority": [
                         "text/html",

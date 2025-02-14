@@ -16,6 +16,7 @@ from .latex import LatexPreprocessor
 from .regexremove import RegexRemovePreprocessor
 from .svg2pdf import SVG2PDFPreprocessor
 from .tagremove import TagRemovePreprocessor
+from .extractbase64images import Base64ImageExtractor
 
 __all__ = [
     "CellExecutionError",
@@ -33,4 +34,5 @@ __all__ = [
     "RegexRemovePreprocessor",
     "SVG2PDFPreprocessor",
     "TagRemovePreprocessor",
+    "Base64ImageExtractor",  # Add this line
 ]
