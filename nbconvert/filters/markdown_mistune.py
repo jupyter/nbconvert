@@ -478,7 +478,7 @@ class MarkdownWithMath(Markdown):
         "def_list",
     )
 
-    def __init__(
+    def nb__(
         self,
         renderer: HTMLRenderer,
         block: Optional[BlockParser] = None,
@@ -518,7 +518,11 @@ def extract_titles_from_notebook_node(nb: NotebookNode):
         if cell.cell_type == "markdown":
             markdown_source = cell.source
             html_source = mistune.html(markdown_source)  # convert all the markdown sources to html
-            cells_html_collection = cells_html_collection + html_source + "\n"
+            if isinstance(html_source, str):
+                cells_html_collection += html_source + "\n"
+            elif isinstance(html_source, list):
+                rendered = "\n".join(str(item) for item in html_source)
+                cells_html_collection += rendered + "\n"
 
     titles_array = []
     html_collection = bs4.BeautifulSoup(cells_html_collection, "html.parser")
