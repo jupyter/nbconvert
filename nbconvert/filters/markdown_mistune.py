@@ -63,7 +63,7 @@ except ImportError:  # for Mistune >= 2.0
     MISTUNE_V3 = False
     MISTUNE_V3_ATX = False
 
-    def import_plugin(name: str) -> "MarkdownPlugin":  # type: ignore[misc]
+    def import_plugin(name: str) -> "Plugin":  # type: ignore[misc]
         """Simple implementation of Mistune V3"s import_plugin for V2."""
         return PLUGINS[name]  # type: ignore[no-any-return]
 
@@ -295,6 +295,7 @@ class IPythonRenderer(HTMLRenderer):
         anchor_link_text: str = "¶",
         path: str = "",
         attachments: Optional[Dict[str, Dict[str, str]]] = None,
+        **lexer_options,
     ):
         """Initialize the renderer."""
         super().__init__(escape, allow_harmful_protocols)
@@ -482,7 +483,7 @@ class MarkdownWithMath(Markdown):
         renderer: HTMLRenderer,
         block: Optional[BlockParser] = None,
         inline: Optional[InlineParser] = None,
-        plugins: Optional[Iterable[MarkdownPlugin]] = None,
+        plugins: Optional[Iterable["Plugin"]] = None,
     ):
         """Initialize the parser."""
         if block is None:
