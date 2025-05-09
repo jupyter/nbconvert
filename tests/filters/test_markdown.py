@@ -122,6 +122,7 @@ class TestMarkdown(TestsBase):
         # Mathematical expressions not containing <, >, &
         # should be passed through unaltered
         # all the "<", ">", "&" must be escaped correctly
+        print('Add this print to have a difference with main branch')
         cases = [
             (
                 "\\begin{equation*}\n"
