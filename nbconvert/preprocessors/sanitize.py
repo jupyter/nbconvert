@@ -34,13 +34,15 @@ except ImportError:
         )
 
     except ImportError:
+        ALLOWED_STYLES = []
+        _USE_BLEACH_CSS_SANITIZER = False
+        _USE_BLEACH_STYLES = False
         warnings.warn(
             "The installed bleach/tinycss2 do not provide CSS sanitization, "
             "please upgrade to bleach >=5",
             UserWarning,
             stacklevel=2,
         )
-
 
 __all__ = ["SanitizeHTML"]
 
