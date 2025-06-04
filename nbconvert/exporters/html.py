@@ -8,14 +8,13 @@ import json
 import mimetypes
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Optional
 
 import jinja2
 import markupsafe
 from bs4 import BeautifulSoup
 from jupyter_core.paths import jupyter_path
-from traitlets import Bool, Unicode, default, validate
-from traitlets import Dict as TraitletsDict
+from traitlets import Bool, Dict, Unicode, default, validate
 from traitlets.config import Config
 
 if tuple(int(x) for x in jinja2.__version__.split(".")[:3]) < (3, 0, 0):
@@ -184,7 +183,7 @@ class HTMLExporter(TemplateExporter):
 
     output_mimetype = "text/html"
 
-    lexer_options = TraitletsDict(
+    lexer_options = Dict(
         {},
         help=(
             "Options to be passed to the pygments lexer for highlighting markdown code blocks. "
@@ -258,8 +257,8 @@ class HTMLExporter(TemplateExporter):
         yield ("markdown2html", self.markdown2html)
 
     def from_notebook_node(  # type:ignore[explicit-override, override]
-        self, nb: NotebookNode, resources: Optional[Dict[str, Any]] = None, **kw: Any
-    ) -> Tuple[str, Dict[str, Any]]:
+        self, nb: NotebookNode, resources: Optional[dict[str, Any]] = None, **kw: Any
+    ) -> tuple[str, dict[str, Any]]:
         """Convert from notebook node."""
         langinfo = nb.metadata.get("language_info", {})
         lexer = langinfo.get("pygments_lexer", langinfo.get("name", None))

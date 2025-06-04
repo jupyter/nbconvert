@@ -80,7 +80,7 @@ class ServePostProcessor(PostProcessorBase):
             handlers.insert(0, (r"/(%s)/(.*)" % self.reveal_prefix, ProxyHandler))
 
         app = web.Application(
-            handlers,  # type:ignore[arg-type]
+            handlers,
             cdn=self.reveal_cdn,
             client=AsyncHTTPClient(),
         )
