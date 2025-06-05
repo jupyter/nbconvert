@@ -38,7 +38,7 @@ class QtExporter(HTMLExporter):
     def _run_pyqtwebengine(self, html):
         ext = ".html"
         temp_file = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
-        filename = f"{temp_file.name[:-len(ext)]}.{self.format}"
+        filename = f"{temp_file.name[: -len(ext)]}.{self.format}"
         with temp_file:
             temp_file.write(html.encode("utf-8"))
         try:
