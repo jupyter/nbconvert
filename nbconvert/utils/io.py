@@ -9,7 +9,7 @@ import os
 import random
 import shutil
 import sys
-from typing import Any, Dict
+from typing import Any
 
 
 def unicode_std_stream(stream="stdout"):
@@ -52,7 +52,7 @@ def unicode_stdin_stream():
     return codecs.getreader("utf-8")(stream_b)
 
 
-class FormatSafeDict(Dict[Any, Any]):
+class FormatSafeDict(dict[Any, Any]):
     """Format a dictionary safely."""
 
     def __missing__(self, key):

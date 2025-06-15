@@ -8,8 +8,10 @@ Used from markdown.py
 import base64
 import mimetypes
 import os
+from collections.abc import Iterable
 from html import escape
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, Match, Optional, Protocol, Tuple
+from re import Match
+from typing import TYPE_CHECKING, Any, ClassVar, Optional, Protocol
 
 import bs4
 from pygments import highlight
@@ -220,7 +222,7 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
         # Multiline math must be searched before other rules
         RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)  # type: ignore[attr-defined]
 
-        def parse_multiline_math(self, m: Match[str], state: Any) -> Dict[str, str]:
+        def parse_multiline_math(self, m: Match[str], state: Any) -> dict[str, str]:
             """Pass token through mutiline math."""
             return {"type": "multiline_math", "text": m.group(0)}
 
@@ -253,29 +255,29 @@ else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
             *InlineParser.RULE_NAMES,  # type: ignore[attr-defined]
         )
 
-        def parse_block_math_tex(self, m: Match[str], state: Any) -> Tuple[str, str]:
+        def parse_block_math_tex(self, m: Match[str], state: Any) -> tuple[str, str]:
             """Parse block text math."""
             # sometimes the Scanner keeps the final '$$', so we use the
             # full matched string and remove the math markers
             text = m.group(0)[2:-2]
             return "block_math", text
 
-        def parse_block_math_latex(self, m: Match[str], state: Any) -> Tuple[str, str]:
+        def parse_block_math_latex(self, m: Match[str], state: Any) -> tuple[str, str]:
             """Parse block latex math ."""
             text = m.group(1)
             return "block_math", text
 
-        def parse_inline_math_tex(self, m: Match[str], state: Any) -> Tuple[str, str]:
+        def parse_inline_math_tex(self, m: Match[str], state: Any) -> tuple[str, str]:
             """Parse inline tex math."""
             text = m.group(1)
             return "inline_math", text
 
-        def parse_inline_math_latex(self, m: Match[str], state: Any) -> Tuple[str, str]:
+        def parse_inline_math_latex(self, m: Match[str], state: Any) -> tuple[str, str]:
             """Parse inline latex math."""
             text = m.group(1)
             return "inline_math", text
 
-        def parse_latex_environment(self, m: Match[str], state: Any) -> Tuple[str, str, str]:
+        def parse_latex_environment(self, m: Match[str], state: Any) -> tuple[str, str, str]:
             """Parse a latex environment."""
             name, text = m.group(1), m.group(2)
             return "latex_environment", name, text
@@ -292,7 +294,7 @@ class IPythonRenderer(HTMLRenderer):
         exclude_anchor_links: bool = False,
         anchor_link_text: str = "¶",
         path: str = "",
-        attachments: Optional[Dict[str, Dict[str, str]]] = None,
+        attachments: Optional[dict[str, dict[str, str]]] = None,
         **lexer_options,
     ):
         """Initialize the renderer."""
@@ -352,7 +354,7 @@ class IPythonRenderer(HTMLRenderer):
 
         return super().inline_html(html)
 
-    def heading(self, text: str, level: int, **attrs: Dict[str, Any]) -> str:
+    def heading(self, text: str, level: int, **attrs: dict[str, Any]) -> str:
         """Handle a heading."""
         html = super().heading(text, level, **attrs)
         if self.exclude_anchor_links:

@@ -44,8 +44,8 @@ if QT_INSTALLED:
 
                 def cleanup(*args):
                     """Cleanup the app."""
-                    self.app.quit()  # type:ignore[union-attr]
                     self.get_data()
+                    self.app.quit()  # type:ignore[union-attr]
 
                 self.page().pdfPrintingFinished.connect(cleanup)
             elif output_file.endswith(".png"):
@@ -81,8 +81,8 @@ if QT_INSTALLED:
         def export_png(self):
             """Export to png."""
             self.grab().save(self.output_file, "PNG")
-            self.app.quit()  # type:ignore[union-attr]
             self.get_data()
+            self.app.quit()  # type:ignore[union-attr]
 
         def get_data(self):
             """Get output data."""
