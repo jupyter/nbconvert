@@ -133,8 +133,7 @@ class HTMLExporter(TemplateExporter):
     )
 
     mermaid_layout_elk_js_url = Unicode(
-        # "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.8/mermaid-layout-elk.esm.min.mjs",
-        "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.8/dist/mermaid-layout-elk.esm.min.mjs",
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.8/mermaid-layout-elk.esm.min.mjs",
         help="""
         URL to load MermaidJS ELK layout from.
 
