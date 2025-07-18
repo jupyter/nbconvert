@@ -22,6 +22,10 @@
 {%- block html_head_js_mermaidjs -%}
 <script type="module">
   import mermaid from '{{ resources.mermaid_js_url }}';
+  {% if resources.mermaid_js_elk_url %}
+  import elkLayouts from '{{ resources.mermaid_js_elk_url }}';
+  mermaid.registerLayoutLoaders(elkLayouts);
+  {% endif %}
   mermaid.initialize({ startOnLoad: true });
 </script>
 {%- endblock html_head_js_mermaidjs -%}
