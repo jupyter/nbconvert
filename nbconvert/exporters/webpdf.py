@@ -11,7 +11,7 @@ import sys
 import tempfile
 from importlib import util as importlib_util
 
-from traitlets import Bool, default
+from traitlets import Bool, List, Unicode, default
 
 from .html import HTMLExporter
 
@@ -68,12 +68,22 @@ class WebPDFExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
+    browser_args = List(
+        Unicode(),
+        help="""
+        Additional arguments to pass to the browser rendering to PDF.
+
+        These arguments will be passed directly to the browser launch method
+        and can be used to customize browser behavior beyond the default settings.
+        """,
+    ).tag(config=True)
+
     def run_playwright(self, html):
         """Run playwright."""
 
         async def main(temp_file):
             """Run main playwright script."""
-            args = ["--no-sandbox"] if self.disable_sandbox else []
+
             try:
                 from playwright.async_api import async_playwright  # type: ignore[import-not-found]
             except ModuleNotFoundError as e:
@@ -89,6 +99,10 @@ class WebPDFExporter(HTMLExporter):
 
             playwright = await async_playwright().start()
             chromium = playwright.chromium
+
+            args = self.browser_args
+            if self.disable_sandbox:
+                args.append("--no-sandbox")
 
             try:
                 browser = await chromium.launch(
