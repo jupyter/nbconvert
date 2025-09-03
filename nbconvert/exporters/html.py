@@ -124,7 +124,7 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mermaid_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.7.0/mermaid.esm.min.mjs",
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.0/mermaid.esm.min.mjs",
         help="""
         URL to load MermaidJS from.
 
@@ -133,7 +133,7 @@ class HTMLExporter(TemplateExporter):
     )
 
     mermaid_layout_elk_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.8/mermaid-layout-elk.esm.min.mjs",
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.9/mermaid-layout-elk.esm.min.mjs",
         help="""
         URL to load MermaidJS ELK layout from.
 
