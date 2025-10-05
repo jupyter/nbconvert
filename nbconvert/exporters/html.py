@@ -124,9 +124,18 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mermaid_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs",
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.0/mermaid.esm.min.mjs",
         help="""
         URL to load MermaidJS from.
+
+        Defaults to loading from cdnjs.
+        """,
+    )
+
+    mermaid_layout_elk_js_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.9/mermaid-layout-elk.esm.min.mjs",
+        help="""
+        URL to load MermaidJS ELK layout from.
 
         Defaults to loading from cdnjs.
         """,
@@ -362,6 +371,7 @@ class HTMLExporter(TemplateExporter):
         resources["require_js_url"] = self.require_js_url
         resources["mathjax_url"] = self.mathjax_url
         resources["mermaid_js_url"] = self.mermaid_js_url
+        resources["mermaid_layout_elk_js_url"] = self.mermaid_layout_elk_js_url
         resources["jquery_url"] = self.jquery_url
         resources["jupyter_widgets_base_url"] = self.jupyter_widgets_base_url
         resources["widget_renderer_url"] = self.widget_renderer_url
