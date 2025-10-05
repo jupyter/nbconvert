@@ -14,6 +14,8 @@ import os
 import shutil
 from datetime import datetime, timezone
 
+from intersphinx_registry import get_intersphinx_mapping
+
 HERE = os.path.dirname(__file__)
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -317,11 +319,7 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.6", None),
-    "jinja": ("http://jinja.pocoo.org/docs", None),
-    "nbformat": ("https://nbformat.readthedocs.io/en/latest", None),
-}
+intersphinx_mapping = get_intersphinx_mapping(packages={"python", "jinja", "nbformat"})
 
 
 def setup(_):
