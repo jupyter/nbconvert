@@ -79,6 +79,7 @@ docs = [
     "ipython",
     "ipykernel",
     "sphinxcontrib_spelling",
+    "intersphinx_registry",
 ]
 all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
