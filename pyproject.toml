@@ -6,13 +6,7 @@ build-backend = "hatchling.build"
 name = "nbconvert"
 authors = [{name = "Jupyter Development Team", email = "jupyter@googlegroups.com"}]
 license = {file = "LICENSE"}
-description = """Converting Jupyter Notebooks (.ipynb files) to other formats.
-
-Output formats include asciidoc, html, latex, markdown, pdf, py, rst, script.
-
-nbconvert can be used both as a Python library (`import nbconvert`)
-or as a command line tool (invoked as `jupyter nbconvert ...`).
-"""
+description = "Convert Jupyter Notebooks (.ipynb files) to other formats."
 readme = "README.md"
 keywords = ["Interactive", "Interpreter", "Shell", "Web"]
 classifiers = [
