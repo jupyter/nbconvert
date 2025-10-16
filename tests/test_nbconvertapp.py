@@ -150,7 +150,7 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook with spaces.pdf")
 
     @pytest.mark.flaky()
-    @pytest.mark.network()
+    @pytest.mark.network
     @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
     def test_webpdf_with_chromium(self):
         """
@@ -536,8 +536,7 @@ class TestNbConvertApp(TestsBase):
         # check relative path
         with self.create_temp_cwd(["notebook4_jpeg.ipynb", "containerized_deployments.jpeg"]):
             self.nbconvert(
-                "--log-level 0 notebook4_jpeg.ipynb --to rst "
-                "--NbConvertApp.output_files_dir=output"
+                "--log-level 0 notebook4_jpeg.ipynb --to rst --NbConvertApp.output_files_dir=output"
             )
             assert fig_exists("output")
 
