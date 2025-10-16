@@ -53,8 +53,8 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
     @default("inkscape_version")
     def _inkscape_version_default(self):
-        p = subprocess.Popen(
-            [self.inkscape, "--version"],  # noqa:S603
+        p = subprocess.Popen(  # noqa:S603
+            [self.inkscape, "--version"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )

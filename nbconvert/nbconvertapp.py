@@ -358,7 +358,7 @@ class NbConvertApp(JupyterApp):
     def initialize(self, argv=None):
         """Initialize application, notebooks, writer, and postprocessor"""
         # See https://bugs.python.org/issue37373 :(
-        if sys.version_info > (3, 8) and sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
         self.init_syspath()
@@ -641,11 +641,11 @@ class NbConvertApp(JupyterApp):
                         """
         )
         sections = ""
-        for category in categories:
+        for category, value in categories.items():
             sections += header.format(section=category.title())
             if category in ["exporter", "preprocessor", "writer"]:
                 sections += f".. image:: _static/{category}_inheritance.png\n\n"
-            sections += "\n".join(c.class_config_rst_doc() for c in categories[category])
+            sections += "\n".join(c.class_config_rst_doc() for c in value)
 
         return sections.replace(" : ", r" \: ")
 
