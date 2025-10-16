@@ -202,7 +202,7 @@ class NbConvertApp(JupyterApp):
     def _log_level_default(self):
         return logging.INFO
 
-    classes = List()  # type:ignore[assignment]
+    classes: list[type] = List()  # type: ignore[assignment]
 
     @default("classes")
     def _classes_default(self):
@@ -215,7 +215,7 @@ class NbConvertApp(JupyterApp):
 
         return classes
 
-    description = Unicode(  # type:ignore[assignment]
+    description = Unicode(
         """This application is used to convert notebook files (*.ipynb)
         to various other formats.
 
@@ -358,7 +358,7 @@ class NbConvertApp(JupyterApp):
     def initialize(self, argv=None):
         """Initialize application, notebooks, writer, and postprocessor"""
         # See https://bugs.python.org/issue37373 :(
-        if sys.version_info > (3, 8) and sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
         self.init_syspath()
@@ -641,11 +641,11 @@ class NbConvertApp(JupyterApp):
                         """
         )
         sections = ""
-        for category in categories:
+        for category, value in categories.items():
             sections += header.format(section=category.title())
             if category in ["exporter", "preprocessor", "writer"]:
                 sections += f".. image:: _static/{category}_inheritance.png\n\n"
-            sections += "\n".join(c.class_config_rst_doc() for c in categories[category])
+            sections += "\n".join(c.class_config_rst_doc() for c in value)
 
         return sections.replace(" : ", r" \: ")
 

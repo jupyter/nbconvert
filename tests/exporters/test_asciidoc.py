@@ -44,7 +44,7 @@ class TestASCIIDocExporter(ExportersTestsBase):
         """
         Can a ASCIIDocExporter export something?
         """
-        (output, resources) = ASCIIDocExporter().from_filename(self._get_notebook())
+        (output, _resources) = ASCIIDocExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
         assert re.findall(in_regex, output)
@@ -67,7 +67,7 @@ class TestASCIIDocExporter(ExportersTestsBase):
         }
         c_no_prompt = Config(no_prompt)
         exporter = ASCIIDocExporter(config=c_no_prompt)
-        (output, resources) = exporter.from_filename(
+        (output, _resources) = exporter.from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb")
         )
 

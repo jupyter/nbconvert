@@ -61,7 +61,7 @@ class LatexPreprocessor(Preprocessor):
             preprocessors to pass variables into the Jinja engine.
         """
         # Generate Pygments definitions for Latex
-        from pygments.formatters import LatexFormatter
+        from pygments.formatters import LatexFormatter  # noqa: PLC0415
 
         resources.setdefault("latex", {})
         resources["latex"].setdefault(

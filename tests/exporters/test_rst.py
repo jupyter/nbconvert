@@ -31,7 +31,7 @@ class TestRSTExporter(ExportersTestsBase):
         """
         Can a RSTExporter export something?
         """
-        (output, resources) = RSTExporter().from_filename(self._get_notebook())
+        (output, _resources) = RSTExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
     @onlyif_cmds_exist("pandoc")
@@ -44,11 +44,11 @@ class TestRSTExporter(ExportersTestsBase):
         nb = v4.upgrade(nb)
         exporter = self.exporter_class()  # type:ignore
 
-        (output, resources) = exporter.from_notebook_node(nb)
+        (output, _resources) = exporter.from_notebook_node(nb)
         # add an empty code cell
         nb.cells.append(v4.new_code_cell(source=""))
 
-        (output2, resources) = exporter.from_notebook_node(nb)
+        (output2, _resources) = exporter.from_notebook_node(nb)
         # adding an empty code cell shouldn't change output
         self.assertEqual(output.strip(), output2.strip())
 
@@ -57,7 +57,7 @@ class TestRSTExporter(ExportersTestsBase):
         """
         Does RSTExporter treat pngs with width/height metadata correctly?
         """
-        (output, resources) = RSTExporter().from_filename(
+        (output, _resources) = RSTExporter().from_filename(
             self._get_notebook(nb_name="pngmetadata.ipynb")
         )
         assert len(output) > 0
@@ -73,7 +73,7 @@ class TestRSTExporter(ExportersTestsBase):
         """
         Is native text/x-rst output included when converting
         """
-        (output, resources) = RSTExporter().from_filename(
+        (output, _resources) = RSTExporter().from_filename(
             self._get_notebook(nb_name="rst_output.ipynb")
         )
         assert len(output) > 0

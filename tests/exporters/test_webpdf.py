@@ -33,12 +33,12 @@ class TestWebPDFExporter(ExportersTestsBase):
 
     exporter_class = WebPDFExporter  # type:ignore
 
-    @pytest.mark.network()
+    @pytest.mark.network
     def test_export(self):
         """
         Can a TemplateExporter export something?
         """
-        (output, resources) = WebPDFExporter(allow_chromium_download=True).from_filename(
+        output, _resources = WebPDFExporter(allow_chromium_download=True).from_filename(
             self._get_notebook()
         )
         assert len(output) > 0

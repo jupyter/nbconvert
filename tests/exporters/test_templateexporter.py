@@ -61,7 +61,7 @@ class TestExporter(ExportersTestsBase):
         Can a TemplateExporter export something?
         """
         exporter = self._make_exporter()
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (output, _resources) = exporter.from_filename(self._get_notebook())
         assert len(output) > 0
 
     def test_extract_outputs(self):
@@ -70,7 +70,7 @@ class TestExporter(ExportersTestsBase):
         """
         config = Config({"ExtractOutputPreprocessor": {"enabled": True}})
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert isinstance(resources["outputs"], dict)
         assert len(resources["outputs"]) > 0
@@ -81,7 +81,7 @@ class TestExporter(ExportersTestsBase):
         """
         config = Config({"Exporter": {"preprocessors": [CheesePreprocessor]}})
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -91,7 +91,7 @@ class TestExporter(ExportersTestsBase):
         """
         config = Config({"Exporter": {"preprocessors": [CheesePreprocessor()]}})
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -103,7 +103,7 @@ class TestExporter(ExportersTestsBase):
             {"Exporter": {"preprocessors": ["tests.exporters.cheese.CheesePreprocessor"]}}
         )
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -113,7 +113,7 @@ class TestExporter(ExportersTestsBase):
         """
         exporter = self._make_exporter()
         exporter.register_preprocessor(CheesePreprocessor, enabled=True)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        _output, resources = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -123,7 +123,7 @@ class TestExporter(ExportersTestsBase):
         """
         exporter = self._make_exporter()
         executor = ProcessPoolExecutor()
-        (output, resources) = executor.submit(exporter.from_filename, self._get_notebook()).result()
+        output, _resources = executor.submit(exporter.from_filename, self._get_notebook()).result()
         assert len(output) > 0
 
     def test_absolute_template_file(self):
@@ -163,7 +163,7 @@ class TestExporter(ExportersTestsBase):
                 f.write(test_output)
             config = Config()
             config.TemplateExporter.template_file = template
-            with pytest.warns(DeprecationWarning):
+            with pytest.warns(DeprecationWarning, match="5.x style template file passed"):
                 exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
@@ -179,7 +179,7 @@ class TestExporter(ExportersTestsBase):
                     f.write(test_output)
                 config = Config()
                 config.TemplateExporter.template_file = template
-                with pytest.warns(DeprecationWarning):
+                with pytest.warns(DeprecationWarning, match="5.x style template file passed"):
                     exporter = self._make_exporter(config=config)
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert os.path.dirname(template_abs) in [
@@ -195,7 +195,7 @@ class TestExporter(ExportersTestsBase):
             config = Config()
             # We're setting the template_name instead of the template_file
             config.TemplateExporter.template_name = template
-            with pytest.warns(DeprecationWarning):
+            with pytest.warns(DeprecationWarning, match=".*style template name passed.*"):
                 exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
@@ -205,7 +205,10 @@ class TestExporter(ExportersTestsBase):
         config = Config()
         # We're setting the template_name instead of the template_file
         config.TemplateExporter.template_name = template
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"5.x template.*",
+        ):
             exporter = self._make_exporter(config=config)
         template_dir, template_file = os.path.split(exporter.template.filename)
         _, compat_dir = os.path.split(template_dir)
@@ -233,7 +236,7 @@ class TestExporter(ExportersTestsBase):
                 config = Config()
                 # We're setting the template_name instead of the template_file
                 config.TemplateExporter.template_name = template
-                with pytest.warns(DeprecationWarning):
+                with pytest.warns(DeprecationWarning, match=r"5.x style .+"):
                     exporter = self._make_exporter(config=config)
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert os.path.dirname(template_abs) in [
@@ -304,7 +307,7 @@ class TestExporter(ExportersTestsBase):
         exporter = HTMLExporter(template_file=template_file, template_name="lab")
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
-        output, resources = exporter.from_notebook_node(nb)
+        output, _resources = exporter.from_notebook_node(nb)
         assert "UNIQUE" in output
 
     def test_local_template_file_esmodule_js(self):
@@ -312,7 +315,7 @@ class TestExporter(ExportersTestsBase):
         exporter = HTMLExporter(template_file=template_file, template_name="lab")
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
-        output, resources = exporter.from_notebook_node(nb)
+        output, _resources = exporter.from_notebook_node(nb)
         print(output[:1000])
         assert '<script type="module">\nconst blerg = true' in output
 
@@ -490,7 +493,7 @@ class TestExporter(ExportersTestsBase):
         assert template not in exporter.environment.list_templates(extensions=["tpl"])
         nb = v4.new_notebook()
         with pytest.raises(TemplateNotFound):
-            out, resources = exporter.from_notebook_node(nb)
+            _out, _resources = exporter.from_notebook_node(nb)
 
     def test_exclude_code_cell(self):
         no_io = {
@@ -650,7 +653,7 @@ class TestExporter(ExportersTestsBase):
         )
 
         exporter = MarkdownExporter(config=conf)
-        nb, resources = exporter.from_filename(self._get_notebook())
+        nb, _resources = exporter.from_filename(self._get_notebook())
 
         assert "hist(evs.real)" not in nb
         assert "cell is just markdown testing whether" not in nb

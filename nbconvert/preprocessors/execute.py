@@ -7,6 +7,7 @@ and updates outputs"""
 from __future__ import annotations
 
 import typing as t
+from warnings import warn
 
 from jupyter_client.manager import KernelManager
 from nbclient.client import NotebookClient
@@ -21,7 +22,6 @@ from .base import Preprocessor
 
 def executenb(*args, **kwargs):
     """DEPRECATED."""
-    from warnings import warn
 
     warn(
         "The 'nbconvert.preprocessors.execute.executenb' function was moved to nbclient.execute. "

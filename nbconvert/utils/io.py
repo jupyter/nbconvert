@@ -9,7 +9,7 @@ import os
 import random
 import shutil
 import sys
-from typing import Any
+from typing import Any, Optional
 
 
 def unicode_std_stream(stream="stdout"):
@@ -75,7 +75,7 @@ def link(src, dst):
 
     if not hasattr(os, "link"):
         return ENOLINK
-    link_errno = 0
+    link_errno: Optional[int] = 0
     try:
         os.link(src, dst)
     except OSError as e:

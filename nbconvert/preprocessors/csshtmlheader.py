@@ -61,7 +61,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         Fills self.header with lines of CSS extracted from IPython
         and Pygments.
         """
-        from pygments.formatters import HtmlFormatter
+        from pygments.formatters import HtmlFormatter  # noqa: PLC0415
 
         header = []
 

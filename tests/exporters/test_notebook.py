@@ -24,7 +24,7 @@ class TestNotebookExporter(ExportersTestsBase):
         """
         with open(self._get_notebook()) as f:
             file_contents = f.read()
-        (output, resources) = self.exporter_class().from_filename(  # type:ignore
+        (output, _resources) = self.exporter_class().from_filename(  # type:ignore
             self._get_notebook()
         )
         assert len(output) > 0
@@ -32,12 +32,12 @@ class TestNotebookExporter(ExportersTestsBase):
 
     def test_downgrade_3(self):
         exporter = self.exporter_class(nbformat_version=3)  # type:ignore
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (output, _resources) = exporter.from_filename(self._get_notebook())
         nb = json.loads(output)
         validate(nb)
 
     def test_downgrade_2(self):
         exporter = self.exporter_class(nbformat_version=2)  # type:ignore
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (output, _resources) = exporter.from_filename(self._get_notebook())
         nb = json.loads(output)
         self.assertEqual(nb["nbformat"], 2)

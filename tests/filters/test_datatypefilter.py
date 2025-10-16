@@ -29,7 +29,7 @@ class TestDataTypeFilter(TestsBase):
             }
         )
 
-        with pytest.warns(UserWarning):
+        with pytest.warns(UserWarning, match="Your element with.*"):
             self.assertEqual(
                 filter_(
                     {"hair": "this is not", "water": "going to return anything", "rock": "or is it"}
@@ -40,5 +40,5 @@ class TestDataTypeFilter(TestsBase):
     def test_null(self):
         """Will the DataTypeFilter fail if no types are passed in?"""
         filter_ = DataTypeFilter()
-        with pytest.warns(UserWarning):
+        with pytest.warns(UserWarning, match="Your element with.*"):
             self.assertEqual(filter_({}), [])

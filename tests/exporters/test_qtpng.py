@@ -19,7 +19,7 @@ class TestQtPNGExporter(ExportersTestsBase):
 
     exporter_class = QtPNGExporter  # type:ignore
 
-    @pytest.mark.flaky()
+    @pytest.mark.flaky
     def test_export(self):
         """
         Can a TemplateExporter export something?
@@ -27,7 +27,7 @@ class TestQtPNGExporter(ExportersTestsBase):
         if os.name == "nt":
             # currently not supported
             with pytest.raises(RuntimeError):
-                (output, resources) = QtPNGExporter().from_filename(self._get_notebook())
+                (output, _resources) = QtPNGExporter().from_filename(self._get_notebook())
         else:
-            (output, resources) = QtPNGExporter().from_filename(self._get_notebook())
+            (output, _resources) = QtPNGExporter().from_filename(self._get_notebook())
             assert len(output) > 0

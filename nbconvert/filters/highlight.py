@@ -63,7 +63,7 @@ class Highlight2HTML(NbConvertBase):
         metadata : NotebookNode cell metadata
             metadata of the cell to highlight
         """
-        from pygments.formatters import HtmlFormatter
+        from pygments.formatters import HtmlFormatter  # noqa: PLC0415
 
         if not language:
             language = self.pygments_lexer
@@ -122,7 +122,7 @@ class Highlight2Latex(NbConvertBase):
         strip_verbatim : bool
             remove the Verbatim environment that pygments provides by default
         """
-        from pygments.formatters import LatexFormatter
+        from pygments.formatters import LatexFormatter  # noqa: PLC0415
 
         if not language:
             language = self.pygments_lexer
@@ -156,9 +156,9 @@ def _pygments_highlight(
         https://pygments.org/docs/lexers/#available-lexers for more information about
         valid lexer options
     """
-    from pygments import highlight
-    from pygments.lexers import get_lexer_by_name
-    from pygments.util import ClassNotFound
+    from pygments import highlight  # noqa: PLC0415
+    from pygments.lexers import get_lexer_by_name  # noqa: PLC0415
+    from pygments.util import ClassNotFound  # noqa: PLC0415
 
     # If the cell uses a magic extension language,
     # use the magic language instead.
@@ -168,16 +168,16 @@ def _pygments_highlight(
     lexer = None
     if language == "ipython2":
         try:
-            from IPython.lib.lexers import IPythonLexer
-        except ImportError:
+            from IPython.lib.lexers import IPythonLexer  # noqa: PLC0415
+        except ModuleNotFoundError:
             warn("IPython lexer unavailable, falling back on Python", stacklevel=2)
             language = "python"
         else:
             lexer = IPythonLexer()
     elif language == "ipython3":
         try:
-            from IPython.lib.lexers import IPython3Lexer
-        except ImportError:
+            from IPython.lib.lexers import IPython3Lexer  # noqa: PLC0415
+        except ModuleNotFoundError:
             warn("IPython3 lexer unavailable, falling back on Python 3", stacklevel=2)
             language = "python3"
         else:
@@ -187,8 +187,11 @@ def _pygments_highlight(
         try:
             lexer = get_lexer_by_name(language, **lexer_options)
         except ClassNotFound:
-            warn("No lexer found for language %r. Treating as plain text." % language, stacklevel=2)
-            from pygments.lexers.special import TextLexer
+            warn(
+                "No lexer found for language %r. Treating as plain text." % language,
+                stacklevel=2,
+            )
+            from pygments.lexers.special import TextLexer  # noqa: PLC0415
 
             lexer = TextLexer()
 

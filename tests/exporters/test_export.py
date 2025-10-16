@@ -52,7 +52,7 @@ class TestExport(ExportersTestsBase):
         Can a notebook be exported by filename?
         """
         exporter = get_exporter("python")
-        (output, resources) = export(exporter, self._get_notebook())
+        (output, _resources) = export(exporter, self._get_notebook())
         assert len(output) > 0
 
     def test_export_nbnode(self):
@@ -62,7 +62,7 @@ class TestExport(ExportersTestsBase):
         with open(self._get_notebook()) as f:
             notebook = nbformat.read(f, 4)
             exporter = get_exporter("python")
-            (output, resources) = export(exporter, notebook)
+            (output, _resources) = export(exporter, notebook)
         assert len(output) > 0
 
     def test_export_filestream(self):
@@ -71,28 +71,28 @@ class TestExport(ExportersTestsBase):
         """
         with open(self._get_notebook()) as f:
             exporter = get_exporter("python")
-            (output, resources) = export(exporter, f)
+            (output, _resources) = export(exporter, f)
         assert len(output) > 0
 
     def test_export_using_exporter(self):
         """
         Can a notebook be exported using an instantiated exporter?
         """
-        (output, resources) = export(PythonExporter(), self._get_notebook())
+        (output, _resources) = export(PythonExporter(), self._get_notebook())
         assert len(output) > 0
 
     def test_export_using_exporter_class(self):
         """
         Can a notebook be exported using an exporter class type?
         """
-        (output, resources) = export(PythonExporter, self._get_notebook())
+        (output, _resources) = export(PythonExporter, self._get_notebook())
         assert len(output) > 0
 
     def test_export_resources(self):
         """
         Can a notebook be exported along with a custom resources dict?
         """
-        (output, resources) = export(PythonExporter, self._get_notebook(), resources={})
+        (output, _resources) = export(PythonExporter, self._get_notebook(), resources={})
         assert len(output) > 0
 
     def test_no_exporter(self):
@@ -100,7 +100,7 @@ class TestExport(ExportersTestsBase):
         Is the right error thrown if no exporter is provided?
         """
         try:
-            (output, resources) = export(None, self._get_notebook())
+            (_output, _resources) = export(None, self._get_notebook())
         except TypeError:
             pass
 

@@ -395,7 +395,7 @@ class TemplateExporter(Exporter):
         """Convert a notebook from a file."""
         return super().from_file(file_stream, resources, **kw)  # type:ignore[return-value]
 
-    def from_notebook_node(  # type:ignore[explicit-override, override]
+    def from_notebook_node(  # type:ignore[override]
         self, nb: NotebookNode, resources: dict[str, t.Any] | None = None, **kw: t.Any
     ) -> tuple[str, dict[str, t.Any]]:
         """

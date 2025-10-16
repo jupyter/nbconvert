@@ -23,7 +23,7 @@ class QtExporter(HTMLExporter):
         if sys.platform.startswith("win") and self.format == "png":
             msg = "Exporting to PNG using Qt is currently not supported on Windows."
             raise RuntimeError(msg)
-        from .qt_screenshot import QT_INSTALLED
+        from .qt_screenshot import QT_INSTALLED  # noqa: PLC0415
 
         if not QT_INSTALLED:
             msg = (
@@ -31,14 +31,16 @@ class QtExporter(HTMLExporter):
                 f"Please install `nbconvert[qt{self.format}]` to enable."
             )
             raise RuntimeError(msg)
-        from .qt_screenshot import QtScreenshot
+        from .qt_screenshot import QtScreenshot  # noqa: PLC0415
 
         return QtScreenshot
 
     def _run_pyqtwebengine(self, html):
         ext = ".html"
-        temp_file = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
-        filename = f"{temp_file.name[:-len(ext)]}.{self.format}"
+        temp_file = tempfile.NamedTemporaryFile(  # noqa: SIM115
+            suffix=ext, delete=False
+        )
+        filename = f"{temp_file.name[: -len(ext)]}.{self.format}"
         with temp_file:
             temp_file.write(html.encode("utf-8"))
         try:

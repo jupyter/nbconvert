@@ -25,7 +25,7 @@ class TestScriptExporter(ExportersTestsBase):
 
     def test_export(self):
         """ScriptExporter can export something"""
-        (output, resources) = self.exporter_class().from_filename(  # type:ignore
+        (output, _resources) = self.exporter_class().from_filename(  # type:ignore
             self._get_notebook()
         )
         assert len(output) > 0
@@ -35,7 +35,7 @@ class TestScriptExporter(ExportersTestsBase):
         self.exporter_class()  # type:ignore
 
         pynb = v4.new_notebook()
-        (output, resources) = self.exporter_class().from_notebook_node(pynb)  # type:ignore
+        (output, _resources) = self.exporter_class().from_notebook_node(pynb)  # type:ignore
         self.assertNotIn("# coding: utf-8", output)
 
         pynb.metadata.language_info = {
@@ -43,7 +43,7 @@ class TestScriptExporter(ExportersTestsBase):
             "mimetype": "text/x-python",
             "nbconvert_exporter": "python",
         }
-        (output, resources) = self.exporter_class().from_notebook_node(pynb)  # type:ignore
+        (output, _resources) = self.exporter_class().from_notebook_node(pynb)  # type:ignore
         self.assertIn("# coding: utf-8", output)
 
     def test_export_config_transfer(self):

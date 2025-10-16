@@ -13,7 +13,7 @@ from html import escape
 from re import Match
 from typing import TYPE_CHECKING, Any, ClassVar, Optional, Protocol
 
-import bs4
+import bs4  # type: ignore[import-not-found]
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexer import Lexer

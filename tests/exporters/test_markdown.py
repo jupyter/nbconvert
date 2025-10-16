@@ -37,5 +37,5 @@ class TestMarkdownExporter(ExportersTestsBase):
         """
         Can a MarkdownExporter export something?
         """
-        (output, resources) = MarkdownExporter().from_filename(self._get_notebook())
+        (output, _resources) = MarkdownExporter().from_filename(self._get_notebook())
         assert len(output) > 0

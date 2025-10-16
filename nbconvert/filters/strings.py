@@ -18,27 +18,27 @@ from xml.etree.ElementTree import Element
 import bleach
 
 # defusedxml does safe(r) parsing of untrusted XML data
-from defusedxml import ElementTree  # type:ignore[import-untyped]
+from defusedxml import ElementTree
 
 from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
 
 __all__ = [
-    "wrap_text",
-    "html2text",
-    "clean_html",
     "add_anchor",
-    "strip_dollars",
-    "strip_files_prefix",
-    "comment_lines",
-    "get_lines",
-    "ipython2python",
-    "posix_path",
-    "path2url",
     "add_prompts",
     "ascii_only",
+    "clean_html",
+    "comment_lines",
+    "get_lines",
+    "html2text",
+    "ipython2python",
+    "path2url",
+    "posix_path",
     "prevent_list_blocks",
+    "strip_dollars",
+    "strip_files_prefix",
     "strip_trailing_newline",
     "text_base64",
+    "wrap_text",
 ]
 
 
@@ -226,7 +226,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
-        from IPython.core.inputtransformer2 import TransformerManager
+        from IPython.core.inputtransformer2 import TransformerManager  # noqa: PLC0415
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."

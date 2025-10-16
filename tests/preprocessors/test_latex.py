@@ -46,7 +46,7 @@ class TestLatex(PreprocessorTestsBase):
         style_defs = res["latex"]["pygments_definitions"]
 
         # Get the default
-        from pygments.formatters import LatexFormatter
+        from pygments.formatters import LatexFormatter  # noqa: PLC0415
 
         default_defs = LatexFormatter(style="default").get_style_defs()
 

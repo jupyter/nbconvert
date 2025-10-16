@@ -30,14 +30,14 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         Can a HTMLExporter export something?
         """
-        (output, resources) = HTMLExporter().from_filename(self._get_notebook())
+        (output, _resources) = HTMLExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
     def test_export_classic(self):
         """
         Can a HTMLExporter export using the 'classic' template?
         """
-        (output, resources) = HTMLExporter(template_name="classic").from_filename(
+        (output, _resources) = HTMLExporter(template_name="classic").from_filename(
             self._get_notebook()
         )
         assert len(output) > 0
@@ -46,7 +46,7 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         Can a HTMLExporter export using the 'lab' template?
         """
-        (output, resources) = HTMLExporter(template_name="lab").from_filename(self._get_notebook())
+        (output, _resources) = HTMLExporter(template_name="lab").from_filename(self._get_notebook())
         assert len(output) > 0
 
     def test_prompt_number(self):
@@ -62,7 +62,7 @@ class TestHTMLExporter(ExportersTestsBase):
             }
         )
         exporter = HTMLExporter(config=no_prompt_conf, template_name="lab")
-        (output, resources) = exporter.from_filename(
+        (output, _resources) = exporter.from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb")
         )
         in_regex = r"In&nbsp;\[(.*)\]:"
@@ -77,7 +77,7 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         exporter = HTMLExporter(template_name="classic")
         with self.assertLogs(exporter.log, level="WARN") as log:
-            (output, resources) = exporter.from_filename(
+            (output, _resources) = exporter.from_filename(
                 self._get_notebook(nb_name="pngmetadata.ipynb")
             )
             assert len(log.output) == 1
@@ -105,7 +105,7 @@ class TestHTMLExporter(ExportersTestsBase):
                 )
             ]
         )
-        (output, resources) = HTMLExporter(template_name="classic").from_notebook_node(nb)
+        (output, _resources) = HTMLExporter(template_name="classic").from_notebook_node(nb)
         self.assertIn("javascript_output", output)
 
     def test_mermaid_output(self):
@@ -121,7 +121,7 @@ class TestHTMLExporter(ExportersTestsBase):
                 )
             ]
         )
-        (output, resources) = HTMLExporter(template_name="lab").from_notebook_node(nb)
+        (output, _resources) = HTMLExporter(template_name="lab").from_notebook_node(nb)
         self.assertIn("""<div class="jp-Mermaid">""", output)
         self.assertIn("""<pre class="mermaid">""", output)
 
@@ -141,11 +141,11 @@ class TestHTMLExporter(ExportersTestsBase):
                 )
             ]
         )
-        (output, resources) = HTMLExporter(template_name="lab").from_notebook_node(nb)
+        (output, _resources) = HTMLExporter(template_name="lab").from_notebook_node(nb)
         self.assertNotIn("""<div class="jp-Mermaid">""", output)
 
     def test_attachments(self):
-        (output, resources) = HTMLExporter(template_name="classic").from_file(
+        (output, _resources) = HTMLExporter(template_name="classic").from_file(
             self._get_notebook(nb_name="attachment.ipynb")
         )
         check_for_png = re.compile(r'<img alt="image.png" src="([^"]*?)"/>')
@@ -167,7 +167,7 @@ class TestHTMLExporter(ExportersTestsBase):
             return source + " ADDED_TEXT"
 
         filters = {"highlight_code": custom_highlight_code}
-        (output, resources) = HTMLExporter(
+        (output, _resources) = HTMLExporter(
             template_name="classic", filters=filters
         ).from_notebook_node(nb)
         self.assertTrue("ADDED_TEXT" in output)
@@ -176,14 +176,14 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         Can a HTMLExporter export using the 'basic' template?
         """
-        (output, resources) = HTMLExporter(template_name="basic").from_filename(
+        (output, _resources) = HTMLExporter(template_name="basic").from_filename(
             self._get_notebook()
         )
         assert len(output) > 0
 
     def test_javascript_injection(self):
         for template in ["lab", "classic", "reveal"]:
-            (output, resources) = HTMLExporter(template_name=template).from_filename(
+            (output, _resources) = HTMLExporter(template_name=template).from_filename(
                 self._get_notebook("notebook_inject.ipynb")
             )
 
@@ -224,7 +224,7 @@ class TestHTMLExporter(ExportersTestsBase):
         # By design, text/html, text/markdown, application/javascript and markdown cells should allow
         # for JavaScript code execution
         for template in ["lab", "classic", "reveal"]:
-            (output, resources) = HTMLExporter(template_name=template).from_filename(
+            (output, _resources) = HTMLExporter(template_name=template).from_filename(
                 self._get_notebook("notebook_inject.ipynb")
             )
 
@@ -235,7 +235,7 @@ class TestHTMLExporter(ExportersTestsBase):
 
         # But it's an opt-out
         for template in ["lab", "classic", "reveal"]:
-            (output, resources) = HTMLExporter(
+            (output, _resources) = HTMLExporter(
                 template_name=template, sanitize_html=True
             ).from_filename(self._get_notebook("notebook_inject.ipynb"))
 
@@ -245,14 +245,14 @@ class TestHTMLExporter(ExportersTestsBase):
             assert "alert('application/javascript output')" not in output
 
     def test_language_code_not_set(self):
-        (output, resources) = HTMLExporter(template_name="classic").from_filename(
+        (output, _resources) = HTMLExporter(template_name="classic").from_filename(
             self._get_notebook()
         )
         assert '<html lang="en">' in output
 
     def test_set_language_code(self):
         exporter = HTMLExporter(template_name="classic", language_code="fr")
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (output, _resources) = exporter.from_filename(self._get_notebook())
         assert '<html lang="fr">' in output
 
     def test_language_code_error(self):
@@ -260,7 +260,7 @@ class TestHTMLExporter(ExportersTestsBase):
             exporter = HTMLExporter(template_name="classic", language_code="zz")
             assert len(log.output) == 1
             assert '"zz" is not an ISO 639-1 language code.' in log.output[0]
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (output, _resources) = exporter.from_filename(self._get_notebook())
 
         assert '<html lang="en">' in output
 

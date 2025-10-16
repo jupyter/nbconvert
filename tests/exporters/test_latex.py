@@ -37,7 +37,7 @@ class TestLatexExporter(ExportersTestsBase):
         """
         Can a LatexExporter export something?
         """
-        (output, resources) = LatexExporter().from_filename(self._get_notebook())
+        (output, _resources) = LatexExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
     @onlyif_cmds_exist("pandoc")
@@ -45,7 +45,7 @@ class TestLatexExporter(ExportersTestsBase):
         """
         Can a LatexExporter export using 'report' template?
         """
-        (output, resources) = LatexExporter(template_file="report").from_filename(
+        (output, _resources) = LatexExporter(template_file="report").from_filename(
             self._get_notebook()
         )
         assert len(output) > 0
@@ -82,7 +82,7 @@ class TestLatexExporter(ExportersTestsBase):
             with open(nbfile, "w") as f:
                 write(nb, f, 4)
 
-            (output, resources) = LatexExporter().from_filename(nbfile)
+            (output, _resources) = LatexExporter().from_filename(nbfile)
             assert len(output) > 0
 
     @onlyif_cmds_exist("pandoc")
@@ -90,7 +90,7 @@ class TestLatexExporter(ExportersTestsBase):
         """
         Does LatexExporter properly format input and output prompts in color?
         """
-        (output, resources) = LatexExporter().from_filename(
+        (output, _resources) = LatexExporter().from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb")
         )
 
@@ -125,7 +125,7 @@ class TestLatexExporter(ExportersTestsBase):
         class MyExporter(LatexExporter):
             template_file = "my_template"
 
-        (output, resources) = MyExporter(extra_loaders=[my_loader_tplx]).from_filename(
+        (output, _resources) = MyExporter(extra_loaders=[my_loader_tplx]).from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb")
         )
 
@@ -149,7 +149,7 @@ class TestLatexExporter(ExportersTestsBase):
         c_no_prompt = Config(no_prompt)
 
         exporter = LatexExporter(config=c_no_prompt)
-        (output, resources) = exporter.from_filename(
+        (output, _resources) = exporter.from_filename(
             self._get_notebook(nb_name="prompt_numbers.ipynb")
         )
         assert "shape" in output
@@ -162,7 +162,7 @@ class TestLatexExporter(ExportersTestsBase):
         """
         filename = os.path.join(current_dir, "files", "svg.ipynb")
 
-        (output, resources) = LatexExporter().from_filename(filename)
+        (output, _resources) = LatexExporter().from_filename(filename)
         assert len(output) > 0
 
     def test_in_memory_template_tplx(self):
@@ -176,7 +176,7 @@ class TestLatexExporter(ExportersTestsBase):
 
         exporter = MyExporter(extra_loaders=[my_loader_tplx])
         nb = v4.new_notebook()
-        out, resources = exporter.from_notebook_node(nb)
+        _out, _resources = exporter.from_notebook_node(nb)
 
     def test_custom_filter_highlight_code(self):
         # Overwriting filters takes place at: Exporter.from_notebook_node
@@ -187,5 +187,5 @@ class TestLatexExporter(ExportersTestsBase):
             return source + " ADDED_TEXT"
 
         filters = {"highlight_code": custom_highlight_code}
-        (output, resources) = LatexExporter(filters=filters).from_notebook_node(nb)
+        (output, _resources) = LatexExporter(filters=filters).from_notebook_node(nb)
         self.assertTrue("ADDED_TEXT" in output)
