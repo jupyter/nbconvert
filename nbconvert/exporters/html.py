@@ -303,8 +303,10 @@ class HTMLExporter(TemplateExporter):
     def _init_resources(self, resources):
         def resources_include_css(name):
             env = self.environment
-            code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])
-            return markupsafe.Markup(code)
+            code = """<style type="text/css">\n%s</style>""" % (
+                env.loader.get_source(env, name)[0]
+            )
+            return markupsafe.Markup(code)  # noqa:S704
 
         def resources_include_lab_theme(name):
             # Try to find the theme with the given name, looking through the labextensions
@@ -328,13 +330,13 @@ class HTMLExporter(TemplateExporter):
                         data = data.replace(local_url, f"url(data:{mime_type};base64,{base64_str})")
 
             code = """<style type="text/css">\n%s</style>""" % data
-            return markupsafe.Markup(code)
+            return markupsafe.Markup(code)  # noqa:S704
 
         def resources_include_js(name, module=False):
             """Get the resources include JS for a name. If module=True, import as ES module"""
             env = self.environment
             code = f"""<script {'type="module"' if module else ""}>\n{env.loader.get_source(env, name)[0]}</script>"""
-            return markupsafe.Markup(code)
+            return markupsafe.Markup(code)  # noqa:S704
 
         def resources_include_url(name):
             """Get the resources include url for a name."""
@@ -360,7 +362,7 @@ class HTMLExporter(TemplateExporter):
             data = base64.b64encode(data)
             data = data.replace(b"\n", b"").decode("ascii")
             src = f"data:{mime_type};base64,{data}"
-            return markupsafe.Markup(src)
+            return markupsafe.Markup(src)  # noqa:S704
 
         resources = super()._init_resources(resources)
         resources["theme"] = self.theme

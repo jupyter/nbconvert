@@ -158,7 +158,7 @@ def _pygments_highlight(
     """
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name
-    from pygments.util import ClassNotFound
+    from pygments.util import ClassNotFound  # noqa: PLC0415
 
     # If the cell uses a magic extension language,
     # use the magic language instead.
@@ -168,16 +168,16 @@ def _pygments_highlight(
     lexer = None
     if language == "ipython2":
         try:
-            from IPython.lib.lexers import IPythonLexer
-        except ImportError:
+            from IPython.lib.lexers import IPythonLexer  # noqa: PLC0415
+        except ModuleNotFound:
             warn("IPython lexer unavailable, falling back on Python", stacklevel=2)
             language = "python"
         else:
             lexer = IPythonLexer()
     elif language == "ipython3":
         try:
-            from IPython.lib.lexers import IPython3Lexer
-        except ImportError:
+            from IPython.lib.lexers import IPython3Lexer  # noqa: PLC0415
+        except ModuleNotFound:
             warn("IPython3 lexer unavailable, falling back on Python 3", stacklevel=2)
             language = "python3"
         else:
@@ -187,8 +187,11 @@ def _pygments_highlight(
         try:
             lexer = get_lexer_by_name(language, **lexer_options)
         except ClassNotFound:
-            warn("No lexer found for language %r. Treating as plain text." % language, stacklevel=2)
-            from pygments.lexers.special import TextLexer
+            warn(
+                "No lexer found for language %r. Treating as plain text." % language,
+                stacklevel=2,
+            )
+            from pygments.lexers.special import TextLexer  # noqa: PLC0415
 
             lexer = TextLexer()
 

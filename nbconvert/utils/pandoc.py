@@ -74,7 +74,7 @@ def get_pandoc_version():
         if not shutil.which("pandoc"):
             raise PandocMissing()
 
-        out = subprocess.check_output(["pandoc", "-v"])  # noqa: S607, S603
+        out = subprocess.check_output(["pandoc", "-v"])  # noqa: S607
         out_lines = out.splitlines()
         version_pattern = re.compile(r"^\d+(\.\d+){1,}$")
         for tok in out_lines[0].decode("ascii", "replace").split():

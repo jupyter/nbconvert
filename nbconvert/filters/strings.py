@@ -226,7 +226,7 @@ def ipython2python(code):
         IPython code, to be transformed to pure Python
     """
     try:
-        from IPython.core.inputtransformer2 import TransformerManager
+        from IPython.core.inputtransformer2 import TransformerManager  # noqa: PLC0415
     except ImportError:
         warnings.warn(
             "IPython is needed to transform IPython syntax to pure Python."
