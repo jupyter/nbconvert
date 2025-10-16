@@ -116,7 +116,7 @@ detached = true
 dependencies = ["pre-commit"]
 [tool.hatch.envs.lint.scripts]
 build = [
-  "pre-commit run --all-files ruff",
+  "pre-commit run --all-files ruff-check",
   "pre-commit run --all-files ruff-format",
 ]
 
