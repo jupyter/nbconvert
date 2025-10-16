@@ -157,24 +157,13 @@ class WebPDFExporter(HTMLExporter):
         # file to be opened by a separate process. So we must close it first
         # before calling Chromium. We also specify delete=False to ensure the
         # file is not deleted after closing (the default behavior).
-        temp_file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+        temp_file = tempfile.NamedTemporaryFile(  # noqa: SIM115
+            suffix=".html", delete=False
+        )
         with temp_file:
             temp_file.write(html.encode("utf-8"))
         try:
-            # TODO: when dropping Python 3.6, use
-            # pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
-            def run_coroutine(coro):
-                """Run an internal coroutine."""
-                loop = (
-                    asyncio.ProactorEventLoop()  # type:ignore[attr-defined]
-                    if IS_WINDOWS
-                    else asyncio.new_event_loop()
-                )
-
-                asyncio.set_event_loop(loop)
-                return loop.run_until_complete(coro)
-
-            pdf_data = pool.submit(run_coroutine, main(temp_file)).result()
+            pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
         finally:
             # Ensure the file is deleted even if playwright raises an exception
             os.unlink(temp_file.name)

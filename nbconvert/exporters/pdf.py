@@ -133,12 +133,12 @@ class PDFExporter(LatexExporter):
         with open(os.devnull, "rb") as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for _ in range(count):
-                p = subprocess.Popen(
+                p = subprocess.Popen(  # noqa: S603
                     command,
                     stdout=stdout,
                     stderr=subprocess.STDOUT,
                     stdin=null,
-                    shell=shell,  # noqa: S603
+                    shell=shell,
                     env=env,
                 )
                 out, _ = p.communicate()
