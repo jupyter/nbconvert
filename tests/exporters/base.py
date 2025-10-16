@@ -30,7 +30,7 @@ class ExportersTestsBase(TestsBase):
         if self.should_include_raw is None:
             return
         exporter = self.exporter_class()
-        (output, resources) = exporter.from_filename(self._get_notebook("rawtest.ipynb"))
+        (output, _resources) = exporter.from_filename(self._get_notebook("rawtest.ipynb"))
         for inc in self.should_include_raw:
             self.assertIn("raw %s" % inc, output, "should include %s" % inc)
         self.assertIn("no raw_mimetype metadata", output)

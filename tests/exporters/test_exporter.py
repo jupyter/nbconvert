@@ -63,14 +63,14 @@ class TestExporter(ExportersTestsBase):
     def test_export(self):
         """Can an Exporter export something?"""
         exporter = Exporter()
-        (notebook, resources) = exporter.from_filename(self._get_notebook())
+        (notebook, _resources) = exporter.from_filename(self._get_notebook())
         assert isinstance(notebook, dict)
 
     def test_preprocessor(self):
         """Do preprocessors work?"""
         config = Config({"Exporter": {"preprocessors": [PizzaPreprocessor()]}})
         exporter = Exporter(config=config)
-        (notebook, resources) = exporter.from_filename(self._get_notebook())
+        (notebook, _resources) = exporter.from_filename(self._get_notebook())
         self.assertEqual(notebook["metadata"]["pizza"], "cheese")
 
     def test_get_export_names_disable(self):

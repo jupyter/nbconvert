@@ -21,5 +21,5 @@ class TestQtPDFExporter(ExportersTestsBase):
         """
         Can a TemplateExporter export something?
         """
-        (output, resources) = QtPDFExporter().from_filename(self._get_notebook())
+        (output, _resources) = QtPDFExporter().from_filename(self._get_notebook())
         assert len(output) > 0

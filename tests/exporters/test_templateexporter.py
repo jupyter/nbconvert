@@ -61,7 +61,7 @@ class TestExporter(ExportersTestsBase):
         Can a TemplateExporter export something?
         """
         exporter = self._make_exporter()
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (output, _resources) = exporter.from_filename(self._get_notebook())
         assert len(output) > 0
 
     def test_extract_outputs(self):
@@ -70,7 +70,7 @@ class TestExporter(ExportersTestsBase):
         """
         config = Config({"ExtractOutputPreprocessor": {"enabled": True}})
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert isinstance(resources["outputs"], dict)
         assert len(resources["outputs"]) > 0
@@ -81,7 +81,7 @@ class TestExporter(ExportersTestsBase):
         """
         config = Config({"Exporter": {"preprocessors": [CheesePreprocessor]}})
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -91,7 +91,7 @@ class TestExporter(ExportersTestsBase):
         """
         config = Config({"Exporter": {"preprocessors": [CheesePreprocessor()]}})
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -103,7 +103,7 @@ class TestExporter(ExportersTestsBase):
             {"Exporter": {"preprocessors": ["tests.exporters.cheese.CheesePreprocessor"]}}
         )
         exporter = self._make_exporter(config=config)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        (_output, resources) = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
