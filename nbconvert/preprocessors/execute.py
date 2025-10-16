@@ -18,10 +18,10 @@ from nbformat import NotebookNode
 
 from .base import Preprocessor
 
+from warnings import warn
 
 def executenb(*args, **kwargs):
     """DEPRECATED."""
-    from warnings import warn
 
     warn(
         "The 'nbconvert.preprocessors.execute.executenb' function was moved to nbclient.execute. "
