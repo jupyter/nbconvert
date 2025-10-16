@@ -85,7 +85,9 @@ class WebPDFExporter(HTMLExporter):
             """Run main playwright script."""
 
             try:
-                from playwright.async_api import async_playwright  # type: ignore[import-not-found]
+                from playwright.async_api import (  # noqa: PLC0415
+                    async_playwright,  # type: ignore[import-not-found]
+                )
             except ModuleNotFoundError as e:
                 msg = (
                     "Playwright is not installed to support Web PDF conversion. "

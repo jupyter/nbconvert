@@ -63,7 +63,7 @@ class Highlight2HTML(NbConvertBase):
         metadata : NotebookNode cell metadata
             metadata of the cell to highlight
         """
-        from pygments.formatters import HtmlFormatter
+        from pygments.formatters import HtmlFormatter  # noqa: PLC0415
 
         if not language:
             language = self.pygments_lexer
@@ -122,7 +122,7 @@ class Highlight2Latex(NbConvertBase):
         strip_verbatim : bool
             remove the Verbatim environment that pygments provides by default
         """
-        from pygments.formatters import LatexFormatter
+        from pygments.formatters import LatexFormatter  # noqa: PLC0415
 
         if not language:
             language = self.pygments_lexer
