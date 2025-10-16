@@ -165,7 +165,9 @@ class TestExporter(ExportersTestsBase):
                 f.write(test_output)
             config = Config()
             config.TemplateExporter.template_file = template
-            with pytest.warns(DeprecationWarning):
+            with pytest.warns(
+                DeprecationWarning, match="5.x style template file passed"
+            ):
                 exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
@@ -181,7 +183,9 @@ class TestExporter(ExportersTestsBase):
                     f.write(test_output)
                 config = Config()
                 config.TemplateExporter.template_file = template
-                with pytest.warns(DeprecationWarning):
+                with pytest.warns(
+                    DeprecationWarning, match="5.x style template file passed"
+                ):
                     exporter = self._make_exporter(config=config)
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert os.path.dirname(template_abs) in [
@@ -197,7 +201,9 @@ class TestExporter(ExportersTestsBase):
             config = Config()
             # We're setting the template_name instead of the template_file
             config.TemplateExporter.template_name = template
-            with pytest.warns(DeprecationWarning):
+            with pytest.warns(
+                DeprecationWarning, match=".*style template name passed.*"
+            ):
                 exporter = self._make_exporter(config=config)
             assert exporter.template.filename == template
             assert os.path.dirname(template) in exporter.template_paths
@@ -207,7 +213,10 @@ class TestExporter(ExportersTestsBase):
         config = Config()
         # We're setting the template_name instead of the template_file
         config.TemplateExporter.template_name = template
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"5.x template.*",
+        ):
             exporter = self._make_exporter(config=config)
         template_dir, template_file = os.path.split(exporter.template.filename)
         _, compat_dir = os.path.split(template_dir)
@@ -235,7 +244,7 @@ class TestExporter(ExportersTestsBase):
                 config = Config()
                 # We're setting the template_name instead of the template_file
                 config.TemplateExporter.template_name = template
-                with pytest.warns(DeprecationWarning):
+                with pytest.warns(DeprecationWarning, match=r"5.x style .+"):
                     exporter = self._make_exporter(config=config)
                 assert os.path.abspath(exporter.template.filename) == template_abs
                 assert os.path.dirname(template_abs) in [
