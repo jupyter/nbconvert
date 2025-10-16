@@ -303,9 +303,7 @@ class HTMLExporter(TemplateExporter):
     def _init_resources(self, resources):
         def resources_include_css(name):
             env = self.environment
-            code = """<style type="text/css">\n%s</style>""" % (
-                env.loader.get_source(env, name)[0]
-            )
+            code = """<style type="text/css">\n%s</style>""" % (env.loader.get_source(env, name)[0])
             return markupsafe.Markup(code)  # noqa:S704
 
         def resources_include_lab_theme(name):

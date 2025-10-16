@@ -183,7 +183,7 @@ class TestHTMLExporter(ExportersTestsBase):
 
     def test_javascript_injection(self):
         for template in ["lab", "classic", "reveal"]:
-            (output, resources) = HTMLExporter(template_name=template).from_filename(
+            (output, _resources) = HTMLExporter(template_name=template).from_filename(
                 self._get_notebook("notebook_inject.ipynb")
             )
 
