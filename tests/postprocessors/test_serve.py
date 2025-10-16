@@ -19,8 +19,8 @@ class TestServe(TestsBase):
         try:
             from nbconvert.postprocessors.serve import (
                 ServePostProcessor,
-            )  # noqa: PLC0415
-        except ImportError:
+            )
+        except ModuleNotFound:
             print("Something weird is happening.\nTornado is sometimes present, sometimes not.")
             raise
         ServePostProcessor()
