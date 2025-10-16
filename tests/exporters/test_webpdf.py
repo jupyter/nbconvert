@@ -38,7 +38,7 @@ class TestWebPDFExporter(ExportersTestsBase):
         """
         Can a TemplateExporter export something?
         """
-        (output, resources) = WebPDFExporter(allow_chromium_download=True).from_filename(
+        output, _resources = WebPDFExporter(allow_chromium_download=True).from_filename(
             self._get_notebook()
         )
         assert len(output) > 0

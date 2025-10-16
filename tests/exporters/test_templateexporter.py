@@ -113,7 +113,7 @@ class TestExporter(ExportersTestsBase):
         """
         exporter = self._make_exporter()
         exporter.register_preprocessor(CheesePreprocessor, enabled=True)
-        (output, resources) = exporter.from_filename(self._get_notebook())
+        _output, resources = exporter.from_filename(self._get_notebook())
         assert resources is not None
         assert resources["cheese"] == "real"
 
@@ -123,7 +123,9 @@ class TestExporter(ExportersTestsBase):
         """
         exporter = self._make_exporter()
         executor = ProcessPoolExecutor()
-        (output, resources) = executor.submit(exporter.from_filename, self._get_notebook()).result()
+        output, _resources = executor.submit(
+            exporter.from_filename, self._get_notebook()
+        ).result()
         assert len(output) > 0
 
     def test_absolute_template_file(self):
@@ -304,7 +306,7 @@ class TestExporter(ExportersTestsBase):
         exporter = HTMLExporter(template_file=template_file, template_name="lab")
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
-        output, resources = exporter.from_notebook_node(nb)
+        output, _resources = exporter.from_notebook_node(nb)
         assert "UNIQUE" in output
 
     def test_local_template_file_esmodule_js(self):
@@ -312,7 +314,7 @@ class TestExporter(ExportersTestsBase):
         exporter = HTMLExporter(template_file=template_file, template_name="lab")
         nb = v4.new_notebook()
         nb.cells.append(v4.new_code_cell("some_text"))
-        output, resources = exporter.from_notebook_node(nb)
+        output, _resources = exporter.from_notebook_node(nb)
         print(output[:1000])
         assert '<script type="module">\nconst blerg = true' in output
 
@@ -490,7 +492,7 @@ class TestExporter(ExportersTestsBase):
         assert template not in exporter.environment.list_templates(extensions=["tpl"])
         nb = v4.new_notebook()
         with pytest.raises(TemplateNotFound):
-            out, resources = exporter.from_notebook_node(nb)
+            _out, _resources = exporter.from_notebook_node(nb)
 
     def test_exclude_code_cell(self):
         no_io = {
@@ -650,7 +652,7 @@ class TestExporter(ExportersTestsBase):
         )
 
         exporter = MarkdownExporter(config=conf)
-        nb, resources = exporter.from_filename(self._get_notebook())
+        nb, _resources = exporter.from_filename(self._get_notebook())
 
         assert "hist(evs.real)" not in nb
         assert "cell is just markdown testing whether" not in nb
