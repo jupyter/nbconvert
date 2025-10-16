@@ -7,6 +7,7 @@ and updates outputs"""
 from __future__ import annotations
 
 import typing as t
+from warnings import warn
 
 from jupyter_client.manager import KernelManager
 from nbclient.client import NotebookClient
@@ -18,7 +19,6 @@ from nbformat import NotebookNode
 
 from .base import Preprocessor
 
-from warnings import warn
 
 def executenb(*args, **kwargs):
     """DEPRECATED."""
