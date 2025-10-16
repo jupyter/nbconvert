@@ -17,10 +17,10 @@ class TestServe(TestsBase):
         """Can a ServePostProcessor be constructed?"""
         pytest.importorskip("tornado")
         try:
-            from nbconvert.postprocessors.serve import (
+            from nbconvert.postprocessors.serve import (  # noqa: PLC0415
                 ServePostProcessor,
             )
-        except ModuleNotFound:
+        except ModuleNotFoundError:
             print("Something weird is happening.\nTornado is sometimes present, sometimes not.")
             raise
         ServePostProcessor()
