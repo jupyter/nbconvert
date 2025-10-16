@@ -12,7 +12,7 @@ from typing import Any, Optional
 
 import jinja2
 import markupsafe
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup  # type: ignore[import-not-found]
 from jupyter_core.paths import jupyter_path
 from traitlets import Bool, Dict, Unicode, default, validate
 from traitlets.config import Config
@@ -265,7 +265,7 @@ class HTMLExporter(TemplateExporter):
         yield from super().default_filters()
         yield ("markdown2html", self.markdown2html)
 
-    def from_notebook_node(  # type:ignore[explicit-override, override]
+    def from_notebook_node(  # type:ignore[override]
         self, nb: NotebookNode, resources: Optional[dict[str, Any]] = None, **kw: Any
     ) -> tuple[str, dict[str, Any]]:
         """Convert from notebook node."""
