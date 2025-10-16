@@ -26,14 +26,14 @@ class TestSlidesExporter(ExportersTestsBase):
         """
         Can a SlidesExporter export something?
         """
-        (output, resources) = SlidesExporter().from_filename(self._get_notebook())
+        (output, _resources) = SlidesExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
     def test_export_reveal(self):
         """
         Can a SlidesExporter export using the 'reveal' template?
         """
-        (output, resources) = SlidesExporter().from_filename(self._get_notebook())
+        (output, _resources) = SlidesExporter().from_filename(self._get_notebook())
         assert len(output) > 0
 
     def build_notebook(self):
@@ -59,7 +59,7 @@ class TestSlidesExporter(ExportersTestsBase):
     def test_metadata_preprocessor(self):
         preprocessor = _RevealMetadataPreprocessor()
         nb = self.build_notebook()
-        nb, resources = preprocessor.preprocess(nb)
+        nb, _resources = preprocessor.preprocess(nb)
         cells = nb.cells
 
         # Make sure correct metadata tags are available on every cell.

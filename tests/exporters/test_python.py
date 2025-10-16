@@ -20,7 +20,7 @@ class TestPythonExporter(ExportersTestsBase):
 
     def test_export(self):
         """Can a PythonExporter export something?"""
-        (output, resources) = self.exporter_class().from_filename(  # type:ignore
+        (output, _resources) = self.exporter_class().from_filename(  # type:ignore
             self._get_notebook()
         )
         self.assertIn("coding: utf-8", output)

@@ -339,7 +339,7 @@ class HTMLExporter(TemplateExporter):
         def resources_include_url(name):
             """Get the resources include url for a name."""
             env = self.environment
-            mime_type, encoding = mimetypes.guess_type(name)
+            mime_type, _encoding = mimetypes.guess_type(name)
             try:
                 # we try to load via the jinja loader, but that tries to load
                 # as (encoded) text

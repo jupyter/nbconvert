@@ -29,5 +29,5 @@ class TestQtPNGExporter(ExportersTestsBase):
             with pytest.raises(RuntimeError):
                 (output, resources) = QtPNGExporter().from_filename(self._get_notebook())
         else:
-            (output, resources) = QtPNGExporter().from_filename(self._get_notebook())
+            (output, _resources) = QtPNGExporter().from_filename(self._get_notebook())
             assert len(output) > 0
