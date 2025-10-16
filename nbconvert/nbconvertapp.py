@@ -202,7 +202,7 @@ class NbConvertApp(JupyterApp):
     def _log_level_default(self):
         return logging.INFO
 
-    classes = List()  # type:ignore[assignment]
+    classes: list[type] = List()  # type: ignore[assignment]
 
     @default("classes")
     def _classes_default(self):
@@ -215,7 +215,7 @@ class NbConvertApp(JupyterApp):
 
         return classes
 
-    description = Unicode(  # type:ignore[assignment]
+    description = Unicode(
         """This application is used to convert notebook files (*.ipynb)
         to various other formats.
 

@@ -85,8 +85,8 @@ class WebPDFExporter(HTMLExporter):
             """Run main playwright script."""
 
             try:
-                from playwright.async_api import (  # noqa: PLC0415
-                    async_playwright,  # type: ignore[import-not-found]
+                from playwright.async_api import (  # type: ignore[import-not-found] # noqa: PLC0415,
+                    async_playwright,
                 )
             except ModuleNotFoundError as e:
                 msg = (
