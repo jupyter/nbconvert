@@ -44,7 +44,7 @@ class TestRSTExporter(ExportersTestsBase):
         nb = v4.upgrade(nb)
         exporter = self.exporter_class()  # type:ignore
 
-        (output, resources) = exporter.from_notebook_node(nb)
+        (output, _resources) = exporter.from_notebook_node(nb)
         # add an empty code cell
         nb.cells.append(v4.new_code_cell(source=""))
 

@@ -224,7 +224,7 @@ class TestHTMLExporter(ExportersTestsBase):
         # By design, text/html, text/markdown, application/javascript and markdown cells should allow
         # for JavaScript code execution
         for template in ["lab", "classic", "reveal"]:
-            (output, resources) = HTMLExporter(template_name=template).from_filename(
+            (output, _resources) = HTMLExporter(template_name=template).from_filename(
                 self._get_notebook("notebook_inject.ipynb")
             )
 
