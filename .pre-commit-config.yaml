@@ -4,7 +4,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
       - id: check-case-conflict
       - id: check-ast
@@ -21,16 +21,14 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.28.4
+    rev: 0.34.1
     hooks:
       - id: check-github-workflows
 
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+  - repo: https://github.com/hukkin/mdformat
+    rev: 1.0.0
     hooks:
       - id: mdformat
-        additional_dependencies:
-          [mdformat-gfm, mdformat-frontmatter, mdformat-footnote]
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v4.0.0-alpha.8"
@@ -39,19 +37,19 @@ repos:
         types_or: [yaml, html, json]
 
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: "1.16.0"
+    rev: "1.20.0"
     hooks:
       - id: blacken-docs
         additional_dependencies: [black==23.7.0]
 
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.3.0"
+    rev: "v2.4.1"
     hooks:
       - id: codespell
         args: ["-L", "sur,nd,assertin"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.10.0"
+    rev: "v1.18.2"
     hooks:
       - id: mypy
         files: "^nbconvert"
@@ -81,16 +79,16 @@ repos:
       - id: rst-inline-touching-normal
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.8
+    rev: v0.14.0
     hooks:
-      - id: ruff
+      - id: ruff-check
         types_or: [python, jupyter]
         args: ["--fix", "--show-fixes"]
       - id: ruff-format
         types_or: [python, jupyter]
 
   - repo: https://github.com/scientific-python/cookie
-    rev: "2024.04.23"
+    rev: "2025.10.01"
     hooks:
       - id: sp-repo-review
         additional_dependencies: ["repo-review[cli]"]

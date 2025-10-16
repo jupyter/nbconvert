@@ -37,8 +37,7 @@ class TagRemovePreprocessor(Preprocessor):
         Unicode(),
         default_value=[],
         help=(
-            "Tags indicating which cells are to be removed,"
-            "matches tags in ``cell.metadata.tags``."
+            "Tags indicating which cells are to be removed,matches tags in ``cell.metadata.tags``."
         ),
     ).tag(config=True)
     remove_all_outputs_tags: set[str] = Set(  # type:ignore[assignment]
