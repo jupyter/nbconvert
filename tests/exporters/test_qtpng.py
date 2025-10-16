@@ -19,7 +19,7 @@ class TestQtPNGExporter(ExportersTestsBase):
 
     exporter_class = QtPNGExporter  # type:ignore
 
-    @pytest.mark.flaky()
+    @pytest.mark.flaky
     def test_export(self):
         """
         Can a TemplateExporter export something?
