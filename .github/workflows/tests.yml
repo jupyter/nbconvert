@@ -124,7 +124,7 @@ jobs:
         run: |
           # Attempt to work around https://github.com/pypa/pip/issues/12781
           PIP_CONSTRAINT= hatch env run -e test -- pip install 'pip>=24.2'
-          xvfb-run --auto-servernum hatch run test:nowarn || xvfb-run --auto-servernum hatch run test:nowarn --lf
+          xvfb-run --auto-servernum hatch run test:nowarn
 
   test_mistune_30:
     name: Test Mistune 3.0
@@ -146,7 +146,7 @@ jobs:
       - name: Run tests
         run: |
           hatch env run -e test -- pip install 'mistune~=3.0.0'
-          xvfb-run --auto-servernum hatch run test:nowarn || xvfb-run --auto-servernum hatch run test:nowarn --lf
+          xvfb-run --auto-servernum hatch run test:nowarn
 
   test_prereleases:
     name: Test Prereleases
@@ -160,7 +160,7 @@ jobs:
       - name: Run the tests
         run: |
           export NBFORMAT_VALIDATOR=jsonschema
-          hatch run test:nowarn || hatch run test:nowarn --lf
+          hatch run test:nowarn
 
   make_sdist:
     name: Make SDist
