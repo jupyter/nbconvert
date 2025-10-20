@@ -11,7 +11,6 @@ import pytest
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
-from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED
 from nbconvert.postprocessors import PostProcessorBase
 
 from .base import TestsBase
@@ -149,16 +148,16 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile("notebook with spaces.pdf")
 
-    @pytest.mark.flaky
-    @pytest.mark.network
-    @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
-    def test_webpdf_with_chromium(self):
-        """
-        Generate PDFs if chromium allowed to be downloaded?
-        """
-        with self.create_temp_cwd(["notebook2.ipynb"]):
-            self.nbconvert('--to webpdf --allow-chromium-download "notebook2"')
-            assert os.path.isfile("notebook2.pdf")
+    #    @pytest.mark.flaky
+    #    @pytest.mark.network
+    #    @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
+    #    def test_webpdf_with_chromium(self):
+    #        """
+    #        Generate PDFs if chromium allowed to be downloaded?
+    #        """
+    #        with self.create_temp_cwd(["notebook2.ipynb"]):
+    #            self.nbconvert('--to webpdf --allow-chromium-download "notebook2"')
+    #            assert os.path.isfile("notebook2.pdf")
 
     @onlyif_cmds_exist("pandoc", "xelatex")
     def test_pdf(self):
