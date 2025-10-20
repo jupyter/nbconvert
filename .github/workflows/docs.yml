@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.11"]
+        python-version: ["3.10", "3.14"]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
@@ -42,12 +42,3 @@ jobs:
         with:
           name: html-${{ github.job }}-${{ strategy.job-index }}
           path: build/sphinx/html
-      - name: Build PDF docs
-        run: |
-          cd docs
-          make latexpdf
-      - name: Upload PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: pdf-python-${{matrix.python-version}}-${{ github.job }}-${{ strategy.job-index }}
-          path: docs/build/latex/nbconvert.pdf
