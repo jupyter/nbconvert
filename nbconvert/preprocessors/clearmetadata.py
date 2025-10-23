@@ -1,4 +1,4 @@
-"""Module containing a preprocessor that removes notebook or code cell metadata"""
+"""Module containing a preprocessor that removes notebook or cell metadata"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -32,8 +32,8 @@ class ClearMetadataPreprocessor(Preprocessor):
     preserve_cell_metadata_mask = Set(
         help=(
             "Indicates the key paths to preserve when deleting metadata "
-            "across all code cells in a notebook. Tuples of keys can be "
-            "passed to preserve specific nested values."
+            "across all cells in a notebook. Tuples of keys can be passed "
+            "to preserve specific nested values."
         )
     ).tag(config=True)
 
@@ -73,14 +73,13 @@ class ClearMetadataPreprocessor(Preprocessor):
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
-        All the code cells are returned with a trimmed down metadata field.
+        All the cells are returned with a trimmed down metadata field.
         """
-        if self.clear_cell_metadata and cell.cell_type == "code":  # noqa: SIM102
+        if self.clear_cell_metadata and "metadata" in cell:
             # Remove metadata
-            if "metadata" in cell:
-                cell.metadata = dict(
-                    self.nested_filter(cell.metadata.items(), self.preserve_cell_metadata_mask)
-                )
+            cell.metadata = dict(
+                self.nested_filter(cell.metadata.items(), self.preserve_cell_metadata_mask)
+            )
         return cell, resources
 
     def preprocess(self, nb, resources):
