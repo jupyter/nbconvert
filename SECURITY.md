@@ -7,4 +7,4 @@ You can find more information on the Jupyter website. https://jupyter.org/securi
 
 ## Tidelift
 
-You can report security concerns for IPython via the [Tidelift platform](https://tidelift.com/security).
+You can report security concerns for IPython via the [Tidelift platform](https://tidelift.com).
