@@ -10,6 +10,7 @@ from .convertfigures import ConvertFiguresPreprocessor
 from .csshtmlheader import CSSHTMLHeaderPreprocessor
 from .execute import ExecutePreprocessor
 from .extractattachments import ExtractAttachmentsPreprocessor
+from .extractbase64images import Base64ImageExtractor
 from .extractoutput import ExtractOutputPreprocessor
 from .highlightmagics import HighlightMagicsPreprocessor
 from .latex import LatexPreprocessor
@@ -33,4 +34,5 @@ __all__ = [
     "RegexRemovePreprocessor",
     "SVG2PDFPreprocessor",
     "TagRemovePreprocessor",
+    "Base64ImageExtractor",  # Add this line
 ]
