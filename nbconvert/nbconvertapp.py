@@ -148,6 +148,9 @@ nbconvert_flags.update(
         ),
         "allow-chromium-download": (
             {
+                "WebHTMLExporter": {
+                    "allow_chromium_download": True,
+                },
                 "WebPDFExporter": {
                     "allow_chromium_download": True,
                 }
@@ -156,6 +159,9 @@ nbconvert_flags.update(
         ),
         "disable-chromium-sandbox": (
             {
+                "WebHTMLExporter": {
+                    "disable_sandbox": True,
+                },
                 "WebPDFExporter": {
                     "disable_sandbox": True,
                 }
