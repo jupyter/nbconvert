@@ -20,6 +20,7 @@ IS_WINDOWS = os.name == "nt"
 
 __all__ = ("WebHTMLExporter",)
 
+
 class WebHTMLExporter(HTMLExporter):
     """Writer designed to write to HTML files after rendering in a browser.
 
@@ -69,7 +70,7 @@ class WebHTMLExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
-    def run_playwright(self, html, _postprocess = None):
+    def run_playwright(self, html, _postprocess=None):
         """Run playwright."""
 
         async def main(temp_file):
