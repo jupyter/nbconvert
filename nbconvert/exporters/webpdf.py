@@ -55,7 +55,12 @@ class WebPDFExporter(HTMLExporter):
 
     @default("file_extension")
     def _file_extension_default(self):
-        return ".html"
+        return ".pdf"
+
+    @default("template_extension")
+    def _template_extension_default(self):
+        # NOTE: we use .html.j2 so that the HTMLExporter can find the template
+        return ".html.j2"
 
     @default("template_name")
     def _template_name_default(self):
@@ -187,9 +192,5 @@ class WebPDFExporter(HTMLExporter):
         self.log.info("Building PDF")
         pdf_data = self.run_playwright(html)
         self.log.info("PDF successfully created")
-
-        # convert output extension to pdf
-        # the writer above required it to be html
-        resources["output_extension"] = ".pdf"
 
         return pdf_data, resources
