@@ -207,3 +207,35 @@ class SlidesExporter(HTMLExporter):
         resources["reveal"]["height"] = self.reveal_height
         resources["reveal"]["width"] = self.reveal_width
         return resources
+    
+    def from_notebook_node(self, nb, resources=None, **kw):
+        """
+        Convert a notebook from a notebook node instance.
+        This method extends the parent implementation to override reveal.js
+        configuration with metadata from the notebook.
+        It reads reveal.js settings from the `reveal` key in the notebook's
+        metadata and merges them with the existing configuration.
+        The precedence for settings is:
+        1. Command-line arguments (highest)
+        2. Notebook metadata
+        3. Default configuration (lowest)
+        Parameters
+        ----------
+        nb : :class:`~nbformat.NotebookNode`
+            Notebook node
+        resources : dict
+            Additional resources that can be accessed by exporters and preprocessors.
+        """
+        output, resources = super().from_notebook_node(nb, resources, **kw)
+        if "reveal" in nb.metadata:
+            self.log.info("Applying reveal config from notebook metadata")
+            # Get reveal config from notebook metadata.
+            nb_reveal_config = nb.metadata.get("reveal", {})
+
+            # `resources['reveal']` contains config from command line.
+            # We merge the two, with command-line config having precedence.
+            reveal_config = nb_reveal_config.copy()
+            reveal_config.update(resources.get("reveal", {}))
+            resources["reveal"] = reveal_config
+
+        return output, resources
