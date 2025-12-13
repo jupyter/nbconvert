@@ -1,8 +1,9 @@
 {%- extends 'display_priority.j2' -%}
 {% from 'celltags.j2' import celltags %}
+{% from 'cell_id_anchor.j2' import cell_id_anchor %}
 
 {% block codecell %}
-<div class="cell border-box-sizing code_cell rendered{{ celltags(cell) }}">
+<div {{ cell_id_anchor(cell) }} class="cell border-box-sizing code_cell rendered{{ celltags(cell) }}">
 {{ super() }}
 </div>
 {%- endblock codecell %}
@@ -75,7 +76,7 @@
 {% endblock output %}
 
 {% block markdowncell scoped %}
-<div class="cell border-box-sizing text_cell rendered{{ celltags(cell) }}">
+<div {{ cell_id_anchor(cell) }} class="cell border-box-sizing text_cell rendered{{ celltags(cell) }}">
 {%- if resources.global_content_filter.include_input_prompt-%}
     {{ self.empty_in_prompt() }}
 {%- endif -%}
@@ -131,7 +132,11 @@ unknown type  {{ cell.type }}
 {%- if output.svg_filename %}
 <img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
-{{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+    {%- if resources.should_not_encode_svg %}
+        {{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+    {%- else %}
+        <img src="data:image/svg+xml;base64,{{ output.data['image/svg+xml'] | text_base64 | escape_html }}">
+    {%- endif %}
 {%- endif %}
 </div>
 {%- endblock data_svg %}
@@ -268,7 +273,7 @@ var element = $('#{{ div_id }}');
 var element = $('#{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
-{{ output.data[datatype] | json_dumps | escape_html_keep_quotes }}
+{{ output.data[datatype] | json_dumps | escape_html_script }}
 </script>
 </div>
 {%- endif %}
@@ -279,7 +284,7 @@ var element = $('#{{ div_id }}');
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_keep_quotes }}
+{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
 </script>
 {% endif %}
 {%- endif %}

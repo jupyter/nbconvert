@@ -20,4 +20,5 @@ class StdoutWriter(WriterBase):
 
         See base for more...
         """
-        io.unicode_std_stream().write(output)
+        stream = io.unicode_std_stream()
+        stream.write(output)

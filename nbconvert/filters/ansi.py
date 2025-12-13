@@ -7,7 +7,7 @@ import re
 
 import markupsafe
 
-__all__ = ["strip_ansi", "ansi2html", "ansi2latex"]
+__all__ = ["ansi2html", "ansi2latex", "strip_ansi"]
 
 _ANSI_RE = re.compile("\x1b\\[(.*?)([@-~])")
 
@@ -133,7 +133,7 @@ def _latexconverter(fg, bg, bold, underline, inverse):
     elif fg:
         # See http://tex.stackexchange.com/a/291102/13684
         starttag += r"\def\tcRGB{\textcolor[RGB]}\expandafter"
-        starttag += r"\tcRGB\expandafter{\detokenize{%s,%s,%s}}{" % fg
+        starttag += r"\tcRGB\expandafter{{\detokenize{{{},{},{}}}}}{{".format(*fg)
         endtag = "}" + endtag
     elif inverse:
         starttag += r"\textcolor{ansi-default-inverse-fg}{"
@@ -147,7 +147,7 @@ def _latexconverter(fg, bg, bold, underline, inverse):
         starttag += r"\setlength{\fboxsep}{0pt}"
         # See http://tex.stackexchange.com/a/291102/13684
         starttag += r"\def\cbRGB{\colorbox[RGB]}\expandafter"
-        starttag += r"\cbRGB\expandafter{\detokenize{%s,%s,%s}}{" % bg
+        starttag += r"\cbRGB\expandafter{{\detokenize{{{},{},{}}}}}{{".format(*bg)
         endtag = r"\strut}" + endtag
     elif inverse:
         starttag += r"\setlength{\fboxsep}{0pt}"
@@ -203,7 +203,11 @@ def _ansi2anything(text, converter):
 
         if chunk:
             starttag, endtag = converter(
-                fg + 8 if bold and fg in range(8) else fg, bg, bold, underline, inverse
+                fg + 8 if bold and fg in range(8) else fg,  # type:ignore[operator]
+                bg,
+                bold,
+                underline,
+                inverse,
             )
             out.append(starttag)
             out.append(chunk)
@@ -271,10 +275,10 @@ def _get_extended_color(numbers):
         idx = numbers.pop(0)
         if idx < 0:
             raise ValueError()
-        elif idx < 16:
+        if idx < 16:
             # 16 default terminal colors
             return idx
-        elif idx < 232:
+        if idx < 232:
             # 6x6x6 color cube, see http://stackoverflow.com/a/27165165/500098
             r = (idx - 16) // 36
             r = 55 + r * 40 if r > 0 else 0

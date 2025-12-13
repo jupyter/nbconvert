@@ -9,6 +9,7 @@ import os
 import random
 import shutil
 import sys
+from typing import Any, Optional
 
 
 def unicode_std_stream(stream="stdout"):
@@ -51,8 +52,11 @@ def unicode_stdin_stream():
     return codecs.getreader("utf-8")(stream_b)
 
 
-class FormatSafeDict(dict):
+class FormatSafeDict(dict[Any, Any]):
+    """Format a dictionary safely."""
+
     def __missing__(self, key):
+        """Handle missing value."""
         return "{" + key + "}"
 
 
@@ -71,7 +75,7 @@ def link(src, dst):
 
     if not hasattr(os, "link"):
         return ENOLINK
-    link_errno = 0
+    link_errno: Optional[int] = 0
     try:
         os.link(src, dst)
     except OSError as e:
@@ -100,7 +104,7 @@ def link_or_copy(src, dst):
             # anyway, we get duplicate files - see http://bugs.python.org/issue21876
             return
 
-        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"
+        new_dst = dst + f"-temp-{random.randint(1, 16**4):04X}"  # noqa: S311
         try:
             link_or_copy(src, new_dst)
         except BaseException:
@@ -114,21 +118,3 @@ def link_or_copy(src, dst):
         # Either link isn't supported, or the filesystem doesn't support
         # linking, or 'src' and 'dst' are on different filesystems.
         shutil.copy(src, dst)
-
-
-def ensure_dir_exists(path, mode=0o755):
-    """ensure that a directory exists
-
-    If it doesn't exist, try to create it and protect against a race condition
-    if another process is doing the same.
-
-    The default permissions are 755, which differ from os.makedirs default of 777.
-    """
-    if not os.path.exists(path):
-        try:
-            os.makedirs(path, mode=mode)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-    elif not os.path.isdir(path):
-        raise OSError("%r exists but is not a directory" % path)

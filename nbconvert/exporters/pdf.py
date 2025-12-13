@@ -2,6 +2,7 @@
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
 import shutil
@@ -11,7 +12,8 @@ from tempfile import TemporaryDirectory
 
 from traitlets import Bool, Instance, Integer, List, Unicode, default
 
-from ..utils import _contextlib_chdir
+from nbconvert.utils import _contextlib_chdir
+
 from .latex import LatexExporter
 
 
@@ -22,14 +24,16 @@ class LatexFailed(IOError):
     """
 
     def __init__(self, output):
+        """Initialize the error."""
         self.output = output
 
     def __unicode__(self):
+        """Unicode representation."""
         return "PDF creating failed, captured latex output:\n%s" % self.output
 
     def __str__(self):
-        u = self.__unicode__()
-        return u
+        """String representation."""
+        return self.__unicode__()
 
 
 def prepend_to_env_search_path(varname, value, envdict):
@@ -70,7 +74,7 @@ class PDFExporter(LatexExporter):
 
     output_mimetype = "application/pdf"
 
-    _captured_output = List()
+    _captured_output = List(Unicode())
 
     @default("file_extension")
     def _file_extension_default(self):
@@ -108,18 +112,19 @@ class PDFExporter(LatexExporter):
         cmd = shutil.which(command_list[0])
         if cmd is None:
             link = "https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex"
-            raise OSError(
-                "{formatter} not found on PATH, if you have not installed "
-                "{formatter} you may need to do so. Find further instructions "
-                "at {link}.".format(formatter=command_list[0], link=link)
+            msg = (
+                f"{command_list[0]} not found on PATH, if you have not installed "
+                f"{command_list[0]} you may need to do so. Find further instructions "
+                f"at {link}."
             )
+            raise OSError(msg)
 
         times = "time" if count == 1 else "times"
         self.log.info("Running %s %i %s: %s", command_list[0], count, times, command)
 
         shell = sys.platform == "win32"
         if shell:
-            command = subprocess.list2cmdline(command)
+            command = subprocess.list2cmdline(command)  # type:ignore[assignment]
         env = os.environ.copy()
         prepend_to_env_search_path("TEXINPUTS", self.texinputs, env)
         prepend_to_env_search_path("BIBINPUTS", self.texinputs, env)
@@ -128,7 +133,7 @@ class PDFExporter(LatexExporter):
         with open(os.devnull, "rb") as null:
             stdout = subprocess.PIPE if not self.verbose else None
             for _ in range(count):
-                p = subprocess.Popen(
+                p = subprocess.Popen(  # noqa: S603
                     command,
                     stdout=stdout,
                     stderr=subprocess.STDOUT,
@@ -138,20 +143,17 @@ class PDFExporter(LatexExporter):
                 )
                 out, _ = p.communicate()
                 if p.returncode:
-                    if self.verbose:
+                    if self.verbose:  # noqa: SIM108
                         # verbose means I didn't capture stdout with PIPE,
                         # so it's already been displayed and `out` is None.
-                        out = ""
+                        out_str = ""
                     else:
-                        out = out.decode("utf-8", "replace")
+                        out_str = out.decode("utf-8", "replace")
                     log_function(command, out)
-                    self._captured_output.append(out)
+                    self._captured_output.append(out_str)
                     if raise_on_failure:
-                        raise raise_on_failure(
-                            'Failed to run "{command}" command:\n{output}'.format(
-                                command=command, output=out
-                            )
-                        )
+                        msg = f'Failed to run "{command}" command:\n{out_str}'
+                        raise raise_on_failure(msg)
                     return False  # failure
         return True  # success
 
@@ -178,10 +180,11 @@ class PDFExporter(LatexExporter):
         return self.run_command(self.bib_command, filename, 1, log_error, raise_on_failure)
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        """Convert from notebook node."""
         latex, resources = super().from_notebook_node(nb, resources=resources, **kw)
         # set texinputs directory, so that local files will be found
         if resources and resources.get("metadata", {}).get("path"):
-            self.texinputs = resources["metadata"]["path"]
+            self.texinputs = os.path.abspath(resources["metadata"]["path"])
         else:
             self.texinputs = os.getcwd()
 
@@ -205,8 +208,9 @@ class PDFExporter(LatexExporter):
         # convert output extension to pdf
         # the writer above required it to be tex
         resources["output_extension"] = ".pdf"
-        # clear figure outputs, extracted by latex export,
+        # clear figure outputs and attachments, extracted by latex export,
         # so we don't claim to be a multi-file export.
         resources.pop("outputs", None)
+        resources.pop("attachments", None)
 
         return pdf_data, resources

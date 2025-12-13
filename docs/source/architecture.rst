@@ -185,8 +185,6 @@ A *Postprocessor* is something that runs after everything is exported and writte
 The only postprocessor in nbconvert at this point is the ``nbconvert.postprocessors.serve.ServePostProcessor``,
 which is used for serving `reveal.js`_ HTML slideshows.
 
-.. links:
-
 .. _jinja: https://jinja.palletsprojects.com/en/3.0.x/
 .. _More on Jinja Filters: https://jinja.palletsprojects.com/en/3.0.x/templates/#filters
 .. _reveal.js: http://lab.hakim.se/reveal-js

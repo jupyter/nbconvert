@@ -1,10 +1,10 @@
 """Module containing a preprocessor that converts outputs in the notebook from
 one format to another.
-"""
 
+Converts all of the outputs in a notebook from one format to another.
+"""
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-
 
 from traitlets import Unicode
 
@@ -26,6 +26,7 @@ class ConvertFiguresPreprocessor(Preprocessor):
         super().__init__(**kw)
 
     def convert_figure(self, data_format, data):
+        """Convert the figure."""
         raise NotImplementedError()
 
     def preprocess_cell(self, cell, resources, cell_index):
@@ -42,7 +43,6 @@ class ConvertFiguresPreprocessor(Preprocessor):
                 and self.from_format in output.data
                 and self.to_format not in output.data
             ):
-
                 output.data[self.to_format] = self.convert_figure(
                     self.from_format, output.data[self.from_format]
                 )

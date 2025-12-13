@@ -44,11 +44,11 @@ example, your package may contain two custom exporters, named "simple" and
 .. sourcecode:: python
 
     setup(
-        ...
-        entry_points = {
-            'nbconvert.exporters': [
-                'simple = mymodule:SimpleExporter',
-                'detail = mymodule:DetailExporter',
+        # ...
+        entry_points={
+            "nbconvert.exporters": [
+                "simple = mymodule:SimpleExporter",
+                "detail = mymodule:DetailExporter",
             ],
         }
     )
@@ -167,9 +167,10 @@ We are going to write an exporter that:
     from traitlets.config import Config
     from nbconvert.exporters.html import HTMLExporter
 
-    #-----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
     # Classes
-    #-----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
+
 
     class MyExporter(HTMLExporter):
         """
@@ -185,7 +186,7 @@ We are going to write an exporter that:
             """
             The new file extension is ``.test_ext``
             """
-            return '.test_ext'
+            return ".test_ext"
 
         @property
         def template_paths(self):
@@ -195,13 +196,15 @@ We are going to write an exporter that:
 
             Note: nbconvert 6.0 changed ``template_path`` to ``template_paths``
             """
-            return super().template_paths+[os.path.join(os.path.dirname(__file__), "templates")]
+            return super().template_paths + [
+                os.path.join(os.path.dirname(__file__), "templates")
+            ]
 
         def _template_file_default(self):
             """
             We want to use the new template we ship with our library.
             """
-            return 'test_template' # full
+            return "test_template"  # full
 
 
 And the template file, that inherits from the html ``full`` template and prepend/append text to each markdown cell (see Jinja2 docs for template syntax)::

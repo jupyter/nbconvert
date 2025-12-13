@@ -5,7 +5,7 @@
 
 from traitlets import Bool
 
-from ..utils.base import NbConvertBase
+from nbconvert.utils.base import NbConvertBase
 
 
 class Preprocessor(NbConvertBase):
@@ -42,11 +42,11 @@ class Preprocessor(NbConvertBase):
         super().__init__(**kw)
 
     def __call__(self, nb, resources):
+        """Apply the preprocessor."""
         if self.enabled:
             self.log.debug("Applying preprocessor: %s", self.__class__.__name__)
             return self.preprocess(nb, resources)
-        else:
-            return nb, resources
+        return nb, resources
 
     def preprocess(self, nb, resources):
         """
@@ -84,6 +84,5 @@ class Preprocessor(NbConvertBase):
         index : int
             Index of the cell being processed
         """
-
-        raise NotImplementedError("should be implemented by subclass")
-        return cell, resources
+        msg = "should be implemented by subclass"
+        raise NotImplementedError(msg)

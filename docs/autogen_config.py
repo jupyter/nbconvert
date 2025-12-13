@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 autogen_config.py
 
@@ -7,6 +6,7 @@ Documents the options that may be set in nbconvert's configuration file,
 jupyter_nbconvert_config.py.
 
 """
+
 import os.path
 
 from nbconvert.nbconvertapp import NbConvertApp
@@ -27,7 +27,7 @@ and the HTMLExporter both inherit from TemplateExporter. With the following conf
 
 .. code-block:: python
 
-    c.TemplateExporter.exclude_input_prompt = False # The default
+    c.TemplateExporter.exclude_input_prompt = False  # The default
     c.PDFExporter.exclude_input_prompt = True
 
 input prompts will not appear when converting to PDF, but they will appear when
@@ -41,7 +41,7 @@ variable ``NBCONVERT_DISABLE_CONFIG_EXPORTERS``. This causes all exporters
 to be loaded regardless of the value of their ``enabled`` attribute.
 
 When using Nbconvert from the command line, a number of aliases and flags are
-defined as shortcuts to configuration options for convience.
+defined as shortcuts to configuration options for convenience.
 
 """
 

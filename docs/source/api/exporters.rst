@@ -46,10 +46,10 @@ Exporter base classes
 Specialized exporter classes
 ----------------------------
 
-The `NotebookExporter` inherits directly from
+The ``NotebookExporter`` inherits directly from
 ``Exporter``, while the other exporters listed here
 inherit either directly or indirectly from
-`TemplateExporter`.
+``TemplateExporter``.
 
 .. autoclass:: NotebookExporter
 

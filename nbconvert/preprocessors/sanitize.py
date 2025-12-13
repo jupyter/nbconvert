@@ -7,6 +7,8 @@ import warnings
 from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
+from .base import Preprocessor
+
 _USE_BLEACH_CSS_SANITIZER = False
 _USE_BLEACH_STYLES = False
 
@@ -21,13 +23,14 @@ try:
 except ImportError:
     try:
         # bleach <5
-        from bleach import ALLOWED_STYLES
+        from bleach import ALLOWED_STYLES  # type:ignore[attr-defined, no-redef]
 
         _USE_BLEACH_CSS_SANITIZER = False
         _USE_BLEACH_STYLES = True
         warnings.warn(
             "Support for bleach <5 will be removed in a future version of nbconvert",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     except ImportError:
@@ -35,15 +38,15 @@ except ImportError:
             "The installed bleach/tinycss2 do not provide CSS sanitization, "
             "please upgrade to bleach >=5",
             UserWarning,
+            stacklevel=2,
         )
 
-
-from .base import Preprocessor
 
 __all__ = ["SanitizeHTML"]
 
 
 class SanitizeHTML(Preprocessor):
+    """A preprocessor to sanitize html."""
 
     # Bleach config.
     attributes = Any(
@@ -54,13 +57,13 @@ class SanitizeHTML(Preprocessor):
     tags = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_TAGS,
+        default_value=ALLOWED_TAGS,  # type:ignore[arg-type]
         help="List of HTML tags to allow",
     )
     styles = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_STYLES,
+        default_value=ALLOWED_STYLES,  # type:ignore[arg-type]
         help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(
@@ -114,12 +117,13 @@ class SanitizeHTML(Preprocessor):
             # but erring on the side of safety maybe.
             cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
-        elif cell.cell_type == "markdown":
+        if cell.cell_type == "markdown":
             cell.source = self.sanitize_html_tags(cell.source)
             return cell, resources
-        elif cell.cell_type == "code":
+        if cell.cell_type == "code":
             cell.outputs = self.sanitize_code_outputs(cell.outputs)
             return cell, resources
+        return None
 
     def sanitize_code_outputs(self, outputs):
         """
@@ -137,15 +141,15 @@ class SanitizeHTML(Preprocessor):
             for key in data:
                 if key in self.safe_output_keys:
                     continue
-                elif key in self.sanitized_output_types:
-                    self.log.info("Sanitizing %s" % key)
+                if key in self.sanitized_output_types:
+                    self.log.info("Sanitizing %s", key)
                     data[key] = self.sanitize_html_tags(data[key])
                 else:
                     # Mark key for removal. (Python doesn't allow deletion of
                     # keys from a dict during iteration)
                     to_remove.append(key)
             for key in to_remove:
-                self.log.info("Removing %s" % key)
+                self.log.info("Removing %s", key)
                 del data[key]
         return outputs
 
@@ -153,12 +157,12 @@ class SanitizeHTML(Preprocessor):
         """
         Sanitize a string containing raw HTML tags.
         """
-        kwargs = dict(
-            tags=self.tags,
-            attributes=self.attributes,
-            strip=self.strip,
-            strip_comments=self.strip_comments,
-        )
+        kwargs = {
+            "tags": self.tags,
+            "attributes": self.attributes,
+            "strip": self.strip,
+            "strip_comments": self.strip_comments,
+        }
 
         if _USE_BLEACH_CSS_SANITIZER:
             css_sanitizer = CSSSanitizer(allowed_css_properties=self.styles)
@@ -167,3 +171,9 @@ class SanitizeHTML(Preprocessor):
             kwargs.update(styles=self.styles)
 
         return clean(html_str, **kwargs)
+
+
+def _get_default_css_sanitizer():
+    if _USE_BLEACH_CSS_SANITIZER:
+        return CSSSanitizer(allowed_css_properties=ALLOWED_STYLES)
+    return None

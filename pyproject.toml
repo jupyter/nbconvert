@@ -1,12 +1,12 @@
 [build-system]
-requires = ["hatchling >=0.25"]
+requires = ["hatchling >=1.5"]
 build-backend = "hatchling.build"
 
 [project]
 name = "nbconvert"
 authors = [{name = "Jupyter Development Team", email = "jupyter@googlegroups.com"}]
 license = {file = "LICENSE"}
-description = "Converting Jupyter Notebooks"
+description = "Convert Jupyter Notebooks (.ipynb files) to other formats."
 readme = "README.md"
 keywords = ["Interactive", "Interpreter", "Shell", "Web"]
 classifiers = [
@@ -18,24 +18,23 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 urls = {Homepage = "https://jupyter.org"}
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dependencies = [
     "beautifulsoup4",
-    "bleach",
+    "bleach[css]!=5.0.0",
     "defusedxml",
     "importlib_metadata>=3.6;python_version<\"3.10\"",
     "jinja2>=3.0",
     "jupyter_core>=4.7",
     "jupyterlab_pygments",
     "MarkupSafe>=2.0",
-    "mistune>=2.0.3,<3",
+    "mistune>=2.0.3,<4",
     "nbclient>=0.5.0",
-    "nbformat>=5.1",
+    "nbformat>=5.7",
     "packaging",
     "pandocfilters>=1.4.1",
     "pygments>=2.4.1",
-    "tinycss2",
-    "traitlets>=5.0",
+    "traitlets>=5.1",
 ]
 dynamic = ["version"]
 
@@ -56,40 +55,27 @@ asciidoc = "nbconvert.exporters:ASCIIDocExporter"
 script = "nbconvert.exporters:ScriptExporter"
 
 [project.optional-dependencies]
+qtpng = ["pyqtwebengine>=5.15"]
+qtpdf = ["nbconvert[qtpng]"]
+webpdf = ["playwright"]
 test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-dependency",
+    "pytest>=7",
     "ipykernel",
-    "ipywidgets>=7",
-    "pre-commit",
-    "pyppeteer>=1,<1.1",
+    "ipywidgets>=7.5",
+    "flaky",
 ]
 serve = ["tornado>=6.1"]
-qtpdf = ["pyqtwebengine>=5.15"]
-qtpng = ["pyqtwebengine>=5.15"]
-webpdf = ["pyppeteer>=1,<1.1"]
 docs = [
-    "sphinx==5.0.2",
-    "sphinx_rtd_theme",
+    "myst_parser",
+    "sphinx>=5.0.2",
+    "pydata_sphinx_theme",
     "nbsphinx>=0.2.12",
     "ipython",
-]
-all = [
     "ipykernel",
-    "ipython",
-    "ipywidgets>=7",
-    "nbsphinx>=0.2.12",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "pytest-dependency",
-    "pyqtwebengine>=5.15",
-    "pyppeteer>=1,<1.1",
-    "sphinx==5.0.2",
-    "sphinx_rtd_theme",
-    "tornado>=6.1",
+    "sphinxcontrib_spelling",
+    "intersphinx_registry",
 ]
+all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
@@ -102,34 +88,181 @@ path = "nbconvert/_version.py"
 [tool.hatch.build.hooks.custom]
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["share/templates/lab/static/*.*"]
-
-[tool.hatch.build.targets.wheel]
-exclude = [
-    "nbconvert/tests/",
-    "nbconvert/**/tests/",
-]
+artifacts = ["share/templates", "tests"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "share/templates" = "share/jupyter/nbconvert/templates"
 
+[tool.hatch.envs.docs]
+features = ["docs"]
+[tool.hatch.envs.docs.scripts]
+build = "make -C docs html SPHINXOPTS='-W'"
+
+[tool.hatch.envs.test]
+features = ["test"]
+[tool.hatch.envs.test.scripts]
+test = "python -m pytest -vv {args}"
+nowarn = "test -W default {args}"
+
+[tool.hatch.envs.cov]
+features = ["all"]
+dependencies = ["coverage[toml]", "pytest-cov"]
+[tool.hatch.envs.cov.scripts]
+test = "python -m pytest -vv --cov nbconvert --cov-branch --cov-report term-missing:skip-covered {args}"
+nowarn = "test -W default {args}"
+
+[tool.hatch.envs.lint]
+detached = true
+dependencies = ["pre-commit"]
+[tool.hatch.envs.lint.scripts]
+build = [
+  "pre-commit run --all-files ruff-check",
+  "pre-commit run --all-files ruff-format",
+]
+
+[tool.hatch.envs.typing]
+dependencies = [ "pre-commit"]
+detached = true
+[tool.hatch.envs.typing.scripts]
+test = "pre-commit run --all-files --hook-stage manual mypy"
+
 [tool.pytest.ini_options]
+minversion = "6.0"
+xfail_strict = true
+log_cli_level = "info"
+addopts = [
+  "-ra", "--durations=10", "--color=yes", "--doctest-modules",
+   "--showlocals", "--strict-markers", "--strict-config",
+   "--ignore=tests/files/jupyter_nbconvert_config.py",
+   "--ignore=tests/files/override.py",
+]
 markers = "network: marks tests which require network connection"
-addopts = "-raXs --durations 10 --color=yes --doctest-modules --ignore=nbconvert/tests/files/override.py --ignore=nbconvert/tests/files/jupyter_nbconvert_config.py"
 testpaths = [
-    "nbconvert/"
+    "tests/"
 ]
 filterwarnings = [
     "error",
+    "always:5.x.*:DeprecationWarning",
     "ignore:nbconvert.utils.lexers is deprecated as of 5.0:UserWarning",
-    # Pending https://github.com/jupyter/nbformat/pull/256
-    "ignore:Passing a schema to Validator.iter_errors is deprecated:DeprecationWarning",
     # https://github.com/pyppeteer/pyppeteer/issues/342
     "ignore:remove loop argument:DeprecationWarning:websockets",
     # https://github.com/mhammond/pywin32/issues/1802
     "ignore:getargs.*format is deprecated:DeprecationWarning",
     # From jupyter_client
     "ignore:unclosed <socket.socket:ResourceWarning",
-    "ignore:unclosed event loop:ResourceWarning",
     "ignore:There is no current event loop:DeprecationWarning",
+    "ignore:unclosed event loop:ResourceWarning",
+    # From jupyter_core
+    "module:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
+    # From dateutil
+    "ignore:.*Use timezone-aware objects to represent datetimes in UTC:DeprecationWarning",
 ]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if self.debug:",
+  "if settings.DEBUG",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "class .*\bProtocol\\):",
+"@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.run]
+relative_files = true
+source = ["nbconvert"]
+
+[tool.mypy]
+files = "nbconvert"
+python_version = "3.9"
+strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+disable_error_code = ["no-untyped-def", "no-untyped-call"]
+warn_unreachable = true
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+exclude = [".*notebook1.ipynb$"]
+
+[tool.ruff.lint]
+extend-select = [
+  "B",           # flake8-bugbear
+  "I",           # isort
+  "C4",          # flake8-comprehensions
+  "EM",          # flake8-errmsg
+  "ICN",         # flake8-import-conventions
+  "G",           # flake8-logging-format
+  "PGH",         # pygrep-hooks
+  "PIE",         # flake8-pie
+  "PL",          # pylint
+  #"PTH",         # flake8-use-pathlib
+  "PT",          # flake8-pytest-style
+  "RET",         # flake8-return
+  "RUF",         # Ruff-specific
+  "SIM",         # flake8-simplify
+  "T20",         # flake8-print
+  "UP",          # pyupgrade
+  "YTT",         # flake8-2020
+  "EXE",         # flake8-executable
+  "PYI",         # flake8-pyi
+  "S",           # flake8-bandit
+]
+ignore = [
+  "PLR",    # Design related pylint codes
+  "S101",   # Use of `assert` detected
+  "SIM105", # Use `contextlib.suppress(...)`
+  "T201",   # `print` found
+  "RUF012", # Mutable class attributes should be annotated
+  "UP031",  # Use format specifiers instead of percent format
+]
+unfixable = [
+  "T201",   # Don't touch print statements
+  "RUF100", # Don't touch noqa lines
+  "F401",    # Unused imports
+]
+
+[tool.ruff.lint.per-file-ignores]
+# F841 local variable 'foo' is assigned to but never used
+# S101 Use of `assert` detected
+# TID252 Relative imports from parent modules are banned
+# PT009 Use a regular `assert` instead of unittest-style
+# PGH003 Use specific rule codes when ignoring type issues
+# PT027 Use `pytest.raises` instead of unittest-style
+# PGH004 Use specific rule codes when using `noqa`
+"tests/*" = ["F841", "S101", "TID252", "PT009", "PTH", "PGH003", "PT027",
+              "PGH004"]
+"tests/*/*.ipynb" = [
+  "EM", "B018", "E402", "F405", "SIM", "F403", "F821",
+  "RUF100", "ICN001", "S605", "S607"
+]
+"docs/*/*.ipynb" = ["S310", "EM", "B018", "E402", "F405", "SIM", "F811", "N816","E741"]
+# F401 'foo' imported but unused
+# F403 'x' used; unable to detect undefined names
+"nbconvert/*/__init__.py" = ["F401", "F403"]
+"nbconvert/__init__.py" = ["F401", "F403"]
+# PLR2004 Magic value used in comparison
+"nbconvert/filters/ansi.py" = ["PLR2004"]
+"tests/exporters/test_html.py" = ["RUF001"]
+
+[tool.interrogate]
+ignore-init-module=true
+ignore-private=true
+ignore-semiprivate=true
+ignore-property-decorators=true
+ignore-nested-functions=true
+ignore-nested-classes=true
+fail-under=100
+exclude = ["tests", "docs"]
+
+[tool.repo-review]
+ignore = ["GH102"]
+
+
+[tool.codespell]
+skip = "*.ipynb,*.css,*.tex.j2,*iso639_1.py,*html.j2,*test_ansi.py"

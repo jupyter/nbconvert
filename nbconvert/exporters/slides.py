@@ -8,7 +8,8 @@ from warnings import warn
 
 from traitlets import Bool, Unicode, default
 
-from ..preprocessors.base import Preprocessor
+from nbconvert.preprocessors.base import Preprocessor
+
 from .html import HTMLExporter
 
 
@@ -35,12 +36,12 @@ class _RevealMetadataPreprocessor(Preprocessor):
                 first_slide_ix = index
                 break
         else:
-            raise ValueError("All cells are hidden, cannot create slideshow")
+            msg = "All cells are hidden, cannot create slideshow"
+            raise ValueError(msg)
 
         in_fragment = False
 
         for index, cell in enumerate(nb.cells[first_slide_ix + 1 :], start=(first_slide_ix + 1)):
-
             previous_cell = nb.cells[index - 1]
 
             # Slides are <section> elements in the HTML, subslides (the vertically
@@ -123,7 +124,8 @@ class SlidesExporter(HTMLExporter):
         if "RevealHelpPreprocessor.url_prefix" in self.config:
             warn(
                 "Please update RevealHelpPreprocessor.url_prefix to "
-                "SlidesExporter.reveal_url_prefix in config files."
+                "SlidesExporter.reveal_url_prefix in config files.",
+                stacklevel=2,
             )
             return self.config.RevealHelpPreprocessor.url_prefix
         return "https://unpkg.com/reveal.js@4.0.2"
@@ -166,6 +168,24 @@ class SlidesExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
+    reveal_width = Unicode(
+        "",
+        help="""
+        width used to determine the aspect ratio of your presentation.
+        Use the horizontal pixels available on your intended presentation
+        equipment.
+        """,
+    ).tag(config=True)
+
+    reveal_height = Unicode(
+        "",
+        help="""
+        height used to determine the aspect ratio of your presentation.
+        Use the horizontal pixels available on your intended presentation
+        equipment.
+        """,
+    ).tag(config=True)
+
     font_awesome_url = Unicode(
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css",
         help="""
@@ -184,4 +204,6 @@ class SlidesExporter(HTMLExporter):
         resources["reveal"]["transition"] = self.reveal_transition
         resources["reveal"]["scroll"] = self.reveal_scroll
         resources["reveal"]["number"] = self.reveal_number
+        resources["reveal"]["height"] = self.reveal_height
+        resources["reveal"]["width"] = self.reveal_width
         return resources

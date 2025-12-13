@@ -3,6 +3,7 @@ this script builds html files with either classic or classic_clone templates
 
 Note: nbconvert 6.0 changed ``template_path`` to ``template_paths``
 """
+
 import nbformat
 from traitlets.config import Config
 
@@ -19,4 +20,4 @@ for template in ["classic", "classic_clone"]:
     (body, resources) = html_exporter.from_notebook_node(the_ipynb)
     with open(f"{template}.html", "w") as outfile:
         outfile.write(body)
-    print(f"\n{'*'*20}\n{template} succeeds\n{'*'*20}\n")
+    print(f"\n{'*' * 20}\n{template} succeeds\n{'*' * 20}\n")

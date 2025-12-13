@@ -6,26 +6,18 @@ Command-line interface for the NbConvert conversion utility.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import asyncio
 import glob
 import logging
 import os
 import sys
+import typing as t
 from textwrap import dedent, fill
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
-from traitlets import (
-    Bool,
-    DottedObjectName,
-    Instance,
-    List,
-    Type,
-    Unicode,
-    default,
-    observe,
-)
+from traitlets import Bool, DottedObjectName, Instance, List, Type, Unicode, default, observe
 from traitlets.config import Configurable, catch_config_error
 from traitlets.utils.importstring import import_item
 
@@ -33,7 +25,6 @@ from nbconvert import __version__, exporters, postprocessors, preprocessors, wri
 from nbconvert.utils.text import indent
 
 from .exporters.base import get_export_names, get_exporter
-from .filters.markdown_mistune import InvalidNotebook  # noqa For backward compatibility
 from .utils.base import NbConvertBase
 from .utils.exceptions import ConversionException
 from .utils.io import unicode_stdin_stream
@@ -51,10 +42,10 @@ class DottedOrNone(DottedObjectName):
     default_value = ""
 
     def validate(self, obj, value):
+        """Validate an input."""
         if value is not None and len(value) > 0:
             return super().validate(obj, value)
-        else:
-            return value
+        return value
 
 
 nbconvert_aliases = {}
@@ -126,6 +117,14 @@ nbconvert_flags.update(
             },
             """Clear output of current file and save in place,
         overwriting the existing notebook. """,
+        ),
+        "coalesce-streams": (
+            {
+                "NbConvertApp": {"use_output_suffix": False, "export_format": "notebook"},
+                "FilesWriter": {"build_directory": ""},
+                "CoalesceStreamsPreprocessor": {"enabled": True},
+            },
+            """Coalesce consecutive stdout and stderr outputs into one stream (within each cell).""",
         ),
         "no-prompt": (
             {
@@ -203,11 +202,11 @@ class NbConvertApp(JupyterApp):
     def _log_level_default(self):
         return logging.INFO
 
-    classes = List()
+    classes: list[type] = List()  # type: ignore[assignment]
 
     @default("classes")
     def _classes_default(self):
-        classes = [NbConvertBase]
+        classes: list[type[t.Any]] = [NbConvertBase]
         for pkg in (exporters, preprocessors, writers, postprocessors):
             for name in dir(pkg):
                 cls = getattr(pkg, name)
@@ -224,9 +223,9 @@ class NbConvertApp(JupyterApp):
     )
 
     output_base = Unicode(
-        "",
-        help="""overwrite base name use for output files.
-            can only be used when converting one notebook at a time.
+        "{notebook_name}",
+        help="""Overwrite base name use for output files.
+            Supports pattern replacements '{notebook_name}'.
             """,
     ).tag(config=True)
 
@@ -245,12 +244,12 @@ class NbConvertApp(JupyterApp):
     ).tag(config=True)
 
     examples = Unicode(
-        """
+        f"""
         The simplest way to use nbconvert is
 
         > jupyter nbconvert mynotebook.ipynb --to html
 
-        Options include {formats}.
+        Options include {get_export_names()}.
 
         > jupyter nbconvert --to latex mynotebook.ipynb
 
@@ -283,9 +282,7 @@ class NbConvertApp(JupyterApp):
             c.NbConvertApp.notebooks = ["my_notebook.ipynb"]
 
         > jupyter nbconvert --config mycfg.py
-        """.format(
-            formats=get_export_names()
-        )
+        """
     )
 
     # Writer specific variables
@@ -337,18 +334,16 @@ class NbConvertApp(JupyterApp):
         if new:
             self.postprocessor_factory = import_item(new)
 
-    export_format = Unicode(
+    export_format = Unicode(  # type:ignore[call-overload]
         allow_none=False,
-        help="""The export format to be used, either one of the built-in formats
-        {formats}
+        help=f"""The export format to be used, either one of the built-in formats
+        {get_export_names()}
         or a dotted object name that represents the import path for an
-        ``Exporter`` class""".format(
-            formats=get_export_names()
-        ),
+        ``Exporter`` class""",
     ).tag(config=True)
 
     notebooks = List(
-        [],
+        Unicode(),
         help="""List of notebooks to convert.
                      Wildcards are supported.
                      Filenames passed positionally will be added to the list.
@@ -363,11 +358,13 @@ class NbConvertApp(JupyterApp):
     def initialize(self, argv=None):
         """Initialize application, notebooks, writer, and postprocessor"""
         # See https://bugs.python.org/issue37373 :(
-        if sys.version_info[0] == 3 and sys.version_info[1] >= 8 and sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
         self.init_syspath()
         super().initialize(argv)
+        if hasattr(self, "load_config_environ"):
+            self.load_config_environ()
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
@@ -386,15 +383,11 @@ class NbConvertApp(JupyterApp):
 
         # Specifying notebooks on the command-line overrides (rather than
         # adds) the notebook list
-        if self.extra_args:
-            patterns = self.extra_args
-        else:
-            patterns = self.notebooks
+        patterns = self.extra_args if self.extra_args else self.notebooks
 
         # Use glob to replace all the notebook patterns with filenames.
         filenames = []
         for pattern in patterns:
-
             # Use glob to find matching filenames.  Allow the user to convert
             # notebooks without having to type the extension.
             globbed_files = glob.glob(pattern, recursive=self.recursive_glob)
@@ -410,9 +403,10 @@ class NbConvertApp(JupyterApp):
     def init_writer(self):
         """Initialize the writer (which is stateless)"""
         self._writer_class_changed({"new": self.writer_class})
-        self.writer = self.writer_factory(parent=self)
-        if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
-            self.use_output_suffix = False
+        if self.writer_factory:
+            self.writer = self.writer_factory(parent=self)
+            if hasattr(self.writer, "build_directory") and self.writer.build_directory != "":
+                self.use_output_suffix = False
 
     def init_postprocessor(self):
         """Initialize the postprocessor (which is stateless)"""
@@ -424,6 +418,17 @@ class NbConvertApp(JupyterApp):
         """Run start after initialization process has completed"""
         super().start()
         self.convert_notebooks()
+
+    def _notebook_filename_to_name(self, notebook_filename):
+        """
+        Returns the notebook name from the notebook filename by
+        applying `output_base` pattern and stripping extension
+        """
+        basename = os.path.basename(notebook_filename)
+        notebook_name = basename[: basename.rfind(".")]
+        notebook_name = self.output_base.format(notebook_name=notebook_name)
+
+        return notebook_name  # noqa: RET504
 
     def init_single_notebook_resources(self, notebook_filename):
         """Step 1: Initialize resources
@@ -439,16 +444,7 @@ class NbConvertApp(JupyterApp):
                 - output_files_dir: a directory where output files (not
                   including the notebook itself) should be saved
         """
-        basename = os.path.basename(notebook_filename)
-        notebook_name = basename[: basename.rfind(".")]
-        if self.output_base:
-            # strip duplicate extension from output_base, to avoid Basename.ext.ext
-            if getattr(self.exporter, "file_extension", False):
-                base, ext = os.path.splitext(self.output_base)
-                if ext == self.exporter.file_extension:
-                    self.output_base = base
-            notebook_name = self.output_base
-
+        notebook_name = self._notebook_filename_to_name(notebook_filename)
         self.log.debug("Notebook name is '%s'", notebook_name)
 
         # first initialize the resources we want to use
@@ -492,7 +488,7 @@ class NbConvertApp(JupyterApp):
                     notebook_filename, resources=resources
                 )
         except ConversionException:
-            self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)
+            self.log.error("Error while converting '%s'", notebook_filename, exc_info=True)  # noqa: G201
             self.exit(1)
 
         return output, resources
@@ -515,15 +511,19 @@ class NbConvertApp(JupyterApp):
         file
             results from the specified writer output of exporter
         """
+
         if "unique_key" not in resources:
-            raise KeyError("unique_key MUST be specified in the resources, but it is not")
+            msg = "unique_key MUST be specified in the resources, but it is not"
+            raise KeyError(msg)
 
         notebook_name = resources["unique_key"]
-        if self.use_output_suffix and not self.output_base:
+        if self.use_output_suffix and self.output_base == "{notebook_name}":
             notebook_name += resources.get("output_suffix", "")
 
-        write_results = self.writer.write(output, resources, notebook_name=notebook_name)
-        return write_results
+        if not self.writer:
+            msg = "No writer object defined!"
+            raise ValueError(msg)
+        return self.writer.write(output, resources, notebook_name=notebook_name)
 
     def postprocess_single_notebook(self, write_results):
         """Step 4: Post-process the written file
@@ -567,17 +567,7 @@ class NbConvertApp(JupyterApp):
         self.postprocess_single_notebook(write_results)
 
     def convert_notebooks(self):
-        """Convert the notebooks in the self.notebook traitlet"""
-        # check that the output base isn't specified if there is more than
-        # one notebook to convert
-        if self.output_base != "" and len(self.notebooks) > 1:
-            self.log.error(
-                """
-                UsageError: --output flag or `NbConvertApp.output_base` config option
-                cannot be used when converting multiple notebooks.
-                """
-            )
-            self.exit(1)
+        """Convert the notebooks in the self.notebooks traitlet"""
 
         # no notebooks to convert!
         if len(self.notebooks) == 0 and not self.from_stdin:
@@ -585,14 +575,21 @@ class NbConvertApp(JupyterApp):
             sys.exit(-1)
 
         if not self.export_format:
-            raise ValueError(
+            msg = (
                 "Please specify an output format with '--to <format>'."
                 f"\nThe following formats are available: {get_export_names()}"
             )
+            raise ValueError(msg)
 
         # initialize the exporter
         cls = get_exporter(self.export_format)
         self.exporter = cls(config=self.config)
+
+        # strip duplicate extension from output_base, to avoid Basename.ext.ext
+        if getattr(self.exporter, "file_extension", False):
+            base, ext = os.path.splitext(self.output_base)
+            if ext == self.exporter.file_extension:
+                self.output_base = base
 
         # convert each notebook
         if not self.from_stdin:
@@ -602,6 +599,7 @@ class NbConvertApp(JupyterApp):
             input_buffer = unicode_stdin_stream()
             # default name when conversion from stdin
             self.convert_single_notebook("notebook.ipynb", input_buffer=input_buffer)
+            input_buffer.close()
 
     def document_flag_help(self):
         """
@@ -617,7 +615,7 @@ class NbConvertApp(JupyterApp):
     def document_alias_help(self):
         """Return a string containing all of the aliases"""
 
-        aliases = "The folowing aliases are defined:\n\n"
+        aliases = "The following aliases are defined:\n\n"
         for alias, longname in self.aliases.items():
             aliases += f"\t**{alias}** ({longname})\n\n"
         return aliases
@@ -643,17 +641,20 @@ class NbConvertApp(JupyterApp):
                         """
         )
         sections = ""
-        for category in categories:
+        for category, value in categories.items():
             sections += header.format(section=category.title())
             if category in ["exporter", "preprocessor", "writer"]:
                 sections += f".. image:: _static/{category}_inheritance.png\n\n"
-            sections += "\n".join(c.class_config_rst_doc() for c in categories[category])
+            sections += "\n".join(c.class_config_rst_doc() for c in value)
 
         return sections.replace(" : ", r" \: ")
 
 
 class DejavuApp(NbConvertApp):
+    """A deja vu app."""
+
     def initialize(self, argv=None):
+        """Initialize the app."""
         self.config.TemplateExporter.exclude_input = True
         self.config.TemplateExporter.exclude_output_prompt = True
         self.config.TemplateExporter.exclude_input_prompt = True
@@ -662,9 +663,11 @@ class DejavuApp(NbConvertApp):
         self.config.QtPDFExporter.paginate = False
 
         super().initialize(argv)
+        if hasattr(self, "load_config_environ"):
+            self.load_config_environ()
 
     @default("export_format")
-    def default_export_format(self):
+    def _default_export_format(self):
         return "html"
 
 

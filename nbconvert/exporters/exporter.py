@@ -4,35 +4,39 @@ see templateexporter.py.
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import collections
 import copy
 import datetime
 import os
 import sys
-from typing import Optional
+import typing as t
 
 import nbformat
-from nbformat import validator
+from nbformat import NotebookNode, validator
 from traitlets import Bool, HasTraits, List, TraitError, Unicode
 from traitlets.config import Config
 from traitlets.config.configurable import LoggingConfigurable
 from traitlets.utils.importstring import import_item
 
 
-class ResourcesDict(collections.defaultdict):
+class ResourcesDict(collections.defaultdict):  # type:ignore[type-arg]
+    """A default dict for resources."""
+
     def __missing__(self, key):
+        """Handle missing value."""
         return ""
 
 
-class FilenameExtension(Unicode):
+class FilenameExtension(Unicode):  # type:ignore[type-arg]
     """A trait for filename extensions."""
 
     default_value = ""
     info_text = "a filename extension, beginning with a dot"
 
     def validate(self, obj, value):
+        """Validate the file name."""
         # cast to proper unicode
         value = super().validate(obj, value)
 
@@ -71,26 +75,27 @@ class Exporter(LoggingConfigurable):
 
     # Should this converter be accessible from the notebook front-end?
     # If so, should be a friendly name to display (and possibly translated).
-    export_from_notebook = None
+    export_from_notebook: str = None  # type:ignore[assignment]
 
     # Configurability, allows the user to easily add filters and preprocessors.
-    preprocessors = List(help="""List of preprocessors, by name or namespace, to enable.""").tag(
-        config=True
-    )
+    preprocessors: List[t.Any] = List(
+        help="""List of preprocessors, by name or namespace, to enable."""
+    ).tag(config=True)
 
-    _preprocessors = List()
+    _preprocessors: List[t.Any] = List()
 
-    default_preprocessors = List(
+    default_preprocessors: List[t.Any] = List(
         [
             "nbconvert.preprocessors.TagRemovePreprocessor",
             "nbconvert.preprocessors.RegexRemovePreprocessor",
             "nbconvert.preprocessors.ClearOutputPreprocessor",
+            "nbconvert.preprocessors.CoalesceStreamsPreprocessor",
             "nbconvert.preprocessors.ExecutePreprocessor",
-            "nbconvert.preprocessors.coalesce_streams",
             "nbconvert.preprocessors.SVG2PDFPreprocessor",
             "nbconvert.preprocessors.LatexPreprocessor",
             "nbconvert.preprocessors.HighlightMagicsPreprocessor",
             "nbconvert.preprocessors.ExtractOutputPreprocessor",
+            "nbconvert.preprocessors.ExtractAttachmentsPreprocessor",
             "nbconvert.preprocessors.ClearMetadataPreprocessor",
         ],
         help="""List of preprocessors available by default, by name, namespace,
@@ -122,7 +127,9 @@ class Exporter(LoggingConfigurable):
     def default_config(self):
         return Config()
 
-    def from_notebook_node(self, nb, resources=None, **kw):
+    def from_notebook_node(
+        self, nb: NotebookNode, resources: t.Any | None = None, **kw: t.Any
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook node instance.
 
@@ -153,7 +160,9 @@ class Exporter(LoggingConfigurable):
         self._nb_metadata[notebook_name] = nb_copy.metadata
         return nb_copy, resources
 
-    def from_filename(self, filename: str, resources: Optional[dict] = None, **kw):
+    def from_filename(
+        self, filename: str, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook file.
 
@@ -178,7 +187,9 @@ class Exporter(LoggingConfigurable):
         resources["metadata"]["name"] = notebook_name
         resources["metadata"]["path"] = path
 
-        modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+        modified_date = datetime.datetime.fromtimestamp(
+            os.path.getmtime(filename), tz=datetime.timezone.utc
+        )
         # datetime.strftime date format for ipython
         if sys.platform == "win32":
             date_format = "%B %d, %Y"
@@ -189,7 +200,9 @@ class Exporter(LoggingConfigurable):
         with open(filename, encoding="utf-8") as f:
             return self.from_file(f, resources=resources, **kw)
 
-    def from_file(self, file_stream, resources=None, **kw):
+    def from_file(
+        self, file_stream: t.Any, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[NotebookNode, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook file.
 
@@ -225,7 +238,8 @@ class Exporter(LoggingConfigurable):
 
         """
         if preprocessor is None:
-            raise TypeError("preprocessor must not be None")
+            msg = "preprocessor must not be None"
+            raise TypeError(msg)
         isclass = isinstance(preprocessor, type)
         constructed = not isclass
 
@@ -239,7 +253,7 @@ class Exporter(LoggingConfigurable):
             preprocessor_cls = import_item(preprocessor)
             return self.register_preprocessor(preprocessor_cls, enabled)
 
-        if constructed and hasattr(preprocessor, "__call__"):  # noqa
+        if constructed and callable(preprocessor):
             # Preprocessor is a function, no need to construct it.
             # Register and return the preprocessor.
             if enabled:
@@ -247,21 +261,22 @@ class Exporter(LoggingConfigurable):
             self._preprocessors.append(preprocessor)
             return preprocessor
 
-        elif isclass and issubclass(preprocessor, HasTraits):
+        if isclass and issubclass(preprocessor, HasTraits):
             # Preprocessor is configurable.  Make sure to pass in new default for
             # the enabled flag if one was specified.
             self.register_preprocessor(preprocessor(parent=self), enabled)
+            return None
 
-        elif isclass:
+        if isclass:
             # Preprocessor is not configurable, construct it
             self.register_preprocessor(preprocessor(), enabled)
+            return None
 
-        else:
-            # Preprocessor is an instance of something without a __call__
-            # attribute.
-            raise TypeError(
-                "preprocessor must be callable or an importable constructor, got %r" % preprocessor
-            )
+        # Preprocessor is an instance of something without a __call__
+        # attribute.
+        raise TypeError(
+            "preprocessor must be callable or an importable constructor, got %r" % preprocessor
+        )
 
     def _init_preprocessors(self):
         """
@@ -279,7 +294,6 @@ class Exporter(LoggingConfigurable):
             self.register_preprocessor(preprocessor, enabled=True)
 
     def _init_resources(self, resources):
-
         # Make sure the resources dict is of ResourcesDict type.
         if resources is None:
             resources = ResourcesDict()
@@ -305,10 +319,7 @@ class Exporter(LoggingConfigurable):
 
     def _validate_preprocessor(self, nbc, preprocessor):
         try:
-            if not hasattr(validator, "normalize"):
-                nbformat.validate(nbc, relax_add_props=True)
-            else:
-                nbformat.validate(nbc)
+            nbformat.validate(nbc, relax_add_props=True)
         except nbformat.ValidationError:
             self.log.error("Notebook is invalid after preprocessor %s", preprocessor)
             raise

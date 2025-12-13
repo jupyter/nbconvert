@@ -4,166 +4,170 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "0 8 * * *"
 
 concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash -eux {0}
+
 jobs:
   run-tests:
     runs-on: ${{ matrix.os }}
+    env:
+      NBFORMAT_VALIDATOR: jsonschema
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: ["3.7", "3.10"]
+        os: ["ubuntu-22.04", "macos-latest", "windows-latest"]
+        python-version: ["3.12", "3.13", "3.14", "3.14t"]
         include:
-          - os: "windows-latest"
-            python-version: "3.8"
           - os: "macos-latest"
-            python-version: "3.9"
-          - os: "ubuntu-latest"
             python-version: "3.10"
+          - os: "ubuntu-22.04"
+            python-version: "3.11"
       fail-fast: false
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Run base setup actions
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          mamba-version: "*"
-          channels: conda-forge
-      - name: Install conda-forge python
-        shell: bash -l {0}
-        run: |
-          mamba create -n nbconvert
-          conda activate nbconvert
-          mamba install python=${{ matrix.python-version }}
-      - name: Install conda-forge dependencies
-        shell: bash -l {0}
-        run: |
-          mamba create -n nbconvert
-          conda activate nbconvert
-          mamba install pip pyqtwebengine pandoc pyxdg
+      - uses: actions/checkout@v5
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
       - name: Install Linux dependencies
         if: startsWith(runner.os, 'Linux')
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-plain-generic inkscape texlive-xetex
-          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0
-      - name: Install package dependencies
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          pip install codecov
-          pip install -e ".[execute,serve,test]"
-          which python
-          python -m ipykernel.kernelspec --sys-prefix
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
 
-      - name: List installed packages
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          pip freeze
-          pip check
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-1-amd64.deb && sudo dpkg -i pandoc-3.1.2-1-amd64.deb
 
-      - name: Run tests with coverage
-        if: ${{ startsWith(runner.os, 'macos')  }}
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
-          python -m pytest --cov nbconvert -vv
-
-      - name: Run tests on pypy and Windows
+      - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
-        shell: bash -l {0}
         run: |
-          conda activate nbconvert
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
-          #python -m pytest -vv
-          xvfb-run --auto-servernum `which coverage` run -m pytest -vv
+          xvfb-run --auto-servernum hatch run cov:test
 
-      - name: Run tests on pypy and Windows
-        if: ${{ startsWith(runner.os, 'Windows') }}
-        shell: bash -l {0}
+      - name: Run tests on other platforms
+        if: ${{ !startsWith(runner.os, 'linux')  }}
         run: |
-          conda activate nbconvert
-          # See https://github.com/pyppeteer/pyppeteer/pull/321
-          pip install -U websockets
-          python -m pytest -vv
+          hatch run cov:nowarn
 
-      - name: Code coverage
-        shell: bash -l {0}
-        run: |
-          conda activate nbconvert
-          codecov
+      - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
 
-  # Run "pre-commit run --all-files --hook-stage=manual"
-  pre-commit:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 5
+  coverage:
+    runs-on: ubuntu-latest
+    needs:
+      - run-tests
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
+      - uses: jupyterlab/maintainer-tools/.github/actions/report-coverage@v1
+
+  test_lint:
+    name: Test Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - uses: pre-commit/action@v2.0.0
-        with:
-          extra_args: --all-files --hook-stage=manual
-      - name: Help message if pre-commit fail
-        if: ${{ failure() }}
+      - name: Run Linters
         run: |
-          echo "You can install pre-commit hooks to automatically run formatting"
-          echo "on each commit with:"
-          echo "    pre-commit install"
-          echo "or you can run by hand on staged files with"
-          echo "    pre-commit run"
-          echo "or after-the-fact on already committed files with"
-          echo "    pre-commit run --all-files --hook-stage=manual"
+          hatch run typing:test
+          hatch run lint:build
+          pipx run interrogate -v .
+          pipx run doc8 --max-line-length=200  --ignore-path=docs/source/other/full-config.rst
+
+  check_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - run: pip install -e .
+      - uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
+        with:
+          version_spec: 10.10.10
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  check_links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
+        with:
+          ignore_links:
+            ^https://ipywidgets.readthedocs.io/en/latest/examples/Output
+            ^https://nbviewer.jupyter.org
 
   test_minimum_versions:
     name: Test Minimum Versions
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
         with:
-          python_version: "3.7"
-      - name: Install miniumum versions
-        uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
-      - name: Run the unit tests
+          dependency_type: minimum
+      - name: Install dependencies
         run: |
-          pytest -vv -W default || pytest -vv -W default --lf
+          sudo apt-get update
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
+
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.9.2.1/pandoc-2.9.2.1-1-amd64.deb && sudo dpkg -i pandoc-2.9.2.1-1-amd64.deb
+
+      - name: Run tests
+        run: |
+          # Attempt to work around https://github.com/pypa/pip/issues/12781
+          PIP_CONSTRAINT= hatch env run -e test -- pip install 'pip>=24.2'
+          xvfb-run --auto-servernum hatch run test:nowarn
+
+  test_mistune_30:
+    name: Test Mistune 3.0
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Base Setup
+        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install xvfb x11-utils libxkbcommon-x11-0  libxcb-xinerama0 python3-pyqt5
+
+          # pandoc is not up to date in the ubuntu repos, so we install directly
+          wget https://github.com/jgm/pandoc/releases/download/2.9.2.1/pandoc-2.9.2.1-1-amd64.deb && sudo dpkg -i pandoc-2.9.2.1-1-amd64.deb
+
+      - name: Run tests
+        run: |
+          hatch env run -e test -- pip install 'mistune~=3.0.0'
+          xvfb-run --auto-servernum hatch run test:nowarn
 
   test_prereleases:
     name: Test Prereleases
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - name: Install the Python dependencies
-        run: |
-          pip install --pre -e ".[test]"
-      - name: List installed packages
-        run: |
-          pip freeze
-          pip check
+      - uses: actions/checkout@v5
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+        with:
+          dependency_type: pre
       - name: Run the tests
         run: |
-          pytest -vv || pytest -vv --lf
+          export NBFORMAT_VALIDATOR=jsonschema
+          hatch run test:nowarn
 
   make_sdist:
     name: Make SDist
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - uses: jupyterlab/maintainer-tools/.github/actions/make-sdist@v1
 

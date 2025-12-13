@@ -18,6 +18,8 @@ override this.-=))
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
     \usepackage{graphicx}
+    % Keep aspect ratio if custom image width or height is specified
+    \setkeys{Gin}{keepaspectratio}
     % Maintain compatibility with old templates. Remove in nbconvert 6.0
     \let\Oldincludegraphics\includegraphics
     % Ensure that by default, figures have no caption (until we provide a
@@ -89,6 +91,7 @@ override this.-=))
     \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
     \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
                                 % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
     \usepackage{mathrsfs}
     ((* endblock packages *))
 
@@ -161,7 +164,26 @@ override this.-=))
     \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
     \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
     \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
-
+    \makeatletter
+    \newsavebox\pandoc@box
+    \newcommand*\pandocbounded[1]{%
+      \sbox\pandoc@box{#1}%
+      % scaling factors for width and height
+      \Gscale@div\@tempa\textheight{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+      \Gscale@div\@tempb\linewidth{\wd\pandoc@box}%
+      % select the smaller of both
+      \ifdim\@tempb\p@<\@tempa\p@
+        \let\@tempa\@tempb
+      \fi
+      % scaling accordingly (\@tempa < 1)
+      \ifdim\@tempa\p@<\p@
+        \scalebox{\@tempa}{\usebox\pandoc@box}%
+      % scaling not needed, use as it is
+      \else
+        \usebox{\pandoc@box}%
+      \fi
+    }
+    \makeatother
 
     % Define a nice break command that doesn't care if a line doesn't already
     % exist.
@@ -179,7 +201,11 @@ override this.-=))
     ((*- set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] -*))
     \title{((( nb_title | escape_latex )))}
     ((*- endblock title *))
-    ((* block date *))((* endblock date *))
+    ((* block date *))
+    ((* if 'date' in nb.metadata *))
+    \date{((( nb.metadata.date | escape_latex )))}
+    ((* endif *))
+    ((* endblock date *))
     ((* block author *))
     ((* if 'authors' in nb.metadata *))
     \author{((( nb.metadata.authors | join(', ', attribute='name') )))}

@@ -1,76 +1,94 @@
+ci:
+  autoupdate_schedule: monthly
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v6.0.0
     hooks:
-      - id: end-of-file-fixer
       - id: check-case-conflict
+      - id: check-ast
+      - id: check-docstring-first
       - id: check-executables-have-shebangs
-      - id: requirements-txt-fixer
       - id: check-added-large-files
       - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-json
       - id: check-toml
       - id: check-yaml
       - id: debug-statements
-      - id: forbid-new-submodules
-      - id: check-builtin-literals
+      - id: end-of-file-fixer
       - id: trailing-whitespace
 
-  - repo: https://github.com/psf/black
-    rev: 22.8.0
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.34.1
     hooks:
-      - id: black
-        args: ["--line-length", "100"]
+      - id: check-github-workflows
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+  - repo: https://github.com/hukkin/mdformat
+    rev: 1.0.0
     hooks:
-      - id: isort
-        files: \.py$
-        args: [--profile=black]
-        stages: [manual]
+      - id: mdformat
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0-alpha.0
+    rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
+        types_or: [yaml, html, json]
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v2.37.3
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: "1.20.0"
     hooks:
-      - id: pyupgrade
-        args: [--py37-plus]
+      - id: blacken-docs
+        additional_dependencies: [black==23.7.0]
 
-  - repo: https://github.com/PyCQA/doc8
-    rev: v1.0.0
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.4.1"
     hooks:
-      - id: doc8
-        args: [--max-line-length=200]
+      - id: codespell
+        args: ["-L", "sur,nd,assertin"]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.18.2"
+    hooks:
+      - id: mypy
+        files: "^nbconvert"
         stages: [manual]
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
-    hooks:
-      - id: flake8
+        args: ["--install-types", "--non-interactive"]
         additional_dependencies:
-          ["flake8-bugbear==22.6.22", "flake8-implicit-str-concat==0.2.0"]
-        stages: [manual]
+          [
+            "traitlets>=5.13",
+            "jupyter_core>=5.3",
+            "jinja2",
+            "nbformat",
+            "markupsafe",
+            "mistune",
+            "nbclient>=0.9",
+            "defusedxml",
+            "ipython",
+            "packaging",
+            "pandocfilters",
+            "jupyterlab_pygments",
+          ]
 
-  - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.18.2
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: "v1.10.0"
     hooks:
-      - id: check-jsonschema
-        name: "Check GitHub Workflows"
-        files: ^\.github/workflows/
-        types: [yaml]
-        args: ["--schemafile", "https://json.schemastore.org/github-workflow"]
-        stages: [manual]
+      - id: rst-backticks
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
 
-  - repo: local
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
     hooks:
-      - id: check-pyproject
-        name: check pyproject file
-        language: python
-        entry: python -m check_requirements
-        files: ^pyproject.toml$
-        stages: [manual]
-        additional_dependencies: ["tomli"]
+      - id: ruff-check
+        types_or: [python, jupyter]
+        args: ["--fix", "--show-fixes"]
+      - id: ruff-format
+        types_or: [python, jupyter]
+
+  - repo: https://github.com/scientific-python/cookie
+    rev: "2025.10.01"
+    hooks:
+      - id: sp-repo-review
+        additional_dependencies: ["repo-review[cli]"]

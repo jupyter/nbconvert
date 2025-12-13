@@ -44,6 +44,10 @@
 {{ output.text | indent }}
 {% endblock stream %}
 
+{% block data_native %}
+{{ output.data['text/x-rst'] }}
+{% endblock data_native %}
+
 {% block data_svg %}
 .. image:: {{ output.metadata.filenames['image/svg+xml'] | urlencode }}
 {% endblock data_svg %}

@@ -7,7 +7,7 @@ import os
 import sys
 
 if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points
+    from importlib_metadata import entry_points  # type:ignore[import-not-found]
 else:
     from importlib.metadata import entry_points
 from nbformat import NotebookNode
@@ -22,20 +22,20 @@ from .exporter import Exporter
 # -----------------------------------------------------------------------------
 
 __all__ = [
-    "export",
     "Exporter",
-    "get_exporter",
-    "get_export_names",
     "ExporterNameError",
+    "export",
+    "get_export_names",
+    "get_exporter",
 ]
 
 
 class ExporterNameError(NameError):
-    pass
+    """An exporter name error."""
 
 
 class ExporterDisabledError(ValueError):
-    pass
+    """An exporter disabled error."""
 
 
 def export(exporter, nb, **kw):
@@ -68,18 +68,18 @@ def export(exporter, nb, **kw):
 
     # Check arguments
     if exporter is None:
-        raise TypeError("Exporter is None")
-    elif not isinstance(exporter, Exporter) and not issubclass(exporter, Exporter):
-        raise TypeError("exporter does not inherit from Exporter (base)")
+        msg = "Exporter is None"
+        raise TypeError(msg)
+    if not isinstance(exporter, Exporter) and not issubclass(exporter, Exporter):
+        msg = "exporter does not inherit from Exporter (base)"
+        raise TypeError(msg)
     if nb is None:
-        raise TypeError("nb is None")
+        msg = "nb is None"
+        raise TypeError(msg)
 
     # Create the exporter
     resources = kw.pop("resources", None)
-    if isinstance(exporter, Exporter):
-        exporter_instance = exporter
-    else:
-        exporter_instance = exporter(**kw)
+    exporter_instance = exporter if isinstance(exporter, Exporter) else exporter(**kw)
 
     # Try to convert the notebook using the appropriate conversion function.
     if isinstance(nb, NotebookNode):
@@ -91,22 +91,25 @@ def export(exporter, nb, **kw):
     return output, resources
 
 
-def get_exporter(name, config=get_config()):  # noqa
+def get_exporter(name, config=None):
     """Given an exporter name or import path, return a class ready to be instantiated
 
     Raises ExporterName if exporter is not found or ExporterDisabledError if not enabled
     """
+
+    if config is None:
+        config = get_config()
 
     if name == "ipynb":
         name = "notebook"
 
     try:
         exporters = entry_points(group="nbconvert.exporters")
-        exporter = [e for e in exporters if e.name == name or e.name == name.lower()][0].load()
+        items = [e for e in exporters if e.name == name or e.name == name.lower()]
+        exporter = items[0].load()
         if getattr(exporter(config=config), "enabled", True):
             return exporter
-        else:
-            raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
+        raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
     except IndexError:
         pass
 
@@ -115,31 +118,33 @@ def get_exporter(name, config=get_config()):  # noqa
             exporter = import_item(name)
             if getattr(exporter(config=config), "enabled", True):
                 return exporter
-            else:
-                raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
+            raise ExporterDisabledError('Exporter "%s" disabled in configuration' % (name))
         except ImportError:
             log = get_logger()
-            log.error("Error importing %s" % name, exc_info=True)
+            log.error("Error importing %s", name, exc_info=True)  # noqa: G201
 
-    raise ExporterNameError(
-        'Unknown exporter "{}", did you mean one of: {}?'.format(
-            name, ", ".join(get_export_names())
-        )
+    msg = 'Unknown exporter "{}", did you mean one of: {}?'.format(
+        name, ", ".join(get_export_names())
     )
+    raise ExporterNameError(msg)
 
 
-def get_export_names(config=get_config()):  # noqa
+def get_export_names(config=None):
     """Return a list of the currently supported export targets
 
     Exporters can be found in external packages by registering
     them as an nbconvert.exporter entrypoint.
     """
+
     exporters = sorted(e.name for e in entry_points(group="nbconvert.exporters"))
     if os.environ.get("NBCONVERT_DISABLE_CONFIG_EXPORTERS"):
         get_logger().info(
             "Config exporter loading disabled, no additional exporters will be automatically included."
         )
         return exporters
+
+    if config is None:
+        config = get_config()
 
     enabled_exporters = []
     for exporter_name in exporters:

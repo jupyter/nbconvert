@@ -1,5 +1,4 @@
-"""Module that pre-processes the notebook for export to HTML.
-"""
+"""Module that pre-processes the notebook for export to HTML."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -7,14 +6,14 @@
 import hashlib
 import os
 
-from jupyterlab_pygments import JupyterStyle
+from jupyterlab_pygments import JupyterStyle  # type:ignore[import-untyped]
 from pygments.style import Style
 from traitlets import Type, Unicode, Union
 
 from .base import Preprocessor
 
 try:
-    from notebook import DEFAULT_STATIC_FILES_PATH
+    from notebook import DEFAULT_STATIC_FILES_PATH  # type:ignore[import-not-found]
 except ImportError:
     DEFAULT_STATIC_FILES_PATH = None
 
@@ -34,6 +33,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
     ).tag(config=True)
 
     def __init__(self, *pargs, **kwargs):
+        """Initialize the preprocessor."""
         Preprocessor.__init__(self, *pargs, **kwargs)
         self._default_css_hash = None
 
@@ -61,7 +61,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
         Fills self.header with lines of CSS extracted from IPython
         and Pygments.
         """
-        from pygments.formatters import HtmlFormatter
+        from pygments.formatters import HtmlFormatter  # noqa: PLC0415
 
         header = []
 
@@ -86,7 +86,7 @@ class CSSHTMLHeaderPreprocessor(Preprocessor):
 
     def _hash(self, filename):
         """Compute the hash of a file."""
-        md5 = hashlib.md5()
+        md5 = hashlib.md5()  # noqa: S324
         with open(filename, "rb") as f:
             md5.update(f.read())
         return md5.digest()

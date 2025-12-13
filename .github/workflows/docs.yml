@@ -14,17 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.10"]
+        python-version: ["3.10", "3.14"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk
+          sudo apt-get install texlive-plain-generic inkscape texlive-xetex latexmk enchant-2
 
           # pandoc is not up to date in the ubuntu repos, so we install directly
-          wget https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb && sudo dpkg -i pandoc-2.14.2-1-amd64.deb
+          wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-1-amd64.deb && sudo dpkg -i pandoc-3.1.2-1-amd64.deb
 
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - name: Install
@@ -38,20 +38,7 @@ jobs:
           cd docs
           make html SPHINXOPTS="-W"
       - name: Upload HTML
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: html
+          name: html-${{ github.job }}-${{ strategy.job-index }}
           path: build/sphinx/html
-      - name: Build PDF docs
-        run: |
-          cd docs
-          make latexpdf
-      - name: Upload PDF
-        uses: actions/upload-artifact@v2
-        with:
-          name: pdf
-          path: docs/build/latex/nbconvert.pdf
-      - name: Check links
-        run: |
-          cd docs
-          make linkcheck

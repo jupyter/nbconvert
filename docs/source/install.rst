@@ -11,7 +11,7 @@ Installation
 Supported Python versions
 -------------------------
 
-Currently Python 3.7-3.9 is supported and tested by nbconvert.
+Currently Python 3.9-3.12 is supported and tested by nbconvert.
 
 Installing nbconvert
 --------------------
@@ -29,7 +29,7 @@ The `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ and `Miniforge
 .. important::
 
     To unlock its full capabilities, nbconvert requires Pandoc, TeX
-    (specifically, XeLaTeX) and Pyppeteer. These must be installed separately.
+    (specifically, XeLaTeX) and playwright. These must be installed separately.
 
 Installing Pandoc
 -----------------
@@ -69,7 +69,7 @@ packages are specific to different operating systems:
         sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-plain-generic
 
 * macOS (OS X): `MacTeX <http://tug.org/mactex/>`_.
-* Windows: `MikTex <https://miktex.org/>`_
+* Windows: `Latex Project <https://www.latex-project.org/get/>`_.
 
 Because nbconvert depends on packages and fonts included in standard
 TeX distributions, if you do not have a complete installation, you
@@ -80,13 +80,13 @@ Installing Chromium
 -------------------
 
 For converting notebooks to PDF with ``--to webpdf``, nbconvert requires the
-`Pyppeteer <https://github.com/pyppeteer/pyppeteer>`_ Chromium automation library.
+`playwright <https://github.com/microsoft/playwright-python>`_ Chromium automation library.
 
-Pyppeteer makes use of a specific version of Chromium. If it does not find a suitable
+Playwright makes use of a specific version of Chromium. If it does not find a suitable
 installation of the web browser, it can automatically download it if the ``--allow-chromium-download``
 flag is passed to the command line.
 
-To install a suitable version of pyppeteer, you can pip install ``nbconvert[webpdf]``.
+To install a suitable version of playwright, you can pip install ``nbconvert[webpdf]``.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

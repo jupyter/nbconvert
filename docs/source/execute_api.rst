@@ -35,7 +35,7 @@ Example
 Let's start with a complete quick example, leaving detailed explanations
 to the following sections.
 
-**Import**: First we import nbconvert and the `ExecutePreprocessor`
+**Import**: First we import nbconvert and the ``ExecutePreprocessor``
 class::
 
     import nbformat
@@ -78,7 +78,7 @@ in the file ``executed_notebook.ipynb``.
 Execution arguments (traitlets)
 -------------------------------
 
-The arguments passed to `ExecutePreprocessor` are configuration options
+The arguments passed to ``ExecutePreprocessor`` are configuration options
 called `traitlets <https://traitlets.readthedocs.io/en/stable>`_.
 There are many cool things about traitlets. For example,
 they enforce the input type, and they can be accessed/modified as

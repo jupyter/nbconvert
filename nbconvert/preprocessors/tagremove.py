@@ -5,6 +5,7 @@ one or more regular expression.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 from traitlets import Set, Unicode
 
@@ -32,15 +33,14 @@ class TagRemovePreprocessor(Preprocessor):
         removes inputs tagged with these values
     """
 
-    remove_cell_tags = Set(
+    remove_cell_tags: set[str] = Set(  # type:ignore[assignment]
         Unicode(),
         default_value=[],
         help=(
-            "Tags indicating which cells are to be removed,"
-            "matches tags in ``cell.metadata.tags``."
+            "Tags indicating which cells are to be removed,matches tags in ``cell.metadata.tags``."
         ),
     ).tag(config=True)
-    remove_all_outputs_tags = Set(
+    remove_all_outputs_tags: set[str] = Set(  # type:ignore[assignment]
         Unicode(),
         default_value=[],
         help=(
@@ -48,7 +48,7 @@ class TagRemovePreprocessor(Preprocessor):
             "matches tags in ``cell.metadata.tags``."
         ),
     ).tag(config=True)
-    remove_single_output_tags = Set(
+    remove_single_output_tags: set[str] = Set(  # type:ignore[assignment]
         Unicode(),
         default_value=[],
         help=(
@@ -56,7 +56,7 @@ class TagRemovePreprocessor(Preprocessor):
             "matches output *i* tags in ``cell.outputs[i].metadata.tags``."
         ),
     ).tag(config=True)
-    remove_input_tags = Set(
+    remove_input_tags: set[str] = Set(  # type:ignore[assignment]
         Unicode(),
         default_value=[],
         help=(
@@ -64,7 +64,7 @@ class TagRemovePreprocessor(Preprocessor):
             "matches tags in ``cell.metadata.tags``."
         ),
     ).tag(config=True)
-    remove_metadata_fields = Set({"collapsed", "scrolled"}).tag(config=True)
+    remove_metadata_fields: set[str] = Set({"collapsed", "scrolled"}).tag(config=True)  # type:ignore[assignment]
 
     def check_cell_conditions(self, cell, resources, index):
         """
@@ -110,7 +110,6 @@ class TagRemovePreprocessor(Preprocessor):
             self.remove_all_outputs_tags.intersection(cell.get("metadata", {}).get("tags", []))
             and cell.cell_type == "code"
         ):
-
             cell.outputs = []
             cell.execution_count = None
             # Remove metadata associated with output

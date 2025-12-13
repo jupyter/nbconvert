@@ -4,11 +4,12 @@ that uses Jinja2 to export notebook files into different formats.
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import html
 import json
 import os
+import typing as t
 import uuid
 import warnings
 from pathlib import Path
@@ -22,6 +23,7 @@ from jinja2 import (
     TemplateNotFound,
 )
 from jupyter_core.paths import jupyter_path
+from nbformat import NotebookNode
 from traitlets import Bool, Dict, HasTraits, List, Unicode, default, observe, validate
 from traitlets.config import Config
 from traitlets.utils.importstring import import_item
@@ -70,6 +72,7 @@ default_filters = {
     # For removing any HTML
     "escape_html": lambda s: html.escape(str(s)),
     "escape_html_keep_quotes": lambda s: html.escape(str(s), quote=False),
+    "escape_html_script": lambda s: s.replace("/", "\\/"),
     # For sanitizing HTML for any XSS
     "clean_html": filters.clean_html,
     "strip_trailing_newline": filters.strip_trailing_newline,
@@ -101,7 +104,8 @@ def recursive_update(target, new):
 
 # define function at the top level to avoid pickle errors
 def deprecated(msg):
-    warnings.warn(msg, DeprecationWarning)
+    """Emit a deprecation warning."""
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
 
 class ExtensionTolerantLoader(BaseLoader):
@@ -114,18 +118,21 @@ class ExtensionTolerantLoader(BaseLoader):
     """
 
     def __init__(self, loader, extension):
+        """Initialize the loader."""
         self.loader = loader
         self.extension = extension
 
     def get_source(self, environment, template):
+        """Get the source for a template."""
         try:
             return self.loader.get_source(environment, template)
         except TemplateNotFound:
             if template.endswith(self.extension):
-                raise TemplateNotFound(template)
+                raise TemplateNotFound(template) from None
             return self.loader.get_source(environment, template + self.extension)
 
     def list_templates(self):
+        """List available templates."""
         return self.loader.list_templates()
 
 
@@ -144,7 +151,11 @@ class TemplateExporter(Exporter):
     """
 
     # finish the docstring
-    __doc__ = __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))
+    __doc__ = (
+        __doc__.format(filters="- " + "\n    - ".join(sorted(default_filters.keys())))
+        if __doc__
+        else None
+    )
 
     _template_cached = None
 
@@ -177,7 +188,10 @@ class TemplateExporter(Exporter):
                 "TagRemovePreprocessor": {"enabled": True},
             }
         )
-        c.merge(super().default_config)
+        if super().default_config:
+            c2 = super().default_config.copy()
+            c2.merge(c)
+            c = c2
         return c
 
     template_name = Unicode(help="Name of the template to use").tag(
@@ -204,38 +218,40 @@ class TemplateExporter(Exporter):
             warnings.warn(
                 f"5.x style template name passed '{self.template_name}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                 DeprecationWarning,
+                stacklevel=2,
             )
             directory, self.template_file = os.path.split(self.template_name)
             if directory:
                 directory, template_name = os.path.split(directory)
-            if directory:
-                if os.path.isabs(directory):
-                    self.extra_template_basedirs = [directory]
+            if directory and os.path.isabs(directory):
+                self.extra_template_basedirs = [directory]
         return template_name
 
     @observe("template_file")
     def _template_file_changed(self, change):
         new = change["new"]
         if new == "default":
-            self.template_file = self.default_template
+            self.template_file = self.default_template  # type:ignore[attr-defined]
             return
         # check if template_file is a file path
         # rather than a name already on template_path
         full_path = os.path.abspath(new)
         if os.path.isfile(full_path):
             directory, self.template_file = os.path.split(full_path)
-            self.extra_template_paths = [directory] + self.extra_template_paths
+            self.extra_template_paths = [directory, *self.extra_template_paths]
             # While not strictly an invalid template file name, the extension hints that there isn't a template directory involved
-            if self.template_file.endswith(".tpl"):
+            if self.template_file and self.template_file.endswith(".tpl"):
                 warnings.warn(
                     f"5.x style template file passed '{new}'. Use --template-name for the template directory with a index.<ext>.j2 file and/or --template-file to denote a different template.",
                     DeprecationWarning,
+                    stacklevel=2,
                 )
 
     @default("template_file")
     def _template_file_default(self):
         if self.template_extension:
             return "index" + self.template_extension
+        return None
 
     @observe("raw_template")
     def _raw_template_changed(self, change):
@@ -244,8 +260,8 @@ class TemplateExporter(Exporter):
         self._invalidate_template_cache()
 
     template_paths = List(["."]).tag(config=True, affects_environment=True)
-    extra_template_basedirs = List().tag(config=True, affects_environment=True)
-    extra_template_paths = List([]).tag(config=True, affects_environment=True)
+    extra_template_basedirs = List(Unicode()).tag(config=True, affects_environment=True)
+    extra_template_paths = List(Unicode()).tag(config=True, affects_environment=True)
 
     @default("extra_template_basedirs")
     def _default_extra_template_basedirs(self):
@@ -258,15 +274,11 @@ class TemplateExporter(Exporter):
         jupyter_path("nbconvert", "templates"), help="Path where templates can be installed too."
     ).tag(affects_environment=True)
 
-    # Extension that the template files use.
-    template_extension = Unicode().tag(config=True, affects_environment=True)
-
     @default("template_extension")
     def _template_extension_default(self):
         if self.file_extension:
             return self.file_extension + ".j2"
-        else:
-            return self.file_extension
+        return self.file_extension
 
     exclude_input = Bool(
         False, help="This allows you to exclude code cell inputs from all templates if set to True."
@@ -306,7 +318,7 @@ class TemplateExporter(Exporter):
         False, help="This allows you to exclude unknown cells from all templates if set to True."
     ).tag(config=True)
 
-    extra_loaders = List(
+    extra_loaders: List[t.Any] = List(
         help="Jinja loaders to find templates. Will be tried in order "
         "before the default FileSystem ones.",
     ).tag(affects_environment=True)
@@ -317,7 +329,7 @@ class TemplateExporter(Exporter):
     ).tag(config=True, affects_environment=True)
 
     raw_mimetypes = List(
-        help="""formats of raw cells to be included in this Exporter's output."""
+        Unicode(), help="""formats of raw cells to be included in this Exporter's output."""
     ).tag(config=True)
 
     @default("raw_mimetypes")
@@ -354,13 +366,14 @@ class TemplateExporter(Exporter):
 
         # this gives precedence to a raw_template if present
         with self.hold_trait_notifications():
-            if self.template_file != self._raw_template_key:
+            if self.template_file and (self.template_file != self._raw_template_key):
                 self._last_template_file = self.template_file
             if self.raw_template:
                 self.template_file = self._raw_template_key
 
         if not self.template_file:
-            raise ValueError("No template_file specified!")
+            msg = "No template_file specified!"
+            raise ValueError(msg)
 
         # First try to load the
         # template by name with extension added, then try loading the template
@@ -370,7 +383,21 @@ class TemplateExporter(Exporter):
         self.log.debug("    template_paths: %s", os.pathsep.join(self.template_paths))
         return self.environment.get_template(template_file)
 
-    def from_notebook_node(self, nb, resources=None, **kw):
+    def from_filename(  # type:ignore[override]
+        self, filename: str, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
+        """Convert a notebook from a filename."""
+        return super().from_filename(filename, resources, **kw)  # type:ignore[return-value]
+
+    def from_file(  # type:ignore[override]
+        self, file_stream: t.Any, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
+        """Convert a notebook from a file."""
+        return super().from_file(file_stream, resources, **kw)  # type:ignore[return-value]
+
+    def from_notebook_node(  # type:ignore[override]
+        self, nb: NotebookNode, resources: dict[str, t.Any] | None = None, **kw: t.Any
+    ) -> tuple[str, dict[str, t.Any]]:
         """
         Convert a notebook from a notebook node instance.
 
@@ -384,6 +411,7 @@ class TemplateExporter(Exporter):
         """
         nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
         resources.setdefault("raw_mimetypes", self.raw_mimetypes)
+        resources.setdefault("output_mimetype", self.output_mimetype)
         resources["global_content_filter"] = {
             "include_code": not self.exclude_code_cell,
             "include_markdown": not self.exclude_markdown,
@@ -415,7 +443,8 @@ class TemplateExporter(Exporter):
         filter : filter
         """
         if jinja_filter is None:
-            raise TypeError("filter")
+            msg = "filter"
+            raise TypeError(msg)
         isclass = isinstance(jinja_filter, type)
         constructed = not isclass
 
@@ -426,26 +455,28 @@ class TemplateExporter(Exporter):
             filter_cls = import_item(jinja_filter)
             return self._register_filter(environ, name, filter_cls)
 
-        if constructed and hasattr(jinja_filter, "__call__"):  # noqa
+        if constructed and callable(jinja_filter):
             # filter is a function, no need to construct it.
             environ.filters[name] = jinja_filter
             return jinja_filter
 
-        elif isclass and issubclass(jinja_filter, HasTraits):
+        if isclass and issubclass(jinja_filter, HasTraits):
             # filter is configurable.  Make sure to pass in new default for
             # the enabled flag if one was specified.
             filter_instance = jinja_filter(parent=self)
             self._register_filter(environ, name, filter_instance)
+            return None
 
-        elif isclass:
+        if isclass:
             # filter is not configurable, construct it
             filter_instance = jinja_filter()
             self._register_filter(environ, name, filter_instance)
+            return None
 
-        else:
-            # filter is an instance of something without a __call__
-            # attribute.
-            raise TypeError("filter")
+        # filter is an instance of something without a __call__
+        # attribute.
+        msg = "filter"
+        raise TypeError(msg)
 
     def register_filter(self, name, jinja_filter):
         """
@@ -480,11 +511,12 @@ class TemplateExporter(Exporter):
         paths = self.template_paths
         self.log.debug("Template paths:\n\t%s", "\n\t".join(paths))
 
-        loaders = self.extra_loaders + [
+        loaders = [
+            *self.extra_loaders,
             ExtensionTolerantLoader(FileSystemLoader(paths), self.template_extension),
             DictLoader({self._raw_template_key: self.raw_template}),
         ]
-        environment = Environment(
+        environment = Environment(  # noqa: S701
             loader=ChoiceLoader(loaders),
             extensions=JINJA_EXTENSIONS,
             enable_async=self.enable_async,
@@ -518,11 +550,11 @@ class TemplateExporter(Exporter):
                 preprocessor_cls = import_item(preprocessor_cls)
                 if preprocessor_cls.__name__ in self.config:
                     kwargs.update(self.config[preprocessor_cls.__name__])
-                preprocessor = preprocessor_cls(**kwargs)
+                preprocessor = preprocessor_cls(**kwargs)  # noqa: PLW2901
                 self.register_preprocessor(preprocessor)
 
     def _get_conf(self):
-        conf = {}  # the configuration once all conf files are merged
+        conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         for path in map(Path, self.template_paths):
             conf_path = path / "conf.json"
             if conf_path.exists():
@@ -538,13 +570,19 @@ class TemplateExporter(Exporter):
         for template_name in template_names:
             for base_dir in self.extra_template_basedirs:
                 path = os.path.join(base_dir, template_name)
-                if not prune or os.path.exists(path):
-                    paths.append(path)
+                try:
+                    if not prune or os.path.exists(path):
+                        paths.append(path)
+                except PermissionError:
+                    pass
             for root_dir in root_dirs:
                 base_dir = os.path.join(root_dir, "nbconvert", "templates")
                 path = os.path.join(base_dir, template_name)
-                if not prune or os.path.exists(path):
-                    paths.append(path)
+                try:
+                    if not prune or os.path.exists(path):
+                        paths.append(path)
+                except PermissionError:
+                    pass
 
         for root_dir in root_dirs:
             # we include root_dir for when we want to be very explicit, e.g.
@@ -567,21 +605,23 @@ class TemplateExporter(Exporter):
 
     @classmethod
     def get_compatibility_base_template_conf(cls, name):
+        """Get the base template config."""
         # Hard-coded base template confs to use for backwards compatibility for 5.x-only templates
         if name == "display_priority":
-            return dict(base_template="base")
+            return {"base_template": "base"}
         if name == "full":
-            return dict(base_template="classic", mimetypes={"text/html": True})
+            return {"base_template": "classic", "mimetypes": {"text/html": True}}
+        return None
 
     def get_template_names(self):
-        # finds a list of template names where each successive template name is the base template
+        """Finds a list of template names where each successive template name is the base template"""
         template_names = []
         root_dirs = self.get_prefix_root_dirs()
-        base_template = self.template_name
-        merged_conf = {}  # the configuration once all conf files are merged
+        base_template: str | None = self.template_name
+        merged_conf: dict[str, t.Any] = {}  # the configuration once all conf files are merged
         while base_template is not None:
             template_names.append(base_template)
-            conf = {}
+            conf: dict[str, t.Any] = {}
             found_at_least_one = False
             for base_dir in self.extra_template_basedirs:
                 template_dir = os.path.join(base_dir, base_template)
@@ -611,30 +651,28 @@ class TemplateExporter(Exporter):
                         warnings.warn(
                             f"5.x template name passed '{self.template_name}'. Use 'lab' or 'classic' for new template usage.",
                             DeprecationWarning,
+                            stacklevel=2,
                         )
                         self.template_file = compatibility_file
                         conf = self.get_compatibility_base_template_conf(base_template)
-                        self.template_name = conf.get("base_template")
+                        self.template_name = t.cast(str, conf.get("base_template"))
                         break
                 if not found_at_least_one:
                     paths = "\n\t".join(root_dirs)
-                    raise ValueError(
-                        "No template sub-directory with name %r found in the following paths:\n\t%s"
-                        % (base_template, paths)
-                    )
+                    msg = f"No template sub-directory with name {base_template!r} found in the following paths:\n\t{paths}"
+                    raise ValueError(msg)
             merged_conf = recursive_update(dict(conf), merged_conf)
-            base_template = conf.get("base_template")
+            base_template = t.cast(t.Any, conf.get("base_template"))
         conf = merged_conf
         mimetypes = [mimetype for mimetype, enabled in conf.get("mimetypes", {}).items() if enabled]
         if self.output_mimetype and self.output_mimetype not in mimetypes and mimetypes:
             supported_mimetypes = "\n\t".join(mimetypes)
-            raise ValueError(
-                "Unsupported mimetype %r for template %r, mimetypes supported are: \n\t%s"
-                % (self.output_mimetype, self.template_name, supported_mimetypes)
-            )
+            msg = f"Unsupported mimetype {self.output_mimetype!r} for template {self.template_name!r}, mimetypes supported are: \n\t{supported_mimetypes}"
+            raise ValueError(msg)
         return template_names
 
     def get_prefix_root_dirs(self):
+        """Get the prefix root dirs."""
         # We look at the usual jupyter locations, and for development purposes also
         # relative to the package directory (first entry, meaning with highest precedence)
         root_dirs = []

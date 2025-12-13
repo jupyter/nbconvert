@@ -5,42 +5,56 @@ is hosted on ReadTheDocs.
 
 ## Build Documentation locally
 
-1.  Change directory to documentation root:
+1. Change directory to documentation root:
 
-        $ cd docs
+   ```
+   $ cd docs
+   ```
 
-2.  Create conda env (and install relevant dependencies):
+1. Create conda env (and install relevant dependencies):
 
-        $ conda env create -f environment.yml
+   ```
+   $ conda env create -f environment.yml
+   ```
 
-3.  Activate the newly built conda environment `nbconvert_docs`
+1. Activate the newly built conda environment `nbconvert_docs`
 
-        $ source activate nbconvert_docs
+   ```
+   $ source activate nbconvert_docs
+   ```
 
-4.  Create an editable install for nbconvert with doc dependencies using
+1. Create an editable install for nbconvert with doc dependencies using
 
-         $ pip install -e '..[docs]'
+   ```
+    $ pip install -e '..[docs]'
+   ```
 
-    or if you want, `cd ..` and `pip install . -e`. But then you will need to `cd docs` before
-    continuing to the next step.
+   or if you want, `cd ..` and `pip install . -e`. But then you will need to `cd docs` before
+   continuing to the next step.
 
-5.  Build documentation using Makefile for Linux and OS X:
+1. Build documentation using Makefile for Linux and OS X:
 
-         $ make html
+   ```
+    $ make html
+   ```
 
-    or on Windows:
+   or on Windows:
 
-         $ make.bat html
+   ```
+    $ make.bat html
+   ```
 
-6.  Display the documentation locally by navigating to
-    `build/html/index.html` in your browser:
+1. Display the documentation locally by navigating to
+   `build/html/index.html` in your browser:
 
-    Or alternatively you may run a local server to display
-    the docs. In Python 3:
+   Or alternatively you may run a local server to display
+   the docs. In Python 3:
 
-         $ python -m http.server 8000
+   ```
+    $ python -m http.server 8000
+   ```
 
-    In your browser, go to `http://localhost:8000`.
+   In your browser, go to `http://localhost:8000`.
 
 ## Developing Documentation
 

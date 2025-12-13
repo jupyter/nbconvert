@@ -1,5 +1,6 @@
 {%- extends 'display_priority.j2' -%}
 {% from 'celltags.j2' import celltags %}
+{% from 'cell_id_anchor.j2' import cell_id_anchor %}
 
 {% block codecell %}
 {%- if not cell.outputs -%}
@@ -8,7 +9,7 @@
 {%- if not resources.global_content_filter.include_input -%}
 {%- set no_input_class="jp-mod-noInput" -%}
 {%- endif -%}
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}">
+<div {{ cell_id_anchor(cell) }} class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}">
 {{ super() }}
 </div>
 {%- endblock codecell %}
@@ -25,7 +26,7 @@
 
 {% block input %}
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
+     <div class="cm-editor cm-s-jupyter">
 {{ cell.source | highlight_code(metadata=cell.metadata) | clean_html }}
      </div>
 </div>
@@ -93,7 +94,7 @@
 {% endblock output %}
 
 {% block markdowncell scoped %}
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div {{ cell_id_anchor(cell) }} class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -163,10 +164,22 @@ unknown type  {{ cell.type }}
 {%- if output.svg_filename %}
 <img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
-{{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+    {%- if resources.should_not_encode_svg %}
+        {{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+    {%- else %}
+        <img src="data:image/svg+xml;base64,{{ output.data['image/svg+xml'] | text_base64 | escape_html }}">
+    {%- endif %}
 {%- endif %}
 </div>
 {%- endblock data_svg %}
+
+{% block data_mermaid scoped -%}
+<div class="jp-Mermaid">
+<pre class="mermaid">
+{{ output.data['text/vnd.mermaid'].strip() }}
+</pre>
+</div>
+{%- endblock data_mermaid %}
 
 {% block data_html scoped -%}
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output {{ extra_class }}" data-mime-type="text/html">
@@ -302,7 +315,7 @@ var element = document.getElementById('{{ div_id }}');
 var element = document.getElementById('{{ div_id }}');
 </script>
 <script type="{{ datatype }}">
-{{ output.data[datatype] | json_dumps | escape_html_keep_quotes }}
+{{ output.data[datatype] | json_dumps | escape_html_script }}
 </script>
 </div>
 {%- endblock data_widget_view -%}
@@ -311,7 +324,7 @@ var element = document.getElementById('{{ div_id }}');
 {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
 {% if mimetype in nb.metadata.get("widgets",{})%}
 <script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_keep_quotes }}
+{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
 </script>
 {% endif %}
 {{ super() }}

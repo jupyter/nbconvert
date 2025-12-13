@@ -13,8 +13,7 @@ from within Jinja templates.
 from html import escape
 from warnings import warn
 
-from traitlets import observe
-from traitlets.config import Dict
+from traitlets import Dict, observe
 
 from nbconvert.utils.base import NbConvertBase
 
@@ -24,6 +23,8 @@ __all__ = ["Highlight2HTML", "Highlight2Latex"]
 
 
 class Highlight2HTML(NbConvertBase):
+    """Convert highlighted code to html."""
+
     extra_formatter_options = Dict(
         {},
         help="""
@@ -36,6 +37,7 @@ class Highlight2HTML(NbConvertBase):
     )
 
     def __init__(self, pygments_lexer=None, **kwargs):
+        """Initialize the converter."""
         self.pygments_lexer = pygments_lexer or "ipython3"
         super().__init__(**kwargs)
 
@@ -43,7 +45,8 @@ class Highlight2HTML(NbConvertBase):
     def _default_language_changed(self, change):
         warn(
             "Setting default_language in config is deprecated as of 5.0, "
-            "please use language_info metadata instead."
+            "please use language_info metadata instead.",
+            stacklevel=2,
         )
         self.pygments_lexer = change["new"]
 
@@ -60,7 +63,7 @@ class Highlight2HTML(NbConvertBase):
         metadata : NotebookNode cell metadata
             metadata of the cell to highlight
         """
-        from pygments.formatters import HtmlFormatter
+        from pygments.formatters import HtmlFormatter  # noqa: PLC0415
 
         if not language:
             language = self.pygments_lexer
@@ -77,6 +80,8 @@ class Highlight2HTML(NbConvertBase):
 
 
 class Highlight2Latex(NbConvertBase):
+    """Convert highlighted code to latex."""
+
     extra_formatter_options = Dict(
         {},
         help="""
@@ -89,6 +94,7 @@ class Highlight2Latex(NbConvertBase):
     )
 
     def __init__(self, pygments_lexer=None, **kwargs):
+        """Initialize the converter."""
         self.pygments_lexer = pygments_lexer or "ipython3"
         super().__init__(**kwargs)
 
@@ -96,7 +102,8 @@ class Highlight2Latex(NbConvertBase):
     def _default_language_changed(self, change):
         warn(
             "Setting default_language in config is deprecated as of 5.0, "
-            "please use language_info metadata instead."
+            "please use language_info metadata instead.",
+            stacklevel=2,
         )
         self.pygments_lexer = change["new"]
 
@@ -115,7 +122,7 @@ class Highlight2Latex(NbConvertBase):
         strip_verbatim : bool
             remove the Verbatim environment that pygments provides by default
         """
-        from pygments.formatters import LatexFormatter
+        from pygments.formatters import LatexFormatter  # noqa: PLC0415
 
         if not language:
             language = self.pygments_lexer
@@ -124,13 +131,14 @@ class Highlight2Latex(NbConvertBase):
             source, LatexFormatter(**self.extra_formatter_options), language, metadata
         )
         if strip_verbatim:
-            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")  # noqa
+            latex = latex.replace(r"\begin{Verbatim}[commandchars=\\\{\}]" + "\n", "")
             return latex.replace("\n\\end{Verbatim}\n", "")
-        else:
-            return latex
+        return latex
 
 
-def _pygments_highlight(source, output_formatter, language="ipython", metadata=None):
+def _pygments_highlight(
+    source, output_formatter, language="ipython", metadata=None, **lexer_options
+):
     """
     Return a syntax-highlighted version of the input source
 
@@ -143,41 +151,47 @@ def _pygments_highlight(source, output_formatter, language="ipython", metadata=N
         language to highlight the syntax of
     metadata : NotebookNode cell metadata
         metadata of the cell to highlight
+    lexer_options : dict
+        Options to pass to the pygments lexer. See
+        https://pygments.org/docs/lexers/#available-lexers for more information about
+        valid lexer options
     """
-    from pygments import highlight
-    from pygments.lexers import get_lexer_by_name
-    from pygments.util import ClassNotFound
+    from pygments import highlight  # noqa: PLC0415
+    from pygments.lexers import get_lexer_by_name  # noqa: PLC0415
+    from pygments.util import ClassNotFound  # noqa: PLC0415
 
     # If the cell uses a magic extension language,
     # use the magic language instead.
     if language.startswith("ipython") and metadata and "magics_language" in metadata:
-
         language = metadata["magics_language"]
 
     lexer = None
     if language == "ipython2":
         try:
-            from IPython.lib.lexers import IPythonLexer
-        except ImportError:
-            warn("IPython lexer unavailable, falling back on Python")
+            from IPython.lib.lexers import IPythonLexer  # noqa: PLC0415
+        except ModuleNotFoundError:
+            warn("IPython lexer unavailable, falling back on Python", stacklevel=2)
             language = "python"
         else:
             lexer = IPythonLexer()
     elif language == "ipython3":
         try:
-            from IPython.lib.lexers import IPython3Lexer
-        except ImportError:
-            warn("IPython3 lexer unavailable, falling back on Python 3")
+            from IPython.lib.lexers import IPython3Lexer  # noqa: PLC0415
+        except ModuleNotFoundError:
+            warn("IPython3 lexer unavailable, falling back on Python 3", stacklevel=2)
             language = "python3"
         else:
             lexer = IPython3Lexer()
 
     if lexer is None:
         try:
-            lexer = get_lexer_by_name(language, stripall=True)
+            lexer = get_lexer_by_name(language, **lexer_options)
         except ClassNotFound:
-            warn("No lexer found for language %r. Treating as plain text." % language)
-            from pygments.lexers.special import TextLexer
+            warn(
+                "No lexer found for language %r. Treating as plain text." % language,
+                stacklevel=2,
+            )
+            from pygments.lexers.special import TextLexer  # noqa: PLC0415
 
             lexer = TextLexer()
 

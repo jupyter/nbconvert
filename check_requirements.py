@@ -1,4 +1,5 @@
-# Verify that the "all" reqs are in sync.
+"""Verify that the "all" reqs are in sync."""
+
 import sys
 
 from tomli import load
@@ -10,7 +11,7 @@ all_reqs = data["project"]["optional-dependencies"]["all"]
 remaining_all = all_reqs.copy()
 errors = []
 
-for (key, reqs) in data["project"]["optional-dependencies"].items():
+for key, reqs in data["project"]["optional-dependencies"].items():
     if key == "all":
         continue
     for req in reqs:
@@ -21,11 +22,11 @@ for (key, reqs) in data["project"]["optional-dependencies"].items():
 
 if errors:
     print('Missing deps in "all" reqs:')
-    print([e for e in errors])
+    print(list(errors))
 
 if remaining_all:
     print('Reqs in "all" but nowhere else:')
-    print([r for r in remaining_all])
+    print(list(remaining_all))
 
 if errors or remaining_all:
     sys.exit(1)
