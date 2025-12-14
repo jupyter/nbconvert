@@ -49,7 +49,7 @@ if QT_INSTALLED:
             self.size = self.page().contentsSize().toSize()
             self.resize(self.size)
             # Wait for resize
-            QtCore.QTimer.singleShot(1000, self.export)
+            QtCore.QTimer.singleShot(2000, self.export)
 
         def export_pdf(self):
             if self.paginate:
