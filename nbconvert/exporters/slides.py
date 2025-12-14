@@ -207,7 +207,7 @@ class SlidesExporter(HTMLExporter):
         resources["reveal"]["height"] = self.reveal_height
         resources["reveal"]["width"] = self.reveal_width
         return resources
-    
+
     def from_notebook_node(self, nb, resources=None, **kw):
         """
         Convert a notebook from a notebook node instance.
