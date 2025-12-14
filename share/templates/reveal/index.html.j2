@@ -166,7 +166,7 @@ require(
         }
         // Then override with any metadata passed in from the notebook or config.
         var reveal_opts = {{ resources.reveal | json_dumps }};
-        
+
         function isEmpty(obj) {
             if (obj === null || obj === "") return true;
             if (Array.isArray(obj) && obj.length === 0) return true;
