@@ -9,6 +9,9 @@
 {% set reveal_width = resources.reveal.width | default('960', true) %}
 {% set reveal_height = resources.reveal.height | default('700', true) %}
 {% set reveal_scroll = resources.reveal.scroll | default(false, true) | json_dumps %}
+{% set reveal_controls = resources.reveal.controls | default(true, true) | json_dumps %}
+{% set reveal_progress = resources.reveal.progress | default(true, true) | json_dumps %}
+{% set reveal_history = resources.reveal.history | default(true, true) | json_dumps %}
 
 {%- block header -%}
 <!DOCTYPE html>
@@ -150,17 +153,38 @@ require(
 
     function(Reveal, RevealNotes){
         // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
-        Reveal.initialize({
-            controls: true,
-            progress: true,
-            history: true,
-            transition: "{{reveal_transition}}",
-            slideNumber: "{{reveal_number}}",
-            plugins: [RevealNotes],
-            width: {{reveal_width}},
-			      height: {{reveal_height}},
+        var config = {
+            // Pass in reveal.js options from template's default arguments
+            controls: {{ reveal_controls }},
+            progress: {{ reveal_progress }},
+            history: {{ reveal_history }},
+            transition: "{{ reveal_transition }}",
+            slideNumber: "{{ reveal_number }}",
+            width: {{ reveal_width }},
+            height: {{ reveal_height }},
+            scroll: {{ reveal_scroll }},
+        }
+        // Then override with any metadata passed in from the notebook or config.
+        var reveal_opts = {{ resources.reveal | json_dumps }};
+        
+        function isEmpty(obj) {
+            if (obj === null || obj === "") return true;
+            if (Array.isArray(obj) && obj.length === 0) return true;
+            if (typeof obj === 'object' && Object.keys(obj).length === 0 && obj.constructor === Object) return true;
+            return false;
+        }
 
-        });
+        for (var key in reveal_opts) {
+            if (!isEmpty(reveal_opts[key])) {
+                config[key] = reveal_opts[key];
+            }
+        }
+
+        if (config.plugins === undefined) {
+            config.plugins = [];
+        }
+        config.plugins.push(RevealNotes);
+        Reveal.initialize(config);
 
         var update = function(event){
           if(MathJax.Hub.getAllJax(Reveal.getCurrentSlide())){
@@ -171,7 +195,7 @@ require(
         Reveal.addEventListener('slidechanged', update);
 
         function setScrollingSlide() {
-            var scroll = {{ reveal_scroll }}
+            var scroll = config.scroll;
             if (scroll === true) {
               var h = $('.reveal').height() * 0.95;
               $('section.present').find('section')
