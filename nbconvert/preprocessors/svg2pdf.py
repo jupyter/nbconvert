@@ -99,6 +99,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
 
+
 @default("inkscape")
 def _inkscape_default(self):
     # Windows: Secure registry lookup FIRST (full path, no CWD risk)
@@ -120,12 +121,12 @@ def _inkscape_default(self):
         inkscape_path = shutil.which("inkscape.com") or shutil.which("inkscape.exe")
     else:
         inkscape_path = shutil.which("inkscape")
-        
+
     if inkscape_path is not None:
         return inkscape_path
 
-     # Order is important. If INKSCAPE_APP exists, prefer it over
-            # the executable in the MacOS directory.
+    # Order is important. If INKSCAPE_APP exists, prefer it over
+    # the executable in the MacOS directory.
     if sys.platform == "darwin":
         if os.path.isfile(INKSCAPE_APP_v1):
             return INKSCAPE_APP_v1
