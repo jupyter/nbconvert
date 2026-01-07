@@ -100,40 +100,40 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
 
 
-@default("inkscape")
-def _inkscape_default(self):
-    # Windows: Secure registry lookup FIRST (full path, no CWD risk)
-    if sys.platform == "win32":
-        wr_handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-        try:
-            rkey = winreg.OpenKey(wr_handle, r"SOFTWARE\Classes\inkscape.svg\DefaultIcon")
-            inkscape_full = winreg.QueryValueEx(rkey, "")[0].split(",")[0]  # Remove ",0"
-            if os.path.isfile(inkscape_full):
-                return inkscape_full
-        except (FileNotFoundError, OSError, IndexError):
-            pass  # Safe fallback to which()
+    @default("inkscape")
+    def _inkscape_default(self):
+        # Windows: Secure registry lookup FIRST (CVE-2025-53000 fix)
+        if sys.platform == "win32":
+            wr_handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+            try:
+                rkey = winreg.OpenKey(wr_handle, r"SOFTWARE\Classes\inkscape.svg\DefaultIcon")
+                inkscape_full = winreg.QueryValueEx(rkey, "")[0].split(",")[0]  # Fix: remove ",0"
+                if os.path.isfile(inkscape_full):
+                    return inkscape_full
+            except (FileNotFoundError, OSError, IndexError):
+                pass  # Safe fallback
 
-    # Block CWD in PATH search (fixes CVE-2025-53000)
-    os.environ["NoDefaultCurrentDirectoryInExePath"] = "1"
+        # Block CWD in PATH search (CVE-2025-53000)
+        os.environ["NoDefaultCurrentDirectoryInExePath"] = "1"
 
-    # Platform-specific which() with Windows priorities (.com > .exe)
-    if sys.platform == "win32":
-        inkscape_path = shutil.which("inkscape.com") or shutil.which("inkscape.exe")
-    else:
-        inkscape_path = shutil.which("inkscape")
+        # Safe which() with Windows priorities (.com > .exe)
+        if sys.platform == "win32":
+            inkscape_path = shutil.which("inkscape.com") or shutil.which("inkscape.exe")
+        else:
+            inkscape_path = shutil.which("inkscape")
+        if inkscape_path is not None:
+            return inkscape_path
 
-    if inkscape_path is not None:
-        return inkscape_path
+        # macOS: EXACT original order preserved
+        if sys.platform == "darwin":
+            if os.path.isfile(INKSCAPE_APP_v1):
+                return INKSCAPE_APP_v1
+            # Order is important. If INKSCAPE_APP exists, prefer it over
+            # the executable in the MacOS directory.
+            if os.path.isfile(INKSCAPE_APP):
+                return INKSCAPE_APP
 
-    # Order is important. If INKSCAPE_APP exists, prefer it over
-    # the executable in the MacOS directory.
-    if sys.platform == "darwin":
-        if os.path.isfile(INKSCAPE_APP_v1):
-            return INKSCAPE_APP_v1
-        if os.path.isfile(INKSCAPE_APP):
-            return INKSCAPE_APP
-
-    raise FileNotFoundError("Inkscape executable not found in safe paths")
+        raise FileNotFoundError("Inkscape executable not found in safe paths")
 
     def convert_figure(self, data_format, data):
         """
