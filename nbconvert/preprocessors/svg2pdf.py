@@ -99,7 +99,6 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
     inkscape = Unicode(help="The path to Inkscape, if necessary").tag(config=True)
 
-
     @default("inkscape")
     def _inkscape_default(self):
         # Windows: Secure registry lookup FIRST (CVE-2025-53000 fix)
