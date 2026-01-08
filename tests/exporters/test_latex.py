@@ -5,8 +5,8 @@
 
 import os.path
 import re
-import textwrap
 import shutil
+import textwrap
 from tempfile import TemporaryDirectory
 
 from jinja2 import DictLoader
