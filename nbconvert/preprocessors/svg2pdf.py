@@ -117,9 +117,9 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
         # Safe which() with Windows priorities (.com > .exe)
         if sys.platform == "win32":
-            inkscape_path = shutil.which("inkscape.com") or shutil.which("inkscape.exe")
+            inkscape_path = which("inkscape.com") or shutil.which("inkscape.exe")
         else:
-            inkscape_path = shutil.which("inkscape")
+            inkscape_path = which("inkscape")
         if inkscape_path is not None:
             return inkscape_path
 
