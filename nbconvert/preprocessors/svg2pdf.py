@@ -132,7 +132,8 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
 
-        raise FileNotFoundError("executable not found in safe paths")
+        msg = "Inkscape executable not found in safe paths"
+        raise FileNotFoundError(msg)
 
     def convert_figure(self, data_format, data):
         """
