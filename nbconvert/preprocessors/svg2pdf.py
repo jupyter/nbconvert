@@ -132,7 +132,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
 
-        raise FileNotFoundError("Inkscape executable not found in safe paths")
+        raise FileNotFoundError("executable not found in safe paths")
 
     def convert_figure(self, data_format, data):
         """
@@ -156,7 +156,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             else:
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
-                full_cmd = self.command.format(*template_vars)
+                full_cmd = self.command.format(**template_vars)
             subprocess.call(full_cmd, shell=isinstance(full_cmd, str))  # noqa: S603
 
             # Read output from drive
