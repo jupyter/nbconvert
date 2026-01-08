@@ -113,7 +113,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                 pass  # Safe fallback
 
         # Block CWD in PATH search (CVE-2025-53000)
-        os.environ["NoDefaultCurrentDirectoryInExePath"] = "1"
+        os.environ["NODEFAULTCURRENTDIRECTORYINEXEPATH"] = "1"
 
         # Safe which() with Windows priorities (.com > .exe)
         if sys.platform == "win32":
