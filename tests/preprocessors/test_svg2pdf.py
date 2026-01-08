@@ -4,7 +4,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 import shutil
-
 from unittest.mock import patch
 
 from nbformat import v4 as nbformat
