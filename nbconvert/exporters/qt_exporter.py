@@ -75,7 +75,7 @@ class QtExporter(HTMLExporter):
         except OSError:
             pass
 
-        return data 
+        return data
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """Convert from notebook node."""
