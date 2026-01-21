@@ -109,12 +109,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                     wr_handle,
                     r"SOFTWARE\Classes\inkscape.svg\DefaultIcon",
                 )
-                inkscape_full = (
-                    winreg.QueryValueEx(rkey, "")[0]
-                    .split(",")[0]
-                    .strip()
-                    .strip('"')
-                )
+                inkscape_full = winreg.QueryValueEx(rkey, "")[0].split(",")[0].strip().strip('"')
                 if os.path.isfile(inkscape_full):
                     return inkscape_full
             except (FileNotFoundError, OSError, IndexError, AttributeError):
@@ -125,11 +120,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
                     winreg.HKEY_LOCAL_MACHINE,
                     r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\inkscape.exe",
                 )
-                inkscape_full = (
-                    winreg.QueryValue(rkey, None)
-                    .strip()
-                    .strip('"')
-                )
+                inkscape_full = winreg.QueryValue(rkey, None).strip().strip('"')
                 if os.path.isfile(inkscape_full):
                     return inkscape_full
             except (FileNotFoundError, OSError):
@@ -153,9 +144,8 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
             safe_path = os.pathsep.join(safe_parts)
 
-            inkscape_path = (
-                which("inkscape.com", path=safe_path)
-                or which("inkscape.exe", path=safe_path)
+            inkscape_path = which("inkscape.com", path=safe_path) or which(
+                "inkscape.exe", path=safe_path
             )
             if inkscape_path and os.path.isfile(inkscape_path):
                 return inkscape_path
