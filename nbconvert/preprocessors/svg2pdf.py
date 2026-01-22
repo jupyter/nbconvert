@@ -140,6 +140,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
                 if in_cwd and not cwd_on_path:
                     import warnings
+
                     warnings.warn(
                         "shutil.which('inkscape') resolved to an executable in the current "
                         "working directory even though CWD is not on PATH. Ignoring this "
