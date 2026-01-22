@@ -3,6 +3,7 @@
 import os
 import sys
 import tempfile
+import time
 
 from traitlets import default
 
@@ -50,7 +51,31 @@ class QtExporter(HTMLExporter):
         finally:
             # Ensure the file is deleted even if pyqtwebengine raises an exception
             os.unlink(temp_file.name)
-        return s.data
+        # Prefer Qt's in-memory bytes, but fall back to reading the file on disk
+        data = getattr(s, "data", b"")
+
+        if (not data) and os.path.exists(filename):
+            deadline = time.time() + 5.0
+            while time.time() < deadline:
+                try:
+                    if os.path.getsize(filename) > 0:
+                        break
+                except OSError:
+                    pass
+                time.sleep(0.05)
+
+            if os.path.exists(filename) and os.path.getsize(filename) > 0:
+                with open(filename, "rb") as f:
+                    data = f.read()
+
+        # Best-effort cleanup of the generated output file
+        try:
+            if os.path.exists(filename):
+                os.unlink(filename)
+        except OSError:
+            pass
+
+        return data
 
     def from_notebook_node(self, nb, resources=None, **kw):
         """Convert from notebook node."""
