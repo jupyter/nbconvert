@@ -9,6 +9,7 @@ import base64
 import os
 import subprocess
 import sys
+import warnings
 from shutil import which
 from tempfile import TemporaryDirectory
 
