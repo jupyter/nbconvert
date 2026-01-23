@@ -126,7 +126,9 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             try:
                 cwd = Path.cwd().resolve()
                 in_cwd = Path(inkscape_path).resolve().parent == cwd
-                cwd_on_path = cwd in {Path(p).resolve() for p in os.environ.get("PATH", os.defpath).split(os.pathsep)}
+                cwd_on_path = cwd in {
+                    Path(p).resolve() for p in os.environ.get("PATH", os.defpath).split(os.pathsep)
+                }
 
                 if in_cwd and not cwd_on_path:
                     warnings.warn(
