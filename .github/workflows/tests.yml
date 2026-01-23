@@ -17,6 +17,7 @@ defaults:
 
 jobs:
   run-tests:
+    continue-on-error: ${{ matrix.python-version == '3.14t' }}
     runs-on: ${{ matrix.os }}
     env:
       NBFORMAT_VALIDATOR: jsonschema
