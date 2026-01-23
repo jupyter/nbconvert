@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 import warnings
+from pathlib import Path
 from shutil import which
 from tempfile import TemporaryDirectory
 
