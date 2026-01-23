@@ -127,17 +127,9 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         # warn and treat as "not found".
         if sys.platform == "win32" and inkscape_path and sys.version_info < (3, 12):
             try:
-                cwd = os.path.realpath(os.getcwd())
-                resolved = os.path.realpath(inkscape_path)
-                in_cwd = os.path.commonpath([cwd, resolved]) == cwd
-
-                # Determine whether CWD is explicitly on PATH ("" and "." count as CWD)
-                path_entries = os.environ.get("PATH", "").split(os.pathsep)
-                cwd_on_path = any(
-                    (p in ("", ".") or os.path.realpath(os.path.expandvars(p.strip('"'))) == cwd)
-                    for p in path_entries
-                    if p is not None
-                )
+                cwd = Path.cwd().resolve()
+                in_cwd = Path(inkscape_path).resolve().parent == cwd
+                cwd_on_path = cwd in {Path(p).resolve() for p in os.environ.get("PATH", os.defpath).split(os.pathsep)}
 
                 if in_cwd and not cwd_on_path:
                     warnings.warn(
