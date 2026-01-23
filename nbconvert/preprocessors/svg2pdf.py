@@ -116,11 +116,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
         # Block CWD in PATH search (CVE-2025-53000)
         os.environ["NODEFAULTCURRENTDIRECTORYINEXEPATH"] = "1"
 
-        # Resolve inkscape via shutil.which
-        if sys.platform == "win32":
-            inkscape_path = which("inkscape.com") or which("inkscape.exe")
-        else:
-            inkscape_path = which("inkscape")
+        inkscape_path = which("inkscape")
 
         # Extra safety for Python < 3.12 on Windows:
         # If which() resolved to a path in CWD even though CWD is not on PATH,
