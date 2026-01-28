@@ -9,6 +9,8 @@ import base64
 import os
 import subprocess
 import sys
+import warnings
+from pathlib import Path
 from shutil import which
 from tempfile import TemporaryDirectory
 
@@ -101,9 +103,50 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
 
     @default("inkscape")
     def _inkscape_default(self):
+        # Windows: Secure registry lookup FIRST (CVE-2025-53000 fix)
+        if sys.platform == "win32":
+            wr_handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+            try:
+                rkey = winreg.OpenKey(wr_handle, r"SOFTWARE\Classes\inkscape.svg\DefaultIcon")
+                inkscape_full = winreg.QueryValueEx(rkey, "")[0].split(",")[0]  # Fix: remove ",0"
+                if os.path.isfile(inkscape_full):
+                    return inkscape_full
+            except (FileNotFoundError, OSError, IndexError):
+                pass  # Safe fallback
+
+        # Block CWD in PATH search (CVE-2025-53000)
+        os.environ["NODEFAULTCURRENTDIRECTORYINEXEPATH"] = "1"
+
         inkscape_path = which("inkscape")
+
+        # Extra safety for Python < 3.12 on Windows:
+        # If which() resolved to a path in CWD even though CWD is not on PATH,
+        # warn and treat as "not found".
+        if sys.platform == "win32" and inkscape_path and sys.version_info < (3, 12):
+            try:
+                cwd = Path.cwd().resolve()
+                in_cwd = Path(inkscape_path).resolve().parent == cwd
+                cwd_on_path = cwd in {
+                    Path(p).resolve() for p in os.environ.get("PATH", os.defpath).split(os.pathsep)
+                }
+
+                if in_cwd and not cwd_on_path:
+                    warnings.warn(
+                        "shutil.which('inkscape') resolved to an executable in the current "
+                        "working directory even though CWD is not on PATH. Ignoring this "
+                        "result for security reasons (CVE-2025-53000).",
+                        RuntimeWarning,
+                        stacklevel=2,
+                    )
+                    inkscape_path = None
+            except Exception:
+                # If detection fails for any reason, prefer safety: ignore CWD result
+                inkscape_path = None
+
         if inkscape_path is not None:
             return inkscape_path
+
+        # macOS: EXACT original order preserved
         if sys.platform == "darwin":
             if os.path.isfile(INKSCAPE_APP_v1):
                 return INKSCAPE_APP_v1
@@ -111,16 +154,9 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             # the executable in the MacOS directory.
             if os.path.isfile(INKSCAPE_APP):
                 return INKSCAPE_APP
-        if sys.platform == "win32":
-            wr_handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-            try:
-                rkey = winreg.OpenKey(wr_handle, "SOFTWARE\\Classes\\inkscape.svg\\DefaultIcon")
-                inkscape = winreg.QueryValueEx(rkey, "")[0]
-            except FileNotFoundError:
-                msg = "Inkscape executable not found"
-                raise FileNotFoundError(msg) from None
-            return inkscape
-        return "inkscape"
+
+        msg = "Inkscape executable not found in safe paths"
+        raise FileNotFoundError(msg)
 
     def convert_figure(self, data_format, data):
         """
@@ -144,7 +180,7 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             else:
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
-                full_cmd = self.command.format(*template_vars)
+                full_cmd = self.command.format(**template_vars)
             subprocess.call(full_cmd, shell=isinstance(full_cmd, str))  # noqa: S603
 
             # Read output from drive
