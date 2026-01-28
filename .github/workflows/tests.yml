@@ -47,12 +47,23 @@ jobs:
       - name: Run tests on Linux
         if: ${{ startsWith(runner.os, 'linux') }}
         run: |
-          xvfb-run --auto-servernum hatch run cov:test
+          # cov: is not installable on free-threaded yet
+          if [[ "${{ matrix.python-version }}" == *t ]]; then
+            target="test:test"
+          else
+            target="cov:test"
+          fi
+          xvfb-run --auto-servernum hatch run $target
 
       - name: Run tests on other platforms
         if: ${{ !startsWith(runner.os, 'linux')  }}
         run: |
-          hatch run cov:nowarn
+          if [[ "${{ matrix.python-version }}" == *t ]]; then
+            target="test:nowarn"
+          else
+            target="cov:nowarn"
+          fi
+          hatch run $target
 
       - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
 
