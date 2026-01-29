@@ -2,6 +2,46 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.17.0
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.6...c9ac1d1040459ed1ff9eb34e9918ce5a87cf9d71))
+
+### Enhancements made
+
+- Add support for arbitrary browser arguments [#2227](https://github.com/jupyter/nbconvert/pull/2227) ([@shreve](https://github.com/shreve), [@Carreau](https://github.com/Carreau), [@krassowski](https://github.com/krassowski))
+
+### Bugs fixed
+
+- Fix QtPNGExporter returning empty bytes on macOS [#2264](https://github.com/jupyter/nbconvert/pull/2264) ([@h3pdesign](https://github.com/h3pdesign), [@Carreau](https://github.com/Carreau), [@QuLogic](https://github.com/QuLogic))
+- Fix CVE-2025-53000: Secure Inkscape Windows path (registry first + block CWD) [#2261](https://github.com/jupyter/nbconvert/pull/2261) ([@h3pdesign](https://github.com/h3pdesign), [@krassowski](https://github.com/krassowski), [@mberlanda](https://github.com/mberlanda), [@minrk](https://github.com/minrk), [@salmankadaya](https://github.com/salmankadaya), [@th3gowtham](https://github.com/th3gowtham))
+- Fix get_export_names and get_exporter default args [#2228](https://github.com/jupyter/nbconvert/pull/2228) ([@shreve](https://github.com/shreve), [@krassowski](https://github.com/krassowski))
+- PyPA-Compliant Summary [#2226](https://github.com/jupyter/nbconvert/pull/2226) ([@hackowitz-af](https://github.com/hackowitz-af), [@Carreau](https://github.com/Carreau))
+
+### Maintenance and upkeep improvements
+
+- avoid cov environment on free-threaded Pythons [#2267](https://github.com/jupyter/nbconvert/pull/2267) ([@minrk](https://github.com/minrk))
+- update pre-commit, and fix all issues. [#2238](https://github.com/jupyter/nbconvert/pull/2238) ([@Carreau](https://github.com/Carreau))
+- Drop test on 3.9, test on 3.13, 3.14, 3.14t [#2237](https://github.com/jupyter/nbconvert/pull/2237) ([@Carreau](https://github.com/Carreau))
+- Bump the actions group across 1 directory with 2 updates [#2231](https://github.com/jupyter/nbconvert/pull/2231) ([@Carreau](https://github.com/Carreau), [@krassowski](https://github.com/krassowski))
+- Replace `@flaky.flaky` decorate with pytest marker [#2229](https://github.com/jupyter/nbconvert/pull/2229) ([@mgorny](https://github.com/mgorny), [@Carreau](https://github.com/Carreau))
+- update to mermaid 11.10.0 [#2224](https://github.com/jupyter/nbconvert/pull/2224) ([@bollwyvl](https://github.com/bollwyvl), [@krassowski](https://github.com/krassowski))
+- Drop support for Python 3.8, fix the CI tests [#2221](https://github.com/jupyter/nbconvert/pull/2221) ([@shreve](https://github.com/shreve), [@minrk](https://github.com/minrk))
+
+### Documentation improvements
+
+- Use `intersphinx_registry` [#2232](https://github.com/jupyter/nbconvert/pull/2232) ([@Carreau](https://github.com/Carreau), [@krassowski](https://github.com/krassowski))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2025-01-28&to=2026-01-29&type=c))
+
+@bollwyvl ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2025-01-28..2026-01-29&type=Issues)) | @Carreau ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2025-01-28..2026-01-29&type=Issues)) | @h3pdesign ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ah3pdesign+updated%3A2025-01-28..2026-01-29&type=Issues)) | @hackowitz-af ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ahackowitz-af+updated%3A2025-01-28..2026-01-29&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2025-01-28..2026-01-29&type=Issues)) | @mberlanda ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amberlanda+updated%3A2025-01-28..2026-01-29&type=Issues)) | @mgorny ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amgorny+updated%3A2025-01-28..2026-01-29&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2025-01-28..2026-01-29&type=Issues)) | @MSeal ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AMSeal+updated%3A2025-01-28..2026-01-29&type=Issues)) | @QuLogic ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AQuLogic+updated%3A2025-01-28..2026-01-29&type=Issues)) | @salmankadaya ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Asalmankadaya+updated%3A2025-01-28..2026-01-29&type=Issues)) | @shreve ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ashreve+updated%3A2025-01-28..2026-01-29&type=Issues)) | @th3gowtham ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ath3gowtham+updated%3A2025-01-28..2026-01-29&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.16.6
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.5...01c6ab25ec81277ab4d8585747f904c89a8c02b0))
@@ -22,8 +62,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2025-01-02&to=2025-01-28&type=c))
 
 [@Carreau](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2025-01-02..2025-01-28&type=Issues) | [@douglas-raillard-arm](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adouglas-raillard-arm+updated%3A2025-01-02..2025-01-28&type=Issues) | [@gabemorris12](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Agabemorris12+updated%3A2025-01-02..2025-01-28&type=Issues) | [@krassowski](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2025-01-02..2025-01-28&type=Issues) | [@PetalAdrift](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3APetalAdrift+updated%3A2025-01-02..2025-01-28&type=Issues) | [@peytondmurray](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Apeytondmurray+updated%3A2025-01-02..2025-01-28&type=Issues) | [@QuLogic](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AQuLogic+updated%3A2025-01-02..2025-01-28&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.16.5
 
@@ -1633,7 +1671,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
