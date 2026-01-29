@@ -560,6 +560,7 @@ class TemplateExporter(Exporter):
             try:
                 conf_path_exists = conf_path.exists()
             except PermissionError:
+                # for Python <3.14
                 pass
             else:
                 if conf_path_exists:
