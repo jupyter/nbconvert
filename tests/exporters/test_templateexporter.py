@@ -8,6 +8,7 @@ Module with tests for templateexporter.py
 import json
 import os
 from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -661,3 +662,27 @@ class TestExporter(ExportersTestsBase):
 
     def _make_exporter(self, config=None):
         return SampleExporter(config=config)
+
+    def test_get_conf_handles_permission_error(self):
+        """Test that _get_conf gracefully handles PermissionError on template paths."""
+        exporter = self._make_exporter()
+
+        # Mock template_paths to include a path that will raise PermissionError
+        original_exists = Path.exists
+        error_msg = "[Errno 13] Permission denied"
+
+        def mock_exists(self):
+            if "restricted" in str(self):
+                raise PermissionError(error_msg)
+            return original_exists(self)
+
+        with patch.object(Path, "exists", mock_exists):
+            # Add a restricted path to template_paths
+            # Using placeholders instead of /tmp to avoid security warnings
+            exporter._template_paths = lambda: ["normal/path", "restricted/path"]
+
+            # This should not raise an exception
+            conf = exporter._get_conf()
+
+            # Should return a dict (possibly empty)
+            assert isinstance(conf, dict)
