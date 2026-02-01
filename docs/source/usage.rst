@@ -26,6 +26,7 @@ The currently supported output formats are:
     - :ref:`HTML <convert_html>`,
     - :ref:`LaTeX <convert_latex>`,
     - :ref:`PDF <convert_pdf>`,
+    - :ref:`WebHTML <convert_webhtml>`,
     - :ref:`WebPDF <convert_webpdf>`,
     - :ref:`Reveal.js HTML slideshow <convert_revealjs>`,
     - :ref:`Markdown <convert_markdown>`,
@@ -70,6 +71,19 @@ HTML
   - ``--embed-images``
 
     If this option is provided, embed images as base64 urls in the resulting HTML file.
+
+.. _convert_webpdf:
+
+WebHTML
+~~~~~~
+* ``--to webhtml``
+
+  Generates an HTML document by first rendering to HTML, rendering the HTML Chromium headless, and
+  exporting to resulting HTML content back to a file. This exporter supports the same templates
+  as ``--to html``.
+
+  The webhtml exporter requires the ``playwright`` Chromium automation library, which
+  can be installed via ``nbconvert[webhtml]``.
 
 .. _convert_latex:
 

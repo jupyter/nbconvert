@@ -9,7 +9,7 @@ from unittest.mock import patch
 import pytest
 
 from nbconvert.exporters.exporter import Exporter
-from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
+from nbconvert.exporters.webhtml import PLAYWRIGHT_INSTALLED, WebHTMLExporter
 
 from .base import ExportersTestsBase
 
@@ -28,37 +28,37 @@ def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(),
 
 
 @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
-class TestWebPDFExporter(ExportersTestsBase):
-    """Contains test functions for webpdf.py"""
+class TestWebHTMLExporter(ExportersTestsBase):
+    """Contains test functions for webhtml.py"""
 
-    exporter_class = WebPDFExporter  # type:ignore
+    exporter_class = WebHTMLExporter  # type:ignore
 
     @pytest.mark.network
     def test_export(self):
         """
         Can a TemplateExporter export something?
         """
-        output, _resources = WebPDFExporter(allow_chromium_download=True).from_filename(
+        output, _resources = WebHTMLExporter(allow_chromium_download=True).from_filename(
             self._get_notebook()
         )
         assert len(output) > 0
 
     @patch("playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser())
-    def test_webpdf_without_chromium(self, mock_chromium):
+    def test_webhtml_without_chromium(self, mock_chromium):
         """
-        Generate PDFs if chromium not present?
+        Generate HTML if chromium not present?
         """
         with pytest.raises(RuntimeError):
-            WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
+            WebHTMLExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
     @patch("builtins.__import__", monkey_import_notfound)
-    def test_webpdf_without_playwright(self):
+    def test_webhtml_without_playwright(self):
         """
-        Generate PDFs if playwright not installed?
+        Generate HTML if playwright not installed?
         """
         with pytest.raises(RuntimeError):  # noqa
             base_exporter = Exporter()
-            exporter = WebPDFExporter()
+            exporter = WebHTMLExporter()
             with open(self._get_notebook(), encoding="utf-8") as f:
                 nb = base_exporter.from_file(f, resources={})[0]
                 # Have to do this as the very last action as traitlets do dynamic importing often
