@@ -17,7 +17,7 @@ jobs:
         python-version: ["3.10", "3.14"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -38,7 +38,7 @@ jobs:
           cd docs
           make html SPHINXOPTS="-W"
       - name: Upload HTML
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: html-${{ github.job }}-${{ strategy.job-index }}
           path: build/sphinx/html
