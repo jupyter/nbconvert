@@ -118,6 +118,18 @@ nbconvert_flags.update(
             """Clear output of current file and save in place,
         overwriting the existing notebook. """,
         ),
+        "clear-metadata": (
+            {
+                "NbConvertApp": {
+                    "use_output_suffix": False,
+                    "export_format": "notebook",
+                },
+                "FilesWriter": {"build_directory": ""},
+                "ClearMetadataPreprocessor": {"enabled": True},
+            },
+            """Clear metadata of current file and save in place,
+        overwriting the existing notebook. """,
+        ),
         "coalesce-streams": (
             {
                 "NbConvertApp": {"use_output_suffix": False, "export_format": "notebook"},
