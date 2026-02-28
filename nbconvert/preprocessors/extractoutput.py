@@ -49,9 +49,9 @@ class ExtractOutputPreprocessor(Preprocessor):
         config=True
     )
 
-    extract_output_types = Set({"image/png", "image/jpeg", "image/svg+xml", "application/pdf", "image/gif"}).tag(
-        config=True
-    )
+    extract_output_types = Set(
+        {"image/png", "image/jpeg", "image/svg+xml", "application/pdf", "image/gif"}
+    ).tag(config=True)
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
