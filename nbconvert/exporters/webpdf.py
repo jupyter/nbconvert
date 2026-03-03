@@ -92,7 +92,7 @@ class WebPDFExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
-    def run_playwright(self, html):
+    def run_playwright(self, html, path=None):
         """Run playwright."""
 
         async def main(temp_file):
@@ -174,7 +174,7 @@ class WebPDFExporter(HTMLExporter):
         # before calling Chromium. We also specify delete=False to ensure the
         # file is not deleted after closing (the default behavior).
         temp_file = tempfile.NamedTemporaryFile(  # noqa: SIM115
-            suffix=".html", delete=False
+            suffix=".html", prefix=".webpdf-", dir=path, delete=False
         )
         with temp_file:
             temp_file.write(html.encode("utf-8"))
@@ -188,9 +188,10 @@ class WebPDFExporter(HTMLExporter):
     def from_notebook_node(self, nb, resources=None, **kw):
         """Convert from a notebook node."""
         html, resources = super().from_notebook_node(nb, resources=resources, **kw)
+        path = resources.get("metadata", {}).get("path")
 
         self.log.info("Building PDF")
-        pdf_data = self.run_playwright(html)
+        pdf_data = self.run_playwright(html, path)
         self.log.info("PDF successfully created")
 
         return pdf_data, resources
