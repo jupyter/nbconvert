@@ -85,4 +85,4 @@ class TestTagRemove(PreprocessorTestsBase):
         self.assertEqual(len(nb.cells[-1].outputs), 0)
 
         # checks that we can remove individual outputs
-        self.assertEqual(len(nb.cells[0].outputs), 8)
+        self.assertEqual(len(nb.cells[0].outputs), 9)
