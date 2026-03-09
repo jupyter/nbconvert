@@ -16,7 +16,12 @@ class TestExtractOutput(PreprocessorTestsBase):
     def build_preprocessor(self):
         """Make an instance of a preprocessor"""
         preprocessor = ExtractOutputPreprocessor()
-        preprocessor.extract_output_types = {"text/plain", "image/png", "application/pdf", "image/gif"}
+        preprocessor.extract_output_types = {
+            "text/plain",
+            "image/png",
+            "application/pdf",
+            "image/gif",
+        }
         preprocessor.enabled = True
         return preprocessor
 
@@ -94,4 +99,3 @@ class TestExtractOutput(PreprocessorTestsBase):
 
         # Verify equivalence of extracted outputs.
         self.assertEqual(sorted(outputs), sorted(reference_files))
-
