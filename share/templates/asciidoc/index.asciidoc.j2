@@ -65,6 +65,10 @@
 ![jpeg]({{ output.metadata.filenames['image/jpeg'] | path2url }})
 {% endblock data_jpg %}
 
+{% block data_gif %}
+![gif]({{ output.metadata.filenames['image/gif'] | path2url }})
+{% endblock data_gif %}
+
 {% block data_latex %}
 {{ output.data['text/latex'] | convert_pandoc(from_format="latex", to_format="asciidoc")}}
 {% endblock data_latex %}
