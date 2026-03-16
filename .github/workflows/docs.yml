@@ -38,7 +38,7 @@ jobs:
           cd docs
           make html SPHINXOPTS="-W"
       - name: Upload HTML
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: html-${{ github.job }}-${{ strategy.job-index }}
           path: build/sphinx/html
