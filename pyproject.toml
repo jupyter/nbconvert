@@ -261,7 +261,12 @@ fail-under=100
 exclude = ["tests", "docs"]
 
 [tool.repo-review]
-ignore = ["GH102"]
+ignore = [
+  "GH102",
+  "PC902",
+  "PP006",
+  "PP304",
+]
 
 
 [tool.codespell]
