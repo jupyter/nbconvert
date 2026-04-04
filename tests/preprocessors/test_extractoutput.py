@@ -16,7 +16,12 @@ class TestExtractOutput(PreprocessorTestsBase):
     def build_preprocessor(self):
         """Make an instance of a preprocessor"""
         preprocessor = ExtractOutputPreprocessor()
-        preprocessor.extract_output_types = {"text/plain", "image/png", "application/pdf"}
+        preprocessor.extract_output_types = {
+            "text/plain",
+            "image/png",
+            "application/pdf",
+            "image/gif",
+        }
         preprocessor.enabled = True
         return preprocessor
 
@@ -48,6 +53,12 @@ class TestExtractOutput(PreprocessorTestsBase):
         self.assertIn("application/pdf", output.metadata.filenames)
         pdf_filename = output.metadata.filenames["application/pdf"]
 
+        # Check that gif was extracted as binary bytes (base64-decoded), not a string
+        output = nb.cells[0].outputs[8]
+        self.assertIn("filenames", output.metadata)
+        self.assertIn("image/gif", output.metadata.filenames)
+        gif_filename = output.metadata.filenames["image/gif"]
+
         # Verify text output
         self.assertIn(text_filename, res["outputs"])
         self.assertEqual(res["outputs"][text_filename], b"b")
@@ -59,6 +70,10 @@ class TestExtractOutput(PreprocessorTestsBase):
         # Verify pdf output
         self.assertIn(pdf_filename, res["outputs"])
         self.assertEqual(res["outputs"][pdf_filename], b"h")
+
+        # Verify gif output — must be bytes, not a raw base64 string
+        self.assertIn(gif_filename, res["outputs"])
+        self.assertEqual(res["outputs"][gif_filename], b"i")
 
     def test_json_extraction(self):
         nb = self.build_notebook(with_json_outputs=True)

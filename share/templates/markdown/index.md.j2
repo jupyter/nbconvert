@@ -61,6 +61,14 @@
     {% endif %}
 {% endblock data_jpg %}
 
+{% block data_gif %}
+    {% if "filenames" in output.metadata %}
+![gif]({{ output.metadata.filenames['image/gif'] | path2url }})
+    {% else %}
+![gif](data:image/gif;base64,{{ output.data['image/gif'] }})
+    {% endif %}
+{% endblock data_gif %}
+
 {% block data_latex %}
 {{ output.data['text/latex'] }}
 {% endblock data_latex %}
