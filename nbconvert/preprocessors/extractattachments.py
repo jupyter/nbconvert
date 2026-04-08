@@ -92,8 +92,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
                     continue
                 if safe_fname != fname:
                     self.log.warning(
-                        "Attachment filename '%s' contained path components, "
-                        "using basename '%s'",
+                        "Attachment filename '%s' contained path components, using basename '%s'",
                         fname,
                         safe_fname,
                     )
