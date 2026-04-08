@@ -312,7 +312,7 @@ class IPythonRenderer(HTMLRenderer):
     def block_code(self, code: str, info: Optional[str] = None) -> str:
         """Handle block code."""
         lang: Optional[str] = ""
-        lexer: Optional[Lexer] = None
+        lexer: Lexer
 
         if info:
             if info.startswith("mermaid"):
