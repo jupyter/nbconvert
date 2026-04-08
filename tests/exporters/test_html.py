@@ -3,7 +3,10 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import base64
+import os
 import re
+from tempfile import TemporaryDirectory
 
 import pytest
 from nbformat import v4
@@ -263,6 +266,31 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, _resources) = exporter.from_filename(self._get_notebook())
 
         assert '<html lang="en">' in output
+
+    def test_embed_images_path_traversal_blocked(self):
+        """Path traversal in image src should be blocked when embed_images=True"""
+        with TemporaryDirectory() as parent_dir:
+            # Create a secret file that an attacker would try to exfiltrate
+            secret_content = b"SUPERSECRETCONTENT"
+            with open(os.path.join(parent_dir, "secret.txt"), "wb") as f:
+                f.write(secret_content)
+
+            # Create a temp subdirectory to serve as the notebook's working path
+            with TemporaryDirectory(dir=parent_dir) as notebook_dir:
+                # Build a notebook with path traversal image references
+                nb = v4.new_notebook()
+                nb.cells.append(v4.new_markdown_cell("![exfil](../secret.txt)"))
+                nb.cells.append(v4.new_markdown_cell('<img src="../secret.txt" alt="exfil"/>'))
+
+                exporter = HTMLExporter()
+                exporter.embed_images = True
+                html, _ = exporter.from_notebook_node(
+                    nb, resources={"metadata": {"path": notebook_dir}}
+                )
+
+                # The secret content must NOT appear as base64 in the output
+                target_b64 = base64.b64encode(secret_content).decode()
+                self.assertNotIn(target_b64, html)
 
 
 @pytest.mark.parametrize(

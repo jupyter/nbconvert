@@ -437,6 +437,11 @@ class IPythonRenderer(HTMLRenderer):
         """
         src_path = os.path.join(self.path, src)
 
+        resolved = os.path.abspath(src_path)
+        allowed_base = os.path.abspath(self.path)
+        if not resolved.startswith(allowed_base + os.sep) and resolved != allowed_base:
+            return None
+
         if not os.path.exists(src_path):
             return None
 
