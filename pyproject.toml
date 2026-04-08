@@ -236,7 +236,7 @@ unfixable = [
 # PT027 Use `pytest.raises` instead of unittest-style
 # PGH004 Use specific rule codes when using `noqa`
 "tests/*" = ["F841", "S101", "TID252", "PT009", "PTH", "PGH003", "PT027",
-              "PGH004"]
+              "PGH004", "S108"]
 "tests/*/*.ipynb" = [
   "EM", "B018", "E402", "F405", "SIM", "F403", "F821",
   "RUF100", "ICN001", "S605", "S607"
