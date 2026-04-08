@@ -2,6 +2,41 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.17.1
+
+This is a security release, fixing two CVEs:
+
+- [CVE-2026-39377](https://github.com/jupyter/nbconvert/security/advisories/GHSA-4c99-qj7h-p3vg)
+- [CVE-2026-39378](https://github.com/jupyter/nbconvert/security/advisories/GHSA-7jqv-fw35-gmx9)
+
+(full advisories will be published seven days after release, on 2026-04-14).
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.17.0...b3b6ec01f872e9af8fd1769eb9cf1889c720ecf3))
+
+### Enhancements made
+
+- Allow configureable WebPDF JavaScript processing timeout [#2250](https://github.com/jupyter/nbconvert/pull/2250) ([@timkpaine](https://github.com/timkpaine), [@Carreau](https://github.com/Carreau))
+
+### Bugs fixed
+
+- Fix `PermissionError` when checking template paths on shared filesystems [#2252](https://github.com/jupyter/nbconvert/pull/2252) ([@ctcjab](https://github.com/ctcjab), [@krassowski](https://github.com/krassowski))
+- Tweak webpdf template logic to fix duplicate extension problem [#2249](https://github.com/jupyter/nbconvert/pull/2249) ([@timkpaine](https://github.com/timkpaine), [@Carreau](https://github.com/Carreau))
+
+### Maintenance and upkeep improvements
+
+- specify python version for pre [#2276](https://github.com/jupyter/nbconvert/pull/2276) ([@minrk](https://github.com/minrk), [@krassowski](https://github.com/krassowski))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2026-01-29&to=2026-04-08&type=c))
+
+@akhmerov ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aakhmerov+updated%3A2026-01-29..2026-04-08&type=Issues)) | @bollwyvl ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2026-01-29..2026-04-08&type=Issues)) | @Carreau ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2026-01-29..2026-04-08&type=Issues)) | @ctcjab ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Actcjab+updated%3A2026-01-29..2026-04-08&type=Issues)) | @davidbrochart ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adavidbrochart+updated%3A2026-01-29..2026-04-08&type=Issues)) | @Ken-B ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AKen-B+updated%3A2026-01-29..2026-04-08&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2026-01-29..2026-04-08&type=Issues)) | @mgeier ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amgeier+updated%3A2026-01-29..2026-04-08&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2026-01-29..2026-04-08&type=Issues)) | @mpacer ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ampacer+updated%3A2026-01-29..2026-04-08&type=Issues)) | @MSeal ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AMSeal+updated%3A2026-01-29..2026-04-08&type=Issues)) | @SylvainCorlay ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ASylvainCorlay+updated%3A2026-01-29..2026-04-08&type=Issues)) | @takluyver ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atakluyver+updated%3A2026-01-29..2026-04-08&type=Issues)) | @timkpaine ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atimkpaine+updated%3A2026-01-29..2026-04-08&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.17.0
 
 ([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.16.6...c9ac1d1040459ed1ff9eb34e9918ce5a87cf9d71))
@@ -39,8 +74,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2025-01-28&to=2026-01-29&type=c))
 
 @bollwyvl ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2025-01-28..2026-01-29&type=Issues)) | @Carreau ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2025-01-28..2026-01-29&type=Issues)) | @h3pdesign ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ah3pdesign+updated%3A2025-01-28..2026-01-29&type=Issues)) | @hackowitz-af ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ahackowitz-af+updated%3A2025-01-28..2026-01-29&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2025-01-28..2026-01-29&type=Issues)) | @mberlanda ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amberlanda+updated%3A2025-01-28..2026-01-29&type=Issues)) | @mgorny ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amgorny+updated%3A2025-01-28..2026-01-29&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2025-01-28..2026-01-29&type=Issues)) | @MSeal ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AMSeal+updated%3A2025-01-28..2026-01-29&type=Issues)) | @QuLogic ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AQuLogic+updated%3A2025-01-28..2026-01-29&type=Issues)) | @salmankadaya ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Asalmankadaya+updated%3A2025-01-28..2026-01-29&type=Issues)) | @shreve ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ashreve+updated%3A2025-01-28..2026-01-29&type=Issues)) | @th3gowtham ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ath3gowtham+updated%3A2025-01-28..2026-01-29&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.16.6
 
@@ -1671,7 +1704,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)
