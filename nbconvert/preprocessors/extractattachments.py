@@ -82,6 +82,22 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
             for fname in cell.attachments:
                 self.log.debug("Encountered attachment %s", fname)
 
+                # Sanitize: use only the basename to prevent path traversal
+                safe_fname = os.path.basename(fname)
+                if not safe_fname:
+                    self.log.warning(
+                        "Attachment filename '%s' is invalid (empty basename), skipping",
+                        fname,
+                    )
+                    continue
+                if safe_fname != fname:
+                    self.log.warning(
+                        "Attachment filename '%s' contained path components, "
+                        "using basename '%s'",
+                        fname,
+                        safe_fname,
+                    )
+
                 # Add file for writer
 
                 # Right now I don't know of a situation where there would be multiple
@@ -94,7 +110,14 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
                     break
 
                 # FilesWriter wants path to be in attachment filename here
-                new_filename = os.path.join(self.path_name, fname)
+                new_filename = os.path.join(self.path_name, safe_fname)
+                if new_filename in resources[self.resources_item_key]:
+                    self.log.warning(
+                        "Attachment filename '%s' (from '%s') overwrites a previous "
+                        "attachment with the same name",
+                        safe_fname,
+                        fname,
+                    )
                 resources[self.resources_item_key][new_filename] = decoded
 
                 # Edit the reference to the attachment

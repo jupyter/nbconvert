@@ -4,7 +4,9 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
-from base64 import b64decode
+from base64 import b64decode, b64encode
+
+from nbformat import v4 as nbformat
 
 from nbconvert.preprocessors.extractattachments import ExtractAttachmentsPreprocessor
 
@@ -86,3 +88,90 @@ class TestExtractAttachments(PreprocessorTestsBase):
         src = nb.cells[-1].source
         # This shouldn't change on Windows
         self.assertEqual(src, "![image.png](notebook1_custom/image.png)")
+
+    def test_attachment_path_traversal_sanitised(self):
+        """Test that path traversal in attachment filenames is sanitised.
+
+        Crafted attachment filenames containing '../' sequences must not escape
+        the output directory. The preprocessor should strip path components,
+        store the file under its basename only, and update the cell source
+        reference accordingly.
+        """
+        malicious_fname = "../../../../../../../tmp/nbconvert_traversal/evil.php"
+        malicious_content = b"<?php\n// I should not be here"
+        b64_content = b64encode(malicious_content).decode("utf-8")
+        attachments = {malicious_fname: {"text/plain": b64_content}}
+        cell = nbformat.new_markdown_cell(
+            source=f"![exploit](attachment:{malicious_fname})",
+            attachments=attachments,
+        )
+        nb = nbformat.new_notebook(cells=[cell])
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor()
+        nb, res = preprocessor(nb, res)
+
+        # The output key must be the basename only - no traversal components
+        self.assertIn("evil.php", res["outputs"])
+        self.assertEqual(res["outputs"]["evil.php"], malicious_content)
+        for key in res["outputs"]:
+            self.assertNotIn("..", key)
+            self.assertFalse(os.path.isabs(key))
+
+        # Cell source must reference the safe, flattened filename
+        self.assertEqual(nb.cells[0].source, "![exploit](evil.php)")
+
+    def test_attachment_absolute_path_sanitised(self):
+        """Test that absolute paths in attachment filenames are sanitised.
+
+        An absolute path like '/tmp/absolute/test1' would cause os.path.join
+        to discard the output directory prefix entirely, writing to the
+        absolute location. The preprocessor must strip the path and use
+        only the basename.
+        """
+        abs_fname = "/tmp/absolute/test1"
+        content = b"absolute path write test"
+        b64_content = b64encode(content).decode("utf-8")
+        attachments = {abs_fname: {"text/plain": b64_content}}
+        cell = nbformat.new_markdown_cell(
+            source=f"![file](attachment:{abs_fname})",
+            attachments=attachments,
+        )
+        nb = nbformat.new_notebook(cells=[cell])
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor()
+        nb, res = preprocessor(nb, res)
+
+        # The output key must be the basename only - not the absolute path
+        self.assertIn("test1", res["outputs"])
+        self.assertNotIn("/tmp/absolute/test1", res["outputs"])
+        self.assertEqual(res["outputs"]["test1"], content)
+        for key in res["outputs"]:
+            self.assertFalse(os.path.isabs(key))
+
+        # Cell source must reference the safe, flattened filename
+        self.assertEqual(nb.cells[0].source, "![file](test1)")
+
+    def test_attachment_empty_basename_skipped(self):
+        """Test that filenames resolving to an empty basename are skipped.
+
+        A filename like '../../../tmp/' has an empty os.path.basename(),
+        which would cause downstream errors if not caught. The preprocessor
+        should skip these attachments entirely and log a warning.
+        """
+        bad_fname = "../../../tmp/"
+        b64_content = b64encode(b"should be skipped").decode("utf-8")
+        attachments = {bad_fname: {"text/plain": b64_content}}
+        cell = nbformat.new_markdown_cell(
+            source=f"![x](attachment:{bad_fname})",
+            attachments=attachments,
+        )
+        nb = nbformat.new_notebook(cells=[cell])
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor()
+        nb, res = preprocessor(nb, res)
+
+        # No outputs should be created for empty basename
+        self.assertEqual(len(res["outputs"]), 0)
+
+        # Cell source should remain unchanged (attachment ref not rewritten)
+        self.assertEqual(nb.cells[0].source, f"![x](attachment:{bad_fname})")
