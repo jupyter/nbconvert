@@ -76,6 +76,18 @@
 {%- endif %}
 {% endblock data_jpg %}
 
+{% block data_gif %}
+.. image:: {{ output.metadata.filenames['image/gif'] | urlencode }}
+{%- set width=output | get_metadata('width', 'image/gif') -%}
+{%- if width is not none %}
+   :width: {{ width }}px
+{%- endif %}
+{%- set height=output | get_metadata('height', 'image/gif') -%}
+{%- if height is not none %}
+   :height: {{ height }}px
+{%- endif %}
+{% endblock data_gif %}
+
 {% block data_markdown %}
 {{ output.data['text/markdown'] | convert_pandoc("markdown", "rst") }}
 {% endblock data_markdown %}
