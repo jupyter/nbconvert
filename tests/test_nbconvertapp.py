@@ -68,7 +68,6 @@ class TestNbConvertApp(TestsBase):
             assert os.path.isfile("notebook1.py")
             assert os.path.isfile("notebook2.py")
 
-
     def test_output_in_subdir_support_files_path(self):
         """Support files for an output path in a subdirectory should not duplicate the subdirectory name."""
         with self.create_temp_cwd(["notebook4_jpeg.ipynb", "containerized_deployments.jpeg"]):
@@ -78,9 +77,7 @@ class TestNbConvertApp(TestsBase):
             )
             assert os.path.isfile("test.md")
             assert os.path.isdir(os.path.join("another_folder", "test_files"))
-            assert not os.path.isdir(
-                os.path.join("another_folder", "test_files", "another_folder")
-            )
+            assert not os.path.isdir(os.path.join("another_folder", "test_files", "another_folder"))
             assert os.listdir(os.path.join("another_folder", "test_files"))
 
     def test_convert_full_qualified_name(self):
