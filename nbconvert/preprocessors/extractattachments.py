@@ -43,6 +43,16 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
             "attachments"  # Here as a default, in case someone doesn't want to call preprocess
         )
 
+    def _unique_filename(self, resources, safe_fname):
+        """Return a unique output filename for an attachment."""
+        base, ext = os.path.splitext(safe_fname)
+        candidate = safe_fname
+        counter = 1
+        while os.path.join(self.path_name, candidate) in resources[self.resources_item_key]:
+            candidate = f"{base}_{counter}{ext}"
+            counter += 1
+        return candidate
+
     # Add condition and configurability here
     def preprocess(self, nb, resources):
         """
@@ -109,13 +119,14 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
                     break
 
                 # FilesWriter wants path to be in attachment filename here
-                new_filename = os.path.join(self.path_name, safe_fname)
-                if new_filename in resources[self.resources_item_key]:
+                unique_fname = self._unique_filename(resources, safe_fname)
+                new_filename = os.path.join(self.path_name, unique_fname)
+                if unique_fname != safe_fname:
                     self.log.warning(
-                        "Attachment filename '%s' (from '%s') overwrites a previous "
-                        "attachment with the same name",
+                        "Attachment filename '%s' (from '%s') already existed; using '%s' instead",
                         safe_fname,
                         fname,
+                        unique_fname,
                     )
                 resources[self.resources_item_key][new_filename] = decoded
 
