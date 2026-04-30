@@ -447,12 +447,17 @@ class NbConvertApp(JupyterApp):
         notebook_name = self._notebook_filename_to_name(notebook_filename)
         self.log.debug("Notebook name is '%s'", notebook_name)
 
+        output_dir = os.path.dirname(notebook_name)
+        output_basename = os.path.basename(notebook_name)
+
         # first initialize the resources we want to use
         resources = {}
         resources["config_dir"] = self.config_dir
-        resources["unique_key"] = notebook_name
+        resources["unique_key"] = output_basename
 
-        output_files_dir = self.output_files_dir.format(notebook_name=notebook_name)
+        output_files_dir = self.output_files_dir.format(notebook_name=output_basename)
+        if output_dir:
+            output_files_dir = os.path.join(output_dir, output_files_dir)
 
         resources["output_files_dir"] = output_files_dir
 
