@@ -70,7 +70,6 @@ class TestRSTExporter(ExportersTestsBase):
         assert ":height:" in attr_string
         assert "px" in attr_string
 
-
     @onlyif_cmds_exist("pandoc")
     def test_markdown_cell_starting_with_block_quote_after_image(self):
         """A leading block quote in one cell must not extend a prior directive."""
@@ -86,9 +85,7 @@ class TestRSTExporter(ExportersTestsBase):
         output, _resources = RSTExporter(config=config).from_notebook_node(nb)
 
         assert (
-            ".. image:: https://jupyter.org/assets/main-logo.svg\n\n"
-            "..\n\n"
-            "   starting with a quote"
+            ".. image:: https://jupyter.org/assets/main-logo.svg\n\n..\n\n   starting with a quote"
         ) in output
 
     def test_rst_output(self):
