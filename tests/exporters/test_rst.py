@@ -7,6 +7,7 @@ import re
 
 import nbformat
 from nbformat import v4
+from traitlets.config import Config
 
 from nbconvert.exporters.rst import RSTExporter
 from tests.testutils import onlyif_cmds_exist
@@ -68,6 +69,27 @@ class TestRSTExporter(ExportersTestsBase):
         assert ":width:" in attr_string
         assert ":height:" in attr_string
         assert "px" in attr_string
+
+
+    @onlyif_cmds_exist("pandoc")
+    def test_markdown_cell_starting_with_block_quote_after_image(self):
+        """A leading block quote in one cell must not extend a prior directive."""
+        nb = v4.new_notebook(
+            cells=[
+                v4.new_markdown_cell("![](https://jupyter.org/assets/main-logo.svg)"),
+                v4.new_markdown_cell("> starting with a quote"),
+            ]
+        )
+
+        config = Config()
+        config.TemplateExporter.extra_template_basedirs = ["share/templates"]
+        output, _resources = RSTExporter(config=config).from_notebook_node(nb)
+
+        assert (
+            ".. image:: https://jupyter.org/assets/main-logo.svg\n\n"
+            "..\n\n"
+            "   starting with a quote"
+        ) in output
 
     def test_rst_output(self):
         """
