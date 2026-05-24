@@ -4,6 +4,9 @@
 # Distributed under the terms of the Modified BSD License.
 
 import json
+import os
+
+from nbformat import v4 as nbformat
 
 from nbconvert.preprocessors.extractoutput import ExtractOutputPreprocessor
 
@@ -84,3 +87,50 @@ class TestExtractOutput(PreprocessorTestsBase):
 
         # Verify equivalence of extracted outputs.
         self.assertEqual(sorted(outputs), sorted(reference_files))
+
+    def _extract_with_output_filename(self, filename):
+        """Run the preprocessor on a notebook whose single image output carries an
+        attacker-controlled ``metadata.filename``; return the resources dict."""
+        output = nbformat.new_output(
+            "display_data",
+            data={"image/png": "Zw=="},
+            metadata={"filename": filename},
+        )
+        nb = nbformat.new_notebook(
+            cells=[nbformat.new_code_cell(source="", execution_count=1, outputs=[output])]
+        )
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor()
+        _, res = preprocessor(nb, res)
+        return res
+
+    def test_output_filename_path_traversal_sanitised(self):
+        """A '../' traversal in output metadata.filename must not escape the output
+        directory; only the basename is used as the resource key."""
+        malicious = "../../../../../../tmp/nbconvert_traversal/evil.png"
+        res = self._extract_with_output_filename(malicious)
+        self.assertIn("evil.png", res["outputs"])
+        self.assertEqual(res["outputs"]["evil.png"], b"g")
+        for key in res["outputs"]:
+            self.assertNotIn("..", key)
+            self.assertFalse(os.path.isabs(key))
+
+    def test_output_filename_absolute_path_sanitised(self):
+        """An absolute output metadata.filename must be reduced to its basename so
+        os.path.join cannot redirect the write to an absolute location."""
+        res = self._extract_with_output_filename("/tmp/absolute/evil.png")
+        self.assertIn("evil.png", res["outputs"])
+        self.assertNotIn("/tmp/absolute/evil.png", res["outputs"])
+        self.assertEqual(res["outputs"]["evil.png"], b"g")
+        for key in res["outputs"]:
+            self.assertFalse(os.path.isabs(key))
+
+    def test_output_filename_empty_basename_fallback(self):
+        """A filename whose basename is empty (e.g. '../') must fall back to a
+        generated filename rather than being used verbatim."""
+        res = self._extract_with_output_filename("../../../tmp/")
+        self.assertEqual(len(res["outputs"]), 1)
+        for key in res["outputs"]:
+            self.assertNotIn("..", key)
+            self.assertFalse(os.path.isabs(key))
+            self.assertTrue(key.endswith(".png"))
