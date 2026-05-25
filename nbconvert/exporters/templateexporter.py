@@ -109,7 +109,7 @@ def _load_template_conf(conf_path):
         with open(conf_path) as f:
             return json.load(f)
     except json.JSONDecodeError as err:
-        msg = f"Failed to parse template configuration file {conf_path!r}: {err}"
+        msg = f"Failed to parse template configuration file {conf_path}: {err}"
         raise ValueError(msg) from err
 
 

@@ -24,7 +24,7 @@ Nbconvert is packaged for both pip and conda, so you can install it with::
 
     conda install nbconvert
 
-The `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ and `Miniforge <https://github.com/conda-forge/miniforge/>`_ distributions both provide a minimal conda installation.
+The `Miniconda <https://www.anaconda.com/docs/getting-started/miniconda/main>`_ and `Miniforge <https://github.com/conda-forge/miniforge/>`_ distributions both provide a minimal conda installation.
 
 .. important::
 
