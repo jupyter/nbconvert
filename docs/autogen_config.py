@@ -68,6 +68,7 @@ data = data.replace("`cell`", "``cell``")
 data = data.replace("`cell_index`", "``cell_index``")
 data = data.replace("`cell_allows_errors`", "``cell_allows_errors``")
 data = data.replace("`notebook`", "``notebook``")
+data = data.replace("`asctime`", "``asctime``")
 
 with open(destination, "w") as f:
     f.write(data)
