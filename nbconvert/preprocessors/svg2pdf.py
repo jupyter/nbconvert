@@ -86,7 +86,8 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
     @default("command")
     def _command_default(self):
         major_version = self.inkscape_version.split(".")[0]
-        command = [self.inkscape]
+        command = [self.inkscape]  # inkscape path
+        # Note: using list format ensures paths with spaces are handled
 
         if int(major_version) < 1:
             # --without-gui is only needed for inkscape 0.x
@@ -175,12 +176,12 @@ class SVG2PDFPreprocessor(ConvertFiguresPreprocessor):
             output_filename = os.path.join(tmpdir, "figure.pdf")
 
             template_vars = {"from_filename": input_filename, "to_filename": output_filename}
-            if isinstance(self.command, list):
+                    if isinstance(self.command, list):
                 full_cmd = [s.format_map(FormatSafeDict(**template_vars)) for s in self.command]
             else:
                 # For backwards compatibility with specifying strings
                 # Okay-ish, since the string is trusted
-                full_cmd = self.command.format(**template_vars)
+                full_cmd = self.command.format(from_filename=f""{input_filename}"", to_filename=f""{output_filename}"")
             subprocess.call(full_cmd, shell=isinstance(full_cmd, str))  # noqa: S603
 
             # Read output from drive
