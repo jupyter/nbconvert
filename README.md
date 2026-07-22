@@ -116,4 +116,4 @@ to indicate the copyright and license terms:
 # Distributed under the terms of the Modified BSD License.
 ```
 
-[jinja]: http://jinja.pocoo.org/
+[jinja]: https://jinja.pocoo.org/
