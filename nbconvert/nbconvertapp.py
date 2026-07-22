@@ -588,8 +588,12 @@ class NbConvertApp(JupyterApp):
         # strip duplicate extension from output_base, to avoid Basename.ext.ext
         if getattr(self.exporter, "file_extension", False):
             base, ext = os.path.splitext(self.output_base)
-            if ext == self.exporter.file_extension:
+            if ext:
+                # User specified an extension via --output, don't duplicate
                 self.output_base = base
+                if ext != self.exporter.file_extension:
+                    # Custom extension: don't append format extension
+                    self.exporter.file_extension = ""
 
         # convert each notebook
         if not self.from_stdin:
