@@ -593,7 +593,7 @@ class NbConvertApp(JupyterApp):
                 self.output_base = base
                 if ext != self.exporter.file_extension:
                     # Custom extension: don't append format extension
-                    self.exporter.file_extension = ''
+                    self.exporter.file_extension = ""
 
         # convert each notebook
         if not self.from_stdin:
