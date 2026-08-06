@@ -47,6 +47,10 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
             nb = NotebookNode()
         Preprocessor.__init__(self, nb=nb, **kw)
         NotebookClient.__init__(self, nb, **kw)
+        # NotebookClient infers and stores the kernel name from the first
+        # notebook it executes. Keep the configured value so that inference is
+        # repeated for each notebook in a batch.
+        self._configured_kernel_name = self.kernel_name
 
     def _check_assign_resources(self, resources):
         if resources or not hasattr(self, "resources"):
@@ -90,6 +94,7 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         resources : dictionary
             Additional resources used in the conversion process.
         """
+        self.kernel_name = self._configured_kernel_name
         NotebookClient.__init__(self, nb, km)
         self.reset_execution_trackers()
         self._check_assign_resources(resources)
