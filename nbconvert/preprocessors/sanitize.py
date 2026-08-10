@@ -5,8 +5,15 @@ NBConvert Preprocessor for sanitizing HTML rendering of notebooks.
 from collections.abc import Mapping
 from html import escape
 from html.parser import HTMLParser
+from importlib import import_module
+from typing import Any as TypingAny
 
-import nh3
+nh3: TypingAny = None
+try:  # pragma: no cover - the fallback is only possible in partial tooling environments
+    nh3 = import_module("nh3")
+except ModuleNotFoundError:
+    pass
+
 from traitlets import Any, Bool, List, Set, Unicode
 
 from .base import Preprocessor
@@ -150,7 +157,7 @@ def _attribute_configuration(attributes):
             if callable(allowed):
                 # nh3 needs a candidate allowlist before it invokes the
                 # callback.  Its default set covers the standard HTML attrs.
-                normalized[tag] = set(nh3.ALLOWED_ATTRIBUTES.get(tag, set()))
+                normalized[tag] = set(ALLOWED_ATTRIBUTES.get(tag, ()))
             elif isinstance(allowed, str):
                 normalized[tag] = {allowed}
             else:
@@ -165,14 +172,15 @@ def _attribute_configuration(attributes):
                 candidates.append(attributes["*"])
             if tag in attributes:
                 candidates.append(attributes[tag])
-            for allowed in candidates:
-                if callable(allowed):
-                    if allowed(tag, attr, value):
+            for allowed_value in candidates:
+                if callable(allowed_value):
+                    if allowed_value(tag, attr, value):
                         return value
                 else:
-                    if isinstance(allowed, str):
-                        allowed = {allowed}
-                    if attr in (allowed or ()):
+                    allowed_attrs = (
+                        {allowed_value} if isinstance(allowed_value, str) else allowed_value
+                    )
+                    if attr in (allowed_attrs or ()):
                         return value
             return None
 
@@ -183,6 +191,10 @@ def _attribute_configuration(attributes):
 
 def sanitize_html(html_str, *, tags, attributes, styles, strip, strip_comments):
     """Sanitize HTML with nh3 while retaining nbconvert's Bleach semantics."""
+    if nh3 is None:
+        msg = "nbconvert's HTML sanitizer requires the nh3 dependency"
+        raise ImportError(msg)
+
     if not strip:
         html_str = _escape_disallowed_tags(html_str, tags)
 
@@ -212,13 +224,13 @@ class SanitizeHTML(Preprocessor):
     tags = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_TAGS,  # type:ignore[arg-type]
+        default_value=ALLOWED_TAGS,
         help="List of HTML tags to allow",
     )
     styles = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_STYLES,  # type:ignore[arg-type]
+        default_value=ALLOWED_STYLES,
         help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(
