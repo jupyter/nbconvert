@@ -8,15 +8,15 @@ from html.parser import HTMLParser
 from importlib import import_module
 from typing import Any as TypingAny
 
+from traitlets import Any, Bool, List, Set, Unicode
+
+from .base import Preprocessor
+
 nh3: TypingAny = None
 try:  # pragma: no cover - the fallback is only possible in partial tooling environments
     nh3 = import_module("nh3")
 except ModuleNotFoundError:
     pass
-
-from traitlets import Any, Bool, List, Set, Unicode
-
-from .base import Preprocessor
 
 # Keep the public defaults compatible with Bleach while using nh3 for the
 # actual sanitization.  nh3's defaults are intentionally broader than
