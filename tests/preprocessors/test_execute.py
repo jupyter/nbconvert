@@ -86,6 +86,24 @@ def test_populate_language_info():
     assert "language_info" in nb.metadata  # See that a basic attribute is filled in
 
 
+def test_show_output_streams_to_console(capsys):
+    preprocessor = ExecutePreprocessor(show_output=True)
+    fname = os.path.join(os.path.dirname(__file__), "files", "HelloWorld.ipynb")
+    with open(fname) as f:
+        input_nb = nbformat.read(f, 4)
+        preprocessor.preprocess(deepcopy(input_nb))
+    assert "Hello World" in capsys.readouterr().out
+
+
+def test_show_output_disabled_by_default(capsys):
+    preprocessor = ExecutePreprocessor()
+    fname = os.path.join(os.path.dirname(__file__), "files", "HelloWorld.ipynb")
+    with open(fname) as f:
+        input_nb = nbformat.read(f, 4)
+        preprocessor.preprocess(deepcopy(input_nb))
+    assert "Hello World" not in capsys.readouterr().out
+
+
 def test_preprocess_cell():
     class CellReplacer(ExecutePreprocessor):
         def preprocess_cell(self, cell, resources, index, **kwargs):

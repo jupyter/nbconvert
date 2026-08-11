@@ -6,6 +6,7 @@ and updates outputs"""
 
 from __future__ import annotations
 
+import sys
 import typing as t
 from warnings import warn
 
@@ -16,6 +17,7 @@ from nbclient.client import execute as _execute
 # Backwards compatibility for imported name
 from nbclient.exceptions import CellExecutionError  # noqa: F401
 from nbformat import NotebookNode
+from traitlets import Bool
 
 from .base import Preprocessor
 
@@ -39,6 +41,12 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
     """
     Executes all the cells in a notebook
     """
+
+    show_output = Bool(
+        False,
+        help="If True, stream each cell's stdout/stderr to the console as it executes, "
+        "in addition to storing it in the notebook.",
+    ).tag(config=True)
 
     def __init__(self, **kw):
         """Initialize the preprocessor."""
@@ -123,3 +131,11 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         self._check_assign_resources(resources)
         cell = self.execute_cell(cell, index, store_history=True)
         return cell, self.resources
+
+    def output(self, outs, msg, display_id, cell_index):
+        """Handle a cell output, streaming it live when ``show_output`` is set."""
+        out = super().output(outs, msg, display_id, cell_index)
+        if self.show_output and out is not None and out.get("output_type") == "stream":
+            stream = sys.stderr if out.get("name") == "stderr" else sys.stdout
+            print(out.get("text", ""), end="", file=stream, flush=True)
+        return out
