@@ -34,7 +34,7 @@
 {% endblock execute_result %}
 
 {% block stream %}
-{{ output.text | indent }}
+{{ output.text | indent | strip_ansi }}
 {% endblock stream %}
 
 {% block data_svg %}
