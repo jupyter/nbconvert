@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 
 import nbformat
 import pytest
+from traitlets.config import Config
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
@@ -105,6 +106,25 @@ class TestNbConvertApp(TestsBase):
                     # Skip markdown cells
                     if "outputs" in cell:
                         assert cell.outputs == []
+
+    def test_coalesce_streams_respects_export_format(self):
+        with self.create_temp_cwd(["notebook*.ipynb"]):
+            self.nbconvert("--to html --coalesce-streams --log-level 0 notebook1.ipynb")
+            assert os.path.isfile("notebook1.html")
+
+    def test_execute_runs_before_coalesce_streams(self):
+        config = Config(
+            {
+                "ExecutePreprocessor": {"enabled": True},
+                "CoalesceStreamsPreprocessor": {"enabled": True},
+            }
+        )
+        exporter = HTMLExporter(config=config)
+        enabled = [type(preprocessor).__name__ for preprocessor in exporter._preprocessors if preprocessor.enabled]
+
+        assert enabled.index("ExecutePreprocessor") < enabled.index(
+            "CoalesceStreamsPreprocessor"
+        )
 
     def test_absolute_template_file(self):
         """--template-file '/path/to/template.tpl'"""
