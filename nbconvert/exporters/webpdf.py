@@ -19,6 +19,17 @@ PLAYWRIGHT_INSTALLED = importlib_util.find_spec("playwright") is not None
 IS_WINDOWS = os.name == "nt"
 
 
+def _run_coroutine(coro):
+    """Run a coroutine on an event loop compatible with Playwright."""
+    if IS_WINDOWS and hasattr(asyncio, "ProactorEventLoop"):
+        loop = asyncio.ProactorEventLoop()
+        try:
+            return loop.run_until_complete(coro)
+        finally:
+            loop.close()
+    return asyncio.run(coro)
+
+
 class WebPDFExporter(HTMLExporter):
     """Writer designed to write to PDF files.
 
@@ -179,7 +190,7 @@ class WebPDFExporter(HTMLExporter):
         with temp_file:
             temp_file.write(html.encode("utf-8"))
         try:
-            pdf_data = pool.submit(asyncio.run, main(temp_file)).result()
+            pdf_data = pool.submit(_run_coroutine, main(temp_file)).result()
         finally:
             # Ensure the file is deleted even if playwright raises an exception
             os.unlink(temp_file.name)
