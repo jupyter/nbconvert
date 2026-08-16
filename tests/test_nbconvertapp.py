@@ -120,11 +120,13 @@ class TestNbConvertApp(TestsBase):
             }
         )
         exporter = HTMLExporter(config=config)
-        enabled = [type(preprocessor).__name__ for preprocessor in exporter._preprocessors if preprocessor.enabled]
+        enabled = [
+            type(preprocessor).__name__
+            for preprocessor in exporter._preprocessors
+            if preprocessor.enabled
+        ]
 
-        assert enabled.index("ExecutePreprocessor") < enabled.index(
-            "CoalesceStreamsPreprocessor"
-        )
+        assert enabled.index("ExecutePreprocessor") < enabled.index("CoalesceStreamsPreprocessor")
 
     def test_absolute_template_file(self):
         """--template-file '/path/to/template.tpl'"""
