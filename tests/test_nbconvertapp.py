@@ -328,6 +328,16 @@ class TestNbConvertApp(TestsBase):
             assert not os.path.isfile("empty.nbconvert.ipynb")
             assert not os.path.isfile("empty.html")
 
+    def test_inplace_respects_explicit_exporter(self):
+        """Verify that --inplace does not override an explicit --to option."""
+        with self.create_temp_cwd():
+            self.create_empty_notebook("empty.ipynb")
+            self.copy_files_to(["../fake_exporters.py"], "tests")
+            self.nbconvert("empty.ipynb --inplace --to tests.fake_exporters.MyNotebookExporter")
+            with open("empty.ipynb", encoding="utf-8") as f:
+                notebook = nbformat.read(f, 4)
+            assert notebook.metadata["custom_exporter"]
+
     def test_no_prompt(self):
         """
         Verify that the html has no prompts when given --no-prompt.

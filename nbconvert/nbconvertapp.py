@@ -99,12 +99,12 @@ nbconvert_flags.update(
             {
                 "NbConvertApp": {
                     "use_output_suffix": False,
-                    "export_format": "notebook",
+                    "inplace": True,
                 },
                 "FilesWriter": {"build_directory": ""},
             },
-            """Run nbconvert in place, overwriting the existing notebook (only
-        relevant when converting to notebook format)""",
+            """Run nbconvert in place, overwriting the existing notebook when
+        converting to notebook format""",
         ),
         "clear-output": (
             {
@@ -349,6 +349,11 @@ class NbConvertApp(JupyterApp):
                      Filenames passed positionally will be added to the list.
                      """,
     ).tag(config=True)
+
+    inplace = Bool(
+        False,
+        help="Run nbconvert in place, overwriting the existing notebook.",
+    ).tag(config=True)
     from_stdin = Bool(False, help="read a single notebook from stdin.").tag(config=True)
     recursive_glob = Bool(
         False, help="set the 'recursive' option for glob for searching wildcards."
@@ -361,13 +366,27 @@ class NbConvertApp(JupyterApp):
         if sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+        if argv is None:
+            argv = sys.argv[1:]
+
         self.init_syspath()
         super().initialize(argv)
         if hasattr(self, "load_config_environ"):
             self.load_config_environ()
+        if self.inplace and not self._export_format_was_explicit(argv):
+            self.export_format = "notebook"
         self.init_notebooks()
         self.init_writer()
         self.init_postprocessor()
+
+    @staticmethod
+    def _export_format_was_explicit(argv):
+        """Return whether command-line arguments explicitly select a format."""
+        return any(
+            argument in ("--to", "--NbConvertApp.export_format")
+            or argument.startswith(("--to=", "--NbConvertApp.export_format="))
+            for argument in argv
+        )
 
     def init_syspath(self):
         """Add the cwd to the sys.path ($PYTHONPATH)"""
