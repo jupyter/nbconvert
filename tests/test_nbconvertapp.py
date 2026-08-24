@@ -333,9 +333,7 @@ class TestNbConvertApp(TestsBase):
         with self.create_temp_cwd():
             self.create_empty_notebook("empty.ipynb")
             self.copy_files_to(["../fake_exporters.py"], "tests")
-            self.nbconvert(
-                "empty.ipynb --inplace --to tests.fake_exporters.MyNotebookExporter"
-            )
+            self.nbconvert("empty.ipynb --inplace --to tests.fake_exporters.MyNotebookExporter")
             with open("empty.ipynb", encoding="utf-8") as f:
                 notebook = nbformat.read(f, 4)
             assert notebook.metadata["custom_exporter"]
