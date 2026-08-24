@@ -383,10 +383,8 @@ class NbConvertApp(JupyterApp):
     def _export_format_was_explicit(argv):
         """Return whether command-line arguments explicitly select a format."""
         return any(
-            argument == "--to"
-            or argument.startswith("--to=")
-            or argument == "--NbConvertApp.export_format"
-            or argument.startswith("--NbConvertApp.export_format=")
+            argument in ("--to", "--NbConvertApp.export_format")
+            or argument.startswith(("--to=", "--NbConvertApp.export_format="))
             for argument in argv
         )
 
