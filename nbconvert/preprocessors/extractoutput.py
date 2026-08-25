@@ -53,6 +53,16 @@ class ExtractOutputPreprocessor(Preprocessor):
         config=True
     )
 
+    def preprocess(self, nb, resources):
+        """Extract outputs using the code-cell index in generated filenames."""
+        code_cell_index = 0
+        for index, cell in enumerate(nb.cells):
+            cell_index = code_cell_index if cell.cell_type == "code" else index
+            nb.cells[index], resources = self.preprocess_cell(cell, resources, cell_index)
+            if cell.cell_type == "code":
+                code_cell_index += 1
+        return nb, resources
+
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell,
