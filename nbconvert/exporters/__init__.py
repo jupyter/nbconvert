@@ -13,6 +13,7 @@ from .rst import RSTExporter
 from .script import ScriptExporter
 from .slides import SlidesExporter
 from .templateexporter import TemplateExporter
+from .webhtml import WebHTMLExporter
 from .webpdf import WebPDFExporter
 
 __all__ = [
@@ -34,6 +35,7 @@ __all__ = [
     "ScriptExporter",
     "SlidesExporter",
     "TemplateExporter",
+    "WebHTMLExporter",
     "WebPDFExporter",
     "export",
     "get_export_names",

@@ -18,10 +18,10 @@ format designated by the ``FORMAT`` string as explained below.
 
 Extending the built-in format exporters
 ---------------------------------------
-A few built-in formats are available by default: ``html``, ``pdf``, ``webpdf``,
-``script``, ``latex``. Each of these has its own *exporter* with many
-configuration options that can be extended. Having the option to point to a
-different *exporter* allows authors to create their own fully customized
+A few built-in formats are available by default: ``html``, ``pdf``, ``webhtml``,
+``webpdf``, ``script``, ``latex``. Each of these has its own *exporter* with
+many configuration options that can be extended. Having the option to point
+to a different *exporter* allows authors to create their own fully customized
 templates or export formats.
 
 A custom *exporter* must be an importable Python object. We recommend that
