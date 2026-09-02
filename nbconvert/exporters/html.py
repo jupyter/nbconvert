@@ -97,6 +97,20 @@ class HTMLExporter(TemplateExporter):
 
     export_from_notebook = "HTML"
 
+    _default_require_js_url = (
+        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"
+    )
+    _default_mathjax_url = (
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,"
+        "Safe"
+    )
+    _default_jquery_url = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"
+
+    _default_require_js_integrity = "sha256-tpTnwzCp6VMSdSv3Apnsnt/MQh8OASQVQmy6Bsg1N+4="
+    _default_mathjax_integrity = "sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw="
+    _default_jquery_integrity = "sha256-pXtSQrmprcTB74RsNlFHuJxHK5zXcPrOMx78uWU0ayU="
+    _enable_cdn_integrity = True
+
     anchor_link_text = Unicode("¶", help="The text used as the text for anchor links.").tag(
         config=True
     )
@@ -106,7 +120,7 @@ class HTMLExporter(TemplateExporter):
     )
 
     require_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js",
+        _default_require_js_url,
         help="""
         URL to load require.js from.
 
@@ -115,7 +129,7 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mathjax_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe",
+        _default_mathjax_url,
         help="""
         URL to load Mathjax from.
 
@@ -142,7 +156,7 @@ class HTMLExporter(TemplateExporter):
     )
 
     jquery_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
+        _default_jquery_url,
         help="""
         URL to load jQuery from.
 
@@ -369,10 +383,19 @@ class HTMLExporter(TemplateExporter):
         resources["include_js"] = resources_include_js
         resources["include_url"] = resources_include_url
         resources["require_js_url"] = self.require_js_url
+        resources["require_js_integrity"] = self._get_cdn_integrity(
+            self.require_js_url, self._default_require_js_url, self._default_require_js_integrity
+        )
         resources["mathjax_url"] = self.mathjax_url
+        resources["mathjax_integrity"] = self._get_cdn_integrity(
+            self.mathjax_url, self._default_mathjax_url, self._default_mathjax_integrity
+        )
         resources["mermaid_js_url"] = self.mermaid_js_url
         resources["mermaid_layout_elk_js_url"] = self.mermaid_layout_elk_js_url
         resources["jquery_url"] = self.jquery_url
+        resources["jquery_integrity"] = self._get_cdn_integrity(
+            self.jquery_url, self._default_jquery_url, self._default_jquery_integrity
+        )
         resources["jupyter_widgets_base_url"] = self.jupyter_widgets_base_url
         resources["widget_renderer_url"] = self.widget_renderer_url
         resources["html_manager_semver_range"] = self.html_manager_semver_range
@@ -380,3 +403,9 @@ class HTMLExporter(TemplateExporter):
         resources["language_code"] = self.language_code
         resources["should_not_encode_svg"] = self.skip_svg_encoding
         return resources
+
+    def _get_cdn_integrity(self, url, default_url, default_integrity):
+        """Return a pinned hash only for the matching built-in CDN URL."""
+        if self._enable_cdn_integrity and url == default_url:
+            return default_integrity
+        return ""
