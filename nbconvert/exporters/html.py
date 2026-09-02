@@ -109,6 +109,7 @@ class HTMLExporter(TemplateExporter):
     _default_require_js_integrity = "sha256-tpTnwzCp6VMSdSv3Apnsnt/MQh8OASQVQmy6Bsg1N+4="
     _default_mathjax_integrity = "sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw="
     _default_jquery_integrity = "sha256-pXtSQrmprcTB74RsNlFHuJxHK5zXcPrOMx78uWU0ayU="
+    _enable_cdn_integrity = True
 
     anchor_link_text = Unicode("¶", help="The text used as the text for anchor links.").tag(
         config=True
@@ -403,9 +404,8 @@ class HTMLExporter(TemplateExporter):
         resources["should_not_encode_svg"] = self.skip_svg_encoding
         return resources
 
-    @staticmethod
-    def _get_cdn_integrity(url, default_url, default_integrity):
+    def _get_cdn_integrity(self, url, default_url, default_integrity):
         """Return a pinned hash only for the matching built-in CDN URL."""
-        if url == default_url:
+        if self._enable_cdn_integrity and url == default_url:
             return default_integrity
         return ""

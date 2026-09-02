@@ -15,6 +15,9 @@ class QtExporter(HTMLExporter):
 
     paginate = None
     format = ""
+    # Qt renders the generated HTML from a file:// URL, which cannot load the
+    # CDN scripts when they use an explicit cross-origin request.
+    _enable_cdn_integrity = False
 
     @default("file_extension")
     def _file_extension_default(self):
