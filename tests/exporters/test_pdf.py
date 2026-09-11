@@ -5,7 +5,10 @@
 
 import os
 import shutil
+import textwrap
 from tempfile import TemporaryDirectory
+
+from nbformat import v4, write
 
 from nbconvert.exporters.pdf import PDFExporter
 from nbconvert.utils import _contextlib_chdir
@@ -41,6 +44,32 @@ class TestPDF(ExportersTestsBase):
             assert len(output) > 0
             # all temporary file should be cleaned up
             assert {file_name} == set(os.listdir(td))
+
+    @onlyif_cmds_exist("xelatex", "pandoc")
+    def test_captionless_markdown_table(self):
+        """
+        Captionless Markdown tables must PDF-build with modern pandoc/longtable.
+
+        Pandoc sets \\LTcaptype to none; without \\newcounter{none} in the
+        template, xelatex fails with ``No counter 'none' defined``.
+        """
+        table = textwrap.dedent(
+            """\
+            | Name | Value |
+            | --- | --- |
+            | a | 1 |
+            """
+        )
+        nb = v4.new_notebook(cells=[v4.new_markdown_cell(source=table)])
+        with TemporaryDirectory() as td:
+            nbfile = os.path.join(td, "captionless_table.ipynb")
+            with open(nbfile, "w", encoding="utf-8") as f:
+                write(nb, f, 4)
+            (output, _resources) = self.exporter_class(latex_count=1).from_filename(  # type:ignore
+                nbfile
+            )
+            self.assertIsInstance(output, bytes)
+            assert len(output) > 0
 
     @onlyif_cmds_exist("xelatex", "pandoc")
     def test_texinputs(self):
