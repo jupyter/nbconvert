@@ -41,6 +41,24 @@ class TestLatexExporter(ExportersTestsBase):
         assert len(output) > 0
 
     @onlyif_cmds_exist("pandoc")
+    def test_captionless_markdown_table_defines_none_counter(self):
+        """
+        Pandoc emits \\def\\LTcaptype{none} for captionless tables. The latex
+        template must define that counter (same as pandoc's common.latex).
+        """
+        table = textwrap.dedent(
+            """\
+            | Name | Value |
+            | --- | --- |
+            | a | 1 |
+            """
+        )
+        nb = v4.new_notebook(cells=[v4.new_markdown_cell(source=table)])
+        (output, _resources) = LatexExporter().from_notebook_node(nb)
+        assert r"\newcounter{none}" in output
+        assert r"\LTcaptype{none}" in output
+
+    @onlyif_cmds_exist("pandoc")
     def test_export_book(self):
         """
         Can a LatexExporter export using 'report' template?
