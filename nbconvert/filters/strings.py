@@ -15,12 +15,15 @@ import warnings
 from urllib.parse import quote
 from xml.etree.ElementTree import Element
 
-import bleach
-
 # defusedxml does safe(r) parsing of untrusted XML data
 from defusedxml import ElementTree
 
-from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
+from nbconvert.preprocessors.sanitize import (
+    ALLOWED_ATTRIBUTES,
+    ALLOWED_STYLES,
+    ALLOWED_TAGS,
+    sanitize_html,
+)
 
 __all__ = [
     "add_anchor",
@@ -83,18 +86,16 @@ def html2text(element):
 def clean_html(element):
     """Clean an html element."""
     element = element.decode() if isinstance(element, bytes) else str(element)
-    kwargs = {}
-    css_sanitizer = _get_default_css_sanitizer()
-    if css_sanitizer:
-        kwargs["css_sanitizer"] = css_sanitizer
-    return bleach.clean(
+    return sanitize_html(
         element,
-        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span", "table", "tr", "td"],
+        tags=[*ALLOWED_TAGS, "div", "pre", "code", "span", "table", "tr", "td"],
         attributes={
-            **bleach.ALLOWED_ATTRIBUTES,
+            **ALLOWED_ATTRIBUTES,
             "*": ["class", "id"],
         },
-        **kwargs,
+        styles=ALLOWED_STYLES,
+        strip=False,
+        strip_comments=True,
     )
 
 

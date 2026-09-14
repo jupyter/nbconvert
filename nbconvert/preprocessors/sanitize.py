@@ -2,47 +2,214 @@
 NBConvert Preprocessor for sanitizing HTML rendering of notebooks.
 """
 
-import warnings
+from collections.abc import Mapping
+from html import escape
+from html.parser import HTMLParser
+from importlib import import_module
+from typing import Any as TypingAny
 
-from bleach import ALLOWED_ATTRIBUTES, ALLOWED_TAGS, clean
 from traitlets import Any, Bool, List, Set, Unicode
 
 from .base import Preprocessor
 
-_USE_BLEACH_CSS_SANITIZER = False
-_USE_BLEACH_STYLES = False
+nh3: TypingAny = None
+try:  # pragma: no cover - the fallback is only possible in partial tooling environments
+    nh3 = import_module("nh3")
+except ModuleNotFoundError:
+    pass
 
-
-try:
-    # bleach[css] >=5.0
-    from bleach.css_sanitizer import ALLOWED_CSS_PROPERTIES as ALLOWED_STYLES
-    from bleach.css_sanitizer import CSSSanitizer
-
-    _USE_BLEACH_CSS_SANITIZER = True
-    _USE_BLEACH_STYLES = False
-except ImportError:
-    try:
-        # bleach <5
-        from bleach import ALLOWED_STYLES  # type:ignore[attr-defined, no-redef]
-
-        _USE_BLEACH_CSS_SANITIZER = False
-        _USE_BLEACH_STYLES = True
-        warnings.warn(
-            "Support for bleach <5 will be removed in a future version of nbconvert",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-    except ImportError:
-        warnings.warn(
-            "The installed bleach/tinycss2 do not provide CSS sanitization, "
-            "please upgrade to bleach >=5",
-            UserWarning,
-            stacklevel=2,
-        )
+# Keep the public defaults compatible with Bleach while using nh3 for the
+# actual sanitization.  nh3's defaults are intentionally broader than
+# Bleach's, so relying on them would silently change the HTML allowlist.
+ALLOWED_TAGS = {
+    "a",
+    "abbr",
+    "acronym",
+    "b",
+    "blockquote",
+    "code",
+    "em",
+    "i",
+    "li",
+    "ol",
+    "strong",
+    "ul",
+}
+ALLOWED_ATTRIBUTES = {
+    "a": ["href", "title"],
+    "abbr": ["title"],
+    "acronym": ["title"],
+}
+ALLOWED_STYLES = {
+    "azimuth",
+    "background-color",
+    "border-bottom-color",
+    "border-collapse",
+    "border-color",
+    "border-left-color",
+    "border-right-color",
+    "border-top-color",
+    "clear",
+    "color",
+    "cursor",
+    "direction",
+    "display",
+    "elevation",
+    "float",
+    "font",
+    "font-family",
+    "font-size",
+    "font-style",
+    "font-variant",
+    "font-weight",
+    "height",
+    "letter-spacing",
+    "line-height",
+    "overflow",
+    "pause",
+    "pause-after",
+    "pause-before",
+    "pitch",
+    "pitch-range",
+    "richness",
+    "speak",
+    "speak-header",
+    "speak-numeral",
+    "speak-punctuation",
+    "speech-rate",
+    "stress",
+    "text-align",
+    "text-decoration",
+    "text-indent",
+    "vertical-align",
+    "voice-family",
+    "volume",
+    "white-space",
+    "width",
+    "unicode-bidi",
+}
 
 
 __all__ = ["SanitizeHTML"]
+
+
+class _TagEscaper(HTMLParser):
+    """Escape disallowed tags so nh3 can reproduce Bleach's strip=False mode."""
+
+    def __init__(self, allowed_tags):
+        super().__init__(convert_charrefs=False)
+        self.allowed_tags = {tag.lower() for tag in allowed_tags}
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        source = self.get_starttag_text() or f"<{tag}>"
+        self.parts.append(source if tag.lower() in self.allowed_tags else escape(source))
+
+    def handle_startendtag(self, tag, attrs):
+        source = self.get_starttag_text() or f"<{tag} />"
+        self.parts.append(source if tag.lower() in self.allowed_tags else escape(source))
+
+    def handle_endtag(self, tag):
+        source = f"</{tag}>"
+        self.parts.append(source if tag.lower() in self.allowed_tags else escape(source))
+
+    def handle_data(self, data):
+        self.parts.append(data)
+
+    def handle_entityref(self, name):
+        self.parts.append(f"&{name};")
+
+    def handle_charref(self, name):
+        self.parts.append(f"&#{name};")
+
+    def handle_comment(self, data):
+        self.parts.append(f"<!--{data}-->")
+
+    def handle_decl(self, decl):
+        self.parts.append(escape(f"<!{decl}>"))
+
+    def unknown_decl(self, data):
+        self.parts.append(escape(f"<![{data}]>"))
+
+    def handle_pi(self, data):
+        self.parts.append(escape(f"<?{data}>"))
+
+    def result(self):
+        return "".join(self.parts)
+
+
+def _escape_disallowed_tags(html_str, tags):
+    parser = _TagEscaper(tags)
+    parser.feed(html_str)
+    parser.close()
+    return parser.result()
+
+
+def _attribute_configuration(attributes):
+    """Convert Bleach's flexible attribute config to nh3's callback API."""
+
+    if callable(attributes):
+        return None, lambda tag, attr, value: value if attributes(tag, attr, value) else None
+
+    if isinstance(attributes, Mapping):
+        normalized = {}
+        for tag, allowed in attributes.items():
+            if callable(allowed):
+                # nh3 needs a candidate allowlist before it invokes the
+                # callback.  Its default set covers the standard HTML attrs.
+                normalized[tag] = set(ALLOWED_ATTRIBUTES.get(tag, ()))
+            elif isinstance(allowed, str):
+                normalized[tag] = {allowed}
+            else:
+                normalized[tag] = set(allowed or ())
+    else:
+        normalized = {"*": set(attributes or ())}
+
+    def filter_mapping(tag, attr, value):
+        if isinstance(attributes, Mapping):
+            candidates = []
+            if "*" in attributes:
+                candidates.append(attributes["*"])
+            if tag in attributes:
+                candidates.append(attributes[tag])
+            for allowed_value in candidates:
+                if callable(allowed_value):
+                    if allowed_value(tag, attr, value):
+                        return value
+                else:
+                    allowed_attrs = (
+                        {allowed_value} if isinstance(allowed_value, str) else allowed_value
+                    )
+                    if attr in (allowed_attrs or ()):
+                        return value
+            return None
+
+        return value if attr in normalized["*"] else None
+
+    return normalized, filter_mapping
+
+
+def sanitize_html(html_str, *, tags, attributes, styles, strip, strip_comments):
+    """Sanitize HTML with nh3 while retaining nbconvert's Bleach semantics."""
+    if nh3 is None:
+        msg = "nbconvert's HTML sanitizer requires the nh3 dependency"
+        raise ImportError(msg)
+
+    if not strip:
+        html_str = _escape_disallowed_tags(html_str, tags)
+
+    attribute_config, attribute_filter = _attribute_configuration(attributes)
+    return nh3.clean(
+        html_str,
+        tags=set(tags),
+        # Bleach strips unsafe tags but keeps their contents in both modes.
+        clean_content_tags=set(),
+        attributes=attribute_config,
+        attribute_filter=attribute_filter,
+        strip_comments=strip_comments,
+        link_rel=None,
+        filter_style_properties=set(styles),
+    )
 
 
 class SanitizeHTML(Preprocessor):
@@ -57,13 +224,13 @@ class SanitizeHTML(Preprocessor):
     tags = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_TAGS,  # type:ignore[arg-type]
+        default_value=ALLOWED_TAGS,
         help="List of HTML tags to allow",
     )
     styles = List(
         Unicode(),
         config=True,
-        default_value=ALLOWED_STYLES,  # type:ignore[arg-type]
+        default_value=ALLOWED_STYLES,
         help="Allowed CSS styles if <style> tag is allowed",
     )
     strip = Bool(
@@ -96,7 +263,7 @@ class SanitizeHTML(Preprocessor):
             "text/html",
             "text/markdown",
         },
-        help="Cell output types to display after escaping with Bleach.",
+        help="Cell output types to display after sanitizing with nh3.",
     )
 
     def preprocess_cell(self, cell, resources, cell_index):
@@ -157,23 +324,15 @@ class SanitizeHTML(Preprocessor):
         """
         Sanitize a string containing raw HTML tags.
         """
-        kwargs = {
-            "tags": self.tags,
-            "attributes": self.attributes,
-            "strip": self.strip,
-            "strip_comments": self.strip_comments,
-        }
-
-        if _USE_BLEACH_CSS_SANITIZER:
-            css_sanitizer = CSSSanitizer(allowed_css_properties=self.styles)
-            kwargs.update(css_sanitizer=css_sanitizer)
-        elif _USE_BLEACH_STYLES:
-            kwargs.update(styles=self.styles)
-
-        return clean(html_str, **kwargs)
+        return sanitize_html(
+            html_str,
+            tags=self.tags,
+            attributes=self.attributes,
+            styles=self.styles,
+            strip=self.strip,
+            strip_comments=self.strip_comments,
+        )
 
 
 def _get_default_css_sanitizer():
-    if _USE_BLEACH_CSS_SANITIZER:
-        return CSSSanitizer(allowed_css_properties=ALLOWED_STYLES)
-    return None
+    return set(ALLOWED_STYLES)
