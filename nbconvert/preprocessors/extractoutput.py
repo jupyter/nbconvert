@@ -39,6 +39,9 @@ def platform_utf_8_encode(data):
     return data
 
 
+import time
+
+
 class ExtractOutputPreprocessor(Preprocessor):
     """
     Extracts all of the outputs from the notebook file.  The extracted
@@ -119,7 +122,11 @@ class ExtractOutputPreprocessor(Preprocessor):
                             filename += ext
                     else:
                         filename = self.output_filename_template.format(
-                            unique_key=unique_key, cell_index=cell_index, index=index, extension=ext
+                            unique_key=unique_key,
+                            cell_index=cell_index,
+                            index=index,
+                            timestamp=str(int(time.time() * 1000)),  # Add millisecond timestamp
+                            extension=ext,
                         )
 
                     # On the cell, make the figure available via
