@@ -52,6 +52,28 @@ class TestHTMLExporter(ExportersTestsBase):
         (output, _resources) = HTMLExporter(template_name="lab").from_filename(self._get_notebook())
         assert len(output) > 0
 
+    def test_cdn_scripts_include_subresource_integrity(self):
+        """Built-in CDN scripts should be protected by SRI attributes."""
+        output, _resources = HTMLExporter(template_name="classic").from_notebook_node(
+            v4.new_notebook()
+        )
+
+        for integrity in (
+            HTMLExporter._default_jquery_integrity,
+            HTMLExporter._default_require_js_integrity,
+            HTMLExporter._default_mathjax_integrity,
+        ):
+            assert f'integrity="{integrity}"' in output
+        assert 'crossorigin="anonymous"' in output
+
+    def test_custom_cdn_url_does_not_reuse_default_integrity(self):
+        """Changing a CDN URL should not leave an invalid default hash behind."""
+        output, _resources = HTMLExporter(
+            template_name="classic", require_js_url="https://example.com/require.js"
+        ).from_notebook_node(v4.new_notebook())
+
+        assert 'src="https://example.com/require.js" integrity=' not in output
+
     def test_prompt_number(self):
         """
         Does HTMLExporter properly format input and output prompts?
