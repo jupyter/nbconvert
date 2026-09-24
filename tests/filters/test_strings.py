@@ -15,6 +15,7 @@ Module with tests for Strings
 # -----------------------------------------------------------------------------
 import os
 import re
+from unittest import mock
 
 from nbconvert.filters.strings import (
     add_anchor,
@@ -175,6 +176,11 @@ class TestStrings(TestsBase):
         native = os.path.join(*path_list)
         filtered = posix_path(native)
         self.assertEqual(filtered, expected)
+
+    def test_posix_path_windows(self):
+        """posix_path converts Windows separators when running on any platform"""
+        with mock.patch.object(os.path, "sep", "\\"):
+            self.assertEqual(posix_path(r"foo\bar"), "foo/bar")
 
     def test_add_prompts(self):
         """add_prompts test"""
