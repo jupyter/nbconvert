@@ -5,6 +5,8 @@
 
 import json
 
+from nbformat import v4 as nbformat
+
 from nbconvert.preprocessors.extractoutput import ExtractOutputPreprocessor
 
 from .base import PreprocessorTestsBase
@@ -84,3 +86,24 @@ class TestExtractOutput(PreprocessorTestsBase):
 
         # Verify equivalence of extracted outputs.
         self.assertEqual(sorted(outputs), sorted(reference_files))
+
+    def test_output_filename_uses_code_cell_index(self):
+        """Markdown cells should not change extracted output numbering."""
+        image = nbformat.new_output("display_data", data={"image/png": "Zw=="})
+        nb = nbformat.new_notebook(
+            cells=[
+                nbformat.new_markdown_cell(source="intro"),
+                nbformat.new_code_cell(outputs=[image]),
+                nbformat.new_markdown_cell(source="between"),
+                nbformat.new_code_cell(
+                    outputs=[nbformat.new_output("display_data", data={"image/png": "Zw=="})]
+                ),
+            ]
+        )
+        res = self.build_resources()
+        preprocessor = self.build_preprocessor()
+        nb, res = preprocessor(nb, res)
+
+        self.assertEqual(nb.cells[1].outputs[0].metadata.filenames["image/png"], "output_0_0.png")
+        self.assertEqual(nb.cells[3].outputs[0].metadata.filenames["image/png"], "output_1_0.png")
+        self.assertEqual(sorted(res["outputs"]), ["output_0_0.png", "output_1_0.png"])
