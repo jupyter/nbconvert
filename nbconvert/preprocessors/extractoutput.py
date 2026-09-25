@@ -114,8 +114,32 @@ class ExtractOutputPreprocessor(Preprocessor):
                     if ext is None:
                         ext = "." + mime_type.rsplit("/")[-1]
                     if out.metadata.get("filename", ""):
-                        filename = out.metadata["filename"]
-                        if not filename.endswith(ext):
+                        # Sanitize: use only the basename to prevent path traversal.
+                        # A crafted filename (an absolute path or a '../' sequence)
+                        # must not be able to redirect the extracted output outside
+                        # the output directory when it is later written to disk.
+                        raw_filename = out.metadata["filename"]
+                        filename = os.path.basename(raw_filename)
+                        if filename != raw_filename:
+                            self.log.warning(
+                                "Output filename '%s' contained path components, "
+                                "using basename '%s'",
+                                raw_filename,
+                                filename,
+                            )
+                        if not filename:
+                            self.log.warning(
+                                "Output filename '%s' is invalid (empty basename), "
+                                "using a generated filename",
+                                raw_filename,
+                            )
+                            filename = self.output_filename_template.format(
+                                unique_key=unique_key,
+                                cell_index=cell_index,
+                                index=index,
+                                extension=ext,
+                            )
+                        elif not filename.endswith(ext):
                             filename += ext
                     else:
                         filename = self.output_filename_template.format(
