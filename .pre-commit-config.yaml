@@ -69,6 +69,7 @@ repos:
             "packaging",
             "pandocfilters",
             "jupyterlab_pygments",
+            "turbohtml",
           ]
 
   - repo: https://github.com/pre-commit/pygrep-hooks

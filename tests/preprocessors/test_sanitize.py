@@ -1,5 +1,9 @@
 """Tests for the HTMLSanitize preprocessor"""
 
+from collections.abc import Callable
+from typing import Final
+
+import pytest
 from nbformat import v4 as nbformat
 
 from nbconvert.preprocessors.sanitize import SanitizeHTML
@@ -107,6 +111,34 @@ class TestSanitizer(PreprocessorTestsBase):
             '<a href="link">Hi</a>',
         )
 
+    def test_attributes_allowlist_list(self):
+        """A flat attribute list applies to every allowed tag"""
+        preprocessor = self.build_preprocessor()
+
+        preprocessor.attributes = ["title"]
+
+        self.assertEqual(
+            self.preprocess_source(
+                "markdown", '<a href="link" title="t">Hi</a> <em title="e">x</em>', preprocessor
+            ),
+            '<a title="t">Hi</a> <em title="e">x</em>',
+        )
+
+    def test_attributes_allowlist_callable(self):
+        """A predicate decides each attribute by tag, name, and value"""
+        preprocessor = self.build_preprocessor()
+
+        preprocessor.attributes = lambda tag, name, value: name == "title" and value != "drop"
+
+        self.assertEqual(
+            self.preprocess_source(
+                "markdown",
+                '<a href="link" title="keep">Hi</a> <em title="drop">x</em>',
+                preprocessor,
+            ),
+            '<a title="keep">Hi</a> <em>x</em>',
+        )
+
     def test_style_allowlist(self):
         """Test style"""
         preprocessor = self.build_preprocessor()
@@ -126,7 +158,7 @@ class TestSanitizer(PreprocessorTestsBase):
                 "few</em> <script>tags</script>",
                 preprocessor,
             ),
-            '_A_ <em style="color: blue;">few</em> &lt;script&gt;tags&lt;/script&gt;',
+            '_A_ <em style="color: blue">few</em> &lt;script&gt;tags&lt;/script&gt;',
         )
 
     def test_tag_passthrough(self):
@@ -181,3 +213,61 @@ class TestSanitizer(PreprocessorTestsBase):
             ),
             "_A_ <em>few</em> &lt;script&gt;tags&lt;/script&gt;",
         )
+
+
+@pytest.mark.parametrize(
+    ("rules", "expected"),
+    [
+        pytest.param(
+            {"a": lambda _tag, name, _value: name == "href"}, '<a href="/x">text</a>', id="tag"
+        ),
+        pytest.param(
+            {"a": ["href"], "*": lambda _tag, name, _value: name == "title"},
+            '<a href="/x" title="t">text</a>',
+            id="tag-list-and-wildcard-predicate",
+        ),
+        pytest.param(
+            {"a": lambda _tag, name, _value: name == "href", "*": ["title"]},
+            '<a href="/x">text</a>',
+            id="tag-predicate-and-wildcard-list",
+        ),
+        pytest.param({"a": ["*"]}, "<a>text</a>", id="literal-star"),
+    ],
+)
+def test_attribute_rules(
+    rules: dict[str, list[str] | Callable[[str, str, str], bool]], expected: str
+) -> None:
+    preprocessor: Final = SanitizeHTML(attributes=rules)
+    assert preprocessor.sanitize_html_tags('<a href="/x" title="t">text</a>') == expected
+
+
+def test_attribute_predicate_retains_css_policy() -> None:
+    preprocessor: Final = SanitizeHTML(attributes={"*": lambda *_: True}, styles=["color"])
+    assert (
+        preprocessor.sanitize_html_tags(
+            '<a href="javascript:alert(1)" onclick="bad()" style="color: red; position: fixed">text</a>'
+        )
+        == '<a style="color: red">text</a>'
+    )
+
+
+def test_attribute_predicate_receives_original_values() -> None:
+    calls: Final[list[tuple[str, str, str]]] = []
+
+    preprocessor: Final = SanitizeHTML(
+        attributes=lambda tag, name, value: calls.append((tag, name, value)) is None,
+        styles=["color"],
+    )
+    assert (
+        preprocessor.sanitize_html_tags(
+            '<a href="javascript:alert(1)" onclick="bad()" style="color: red; position: fixed">text</a>'
+        ),
+        calls,
+    ) == (
+        '<a style="color: red">text</a>',
+        [
+            ("a", "href", "javascript:alert(1)"),
+            ("a", "onclick", "bad()"),
+            ("a", "style", "color: red; position: fixed"),
+        ],
+    )
