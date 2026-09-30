@@ -106,6 +106,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      # check-links imports nbconvert from this checkout but installs the released nbconvert's dependencies
+      - run: pip install turbohtml
       - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
         with:
           ignore_links:

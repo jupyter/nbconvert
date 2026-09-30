@@ -4,12 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
-import sys
+from importlib.metadata import entry_points
 
-if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points  # type:ignore[import-not-found]
-else:
-    from importlib.metadata import entry_points
 from nbformat import NotebookNode
 from traitlets.config import get_config
 from traitlets.log import get_logger

@@ -11,7 +11,7 @@ import os
 from collections.abc import Iterable
 from html import escape
 from re import Match
-from typing import TYPE_CHECKING, Any, ClassVar, Optional, Protocol
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol
 
 import bs4  # type: ignore[import-not-found]
 from pygments import highlight
@@ -294,7 +294,7 @@ class IPythonRenderer(HTMLRenderer):
         exclude_anchor_links: bool = False,
         anchor_link_text: str = "¶",
         path: str = "",
-        attachments: Optional[dict[str, dict[str, str]]] = None,
+        attachments: dict[str, dict[str, str]] | None = None,
         **lexer_options,
     ):
         """Initialize the renderer."""
@@ -309,9 +309,9 @@ class IPythonRenderer(HTMLRenderer):
         else:
             self.attachments = {}
 
-    def block_code(self, code: str, info: Optional[str] = None) -> str:
+    def block_code(self, code: str, info: str | None = None) -> str:
         """Handle block code."""
-        lang: Optional[str] = ""
+        lang: str | None = ""
         lexer: Lexer
 
         if info:
@@ -382,7 +382,7 @@ class IPythonRenderer(HTMLRenderer):
         """Handle inline math."""
         return f"${self.escape_html(body)}$"
 
-    def image(self, text: str, url: str, title: Optional[str] = None) -> str:
+    def image(self, text: str, url: str, title: str | None = None) -> str:
         """Rendering a image with title and text.
 
         :param text: alt text of the image.
@@ -429,7 +429,7 @@ class IPythonRenderer(HTMLRenderer):
 
         return src
 
-    def _src_to_base64(self, src: str) -> Optional[str]:
+    def _src_to_base64(self, src: str) -> str | None:
         """Turn the source file into a base64 url.
 
         :param src: source link of the file.
@@ -486,9 +486,9 @@ class MarkdownWithMath(Markdown):
     def __init__(
         self,
         renderer: HTMLRenderer,
-        block: Optional[BlockParser] = None,
-        inline: Optional[InlineParser] = None,
-        plugins: Optional[Iterable["Plugin"]] = None,
+        block: BlockParser | None = None,
+        inline: InlineParser | None = None,
+        plugins: Iterable["Plugin"] | None = None,
     ):
         """Initialize the parser."""
         if block is None:
