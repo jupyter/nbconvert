@@ -44,8 +44,10 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
 
     show_output = Bool(
         False,
-        help="If True, stream each cell's stdout/stderr to the console as it executes, "
-        "in addition to storing it in the notebook.",
+        help="If True, echo each cell's stdout/stderr stream output to stderr as "
+        "it executes, in addition to storing it in the notebook. Output is always "
+        "written to stderr so it cannot corrupt converted output written to stdout "
+        "(e.g. with --stdout).",
     ).tag(config=True)
 
     def __init__(self, **kw):
@@ -133,9 +135,8 @@ class ExecutePreprocessor(Preprocessor, NotebookClient):
         return cell, self.resources
 
     def output(self, outs, msg, display_id, cell_index):
-        """Handle a cell output, streaming it live when ``show_output`` is set."""
+        """Handle a cell output, echoing stream output to stderr when ``show_output`` is set."""
         out = super().output(outs, msg, display_id, cell_index)
         if self.show_output and out is not None and out.get("output_type") == "stream":
-            stream = sys.stderr if out.get("name") == "stderr" else sys.stdout
-            print(out.get("text", ""), end="", file=stream, flush=True)
+            print(out.get("text", ""), end="", file=sys.stderr, flush=True)
         return out
