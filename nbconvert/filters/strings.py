@@ -217,8 +217,47 @@ def get_lines(text, start=None, end=None):
     return "\n".join(lines[start:end])  # re-join
 
 
+def _common_leading_indent(code):
+    """Return the space or tab prefix shared by every non-blank line."""
+    margin = None
+    for line in code.splitlines():
+        if not line.strip():
+            continue
+        indent = line[: len(line) - len(line.lstrip(" \t"))]
+        if margin is None:
+            margin = indent
+        elif indent.startswith(margin):
+            continue
+        elif margin.startswith(indent):
+            margin = indent
+        else:
+            for index, (left, right) in enumerate(zip(margin, indent)):
+                if left != right:
+                    margin = margin[:index]
+                    break
+            else:
+                margin = margin[: len(indent)]
+    return margin or ""
+
+
+def _with_leading_indent(code, margin):
+    """Put ``margin`` back on each non-blank line of ``code``."""
+    if not margin:
+        return code
+    lines = []
+    for line in code.splitlines(keepends=True):
+        if line.strip():
+            lines.append(margin + line)
+        else:
+            lines.append(line)
+    return "".join(lines)
+
+
 def ipython2python(code):
     """Transform IPython syntax to pure Python syntax
+
+    A shared leading indent is kept. IPython removes it so the cell can run
+    at top level, but script export needs the original indentation.
 
     Parameters
     ----------
@@ -235,8 +274,9 @@ def ipython2python(code):
         )
         return code
     else:
+        margin = _common_leading_indent(code)
         isp = TransformerManager()
-        return isp.transform_cell(code)
+        return _with_leading_indent(isp.transform_cell(code), margin)
 
 
 def posix_path(path):
