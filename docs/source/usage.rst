@@ -307,6 +307,14 @@ execution of a cell. If you specify ``--allow-errors`` (in addition to the
 ``--execute`` flag) then conversion will continue and the output from any
 exception will be included in the cell output.
 
+By default, output written by cells while they execute is only stored in the
+resulting notebook. To also watch it live (e.g. to follow the progress of a
+long-running notebook), add ``--show-output``. Each cell's stdout and stderr
+stream output is then echoed to nbconvert's stderr as it arrives, so it won't
+interfere with ``--stdout``::
+
+      jupyter nbconvert --to notebook --execute --show-output mynotebook.ipynb
+
 The following command::
 
       jupyter nbconvert --to notebook --nbformat 3 mynotebook

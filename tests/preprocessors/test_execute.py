@@ -86,6 +86,34 @@ def test_populate_language_info():
     assert "language_info" in nb.metadata  # See that a basic attribute is filled in
 
 
+def _run_show_output_nb(**kw):
+    preprocessor = ExecutePreprocessor(**kw)
+    nb = nbformat.v4.new_notebook()
+    nb.cells.append(
+        nbformat.v4.new_code_cell(
+            "import sys\nprint('to stdout')\nprint('to stderr', file=sys.stderr)"
+        )
+    )
+    preprocessor.preprocess(nb)
+
+
+def test_show_output_streams_to_stderr(capsys):
+    _run_show_output_nb(show_output=True)
+    captured = capsys.readouterr()
+    # Both streams are echoed to stderr so stdout stays clean for --stdout.
+    assert "to stdout" in captured.err
+    assert "to stderr" in captured.err
+    assert "to stdout" not in captured.out
+    assert "to stderr" not in captured.out
+
+
+def test_show_output_disabled_by_default(capsys):
+    _run_show_output_nb()
+    captured = capsys.readouterr()
+    assert "to stdout" not in captured.out + captured.err
+    assert "to stderr" not in captured.out + captured.err
+
+
 def test_preprocess_cell():
     class CellReplacer(ExecutePreprocessor):
         def preprocess_cell(self, cell, resources, index, **kwargs):

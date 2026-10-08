@@ -83,6 +83,15 @@ nbconvert_flags.update(
                 "is only relevant if '--execute' was specified, too."
             ),
         ),
+        "show-output": (
+            {"ExecutePreprocessor": {"show_output": True}},
+            (
+                "Echo each cell's stdout/stderr output to stderr as the "
+                "notebook executes, so progress of long-running notebooks "
+                "is visible. This flag is only relevant if '--execute' was "
+                "specified, too."
+            ),
+        ),
         "stdin": (
             {
                 "NbConvertApp": {
