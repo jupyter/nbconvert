@@ -15,7 +15,7 @@ This is a security release, fixing two CVEs:
 
 ### Enhancements made
 
-- Allow configureable WebPDF JavaScript processing timeout [#2250](https://github.com/jupyter/nbconvert/pull/2250) ([@timkpaine](https://github.com/timkpaine), [@Carreau](https://github.com/Carreau))
+- Allow configurable WebPDF JavaScript processing timeout [#2250](https://github.com/jupyter/nbconvert/pull/2250) ([@timkpaine](https://github.com/timkpaine), [@Carreau](https://github.com/Carreau))
 
 ### Bugs fixed
 
