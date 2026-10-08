@@ -273,6 +273,30 @@ class TestExporter(ExportersTestsBase):
             assert exporter.template_name == template
             assert os.path.join(td, template) in exporter.template_paths
 
+    def test_invalid_template_conf_json_error_includes_path(self):
+        with TemporaryDirectory() as td:
+            template = "mytemplate"
+            template_dir = os.path.join(td, template)
+            template_file = os.path.join(template_dir, "index.py.j2")
+            template_conf = os.path.join(template_dir, "conf.json")
+            os.mkdir(template_dir)
+            with open(template_file, "w") as f:
+                f.write("content")
+            with open(template_conf, "w") as f:
+                f.write("{")
+
+            config = Config()
+            config.TemplateExporter.template_name = template
+            config.TemplateExporter.extra_template_basedirs = [td]
+
+            with pytest.raises(
+                ValueError, match="Failed to parse template configuration file"
+            ) as exc_info:
+                self._make_exporter(config=config)
+
+            assert "Failed to parse template configuration file" in str(exc_info.value)
+            assert template_conf in str(exc_info.value)
+
     def test_local_template_dir(self):
         with TemporaryDirectory() as td, _contextlib_chdir.chdir(td):  # noqa
             with patch("os.getcwd", return_value=os.path.abspath(td)):

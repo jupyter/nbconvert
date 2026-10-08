@@ -102,6 +102,17 @@ def recursive_update(target, new):
     return target  # return for convenience
 
 
+def _load_template_conf(conf_path):
+    """Load a template conf.json file."""
+    conf_path = os.fspath(conf_path)
+    try:
+        with open(conf_path) as f:
+            return json.load(f)
+    except json.JSONDecodeError as err:
+        msg = f"Failed to parse template configuration file {conf_path}: {err}"
+        raise ValueError(msg) from err
+
+
 # define function at the top level to avoid pickle errors
 def deprecated(msg):
     """Emit a deprecation warning."""
@@ -564,8 +575,7 @@ class TemplateExporter(Exporter):
                 pass
             else:
                 if conf_path_exists:
-                    with conf_path.open() as f:
-                        conf = recursive_update(conf, json.load(f))
+                    conf = recursive_update(conf, _load_template_conf(conf_path))
         return conf
 
     @default("template_paths")
@@ -635,16 +645,14 @@ class TemplateExporter(Exporter):
                     found_at_least_one = True
                 conf_file = os.path.join(template_dir, "conf.json")
                 if os.path.exists(conf_file):
-                    with open(conf_file) as f:
-                        conf = recursive_update(json.load(f), conf)
+                    conf = recursive_update(_load_template_conf(conf_file), conf)
             for root_dir in root_dirs:
                 template_dir = os.path.join(root_dir, "nbconvert", "templates", base_template)
                 if os.path.exists(template_dir):
                     found_at_least_one = True
                 conf_file = os.path.join(template_dir, "conf.json")
                 if os.path.exists(conf_file):
-                    with open(conf_file) as f:
-                        conf = recursive_update(json.load(f), conf)
+                    conf = recursive_update(_load_template_conf(conf_file), conf)
             if not found_at_least_one:
                 # Check for backwards compatibility template names
                 for root_dir in root_dirs:
