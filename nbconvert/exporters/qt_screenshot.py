@@ -35,6 +35,7 @@ if QT_INSTALLED:
             self.paginate = paginate
             self.load(QtCore.QUrl(url))
             self.loadFinished.connect(self.on_loaded)
+            self.page().contentsSizeChanged.connect(self.on_loaded)
             # Create hidden view without scrollbars
             self.setAttribute(QtCore.Qt.WA_DontShowOnScreen)
             self.page().settings().setAttribute(QWebEngineSettings.ShowScrollBars, False)
@@ -53,15 +54,19 @@ if QT_INSTALLED:
             else:
                 msg = f"Export file extension not supported: {output_file}"
                 raise RuntimeError(msg)
+            self.export_timer = QtCore.QTimer(self)
+            self.export_timer.setSingleShot(True)
+            self.export_timer.setInterval(1000)
+            self.export_timer.timeout.connect(self.export)
             self.show()
             self.app.exec()  # type:ignore[union-attr]
 
-        def on_loaded(self):
-            """Handle app load."""
+        def on_loaded(self, *args):
+            """Fit the view to the page, and export once the size stops changing."""
+            # The page can still report an empty size when loading finishes, and the export of a 0x0 view is empty
             self.size = self.page().contentsSize().toSize()
             self.resize(self.size)
-            # Wait for resize
-            QtCore.QTimer.singleShot(1000, self.export)
+            self.export_timer.start()
 
         def export_pdf(self):
             """Export to pdf."""
