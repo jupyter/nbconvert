@@ -323,7 +323,9 @@ class IPythonRenderer(HTMLRenderer):
                     lang = info.strip().split(maxsplit=1)[0]
                     lexer = get_lexer_by_name(lang, **self.lexer_options)
             except ClassNotFound:
-                code = f"{lang}\n{code}"
+                # Pygments has no lexer for this info string. Fall back to an
+                # unhighlighted block; mistune keeps the info string in the
+                # ``language-`` class, so it must not be added to the code.
                 lang = None
 
         if not lang:
