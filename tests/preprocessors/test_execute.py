@@ -39,7 +39,7 @@ def assert_notebooks_equal(expected, actual):
     actual_cells = actual["cells"]
     assert len(expected_cells) == len(actual_cells)
 
-    for expected_cell, actual_cell in zip(expected_cells, actual_cells):
+    for expected_cell, actual_cell in zip(expected_cells, actual_cells, strict=True):
         expected_outputs = expected_cell.get("outputs", [])
         actual_outputs = actual_cell.get("outputs", [])
         normalized_expected_outputs = list(map(normalize_output, expected_outputs))

@@ -15,12 +15,9 @@ import warnings
 from urllib.parse import quote
 from xml.etree.ElementTree import Element
 
-import bleach
-
 # defusedxml does safe(r) parsing of untrusted XML data
 from defusedxml import ElementTree
-
-from nbconvert.preprocessors.sanitize import _get_default_css_sanitizer
+from turbohtml.clean import DEFAULT_ATTRIBUTES, DEFAULT_TAGS, Policy, Sanitizer
 
 __all__ = [
     "add_anchor",
@@ -80,22 +77,18 @@ def html2text(element):
     return text
 
 
+_CLEAN_HTML = Sanitizer(
+    Policy(
+        tags=DEFAULT_TAGS | {"div", "pre", "code", "span", "table", "tr", "td"},
+        attributes={**DEFAULT_ATTRIBUTES, "*": frozenset({"class", "id"})},
+    )
+)
+
+
 def clean_html(element):
     """Clean an html element."""
     element = element.decode() if isinstance(element, bytes) else str(element)
-    kwargs = {}
-    css_sanitizer = _get_default_css_sanitizer()
-    if css_sanitizer:
-        kwargs["css_sanitizer"] = css_sanitizer
-    return bleach.clean(
-        element,
-        tags=[*bleach.ALLOWED_TAGS, "div", "pre", "code", "span", "table", "tr", "td"],
-        attributes={
-            **bleach.ALLOWED_ATTRIBUTES,
-            "*": ["class", "id"],
-        },
-        **kwargs,
-    )
+    return _CLEAN_HTML.sanitize(element)
 
 
 def _convert_header_id(header_contents):
