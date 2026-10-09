@@ -203,7 +203,7 @@ override this.-=))
     ((*- endblock title *))
     ((* block date *))
     ((* if 'date' in nb.metadata *))
-    \date{((( nb.metadata.date | escape_latex )))}
+    \date{((( nb.metadata.date | string | escape_latex )))}
     ((* endif *))
     ((* endblock date *))
     ((* block author *))
