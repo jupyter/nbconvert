@@ -4,12 +4,16 @@
 # Distributed under the terms of the Modified BSD License.
 
 import builtins
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 
 from nbconvert.exporters.exporter import Exporter
-from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
+from nbconvert.exporters.webpdf import (
+    PLAYWRIGHT_INSTALLED,
+    WebPDFExporter,
+    _run_coroutine,
+)
 
 from .base import ExportersTestsBase
 
@@ -18,6 +22,33 @@ real_import = builtins.__import__
 
 class FakeBrowser:
     executable_path: str = ""
+
+
+def test_run_coroutine_uses_asyncio_run_off_windows():
+    coro = object()
+    with (
+        patch("nbconvert.exporters.webpdf.IS_WINDOWS", False),
+        patch("nbconvert.exporters.webpdf.asyncio.run", return_value="done") as run,
+    ):
+        assert _run_coroutine(coro) == "done"
+        run.assert_called_once_with(coro)
+
+
+def test_run_coroutine_uses_proactor_loop_on_windows():
+    coro = object()
+    loop = Mock()
+    loop.run_until_complete.return_value = "done"
+    with (
+        patch("nbconvert.exporters.webpdf.IS_WINDOWS", True),
+        patch(
+            "nbconvert.exporters.webpdf.asyncio.ProactorEventLoop",
+            return_value=loop,
+            create=True,
+        ),
+    ):
+        assert _run_coroutine(coro) == "done"
+        loop.run_until_complete.assert_called_once_with(coro)
+        loop.close.assert_called_once_with()
 
 
 def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(), level=0):
