@@ -1,4 +1,4 @@
-"""Tests for the webpdf exporter"""
+"""Tests for the webhtml exporter"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -9,7 +9,7 @@ from unittest.mock import patch
 import pytest
 
 from nbconvert.exporters.exporter import Exporter
-from nbconvert.exporters.webpdf import PLAYWRIGHT_INSTALLED, WebPDFExporter
+from nbconvert.exporters.webhtml import PLAYWRIGHT_INSTALLED, WebHTMLExporter
 
 from .base import ExportersTestsBase
 
@@ -27,18 +27,18 @@ def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(),
     return real_import(name, globals=globals_ctx, locals=locals_ctx, fromlist=fromlist, level=level)
 
 
-class TestWebPDFExporter(ExportersTestsBase):
-    """Contains test functions for webpdf.py"""
+class TestWebHTMLExporter(ExportersTestsBase):
+    """Contains test functions for webhtml.py"""
 
-    exporter_class = WebPDFExporter  # type:ignore
+    exporter_class = WebHTMLExporter  # type:ignore
 
     def test_output_extension_and_single_browser_render(self):
-        exporter = WebPDFExporter()
-        with patch.object(exporter, "run_playwright", return_value=b"%PDF") as run_playwright:
+        exporter = WebHTMLExporter()
+        with patch.object(exporter, "run_playwright", return_value="rendered") as run_playwright:
             output, resources = exporter.from_filename(self._get_notebook())
 
-        assert output == b"%PDF"
-        assert resources["output_extension"] == ".pdf"
+        assert output == "rendered"
+        assert resources["output_extension"] == ".html"
         run_playwright.assert_called_once()
 
     @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
@@ -47,15 +47,15 @@ class TestWebPDFExporter(ExportersTestsBase):
         """
         Can a TemplateExporter export something?
         """
-        output, _resources = WebPDFExporter(allow_chromium_download=True).from_filename(
+        output, _resources = WebHTMLExporter(allow_chromium_download=True).from_filename(
             self._get_notebook()
         )
-        assert output.startswith(b"%PDF")
+        assert "<html" in output
 
     @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
-    def test_webpdf_without_chromium(self):
+    def test_webhtml_without_chromium(self):
         """
-        Generate PDFs if chromium not present?
+        Generate HTML if chromium not present?
         """
         with (
             patch(
@@ -63,14 +63,14 @@ class TestWebPDFExporter(ExportersTestsBase):
             ),
             pytest.raises(RuntimeError, match="No suitable chromium executable"),
         ):
-            WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
+            WebHTMLExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
-    def test_webpdf_without_playwright(self):
+    def test_webhtml_without_playwright(self):
         """
-        Generate PDFs if playwright not installed?
+        Generate HTML if playwright not installed?
         """
         base_exporter = Exporter()
-        exporter = WebPDFExporter()
+        exporter = WebHTMLExporter()
         with open(self._get_notebook(), encoding="utf-8") as f:
             nb = base_exporter.from_file(f, resources={})[0]
         with (

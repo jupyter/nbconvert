@@ -46,6 +46,7 @@ latex = "nbconvert.exporters:LatexExporter"
 pdf = "nbconvert.exporters:PDFExporter"
 qtpdf = "nbconvert.exporters:QtPDFExporter"
 qtpng = "nbconvert.exporters:QtPNGExporter"
+webhtml = "nbconvert.exporters:WebHTMLExporter"
 webpdf = "nbconvert.exporters:WebPDFExporter"
 markdown = "nbconvert.exporters:MarkdownExporter"
 python = "nbconvert.exporters:PythonExporter"
@@ -57,6 +58,7 @@ script = "nbconvert.exporters:ScriptExporter"
 [project.optional-dependencies]
 qtpng = ["pyqtwebengine>=5.15"]
 qtpdf = ["nbconvert[qtpng]"]
+webhtml = ["playwright"]
 webpdf = ["playwright"]
 test = [
     "pytest>=7",
@@ -75,7 +77,7 @@ docs = [
     "sphinxcontrib_spelling",
     "intersphinx_registry",
 ]
-all = ["nbconvert[qtpdf,webpdf,test,serve,docs]"]
+all = ["nbconvert[qtpdf,webhtml,webpdf,test,serve,docs]"]
 
 [project.scripts]
 jupyter-nbconvert = "nbconvert.nbconvertapp:main"
