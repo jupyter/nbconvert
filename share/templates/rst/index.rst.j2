@@ -99,7 +99,12 @@
 {% endblock data_html %}
 
 {% block markdowncell scoped %}
-{{ cell.source | convert_pandoc("markdown", "rst") }}
+{% set rst_source = cell.source | convert_pandoc("markdown", "rst") -%}
+{%- if rst_source.startswith(" ") -%}
+..
+
+{% endif -%}
+{{ rst_source }}
 {% endblock markdowncell %}
 
 {%- block rawcell scoped -%}
