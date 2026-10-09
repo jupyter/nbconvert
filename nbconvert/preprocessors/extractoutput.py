@@ -49,9 +49,9 @@ class ExtractOutputPreprocessor(Preprocessor):
         config=True
     )
 
-    extract_output_types = Set({"image/png", "image/jpeg", "image/svg+xml", "application/pdf"}).tag(
-        config=True
-    )
+    extract_output_types = Set(
+        {"image/png", "image/jpeg", "image/svg+xml", "application/pdf", "image/gif"}
+    ).tag(config=True)
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
@@ -90,7 +90,7 @@ class ExtractOutputPreprocessor(Preprocessor):
                     data = out.data[mime_type]
 
                     # Binary files are base64-encoded, SVG is already XML
-                    if mime_type in {"image/png", "image/jpeg", "application/pdf"}:
+                    if mime_type in {"image/png", "image/jpeg", "image/gif", "application/pdf"}:
                         # data is b64-encoded as text (str, unicode),
                         # we want the original bytes
                         data = a2b_base64(data)
