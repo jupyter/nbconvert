@@ -38,15 +38,15 @@
 {% endblock stream %}
 
 {% block data_svg %}
-    {% if "filenames" in output.metadata %}
+    {% if "filenames" in output.metadata and not resources.get("embed_images", False) %}
 ![svg]({{ output.metadata.filenames['image/svg+xml'] | path2url }})
     {% else %}
-![svg](data:image/svg;base64,{{ output.data['image/svg+xml'] }})
+![svg](data:image/svg+xml;base64,{{ output.data['image/svg+xml'] | text_base64 }})
     {% endif %}
 {% endblock data_svg %}
 
 {% block data_png %}
-    {% if "filenames" in output.metadata %}
+    {% if "filenames" in output.metadata and not resources.get("embed_images", False) %}
 ![png]({{ output.metadata.filenames['image/png'] | path2url }})
     {% else %}
 ![png](data:image/png;base64,{{ output.data['image/png'] }})
@@ -54,7 +54,7 @@
 {% endblock data_png %}
 
 {% block data_jpg %}
-    {% if "filenames" in output.metadata %}
+    {% if "filenames" in output.metadata and not resources.get("embed_images", False) %}
 ![jpeg]({{ output.metadata.filenames['image/jpeg'] | path2url }})
     {% else %}
 ![jpeg](data:image/jpeg;base64,{{ output.data['image/jpeg'] }})
