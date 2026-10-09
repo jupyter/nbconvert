@@ -151,6 +151,58 @@ class TestExtractAttachments(PreprocessorTestsBase):
         # Cell source must reference the safe, flattened filename
         self.assertEqual(nb.cells[0].source, "![file](test1)")
 
+    def test_attachment_duplicate_filenames_are_made_unique_per_cell(self):
+        """Attachments with the same filename in different cells should not overwrite.
+
+        Markdown export writes attachments to disk, so filenames must be unique
+        across cells even though notebook attachments are only scoped per cell.
+        """
+        first = b64encode(b"first image").decode("utf-8")
+        second = b64encode(b"second image").decode("utf-8")
+        first_cell = nbformat.new_markdown_cell(
+            source="![first](attachment:image.png)",
+            attachments={"image.png": {"image/png": first}},
+        )
+        second_cell = nbformat.new_markdown_cell(
+            source="![second](attachment:image.png)",
+            attachments={"image.png": {"image/png": second}},
+        )
+        nb = nbformat.new_notebook(cells=[first_cell, second_cell])
+        res = self.build_resources()
+        res["output_files_dir"] = "outputs"
+        preprocessor = self.build_preprocessor()
+
+        nb, res = preprocessor(nb, res)
+
+        self.assertEqual(res["outputs"][os.path.join("outputs", "image.png")], b"first image")
+        self.assertEqual(res["outputs"][os.path.join("outputs", "image_1.png")], b"second image")
+        self.assertEqual(nb.cells[0].source, "![first](outputs/image.png)")
+        self.assertEqual(nb.cells[1].source, "![second](outputs/image_1.png)")
+
+    def test_attachment_sanitized_name_collisions_are_made_unique(self):
+        """Sanitized basenames should still be uniquified across cells."""
+        nested = b64encode(b"nested image").decode("utf-8")
+        flat = b64encode(b"flat image").decode("utf-8")
+        first_cell = nbformat.new_markdown_cell(
+            source="![first](attachment:dir/image.png)",
+            attachments={"dir/image.png": {"image/png": nested}},
+        )
+        second_cell = nbformat.new_markdown_cell(
+            source="![second](attachment:image.png)",
+            attachments={"image.png": {"image/png": flat}},
+        )
+        nb = nbformat.new_notebook(cells=[first_cell, second_cell])
+        res = self.build_resources()
+        res["output_files_dir"] = "outputs"
+        preprocessor = self.build_preprocessor()
+
+        nb, res = preprocessor(nb, res)
+
+        self.assertEqual(res["outputs"][os.path.join("outputs", "image.png")], b"nested image")
+        self.assertEqual(res["outputs"][os.path.join("outputs", "image_1.png")], b"flat image")
+        self.assertEqual(nb.cells[0].source, "![first](outputs/image.png)")
+        self.assertEqual(nb.cells[1].source, "![second](outputs/image_1.png)")
+
     def test_attachment_empty_basename_skipped(self):
         """Test that filenames resolving to an empty basename are skipped.
 
