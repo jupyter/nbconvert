@@ -54,11 +54,8 @@ class WidgetsDataTypeFilter(NbConvertBase):
 
         """
         metadata = self.metadata.get(self.notebook_path, {})
-        widgets_state = (
-            metadata["widgets"][WIDGET_STATE_MIMETYPE]["state"]
-            if metadata.get("widgets") is not None
-            else {}
-        )
+        widgets_metadata = (metadata.get("widgets") or {}).get(WIDGET_STATE_MIMETYPE) or {}
+        widgets_state = widgets_metadata.get("state", {})
         for fmt in self.display_data_priority:
             if fmt in output:
                 # If there is no widget state available, we skip this mimetype
