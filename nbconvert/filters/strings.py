@@ -123,6 +123,8 @@ def add_anchor(html, anchor_link_text="¶"):
         return html
     link = _convert_header_id(html2text(h))
     h.set("id", link)
+    if anchor_link_text == "":
+        return ElementTree.tostring(h).decode(encoding="utf-8")
     a = Element("a", {"class": "anchor-link", "href": "#" + link})
     try:
         # Test if the anchor link text is HTML (e.g. an image)

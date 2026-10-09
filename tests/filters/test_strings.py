@@ -67,6 +67,11 @@ class TestStrings(TestsBase):
         assert "<b" in results
         assert "</b>" in results
 
+    def test_add_anchor_with_empty_link_text(self):
+        """add_anchor keeps the heading visible when the link text is empty"""
+        results = add_anchor("<h1>header</h1>", anchor_link_text="")
+        self.assertEqual(results, '<h1 id="header">header</h1>')
+
     def test_add_anchor_fail(self):
         """add_anchor does nothing when it fails"""
         html = "<h1>Hello <br>World!</h1>"
