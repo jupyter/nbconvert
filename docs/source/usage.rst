@@ -10,6 +10,11 @@ The command-line syntax to run the ``nbconvert`` script is::
 This will convert the Jupyter notebook file ``notebook.ipynb`` into the output
 format given by the ``FORMAT`` string.
 
+Unrecognized command-line aliases cause conversion to stop with an error.
+For example, use ``--output`` (two leading hyphens) to specify an output name;
+``-output`` is not a valid alias. This prevents an ignored output option from
+causing a file at the default output path to be overwritten.
+
 Default output format
 ---------------------
 
