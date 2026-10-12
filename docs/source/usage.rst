@@ -359,3 +359,9 @@ or via a list in a configuration file, say ``mycfg.py``, containing the text:
 and using the command::
 
   $ jupyter nbconvert --config mycfg.py
+
+Each argument is expanded as a glob pattern. Existing literal paths are also
+included, with or without the ``.ipynb`` extension, even if they contain glob
+metacharacters such as square brackets. If an argument matches other notebooks
+as a pattern, those matches are retained too. Duplicate paths are converted
+only once. Quote arguments containing spaces to keep them together in the shell.

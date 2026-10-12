@@ -392,6 +392,10 @@ class NbConvertApp(JupyterApp):
             # notebooks without having to type the extension.
             globbed_files = glob.glob(pattern, recursive=self.recursive_glob)
             globbed_files.extend(glob.glob(pattern + ".ipynb", recursive=self.recursive_glob))
+            # Also accept literal filenames containing glob metacharacters.
+            for filename in (pattern, pattern + ".ipynb"):
+                if os.path.isfile(filename):
+                    globbed_files.append(filename)
             if not globbed_files:
                 self.log.warning("pattern %r matched no files", pattern)
 

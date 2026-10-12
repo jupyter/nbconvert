@@ -3,6 +3,7 @@
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import glob
 import os
 from tempfile import TemporaryDirectory
 
@@ -11,6 +12,7 @@ import pytest
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
+from nbconvert.nbconvertapp import NbConvertApp
 from nbconvert.postprocessors import PostProcessorBase
 
 from .base import TestsBase
@@ -19,6 +21,61 @@ from .testutils import onlyif_cmds_exist
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "filename", ["Day 3-1, Hands-on Deep Learning [2].ipynb", "data[2]/café[3].ipynb"]
+)
+@pytest.mark.parametrize("absolute", [False, True])
+@pytest.mark.parametrize("extension", [False, True])
+def test_literal_notebook_selection(tmp_path, monkeypatch, filename, absolute, extension):
+    monkeypatch.chdir(tmp_path)
+    notebook = tmp_path / filename
+    notebook.parent.mkdir(exist_ok=True)
+    notebook.touch()
+    expected = str(notebook) if absolute else os.path.normpath(filename)
+    argument = expected if extension else expected[:-6]
+    app = NbConvertApp(notebooks=["unused-config.ipynb"])
+    app.extra_args = [argument, argument]
+    app.init_notebooks()
+    assert app.notebooks == [expected]
+
+
+@pytest.mark.parametrize("extension", [False, True])
+def test_literal_notebook_preserves_glob_matches(tmp_path, monkeypatch, extension):
+    monkeypatch.chdir(tmp_path)
+    for name in ["notebook1.ipynb", "notebook2.ipynb", "notebook[12].ipynb"]:
+        (tmp_path / name).touch()
+    argument = "notebook[12].ipynb" if extension else "notebook[12]"
+    matches = glob.glob(argument) + glob.glob(argument + ".ipynb")
+    app = NbConvertApp()
+    app.extra_args = [argument, argument]
+    app.init_notebooks()
+    assert app.notebooks == [*matches, "notebook[12].ipynb"]
+    app.extra_args = [argument, "notebook[[]12].ipynb", "*.ipynb"]
+    app.init_notebooks()
+    assert app.notebooks == [*matches, "notebook[12].ipynb"]
+
+
+def test_literal_notebook_from_config(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    filename = "notebook[2].ipynb"
+    (tmp_path / filename).touch()
+    app = NbConvertApp(notebooks=[filename, filename[:-6]])
+    app.init_notebooks()
+    assert app.notebooks == [filename]
+
+
+def test_notebook_glob_controls(tmp_path, monkeypatch, caplog):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "subdir").mkdir()
+    (tmp_path / "subdir" / "notebook1.ipynb").touch()
+    app = NbConvertApp(recursive_glob=True)
+    monkeypatch.setattr(app.log, "propagate", True)
+    app.extra_args = [os.path.join("**", "notebook?.ipynb"), "missing[2].ipynb"]
+    app.init_notebooks()
+    assert app.notebooks == [os.path.join("subdir", "notebook1.ipynb")]
+    assert "matched no files" in caplog.text
 
 
 class DummyPost(PostProcessorBase):
@@ -91,6 +148,15 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert("--log-level 0 --to python notebook2")
             assert not os.path.isfile("notebook1.py")
             assert os.path.isfile("notebook2.py")
+
+    def test_literal_filename_brackets(self):
+        with self.create_temp_cwd(["notebook2.ipynb"]):
+            filename = "Day 3-1, Hands-on Deep Learning [2]"
+            os.rename("notebook2.ipynb", filename + ".ipynb")
+            for extension in [".ipynb", ""]:
+                self.nbconvert('--to python "' + filename + extension + '"')
+                assert os.path.isfile(filename + ".py")
+                os.remove(filename + ".py")
 
     def test_clear_output(self):
         """
