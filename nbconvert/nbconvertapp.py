@@ -174,9 +174,12 @@ nbconvert_flags.update(
             {
                 "HTMLExporter": {
                     "embed_images": True,
-                }
+                },
+                "MarkdownExporter": {
+                    "embed_images": True,
+                },
             },
-            """Embed the images as base64 dataurls in the output. This flag is only useful for the HTML/WebPDF/Slides exports.""",
+            """Embed the images as base64 dataurls in the output. This flag is only useful for the HTML/Markdown/WebPDF/Slides exports.""",
         ),
         "sanitize-html": (
             {
