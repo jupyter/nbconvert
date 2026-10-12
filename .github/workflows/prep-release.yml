@@ -36,7 +36,7 @@ jobs:
           post_version_spec: ${{ github.event.inputs.post_version_spec }}
           target: ${{ github.event.inputs.target }}
           branch: ${{ github.event.inputs.branch }}
-          since: ${{ github.event.inputs.since }}
+          since: ${{ steps.since.outputs.since }}
           since_last_stable: ${{ github.event.inputs.since_last_stable }}
 
       - name: "** Next Step **"

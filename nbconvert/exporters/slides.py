@@ -6,7 +6,7 @@
 from copy import deepcopy
 from warnings import warn
 
-from traitlets import Bool, Unicode, default
+from traitlets import Bool, Dict, Unicode, default
 
 from nbconvert.preprocessors.base import Preprocessor
 
@@ -195,15 +195,61 @@ class SlidesExporter(HTMLExporter):
         """,
     ).tag(config=True)
 
-    def _init_resources(self, resources):
-        resources = super()._init_resources(resources)
+    reveal_config = Dict(
+        {},
+        help="""A dictionary of configuration options for reveal.js.
+        This is passed directly to the Reveal.initialize() call.
+        """,
+    ).tag(config=True)
+
+    def from_notebook_node(self, nb, resources=None, **kw):
+        """
+        Convert a notebook from a notebook node instance.
+        This method extends the parent implementation to override reveal.js
+        configuration with metadata from the notebook.
+        It reads reveal.js settings from the `reveal` key in the notebook's
+        metadata and merges them with the existing configuration.
+        The precedence for settings is:
+        1. Command-line arguments (highest)
+        2. Notebook metadata
+        3. Config file
+        4. Default values (lowest)
+        Parameters
+        ----------
+        nb : :class:`~nbformat.NotebookNode`
+            Notebook node
+        resources : dict
+            Additional resources that can be accessed by exporters and preprocessors.
+        """
+        if resources is None:
+            resources = {}
+
+        # 1. Start with the config file settings
+        reveal_config = self.reveal_config.copy()
+
+        # 2. Layer notebook metadata on top
+        if "reveal" in nb.metadata:
+            self.log.info("Applying reveal config from notebook metadata")
+            reveal_config.update(nb.metadata.get("reveal", {}))
+
+        # 3. Layer command-line options on top
+        traitlet_map = {
+            "reveal_url_prefix": "url_prefix",
+            "reveal_theme": "theme",
+            "reveal_transition": "transition",
+            "reveal_scroll": "scroll",
+            "reveal_number": "number",
+            "reveal_height": "height",
+            "reveal_width": "width",
+        }
+        for trait_name, config_key in traitlet_map.items():
+            # Check if the trait was set via command-line config
+            if trait_name in self.config.SlidesExporter:
+                reveal_config[config_key] = getattr(self, trait_name)
+
+        # Update the resources dictionary
         if "reveal" not in resources:
             resources["reveal"] = {}
-        resources["reveal"]["url_prefix"] = self.reveal_url_prefix
-        resources["reveal"]["theme"] = self.reveal_theme
-        resources["reveal"]["transition"] = self.reveal_transition
-        resources["reveal"]["scroll"] = self.reveal_scroll
-        resources["reveal"]["number"] = self.reveal_number
-        resources["reveal"]["height"] = self.reveal_height
-        resources["reveal"]["width"] = self.reveal_width
-        return resources
+        resources["reveal"].update(reveal_config)
+
+        return super().from_notebook_node(nb, resources=resources, **kw)
