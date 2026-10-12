@@ -128,7 +128,7 @@ class SlidesExporter(HTMLExporter):
                 stacklevel=2,
             )
             return self.config.RevealHelpPreprocessor.url_prefix
-        return "https://unpkg.com/reveal.js@4.0.2"
+        return "https://unpkg.com/reveal.js@5.2.1"
 
     reveal_theme = Unicode(
         "simple",
