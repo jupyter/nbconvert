@@ -75,3 +75,24 @@ def test_script_exporter_entrypoint():
         assert output == "dummy-script-exported"
     finally:
         sys.path.remove(p)
+
+
+def test_script_export_keeps_shared_leading_indent():
+    """A code cell's shared leading indent is kept in the exported script."""
+    nb = v4.new_notebook()
+    nb.metadata.language_info = {
+        "name": "python",
+        "mimetype": "text/x-python",
+        "nbconvert_exporter": "python",
+    }
+    nb.cells = [
+        v4.new_code_cell("if is_true:"),
+        v4.new_code_cell("    do_stuff1()\n    do_stuff2()"),
+        v4.new_code_cell("    if ready:\n        do_stuff()"),
+    ]
+
+    output, _resources = ScriptExporter().from_notebook_node(nb)
+
+    assert "if is_true:" in output
+    assert "    do_stuff1()\n    do_stuff2()" in output
+    assert "    if ready:\n        do_stuff()" in output
