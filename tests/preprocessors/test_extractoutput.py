@@ -87,16 +87,36 @@ class TestExtractOutput(PreprocessorTestsBase):
         self.assertEqual(sorted(outputs), sorted(reference_files))
 
     def test_filename_path_traversal(self):
-        """Are path components stripped from output filename metadata?"""
-        for name in ["/tmp/evil.png", "../../evil.png", "sub/evil.png"]:
+        """Are unsafe path components stripped while safe subdirectories are preserved?"""
+        for name, expected_name in [
+            ("/tmp/evil.png", "tmp/evil.png"),
+            ("../../evil.png", "evil.png"),
+            ("sub/evil.png", "sub/evil.png"),
+        ]:
             nb = self.build_notebook()
             nb.cells[0].outputs[6].metadata["filename"] = name
             res = self.build_resources()
             res["output_files_dir"] = "nb_files"
             nb, res = self.build_preprocessor()(nb, res)
-            expected = os.path.join("nb_files", "evil.png")
+            expected = os.path.join("nb_files", expected_name)
             self.assertEqual(nb.cells[0].outputs[6].metadata.filenames["image/png"], expected)
             self.assertEqual(res["outputs"][expected], b"g")
+
+    def test_filename_subdirectory_preserved(self):
+        """Do same-basename files in different subdirectories stay distinct (#2330)?"""
+        seen = {}
+        for name in ["a/image.png", "b/image.png"]:
+            nb = self.build_notebook()
+            nb.cells[0].outputs[6].metadata["filename"] = name
+            res = self.build_resources()
+            res["output_files_dir"] = "nb_files"
+            nb, res = self.build_preprocessor()(nb, res)
+            expected = os.path.join("nb_files", name)
+            seen[name] = nb.cells[0].outputs[6].metadata.filenames["image/png"]
+            self.assertEqual(seen[name], expected)
+            self.assertEqual(res["outputs"][expected], b"g")
+        # 两个子目录下的同名文件必须落在不同路径, 不能互相覆盖
+        self.assertEqual(len(set(seen.values())), 2)
 
     def test_filename_empty_basename(self):
         """Is an output whose filename metadata has an empty basename skipped?"""
