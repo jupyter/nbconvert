@@ -7,6 +7,7 @@ notebook file.  The extracted outputs are returned in the 'resources' dictionary
 
 import json
 import os
+import posixpath
 import sys
 from binascii import a2b_base64
 from mimetypes import guess_extension
@@ -52,6 +53,26 @@ class ExtractOutputPreprocessor(Preprocessor):
     extract_output_types = Set({"image/png", "image/jpeg", "image/svg+xml", "application/pdf"}).tag(
         config=True
     )
+
+    @staticmethod
+    def _sanitize_output_filename(fname: str) -> str:
+        """Return a path-traversal-safe relative filename.
+
+        Keeps legitimate subdirectories (e.g. "sub/image.png") so that files
+        sharing a basename in different folders do not collide, while removing
+        ".." segments and any absolute prefix so the resolved path stays inside
+        the output files directory. Returns "" when the input has no usable
+        file-name component (e.g. it ends with a separator).
+        """
+        raw = fname.replace("\\", "/")
+        if raw.endswith("/"):
+            # directory-like input has no file-name component: treat as invalid
+            return ""
+        normalized = posixpath.normpath(raw)
+        if posixpath.isabs(normalized):
+            normalized = normalized.lstrip("/")
+        parts = [p for p in normalized.split("/") if p and p != ".." and not p.endswith(":")]
+        return "/".join(parts)
 
     def preprocess_cell(self, cell, resources, cell_index):
         """
@@ -115,18 +136,18 @@ class ExtractOutputPreprocessor(Preprocessor):
                         ext = "." + mime_type.rsplit("/")[-1]
                     if out.metadata.get("filename", ""):
                         fname = out.metadata["filename"]
-                        # Sanitize: use only the basename to prevent path traversal
-                        filename = os.path.basename(fname)
+                        # Sanitize: strip path traversal while keeping safe subdirectories
+                        filename = self._sanitize_output_filename(fname)
                         if not filename:
                             self.log.warning(
-                                "Output filename '%s' is invalid (empty basename), skipping",
+                                "Output filename '%s' is invalid (no usable file name), skipping",
                                 fname,
                             )
                             continue
                         if filename != fname:
                             self.log.warning(
-                                "Output filename '%s' contained path components, "
-                                "using basename '%s'",
+                                "Output filename '%s' contained unsafe path components, "
+                                "using sanitized '%s'",
                                 fname,
                                 filename,
                             )
