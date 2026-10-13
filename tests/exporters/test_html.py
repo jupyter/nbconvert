@@ -161,6 +161,25 @@ class TestHTMLExporter(ExportersTestsBase):
         assert results[0] != results[1], "attachments only need to be unique within a cell"
         assert "image/svg" in results[1], "second image should use svg"
 
+    def test_attachments_in_html_img_tags(self):
+        png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+        attachments = {"image.png": {"image/png": png}}
+        nb = v4.new_notebook()
+        nb.cells.append(
+            v4.new_markdown_cell(
+                '<img src="attachment:image.png" width="100"/>', attachments=attachments
+            )
+        )
+        nb.cells.append(
+            v4.new_markdown_cell(
+                'Inline <img src="attachment:image.png" width="50"/> image',
+                attachments=attachments,
+            )
+        )
+        (output, _resources) = HTMLExporter(template_name="lab").from_notebook_node(nb)
+        assert "attachment:image.png" not in output
+        assert output.count(f"data:image/png;base64,{png}") == 2
+
     def test_custom_filter_highlight_code(self):
         # Overwriting filters takes place at: Exporter.from_notebook_node
         nb = v4.new_notebook()

@@ -342,14 +342,14 @@ class IPythonRenderer(HTMLRenderer):
 
     def block_html(self, html: str) -> str:
         """Handle block html."""
-        if self.embed_images:
+        if self.embed_images or "attachment:" in html:
             html = self._html_embed_images(html)
 
         return super().block_html(html)
 
     def inline_html(self, html: str) -> str:
         """Handle inline html."""
-        if self.embed_images:
+        if self.embed_images or "attachment:" in html:
             html = self._html_embed_images(html)
 
         return super().inline_html(html)
@@ -457,15 +457,13 @@ class IPythonRenderer(HTMLRenderer):
         parsed_html = bs4.BeautifulSoup(html, features="html.parser")
         imgs: bs4.ResultSet[bs4.Tag] = parsed_html.find_all("img")
 
-        # Replace img tags's sources by base64 dataurls
+        # Replace img tags's sources by attachments or base64 dataurls
         for img in imgs:
             src = img.attrs.get("src")
             if src is None:
                 continue
 
-            base64_url = self._src_to_base64(img.attrs["src"])
-            if base64_url is not None:
-                img.attrs["src"] = base64_url
+            img.attrs["src"] = self._embed_image_or_attachment(src)
 
         return str(parsed_html)
 
