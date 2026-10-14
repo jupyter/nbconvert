@@ -61,6 +61,22 @@ class TestExtractOutput(PreprocessorTestsBase):
         self.assertIn(pdf_filename, res["outputs"])
         self.assertEqual(res["outputs"][pdf_filename], b"h")
 
+    def test_filename_template_execution_count(self):
+        """Allow execution counts in extracted output filenames."""
+        from nbformat.v4 import new_code_cell, new_output
+
+        cell = new_code_cell(
+            execution_count=12,
+            outputs=[new_output("display_data", data={"image/svg+xml": "<svg/>"})],
+        )
+        preprocessor = ExtractOutputPreprocessor(
+            output_filename_template="{unique_key}_{execution_count}_{index}{extension}"
+        )
+        _, resources = preprocessor.preprocess_cell(
+            cell, {"outputs": {}, "unique_key": "figure"}, 0
+        )
+        self.assertIn("figure_12_0.svg", resources["outputs"])
+
     def test_json_extraction(self):
         nb = self.build_notebook(with_json_outputs=True)
         res = self.build_resources()

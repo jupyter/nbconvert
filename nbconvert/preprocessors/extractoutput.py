@@ -134,7 +134,11 @@ class ExtractOutputPreprocessor(Preprocessor):
                             filename += ext
                     else:
                         filename = self.output_filename_template.format(
-                            unique_key=unique_key, cell_index=cell_index, index=index, extension=ext
+                            unique_key=unique_key,
+                            cell_index=cell_index,
+                            execution_count=cell.get("execution_count"),
+                            index=index,
+                            extension=ext,
                         )
 
                     # On the cell, make the figure available via
