@@ -6,6 +6,8 @@
 import json
 import os
 
+from nbformat.v4 import new_code_cell, new_output
+
 from nbconvert.preprocessors.extractoutput import ExtractOutputPreprocessor
 
 from .base import PreprocessorTestsBase
@@ -63,7 +65,6 @@ class TestExtractOutput(PreprocessorTestsBase):
 
     def test_filename_template_execution_count(self):
         """Allow execution counts in extracted output filenames."""
-        from nbformat.v4 import new_code_cell, new_output
 
         cell = new_code_cell(
             execution_count=12,
