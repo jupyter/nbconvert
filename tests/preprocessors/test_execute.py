@@ -6,10 +6,12 @@ Module with tests for the execute preprocessor.
 # Distributed under the terms of the Modified BSD License.
 import os
 import re
+from contextlib import contextmanager
 from copy import deepcopy
 
 import nbformat
 import pytest
+from jupyter_client.manager import KernelManager
 
 from nbconvert.preprocessors.execute import ExecutePreprocessor, executenb
 
@@ -103,3 +105,49 @@ def test_preprocess_cell():
         for output in cell.outputs:
             output.text = "Ignored\n"
     assert_notebooks_equal(expected_nb, output_nb)
+
+
+def test_batch_execution_uses_each_notebook_kernel():
+    """Kernel inference must be refreshed for every notebook in a batch."""
+
+    class RecordingKernelManager(KernelManager):
+        requested_kernel_names = []
+
+        def __init__(self, *args, **kwargs):
+            self.requested_kernel_names.append(kwargs.get("kernel_name"))
+            super().__init__(*args, **kwargs)
+
+    class RecordingKernelClient:
+        def kernel_info(self):
+            return "kernel-info"
+
+    class RecordingExecutePreprocessor(ExecutePreprocessor):
+        @contextmanager
+        def setup_kernel(self):
+            self.create_kernel_manager()
+            self.kc = RecordingKernelClient()
+            yield
+            self.kc = None
+
+        def wait_for_reply(self, *args, **kwargs):
+            return {"content": {"language_info": {}}}
+
+        def preprocess_cell(self, cell, resources, index):
+            return cell, resources
+
+        def set_widgets_metadata(self):
+            pass
+
+    preprocessor = RecordingExecutePreprocessor()
+    preprocessor.kernel_manager_class = RecordingKernelManager
+    resources = {"metadata": {"path": ""}}
+
+    for kernel_name in ("python3", "julia"):
+        notebook = nbformat.v4.new_notebook(
+            metadata={
+                "kernelspec": {"name": kernel_name, "display_name": kernel_name},
+            }
+        )
+        preprocessor.preprocess(notebook, resources=resources)
+
+    assert RecordingKernelManager.requested_kernel_names == ["python3", "julia"]
