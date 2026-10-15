@@ -18,7 +18,8 @@ from textwrap import dedent, fill
 
 from jupyter_core.application import JupyterApp, base_aliases, base_flags
 from traitlets import Bool, DottedObjectName, Instance, List, Type, Unicode, default, observe
-from traitlets.config import Configurable, catch_config_error
+from traitlets.config import Config, Configurable, catch_config_error
+from traitlets.config.loader import ArgumentError
 from traitlets.utils.importstring import import_item
 
 from nbconvert import __version__, exporters, postprocessors, preprocessors, writers
@@ -363,6 +364,13 @@ class NbConvertApp(JupyterApp):
 
         self.init_syspath()
         super().initialize(argv)
+        # Traitlets retains unrecognized aliases as top-level values and only
+        # warns. Continuing could write to a default path instead of the one
+        # the user intended (for example, with a mistyped --output option).
+        for name, value in self.cli_config.items():
+            if not isinstance(value, Config):
+                msg = f"Unrecognized command-line alias: {name!r}"
+                raise ArgumentError(msg)
         if hasattr(self, "load_config_environ"):
             self.load_config_environ()
         self.init_notebooks()

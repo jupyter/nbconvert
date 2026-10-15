@@ -4,6 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import subprocess
+import sys
 from tempfile import TemporaryDirectory
 
 import nbformat
@@ -15,6 +17,50 @@ from nbconvert.postprocessors import PostProcessorBase
 
 from .base import TestsBase
 from .testutils import onlyif_cmds_exist
+
+
+@pytest.mark.parametrize("option", ["-output", "--ouptut", "--ouptut=requested"])
+def test_unrecognized_alias_preserves_existing_output(tmp_path, option):
+    """An ignored output option must not cause conversion to overwrite a file."""
+    notebook = tmp_path / "original.ipynb"
+    nbformat.write(nbformat.v4.new_notebook(), notebook)
+    output = tmp_path / "original.py"
+    output.write_text("existing content\n", encoding="utf-8")
+    args = [option] if "=" in option else [option, "requested"]
+
+    result = subprocess.run(  # noqa: S603 - fixed CLI arguments and temporary test files
+        [sys.executable, "-m", "nbconvert", "--to", "python", str(notebook), *args],
+        cwd=tmp_path,
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+
+    assert result.returncode != 0
+    assert "Unrecognized" in result.stderr
+    assert output.read_text(encoding="utf-8") == "existing content\n"
+    assert not (tmp_path / "requested.py").exists()
+
+
+@pytest.mark.parametrize("option", ["--output", "--NbConvertApp.output_base"])
+def test_valid_output_option_preserves_existing_output(tmp_path, option):
+    notebook = tmp_path / "original.ipynb"
+    nbformat.write(nbformat.v4.new_notebook(), notebook)
+    output = tmp_path / "original.py"
+    output.write_text("existing content\n", encoding="utf-8")
+
+    result = subprocess.run(  # noqa: S603 - fixed CLI arguments and temporary test files
+        [sys.executable, "-m", "nbconvert", "--to", "python", str(notebook), option, "requested"],
+        cwd=tmp_path,
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert output.read_text(encoding="utf-8") == "existing content\n"
+    assert (tmp_path / "requested.py").is_file()
+
 
 # -----------------------------------------------------------------------------
 # Classes and functions
