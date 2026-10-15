@@ -50,6 +50,12 @@ class TestLatexExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
+    def test_graphics_alt_key_is_defined(self):
+        """Pandoc image alt metadata should be accepted by the LaTeX preamble."""
+        output, _resources = LatexExporter().from_notebook_node(v4.new_notebook())
+
+        assert r"\define@key{Gin}{alt}{}" in output
+
     @onlyif_cmds_exist("pandoc")
     def test_very_long_cells(self):
         """
