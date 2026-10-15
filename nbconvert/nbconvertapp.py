@@ -519,6 +519,10 @@ class NbConvertApp(JupyterApp):
         notebook_name = resources["unique_key"]
         if self.use_output_suffix and self.output_base == "{notebook_name}":
             notebook_name += resources.get("output_suffix", "")
+        if os.path.splitext(self.output_base)[1]:
+            # An explicit output suffix is already part of notebook_name.
+            resources = resources.copy()
+            resources["output_extension"] = ""
 
         if not self.writer:
             msg = "No writer object defined!"

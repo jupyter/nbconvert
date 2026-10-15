@@ -226,6 +226,16 @@ class TestNbConvertApp(TestsBase):
             self.nbconvert("--log-level 0 --to python notebook1.ipynb --output nb2")
             assert os.path.exists("nb2.py")
 
+    def test_output_ext_script_exporter(self):
+        """Explicit --output extensions are not duplicated by ScriptExporter."""
+        with self.create_temp_cwd(["notebook1.ipynb"]):
+            self.nbconvert("--log-level 0 --to script notebook1.ipynb --output nb.py")
+            assert os.path.exists("nb.py")
+            assert not os.path.exists("nb.py.py")
+
+            self.nbconvert("--log-level 0 --to script notebook1.ipynb --output nb.txt")
+            assert os.path.exists("nb.txt")
+
     def test_glob_explicit(self):
         """
         Can a search pattern be used along with matching explicit notebook names?
