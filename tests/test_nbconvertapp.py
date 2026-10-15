@@ -11,6 +11,7 @@ import pytest
 from traitlets.tests.utils import check_help_all_output
 
 from nbconvert.exporters import HTMLExporter
+from nbconvert.nbconvertapp import NbConvertApp
 from nbconvert.postprocessors import PostProcessorBase
 
 from .base import TestsBase
@@ -38,6 +39,12 @@ class TestNbConvertApp(TestsBase):
     def test_help_output(self):
         """ipython nbconvert --help-all works"""
         check_help_all_output("nbconvert")
+
+    def test_notebook_filename_to_name_without_extension(self):
+        app = NbConvertApp()
+
+        assert app._notebook_filename_to_name("test") == "test"
+        assert app._notebook_filename_to_name("report.v1.ipynb") == "report.v1"
 
     def test_glob(self):
         """

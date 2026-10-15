@@ -425,7 +425,8 @@ class NbConvertApp(JupyterApp):
         applying `output_base` pattern and stripping extension
         """
         basename = os.path.basename(notebook_filename)
-        notebook_name = basename[: basename.rfind(".")]
+        stem, extension = os.path.splitext(basename)
+        notebook_name = stem if extension else basename
         notebook_name = self.output_base.format(notebook_name=notebook_name)
 
         return notebook_name  # noqa: RET504
