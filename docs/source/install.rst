@@ -79,14 +79,16 @@ notebooks to PDF.
 Installing Chromium
 -------------------
 
-For converting notebooks to PDF with ``--to webpdf``, nbconvert requires the
+For converting notebooks to PDF with ``--to webpdf``, or for prerendering HTML
+notebooks via ``--to webhtml``, nbconvert requires the
 `playwright <https://github.com/microsoft/playwright-python>`_ Chromium automation library.
 
 Playwright makes use of a specific version of Chromium. If it does not find a suitable
 installation of the web browser, it can automatically download it if the ``--allow-chromium-download``
 flag is passed to the command line.
 
-To install a suitable version of playwright, you can pip install ``nbconvert[webpdf]``.
+Install Playwright with ``pip install nbconvert[webhtml]`` for HTML output or
+``pip install nbconvert[webpdf]`` for PDF output.
 
 PDF conversion on a limited TeX environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
