@@ -276,8 +276,7 @@ def strip_trailing_newline(text):
     """
     Strips a newline from the end of text.
     """
-    if text.endswith("\n"):
-        text = text[:-1]
+    text = text.removesuffix("\n")
     return text
 
 
