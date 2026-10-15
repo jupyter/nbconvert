@@ -422,6 +422,27 @@ class TestNbConvertApp(TestsBase):
             with pytest.raises(OSError):  # noqa
                 self.nbconvert("--execute --to markdown --stdout notebook3*.ipynb")
 
+    def test_show_output(self):
+        """
+        Verify that '--show-output' echoes cell output to stderr while keeping
+        the converted notebook on stdout uncorrupted.
+        """
+        with self.create_temp_cwd(["notebook3_with_errors.ipynb"]):
+            output, error_output = self.nbconvert(
+                "--execute --allow-errors --show-output --to notebook --stdout "
+                "notebook3_with_errors.ipynb"
+            )
+            assert "Hello world, my number is 23" in error_output
+            assert "Some text before the error" in error_output
+            assert "the universe and everything is: 42" in error_output
+            nb = nbformat.reads(output, 4)
+            assert "Hello world, my number is 23" in nb.cells[2].outputs[0].text
+
+            _, error_output = self.nbconvert(
+                "--execute --allow-errors --to notebook --stdout notebook3_with_errors.ipynb"
+            )
+            assert "Hello world, my number is 23" not in error_output
+
     def test_errors_print_traceback(self):
         """
         Verify that the stderr output contains the traceback of the cell execution exception.
