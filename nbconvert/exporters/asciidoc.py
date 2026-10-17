@@ -40,6 +40,7 @@ class ASCIIDocExporter(TemplateExporter):
                         "image/svg+xml",
                         "image/png",
                         "image/jpeg",
+                        "image/gif",
                         "text/plain",
                         "text/latex",
                     ]
