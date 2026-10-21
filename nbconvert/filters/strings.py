@@ -236,7 +236,13 @@ def ipython2python(code):
         return code
     else:
         isp = TransformerManager()
-        return isp.transform_cell(code)
+        try:
+            return isp.transform_cell(code)
+        except SyntaxError:
+            # IPython cannot tokenize some invalid code (e.g. a dedent that
+            # matches no outer level). Keep it as is, like IPython does when
+            # running such a cell.
+            return code if code.endswith("\n") else code + "\n"
 
 
 def posix_path(path):
