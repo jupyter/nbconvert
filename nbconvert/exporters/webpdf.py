@@ -157,8 +157,8 @@ class WebPDFExporter(HTMLExporter):
                 # 200 inches is the maximum size for Adobe Acrobat Reader.
                 pdf_params.update(
                     {
-                        "width": min(width, 200 * 72),
-                        "height": min(height, 200 * 72),
+                        "width": f"{min(width, 200 * 72)}px",
+                        "height": f"{min(height, 200 * 72)}px",
                     }
                 )
             pdf_data = await page.pdf(**pdf_params)
