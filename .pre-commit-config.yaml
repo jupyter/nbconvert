@@ -55,6 +55,7 @@ repos:
         files: "^nbconvert"
         stages: [manual]
         args: ["--install-types", "--non-interactive"]
+        # Tornado 6.6 drops Python 3.9, which is still the mypy target.
         additional_dependencies:
           [
             "traitlets>=5.13",
@@ -64,6 +65,7 @@ repos:
             "markupsafe",
             "mistune",
             "nbclient>=0.9",
+            "tornado<6.6",
             "defusedxml",
             "ipython",
             "packaging",
