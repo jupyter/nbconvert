@@ -81,3 +81,18 @@ class TestSlidesExporter(ExportersTestsBase):
         assert cells[-1].metadata["fragment_end"]
         assert cells[-1].metadata["subslide_end"]
         assert cells[-1].metadata["slide_end"]
+
+    def test_slideshow_data_attributes(self):
+        data = {
+            "background_video": "video.mp4",
+            "x><script>alert('slideshow data key')</script><x y": "",
+            "x onmouseover=alert('slideshow data key') y": "",
+        }
+        metadata = {"slideshow": {"slide_type": "slide", "data": data}}
+        nb = nbformat.new_notebook(cells=[nbformat.new_markdown_cell(source="", metadata=metadata)])
+
+        (output, _resources) = SlidesExporter().from_notebook_node(nb)
+
+        assert 'data-background-video="video.mp4"' in output
+        assert "<script>alert('slideshow data key')</script>" not in output
+        assert "onmouseover" not in output
