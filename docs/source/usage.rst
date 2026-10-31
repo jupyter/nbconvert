@@ -81,11 +81,11 @@ LaTeX
   ready for export.
   Images are output as .png files in a folder.
 
-  - ``--template article`` (default)
+  - ``--template-file index.tex.j2`` (default)
 
     Latex article, derived from Sphinx's howto template.
 
-  - ``--template report``
+  - ``--template-file report.tex.j2``
 
     Latex report, providing a table of contents and chapters.
 
