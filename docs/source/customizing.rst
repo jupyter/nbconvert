@@ -15,6 +15,15 @@ one can type.
 
    jupyter nbconvert <path-to-notebook> --to html --template reveal
 
+The ``--template`` option selects a template directory. To select an entry-point
+file within that template, use ``--template-file`` instead. For example, the LaTeX
+exporter uses the ``latex`` template directory by default; select its report layout
+with:
+
+.. sourcecode:: bash
+
+   jupyter nbconvert <path-to-notebook> --to latex --template-file report.tex.j2
+
 Where are nbconvert templates installed?
 ----------------------------------------
 
