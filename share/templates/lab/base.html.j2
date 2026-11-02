@@ -176,7 +176,7 @@ unknown type  {{ cell.type }}
 {% block data_mermaid scoped -%}
 <div class="jp-Mermaid">
 <pre class="mermaid">
-{{ output.data['text/vnd.mermaid'].strip() }}
+{{ output.data['text/vnd.mermaid'].strip() | escape_html_keep_quotes }}
 </pre>
 </div>
 {%- endblock data_mermaid %}

@@ -247,11 +247,23 @@ i.e. the $i^{th}$""",
 
         output_check = (
             """<div class="jp-Mermaid"><pre class="mermaid">\n"""
-            f"""{code.strip()}"""
+            """flowchart LR\n            chicken --&gt; egg --&gt; chicken"""
             """\n</pre></div>"""
         )
 
         self._try_markdown(markdown2html, case, output_check)
+
+    def test_mermaid_markdown_escaped(self):
+        code = """flowchart LR\na --> b\n</pre></div><script>alert(1)</script>"""
+        case = f"""```mermaid\n{code}\n```"""
+
+        output = markdown2html(case)
+        self.assertNotIn("<script>", output)
+        self.assertIn(
+            """<pre class="mermaid">\nflowchart LR\na --&gt; b\n"""
+            """&lt;/pre&gt;&lt;/div&gt;&lt;script&gt;alert(1)&lt;/script&gt;\n</pre>""",
+            output,
+        )
 
     def _try_markdown(self, method, test, tokens):
         results = method(test)

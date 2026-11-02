@@ -336,7 +336,7 @@ class IPythonRenderer(HTMLRenderer):
         """Handle mermaid syntax."""
         return (
             """<div class="jp-Mermaid"><pre class="mermaid">\n"""
-            f"""{code.strip()}"""
+            f"""{escape(code.strip(), quote=False)}"""
             """\n</pre></div>"""
         )
 
