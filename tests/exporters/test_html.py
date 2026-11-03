@@ -128,6 +128,34 @@ class TestHTMLExporter(ExportersTestsBase):
         self.assertIn("""<div class="jp-Mermaid">""", output)
         self.assertIn("""<pre class="mermaid">""", output)
 
+    def test_mermaid_output_escaped(self):
+        nb = v4.new_notebook(
+            cells=[
+                v4.new_code_cell(
+                    outputs=[
+                        v4.new_output(
+                            output_type="display_data",
+                            data={
+                                "text/vnd.mermaid": (
+                                    "flowchart LR\na --> b\n</pre></div><script>alert(1)</script>"
+                                )
+                            },
+                        )
+                    ]
+                )
+            ]
+        )
+        for template_name in ("lab", "reveal"):
+            (output, _resources) = HTMLExporter(
+                template_name=template_name, sanitize_html=True
+            ).from_notebook_node(nb)
+            self.assertNotIn("<script>alert(1)</script>", output)
+            self.assertIn(
+                """<pre class="mermaid">\nflowchart LR\na --&gt; b\n"""
+                """&lt;/pre&gt;&lt;/div&gt;&lt;script&gt;alert(1)&lt;/script&gt;\n</pre>""",
+                output,
+            )
+
     def test_mermaid_prerendered_output(self):
         nb = v4.new_notebook(
             cells=[
