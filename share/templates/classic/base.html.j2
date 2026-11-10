@@ -3,9 +3,19 @@
 {% from 'cell_id_anchor.j2' import cell_id_anchor %}
 
 {% block codecell %}
+{# Skip the cell entirely when nothing of it will be rendered: no input
+   (excluded, or removed via the "remove_source" transient flag set by
+   TagRemovePreprocessor.remove_input_tags) and no outputs (removed via
+   TagRemovePreprocessor.remove_*_outputs_tags, or excluded). Otherwise an
+   empty <div class="cell ..."> is emitted which shows up as a blank gap
+   in the exported HTML (gh-931). #}
+{%- set show_input = resources.global_content_filter.include_input and not cell.metadata.get("transient", {}).get("remove_source", false) -%}
+{%- set show_output = cell.outputs and resources.global_content_filter.include_output -%}
+{%- if show_input or show_output -%}
 <div {{ cell_id_anchor(cell) }} class="cell border-box-sizing code_cell rendered{{ celltags(cell) }}">
 {{ super() }}
 </div>
+{%- endif -%}
 {%- endblock codecell %}
 
 {% block input_group -%}
