@@ -80,7 +80,7 @@
 
 {% block output_area_prompt %}
  <div class="jp-OutputPrompt jp-OutputArea-prompt">
-{%- if output.output_type == 'execute_result' -%}
+   {%- if output.output_type == 'execute_result' -%}
     {%- if cell.execution_count is defined -%}
         Out[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
     {%- else -%}
@@ -88,7 +88,7 @@
     {%- endif -%}
 {%- endif -%}
  </div>
-{% endblock output_area_prompt %}
+   {% endblock output_area_prompt %}
 
 {% block output %}
 {%- if output.output_type == 'execute_result' -%}
