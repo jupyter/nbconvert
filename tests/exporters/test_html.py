@@ -13,6 +13,7 @@ from nbformat import v4
 from traitlets.config import Config
 
 from nbconvert.exporters.html import HTMLExporter
+from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
 
 from .base import ExportersTestsBase
 
@@ -51,6 +52,91 @@ class TestHTMLExporter(ExportersTestsBase):
         """
         (output, _resources) = HTMLExporter(template_name="lab").from_filename(self._get_notebook())
         assert len(output) > 0
+
+    def _build_tagremove_notebook(self):
+        """Notebook with cells whose input/outputs are removed via tags.
+
+        - "hidden output": outputs removed, input shown or excluded
+        - "kept output": untouched control cell
+        - "input hidden": input removed, outputs kept
+        - "gone both ways": input and outputs removed
+        """
+        nb = v4.new_notebook()
+        nb.cells = [
+            v4.new_markdown_cell("# Visible"),
+            v4.new_code_cell(
+                "print('hidden output')",
+                execution_count=1,
+                outputs=[v4.new_output("stream", name="stdout", text="hidden output\n")],
+                metadata={"tags": ["remove_all_outputs"]},
+            ),
+            v4.new_code_cell(
+                "print('kept output')",
+                execution_count=2,
+                outputs=[v4.new_output("stream", name="stdout", text="kept output\n")],
+            ),
+            v4.new_code_cell(
+                "print('input hidden')",
+                execution_count=3,
+                outputs=[v4.new_output("stream", name="stdout", text="input hidden\n")],
+                metadata={"tags": ["remove_input"]},
+            ),
+            v4.new_code_cell(
+                "print('gone both ways')",
+                execution_count=4,
+                outputs=[v4.new_output("stream", name="stdout", text="gone both ways\n")],
+                metadata={"tags": ["remove_input", "remove_all_outputs_both"]},
+            ),
+        ]
+        return nb
+
+    def _export_tagremove_notebook(self, template_name, exclude_input):
+        conf = Config(
+            {
+                "TagRemovePreprocessor": {
+                    "remove_all_outputs_tags": ["remove_all_outputs", "remove_all_outputs_both"],
+                    "remove_input_tags": ["remove_input"],
+                },
+                "TemplateExporter": {"exclude_input": exclude_input},
+            }
+        )
+        exporter = HTMLExporter(config=conf, template_name=template_name)
+        exporter.register_preprocessor(TagRemovePreprocessor, enabled=True)
+        (output, _resources) = exporter.from_notebook_node(self._build_tagremove_notebook())
+        return output
+
+    def test_no_blank_cell_when_input_and_outputs_removed(self):
+        """A code cell with neither input nor outputs left must not leave
+        an empty cell div (blank gap) in the HTML output (gh-931)."""
+        for template_name in ["lab", "classic"]:
+            output = self._export_tagremove_notebook(template_name, exclude_input=True)
+
+            # Cells emptied by tag removal leave no trace ...
+            assert "celltag_remove_all_outputs" not in output
+            assert "celltag_remove_all_outputs_both" not in output
+            assert "gone both ways" not in output
+            if template_name == "lab":
+                assert "jp-mod-noOutputs jp-mod-noInput" not in output
+            # ... while cells that still show something are kept.
+            assert "kept output" in output
+            assert "input hidden" in output
+
+    def test_cell_with_removed_outputs_but_shown_input_is_kept(self):
+        """Only truly empty cells are skipped: with input shown, a cell
+        whose outputs were removed must still render (gh-931)."""
+        for template_name in ["lab", "classic"]:
+            output = self._export_tagremove_notebook(template_name, exclude_input=False)
+
+            # The tag class is the last class in the cell div, so it is
+            # followed by a closing quote; match exactly to distinguish it
+            # from the celltag_remove_all_outputs_both cell below.
+            assert 'celltag_remove_all_outputs"' in output
+            assert "celltag_remove_all_outputs_both" not in output
+            assert "gone both ways" not in output
+            if template_name == "lab":
+                assert "jp-mod-noOutputs jp-mod-noInput" not in output
+            assert "kept output" in output
+            assert "input hidden" in output
 
     def test_prompt_number(self):
         """
