@@ -2,6 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 7.17.2
+
+([Full Changelog](https://github.com/jupyter/nbconvert/compare/v7.17.1...8685e15e2d924fa39be38aeafb6ac859fc254ccc))
+
+### Maintenance and upkeep improvements
+
+- Fix CI: fetch the classic CSS from PyPI, update dead links [#2327](https://github.com/jupyter/nbconvert/pull/2327) ([@Yann-P](https://github.com/Yann-P), [@Carreau](https://github.com/Carreau), [@claude](https://github.com/claude))
+
+### Other merged PRs
+
+- Use org-level security policy (jupyter/.github/SECURITY.md) [#2318](https://github.com/jupyter/nbconvert/pull/2318) ([@Yann-P](https://github.com/Yann-P), [@minrk](https://github.com/minrk))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2026-04-08&to=2026-10-12&type=c))
+
+@Carreau ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2026-04-08..2026-10-12&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aclaude+updated%3A2026-04-08..2026-10-12&type=Issues)) | @GruffElixir ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AGruffElixir+updated%3A2026-04-08..2026-10-12&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2026-04-08..2026-10-12&type=Issues)) | @Yann-P ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AYann-P+updated%3A2026-04-08..2026-10-12&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 7.17.1
 
 This is a security release, fixing two CVEs:
@@ -15,7 +38,7 @@ This is a security release, fixing two CVEs:
 
 ### Enhancements made
 
-- Allow configureable WebPDF JavaScript processing timeout [#2250](https://github.com/jupyter/nbconvert/pull/2250) ([@timkpaine](https://github.com/timkpaine), [@Carreau](https://github.com/Carreau))
+- Allow configurable WebPDF JavaScript processing timeout [#2250](https://github.com/jupyter/nbconvert/pull/2250) ([@timkpaine](https://github.com/timkpaine), [@Carreau](https://github.com/Carreau))
 
 ### Bugs fixed
 
@@ -34,8 +57,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/jupyter/nbconvert/graphs/contributors?from=2026-01-29&to=2026-04-08&type=c))
 
 @akhmerov ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aakhmerov+updated%3A2026-01-29..2026-04-08&type=Issues)) | @bollwyvl ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Abollwyvl+updated%3A2026-01-29..2026-04-08&type=Issues)) | @Carreau ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ACarreau+updated%3A2026-01-29..2026-04-08&type=Issues)) | @ctcjab ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Actcjab+updated%3A2026-01-29..2026-04-08&type=Issues)) | @davidbrochart ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Adavidbrochart+updated%3A2026-01-29..2026-04-08&type=Issues)) | @Ken-B ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AKen-B+updated%3A2026-01-29..2026-04-08&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Akrassowski+updated%3A2026-01-29..2026-04-08&type=Issues)) | @mgeier ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Amgeier+updated%3A2026-01-29..2026-04-08&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Aminrk+updated%3A2026-01-29..2026-04-08&type=Issues)) | @mpacer ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Ampacer+updated%3A2026-01-29..2026-04-08&type=Issues)) | @MSeal ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3AMSeal+updated%3A2026-01-29..2026-04-08&type=Issues)) | @SylvainCorlay ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3ASylvainCorlay+updated%3A2026-01-29..2026-04-08&type=Issues)) | @takluyver ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atakluyver+updated%3A2026-01-29..2026-04-08&type=Issues)) | @timkpaine ([activity](https://github.com/search?q=repo%3Ajupyter%2Fnbconvert+involves%3Atimkpaine+updated%3A2026-01-29..2026-04-08&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 7.17.0
 
@@ -1704,7 +1725,6 @@ class AttrExporter(TemplateExporter):
 raw template
 {%- endblock in_prompt -%}
     """
-
 
 exporter_attr = AttrExporter()
 output_attr, _ = exporter_attr.from_notebook_node(nb)

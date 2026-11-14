@@ -114,7 +114,22 @@ class ExtractOutputPreprocessor(Preprocessor):
                     if ext is None:
                         ext = "." + mime_type.rsplit("/")[-1]
                     if out.metadata.get("filename", ""):
-                        filename = out.metadata["filename"]
+                        fname = out.metadata["filename"]
+                        # Sanitize: use only the basename to prevent path traversal
+                        filename = os.path.basename(fname)
+                        if not filename:
+                            self.log.warning(
+                                "Output filename '%s' is invalid (empty basename), skipping",
+                                fname,
+                            )
+                            continue
+                        if filename != fname:
+                            self.log.warning(
+                                "Output filename '%s' contained path components, "
+                                "using basename '%s'",
+                                fname,
+                                filename,
+                            )
                         if not filename.endswith(ext):
                             filename += ext
                     else:
