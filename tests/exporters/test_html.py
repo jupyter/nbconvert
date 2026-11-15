@@ -9,6 +9,7 @@ import re
 from tempfile import TemporaryDirectory
 
 import pytest
+from bs4 import BeautifulSoup
 from nbformat import v4
 from traitlets.config import Config
 
@@ -246,6 +247,38 @@ class TestHTMLExporter(ExportersTestsBase):
             assert "<script>alert('text/markdown output')</script>" not in output
             assert "<script>alert('text/html output')</script>" not in output
             assert "alert('application/javascript output')" not in output
+
+    def test_image_metadata_attribute_injection(self):
+        payload = "1 onerror=alert(document.domain)"
+        nb = v4.new_notebook(
+            cells=[
+                v4.new_code_cell(
+                    outputs=[
+                        v4.new_output(
+                            output_type="display_data",
+                            data={"image/png": "AAAA"},
+                            metadata={"width": payload, "height": payload},
+                        ),
+                        v4.new_output(
+                            output_type="display_data",
+                            data={"image/jpeg": "AAAA"},
+                            metadata={"image/jpeg": {"width": payload, "height": payload}},
+                        ),
+                    ]
+                )
+            ]
+        )
+        for template in ["lab", "classic", "reveal"]:
+            for sanitize_html in [False, True]:
+                (output, _resources) = HTMLExporter(
+                    template_name=template, sanitize_html=sanitize_html
+                ).from_notebook_node(nb)
+                imgs = BeautifulSoup(output, features="html.parser").find_all("img")
+                assert len(imgs) == 2
+                for img in imgs:
+                    assert "onerror" not in img.attrs
+                    assert img["width"] == payload
+                    assert img["height"] == payload
 
     def test_language_code_not_set(self):
         (output, _resources) = HTMLExporter(template_name="classic").from_filename(
