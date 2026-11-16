@@ -75,11 +75,17 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        variant: ["baseline", "disable-gpu", "no-sandbox", "software-opengl"]
+        variant:
+          [
+            "baseline",
+            "no-sandbox",
+            "no-gpu-sandbox",
+            "no-renderer-code-integrity",
+          ]
       fail-fast: false
     env:
       QT_LOGGING_RULES: "qt.webenginecontext.debug=true"
-      QTWEBENGINE_CHROMIUM_FLAGS: "--enable-logging --log-level=0"
+      QTWEBENGINE_CHROMIUM_FLAGS: "--enable-logging=stderr --log-level=0"
     steps:
       - uses: actions/checkout@v6
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
@@ -90,12 +96,12 @@ jobs:
         run: hatch run cov:python -m pip show PyQt5 PyQt5-Qt5 PyQtWebEngine PyQtWebEngine-Qt5
 
       - name: Run Qt tests
-        timeout-minutes: 10
+        timeout-minutes: 5
         run: |
           case "${{ matrix.variant }}" in
-            disable-gpu) export QTWEBENGINE_CHROMIUM_FLAGS="$QTWEBENGINE_CHROMIUM_FLAGS --disable-gpu" ;;
             no-sandbox) export QTWEBENGINE_DISABLE_SANDBOX=1 ;;
-            software-opengl) export QT_OPENGL=software ;;
+            no-gpu-sandbox) export QTWEBENGINE_CHROMIUM_FLAGS="$QTWEBENGINE_CHROMIUM_FLAGS --disable-gpu-sandbox" ;;
+            no-renderer-code-integrity) export QTWEBENGINE_CHROMIUM_FLAGS="$QTWEBENGINE_CHROMIUM_FLAGS --disable-features=RendererCodeIntegrity" ;;
           esac
           hatch run cov:python -m pytest -v -s -W default -o faulthandler_timeout=120 tests/exporters/test_qtpdf.py tests/exporters/test_qtpng.py
 
