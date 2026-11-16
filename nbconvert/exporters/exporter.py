@@ -187,9 +187,7 @@ class Exporter(LoggingConfigurable):
         resources["metadata"]["name"] = notebook_name
         resources["metadata"]["path"] = path
 
-        modified_date = datetime.datetime.fromtimestamp(
-            os.path.getmtime(filename), tz=datetime.timezone.utc
-        )
+        modified_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename), tz=datetime.UTC)
         # datetime.strftime date format for ipython
         if sys.platform == "win32":
             date_format = "%B %d, %Y"

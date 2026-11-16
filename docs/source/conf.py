@@ -12,7 +12,7 @@
 
 import os
 import shutil
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from intersphinx_registry import get_intersphinx_mapping
 
@@ -73,7 +73,7 @@ master_doc = "index"
 project = "nbconvert"
 
 
-year = datetime.now(tz=timezone.utc).date().year
+year = datetime.now(tz=UTC).date().year
 copyright = "2015-%s, Jupyter Development Team" % year
 author = "Jupyter Development Team"
 
