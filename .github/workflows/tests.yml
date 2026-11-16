@@ -57,6 +57,7 @@ jobs:
 
       - name: Run tests on other platforms
         if: ${{ !startsWith(runner.os, 'linux')  }}
+        timeout-minutes: 30
         run: |
           if [[ "${{ matrix.python-version }}" == *t ]]; then
             target="test:nowarn"
