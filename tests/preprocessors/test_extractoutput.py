@@ -4,6 +4,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import json
+import os
 
 from nbconvert.preprocessors.extractoutput import ExtractOutputPreprocessor
 
@@ -84,3 +85,24 @@ class TestExtractOutput(PreprocessorTestsBase):
 
         # Verify equivalence of extracted outputs.
         self.assertEqual(sorted(outputs), sorted(reference_files))
+
+    def test_filename_path_traversal(self):
+        """Are path components stripped from output filename metadata?"""
+        for name in ["/tmp/evil.png", "../../evil.png", "sub/evil.png"]:
+            nb = self.build_notebook()
+            nb.cells[0].outputs[6].metadata["filename"] = name
+            res = self.build_resources()
+            res["output_files_dir"] = "nb_files"
+            nb, res = self.build_preprocessor()(nb, res)
+            expected = os.path.join("nb_files", "evil.png")
+            self.assertEqual(nb.cells[0].outputs[6].metadata.filenames["image/png"], expected)
+            self.assertEqual(res["outputs"][expected], b"g")
+
+    def test_filename_empty_basename(self):
+        """Is an output whose filename metadata has an empty basename skipped?"""
+        nb = self.build_notebook()
+        nb.cells[0].outputs[6].metadata["filename"] = "../../../tmp/"
+        res = self.build_resources()
+        nb, res = self.build_preprocessor()(nb, res)
+        self.assertNotIn("image/png", nb.cells[0].outputs[6].metadata.get("filenames", {}))
+        self.assertNotIn(b"g", res["outputs"].values())
