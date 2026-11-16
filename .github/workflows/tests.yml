@@ -68,43 +68,6 @@ jobs:
 
       - uses: jupyterlab/maintainer-tools/.github/actions/upload-coverage@v1
 
-  # Temporary: find which Qt WebEngine setting avoids the hang on Windows images since 20261018.
-  qt_windows_debug:
-    name: Qt on Windows (${{ matrix.variant }})
-    runs-on: windows-latest
-    timeout-minutes: 30
-    strategy:
-      matrix:
-        variant:
-          [
-            "baseline",
-            "no-sandbox",
-            "no-gpu-sandbox",
-            "no-renderer-code-integrity",
-          ]
-      fail-fast: false
-    env:
-      QT_LOGGING_RULES: "qt.webenginecontext.debug=true"
-      QTWEBENGINE_CHROMIUM_FLAGS: "--enable-logging=stderr --log-level=0"
-    steps:
-      - uses: actions/checkout@v6
-      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-        with:
-          python_version: "3.13"
-
-      - name: Print Qt versions
-        run: hatch run cov:python -m pip show PyQt5 PyQt5-Qt5 PyQtWebEngine PyQtWebEngine-Qt5
-
-      - name: Run Qt tests
-        timeout-minutes: 5
-        run: |
-          case "${{ matrix.variant }}" in
-            no-sandbox) export QTWEBENGINE_DISABLE_SANDBOX=1 ;;
-            no-gpu-sandbox) export QTWEBENGINE_CHROMIUM_FLAGS="$QTWEBENGINE_CHROMIUM_FLAGS --disable-gpu-sandbox" ;;
-            no-renderer-code-integrity) export QTWEBENGINE_CHROMIUM_FLAGS="$QTWEBENGINE_CHROMIUM_FLAGS --disable-features=RendererCodeIntegrity" ;;
-          esac
-          hatch run cov:python -m pytest -v -s -W default -o faulthandler_timeout=120 tests/exporters/test_qtpdf.py tests/exporters/test_qtpng.py
-
   coverage:
     runs-on: ubuntu-latest
     needs:
