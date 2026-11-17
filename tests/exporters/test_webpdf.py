@@ -1,4 +1,4 @@
-"""Tests for the latex preprocessor"""
+"""Tests for the webpdf exporter"""
 
 # Copyright (c) IPython Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -27,12 +27,21 @@ def monkey_import_notfound(name, globals_ctx=None, locals_ctx=None, fromlist=(),
     return real_import(name, globals=globals_ctx, locals=locals_ctx, fromlist=fromlist, level=level)
 
 
-@pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
 class TestWebPDFExporter(ExportersTestsBase):
     """Contains test functions for webpdf.py"""
 
     exporter_class = WebPDFExporter  # type:ignore
 
+    def test_output_extension_and_single_browser_render(self):
+        exporter = WebPDFExporter()
+        with patch.object(exporter, "run_playwright", return_value=b"%PDF") as run_playwright:
+            output, resources = exporter.from_filename(self._get_notebook())
+
+        assert output == b"%PDF"
+        assert resources["output_extension"] == ".pdf"
+        run_playwright.assert_called_once()
+
+    @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
     @pytest.mark.network
     def test_export(self):
         """
@@ -41,25 +50,31 @@ class TestWebPDFExporter(ExportersTestsBase):
         output, _resources = WebPDFExporter(allow_chromium_download=True).from_filename(
             self._get_notebook()
         )
-        assert len(output) > 0
+        assert output.startswith(b"%PDF")
 
-    @patch("playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser())
-    def test_webpdf_without_chromium(self, mock_chromium):
+    @pytest.mark.skipif(not PLAYWRIGHT_INSTALLED, reason="Playwright not installed")
+    def test_webpdf_without_chromium(self):
         """
         Generate PDFs if chromium not present?
         """
-        with pytest.raises(RuntimeError):
+        with (
+            patch(
+                "playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser()
+            ),
+            pytest.raises(RuntimeError, match="No suitable chromium executable"),
+        ):
             WebPDFExporter(allow_chromium_download=False).from_filename(self._get_notebook())
 
-    @patch("builtins.__import__", monkey_import_notfound)
     def test_webpdf_without_playwright(self):
         """
         Generate PDFs if playwright not installed?
         """
-        with pytest.raises(RuntimeError):  # noqa
-            base_exporter = Exporter()
-            exporter = WebPDFExporter()
-            with open(self._get_notebook(), encoding="utf-8") as f:
-                nb = base_exporter.from_file(f, resources={})[0]
-                # Have to do this as the very last action as traitlets do dynamic importing often
-                exporter.from_notebook_node(nb)
+        base_exporter = Exporter()
+        exporter = WebPDFExporter()
+        with open(self._get_notebook(), encoding="utf-8") as f:
+            nb = base_exporter.from_file(f, resources={})[0]
+        with (
+            patch("builtins.__import__", monkey_import_notfound),
+            pytest.raises(RuntimeError, match="Playwright is not installed"),
+        ):
+            exporter.from_notebook_node(nb)

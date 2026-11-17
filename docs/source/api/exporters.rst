@@ -63,6 +63,8 @@ inherit either directly or indirectly from
 
 .. autoclass:: PDFExporter
 
+.. autoclass:: WebHTMLExporter
+
 .. autoclass:: WebPDFExporter
 
 .. autoclass:: PythonExporter
