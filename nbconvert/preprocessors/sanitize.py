@@ -34,9 +34,11 @@ except ImportError:
         )
 
     except ImportError:
+        ALLOWED_STYLES = frozenset()
+
         warnings.warn(
             "The installed bleach/tinycss2 do not provide CSS sanitization, "
-            "please upgrade to bleach >=5",
+            "please install bleach[css] (bleach >=5 with tinycss2) to enable it",
             UserWarning,
             stacklevel=2,
         )
