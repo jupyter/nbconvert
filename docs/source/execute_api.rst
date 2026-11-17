@@ -25,6 +25,9 @@ As an example, a notebook can be executed from the command line with::
 
     jupyter nbconvert --to notebook --execute mynotebook.ipynb
 
+Add ``--show-output`` (``ExecutePreprocessor.show_output = True``) to echo each
+cell's stdout/stderr stream output to stderr while the notebook executes.
+
 Executing notebooks using the Python API interface
 --------------------------------------------------
 This section will illustrate the Python API interface.
