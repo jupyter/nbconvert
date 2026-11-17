@@ -149,7 +149,7 @@ class FilesWriter(WriterBase):
         # Write conversion results.
         self.log.info("Writing %i bytes to %s", len(output), dest_path)
         if isinstance(output, str):
-            with open(dest_path, "w", encoding="utf-8") as f:
+            with open(dest_path, "w", encoding="utf-8", newline="") as f:
                 f.write(output)
         else:
             with open(dest_path, "wb") as f:

@@ -7,8 +7,26 @@ Module with tests for files
 
 import os
 
+import pytest
+
 from nbconvert.writers.files import FilesWriter
 from tests.base import TestsBase
+
+
+@pytest.mark.parametrize("output", ["first\nsecond\n", "first\r\nsecond\r\n", "first\r\nsecond\n"])
+def test_preserve_text_line_endings(tmp_path, output):
+    """Writing exported text must not translate its existing line endings."""
+    writer = FilesWriter(build_directory=str(tmp_path))
+    dest = writer.write(output, {"output_extension": ".rst"}, notebook_name="out")
+    assert dest.read_bytes() == output.encode("utf-8")
+
+
+def test_preserve_binary_output(tmp_path):
+    """Binary exports are written without any newline translation."""
+    output = b"first\r\nsecond\n\x00"
+    writer = FilesWriter(build_directory=str(tmp_path))
+    dest = writer.write(output, {}, notebook_name="out")
+    assert dest.read_bytes() == output
 
 
 class Testfiles(TestsBase):
