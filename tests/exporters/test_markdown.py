@@ -12,6 +12,10 @@
 # Imports
 # -----------------------------------------------------------------------------
 
+import base64
+
+from nbformat import v4
+
 from nbconvert.exporters.markdown import MarkdownExporter
 
 from .base import ExportersTestsBase
@@ -39,3 +43,36 @@ class TestMarkdownExporter(ExportersTestsBase):
         """
         (output, _resources) = MarkdownExporter().from_filename(self._get_notebook())
         assert len(output) > 0
+
+    def test_embed_images(self):
+        """Embed extracted image outputs when requested."""
+        image = base64.b64encode(b"test image").decode("ascii")
+        svg = "<svg xmlns='http://www.w3.org/2000/svg'><rect width='1' height='1'/></svg>"
+        notebook = v4.new_notebook(
+            cells=[
+                v4.new_code_cell(
+                    outputs=[
+                        v4.new_output(
+                            "display_data",
+                            data={"image/png": image},
+                        )
+                    ]
+                ),
+                v4.new_code_cell(
+                    outputs=[
+                        v4.new_output(
+                            "display_data",
+                            data={"image/svg+xml": svg},
+                        )
+                    ]
+                ),
+            ]
+        )
+
+        output, resources = MarkdownExporter(embed_images=True).from_notebook_node(notebook)
+
+        assert "![png](data:image/png;base64," + image + ")" in output
+        svg64 = base64.b64encode(svg.encode("utf-8")).decode("ascii")
+        assert "![svg](data:image/svg+xml;base64," + svg64 + ")" in output
+        assert resources["embed_images"] is True
+        assert "output_0_0.png" not in output
