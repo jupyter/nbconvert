@@ -11,7 +11,7 @@ Installation
 Supported Python versions
 -------------------------
 
-Currently Python 3.9-3.12 is supported and tested by nbconvert.
+Currently Python 3.11-3.14 is supported and tested by nbconvert.
 
 Installing nbconvert
 --------------------

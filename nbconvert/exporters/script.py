@@ -2,12 +2,8 @@
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-import sys
+from importlib.metadata import entry_points
 
-if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points  # type:ignore[import-not-found]
-else:
-    from importlib.metadata import entry_points
 from traitlets import Dict, default
 
 from .base import get_exporter
