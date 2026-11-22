@@ -168,6 +168,11 @@ class TestStrings(TestsBase):
             ignore_newlines=True,
         )
 
+    def test_ipython2python_invalid_indentation(self):
+        """ipython2python leaves code that IPython cannot tokenize as it is"""
+        code = "for i in range(10):\n        print(i)\n    print(i)"
+        self.assertEqual(ipython2python(code), code + "\n")
+
     def test_posix_path(self):
         """posix_path test"""
         path_list = ["foo", "bar"]
