@@ -246,6 +246,11 @@ Markdown
   and code cells indented 4 spaces.
   Images are output as .png files in a folder.
 
+  To set the document language for Pandoc, set ``lang`` in the notebook's
+  top-level metadata to a language tag such as ``pl`` or ``pt-BR``. The
+  Markdown exporter writes it as a ``lang`` YAML metadata block, after a
+  Pandoc title block if one is present. A later YAML block can override it.
+
 .. _convert_ascii:
 
 Ascii
