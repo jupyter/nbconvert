@@ -43,6 +43,14 @@ class TestWebPDFExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
+    @pytest.mark.network
+    def test_export_without_pagination(self):
+        """Export a notebook as a PDF with a custom page size."""
+        output, _resources = WebPDFExporter(
+            allow_chromium_download=True, paginate=False
+        ).from_filename(self._get_notebook())
+        assert output.startswith(b"%PDF-")
+
     @patch("playwright.async_api._generated.Playwright.chromium", return_value=FakeBrowser())
     def test_webpdf_without_chromium(self, mock_chromium):
         """
