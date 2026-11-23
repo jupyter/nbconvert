@@ -21,7 +21,7 @@ urls = {Homepage = "https://jupyter.org"}
 requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4",
-    "bleach[css]!=5.0.0",
+    "nh3>=0.3.0",
     "defusedxml",
     "jinja2>=3.0",
     "jupyter_core>=4.7",
