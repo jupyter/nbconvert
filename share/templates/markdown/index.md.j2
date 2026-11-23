@@ -1,5 +1,24 @@
 {% extends 'base/display_priority.j2' %}
 
+{% block body -%}
+{% set language = nb.metadata.get('lang') -%}
+{% if language is string and language | trim -%}
+{% set body = super() | trim('\n') -%}
+{#- Pandoc recognizes its percent-prefixed title block only at the start. -#}
+{% if body.startswith('%') -%}
+{% set title, _, body = body.partition('\n\n') -%}
+{{ title }}
+
+{% endif -%}
+---
+lang: {{ language | trim | json_dumps }}
+---
+
+{{ body }}
+{% else -%}
+{{ super() -}}
+{% endif -%}
+{% endblock body %}
 
 {% block in_prompt %}
 {% endblock in_prompt %}
