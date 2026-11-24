@@ -50,6 +50,13 @@ class TestLatexExporter(ExportersTestsBase):
         )
         assert len(output) > 0
 
+    def test_numeric_date_metadata(self):
+        """Numeric date metadata should be rendered rather than crashing."""
+        nb = v4.new_notebook(metadata={"date": 1.23})
+        output, _resources = LatexExporter().from_notebook_node(nb)
+
+        assert r"\date{1.23}" in output
+
     @onlyif_cmds_exist("pandoc")
     def test_very_long_cells(self):
         """
