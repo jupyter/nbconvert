@@ -200,7 +200,7 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
             state.append_token({"type": "latex_environment", "attrs": attrs})
             return m.end()
 
-else:  # Mistune 2
+else:
     _MULTILINE_MATH = re.compile(
         r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}|"
         r"\\\\\[.*?\\\\\]|"
@@ -212,10 +212,10 @@ else:  # Mistune 2
         """Protect list markers inside display math."""
 
         MATH_START = re.compile(r"^ {0,3}(?=\$\$|\\\\\[|\\begin\{)", re.MULTILINE)
-        # Check overlapping candidate code spans.
         CODE_SPAN = re.compile(f"(?={InlineParser.CODESPAN})")  # type: ignore[attr-defined]
 
         def search_pos(self, string: str, pos: int) -> int | None:
+            """Find a block boundary outside math."""
             scope = max(0, string.rfind("\n\n", 0, pos))
             end: int | None = super().search_pos(string, pos)
             while end is not None:
