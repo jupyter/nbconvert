@@ -7,10 +7,12 @@ import re
 from copy import copy
 from functools import partial
 from html import unescape
+from unittest import skipIf
 
 from jinja2 import Environment
 
 from nbconvert.filters.markdown import markdown2html
+from nbconvert.filters.markdown_mistune import MISTUNE_V3
 from nbconvert.filters.pandoc import convert_pandoc
 from tests.base import TestsBase
 from tests.testutils import onlyif_cmds_exist
@@ -223,6 +225,48 @@ i.e. the $i^{th}$""",
         for case in cases:
             s = markdown2html(case)
             self.assertIn(case, unescape(s))
+
+    def test_markdown2html_keeps_list_markers_inside_display_math(self):
+        math_paragraph = "where\n$$\na +\n- b\n$$"
+        rendered = markdown2html(f"{math_paragraph}\n\n- a real list item")
+
+        self.assertIn(math_paragraph, unescape(rendered))
+        self.assertEqual(rendered.count("<li>"), 1)
+        self.assertIn("<li>a real list item</li>", rendered)
+
+    def test_markdown2html_keeps_list_between_display_math_blocks(self):
+        rendered = markdown2html("where\n$$\na + b\n$$\n- a real list item\n$$\nc + d\n$$")
+
+        self.assertIn("<li>a real list item", rendered)
+
+    @skipIf(MISTUNE_V3, "Preserves Mistune 2 fenced code parsing")
+    def test_markdown2html_unpaired_math_preserves_code_fences(self):
+        cases = [
+            ("where\n$$\na\n```text\n$$x$$\n```", "$$x$$"),
+            ("where\n$$\na\n```text\nliteral\n```\n$$", "literal"),
+            ("where\n$$\n- real\n```text\n$$x$$\n```", "$$x$$"),
+        ]
+        for source, code in cases:
+            with self.subTest(source=source):
+                rendered = markdown2html(source)
+                self.assertRegex(rendered, rf"<pre>[^\n]*{re.escape(code)}\n</pre>")
+                self.assertEqual(rendered.count("<li>"), source.count("\n- "))
+
+    @skipIf(MISTUNE_V3, "Preserves Mistune 2 inline code and list parsing")
+    def test_markdown2html_inline_code_delimiters_do_not_hide_lists(self):
+        cases = [
+            ("where\n`code\n$$`\n- real\n$$\n- other", "code $$"),
+            ("where\n`code\n$$\n`\n- real\n$$\n- other", "code $$"),
+            ("where\n$$\n- real\n`code\n$$\n`", "code $$"),
+            ("where\n`code\n-option\n$$`\n- real\n$$\n- other", "code -option $$"),
+            ("# Intro `\nwhere\n`code\n-option\n$$`\n- real\n$$\n- other", "code -option $$"),
+        ]
+        for source, code in cases:
+            with self.subTest(source=source):
+                rendered = markdown2html(source)
+                self.assertIn(f"<code>{code}</code>", rendered)
+                self.assertIn("<li>real</li>", rendered)
+                self.assertEqual(rendered.count("<li>"), source.count("\n- "))
 
     @onlyif_cmds_exist("pandoc")
     def test_markdown2rst(self):

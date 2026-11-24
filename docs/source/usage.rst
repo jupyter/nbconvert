@@ -48,6 +48,8 @@ HTML
   template files (i.e. ``--template``), you will now need to use ``--template-file path/to/old/file.tpl``
   in order to use that file in compatibility mode as opposed to other options.
 
+  A blank line before a display equation makes its boundary explicit when the surrounding Markdown contains backticks.
+
   - ``--template lab`` (default)
 
     A full static HTML render of the notebook.
