@@ -59,6 +59,7 @@ except ImportError:  # for Mistune >= 2.0
         InlineParser,
         Markdown,
     )
+    from mistune.scanner import Matcher  # type: ignore[import-not-found]
 
     MISTUNE_V3 = False
     MISTUNE_V3_ATX = False
@@ -199,31 +200,61 @@ if MISTUNE_V3:  # Parsers for Mistune >= 3.0.0
             state.append_token({"type": "latex_environment", "attrs": attrs})
             return m.end()
 
-else:  # Parsers for Mistune >= 2.0.0 < 3.0.0
+else:  # Mistune 2
+    _MULTILINE_MATH = re.compile(
+        r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}|"
+        r"\\\\\[.*?\\\\\]|"
+        r"\\begin\{([a-z]*\*?)\}.*?\\end\{\1\}",
+        re.DOTALL,
+    )
+
+    class MathBlockMatcher(Matcher):  # type: ignore[misc]
+        """Protect list markers inside display math."""
+
+        MATH_START = re.compile(r"^ {0,3}(?=\$\$|\\\\\[|\\begin\{)", re.MULTILINE)
+        # Check overlapping candidate code spans.
+        CODE_SPAN = re.compile(f"(?={InlineParser.CODESPAN})")  # type: ignore[attr-defined]
+
+        def search_pos(self, string: str, pos: int) -> int | None:
+            scope = max(0, string.rfind("\n\n", 0, pos))
+            end: int | None = super().search_pos(string, pos)
+            while end is not None:
+                start = self.MATH_START.search(string, pos, end)
+                if start is None:
+                    return end
+                math = _MULTILINE_MATH.match(string, start.end())
+                pos = start.end() + 1
+                if (
+                    math
+                    and "\n\n" not in math[0]
+                    and all(
+                        BlockParser.LIST_START.match(string, marker.start() + 1)  # type: ignore[attr-defined]
+                        for marker in self.PARAGRAPH_END.finditer(string, *math.span())
+                    )
+                ):
+                    stop = string.find("\n\n", math.end())
+                    if not any(
+                        span.start() < math.end() and math.start() < span.end(2)
+                        for span in self.CODE_SPAN.finditer(
+                            string, scope, len(string) if stop < 0 else stop
+                        )
+                    ):
+                        pos = math.end()
+                end = super().search_pos(string, pos)
+            return None
 
     class MathBlockParser(BlockParser):  # type: ignore[no-redef]
-        """This acts as a pass-through to the MathInlineParser. It is needed in
-        order to avoid other block level rules splitting math sections apart.
-        """
+        """Keep display math intact."""
 
-        MULTILINE_MATH = re.compile(
-            # Display math mode, old TeX delimiter: $$ \sqrt{2} $$
-            r"(?<!\\)[$]{2}.*?(?<!\\)[$]{2}|"
-            # Display math mode, new LaTeX delimiter: \[ \sqrt{2} \]
-            r"\\\\\[.*?\\\\\]|"
-            # LaTeX environment: \begin{equation} \sqrt{2} \end{equation}
-            r"\\begin\{([a-z]*\*?)\}.*?\\end\{\1\}",
-            re.DOTALL,
-        )
+        scanner_cls = MathBlockMatcher
+        MULTILINE_MATH = _MULTILINE_MATH
 
-        # Regex for header that doesn't require space after '#'
         AXT_HEADING = re.compile(r" {0,3}(#{1,6})(?!#+)(?: *\n+|([^\n]*?)(?:\n+|\s+?#+\s*\n+))")
 
-        # Multiline math must be searched before other rules
         RULE_NAMES = ("multiline_math", *BlockParser.RULE_NAMES)  # type: ignore[attr-defined]
 
         def parse_multiline_math(self, m: Match[str], state: Any) -> dict[str, str]:
-            """Pass token through mutiline math."""
+            """Pass math to the inline parser."""
             return {"type": "multiline_math", "text": m.group(0)}
 
     class MathInlineParser(InlineParser):  # type: ignore[no-redef]
