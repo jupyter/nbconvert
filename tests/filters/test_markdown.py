@@ -253,6 +253,14 @@ i.e. the $i^{th}$""",
 
         self._try_markdown(markdown2html, case, output_check)
 
+    def test_markdown2html_unknown_language(self):
+        """An info string Pygments cannot resolve is not copied into the code"""
+        for info in ["plaintext", "{python}", "unknownlang extra"]:
+            case = f"```{info}\nx = 1\n```"
+            results = markdown2html(case)
+            self.assertIn("<code", results)
+            self.assertIn(">x = 1\n</code>", results)
+
     def _try_markdown(self, method, test, tokens):
         results = method(test)
         if isinstance(tokens, (str,)):
