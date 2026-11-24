@@ -4,6 +4,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
+import tempfile
+from pathlib import Path
 
 import nbformat
 from nbformat import v4
@@ -79,3 +81,35 @@ class TestRSTExporter(ExportersTestsBase):
         assert len(output) > 0
         assert "\n.. note::" in output
         assert ".. raw:: html" not in output  # rst should shadow html output
+
+    def test_image_paths_use_posix_separators(self):
+        """Image paths should use POSIX separators, not URL-encoded ones (GH-765)."""
+        nb = v4.new_notebook()
+        cell = v4.new_code_cell("print('hello')")
+        cell.outputs = [
+            v4.new_output(
+                "display_data",
+                data={
+                    "image/png": (
+                        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk"
+                        "YAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                    ),
+                    "text/plain": "<Figure>",
+                },
+                metadata={"image/png": {"width": 1, "height": 1}},
+            )
+        ]
+        nb.cells.append(cell)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            notebook = Path(tmp) / "image.ipynb"
+            nbformat.write(nb, notebook)
+            output, _resources = RSTExporter().from_filename(
+                notebook, resources={"output_files_dir": "image_files"}
+            )
+
+        match = re.search(r"\.\. image:: (.+)", output)
+        assert match is not None
+        image_path = match.group(1)
+        assert image_path.startswith("image_files/")
+        assert "%5C" not in image_path
