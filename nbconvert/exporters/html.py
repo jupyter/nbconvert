@@ -215,6 +215,7 @@ class HTMLExporter(TemplateExporter):
                         "text/latex",
                         "image/png",
                         "image/jpeg",
+                        "image/gif",
                         "text/plain",
                     ]
                 },

@@ -26,6 +26,7 @@ class PreprocessorTestsBase(TestsBase):
             nbformat.new_output("stream", name="stderr", text="f"),
             nbformat.new_output("display_data", data={"image/png": "Zw=="}),  # g
             nbformat.new_output("display_data", data={"application/pdf": "aA=="}),  # h
+            nbformat.new_output("display_data", data={"image/gif": "aQ=="}),  # i
         ]
         if with_json_outputs:
             outputs.extend(
