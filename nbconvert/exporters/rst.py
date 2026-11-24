@@ -46,6 +46,7 @@ class RSTExporter(TemplateExporter):
         c = Config(
             {
                 "CoalesceStreamsPreprocessor": {"enabled": True},
+                "ExtractAttachmentsPreprocessor": {"enabled": True},
                 "ExtractOutputPreprocessor": {"enabled": True},
                 "HighlightMagicsPreprocessor": {"enabled": True},
             }
