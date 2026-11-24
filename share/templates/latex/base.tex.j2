@@ -18,6 +18,10 @@ override this.-=))
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
     \usepackage{graphicx}
+    % Pandoc may emit alt={...} for images. Treat it as metadata so graphicx
+    % and adjustbox do not reject otherwise valid images.
+    \makeatletter\define@key{Gin}{alt}{}\makeatother
+
     % Keep aspect ratio if custom image width or height is specified
     \setkeys{Gin}{keepaspectratio}
     % Maintain compatibility with old templates. Remove in nbconvert 6.0
