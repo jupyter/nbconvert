@@ -32,6 +32,24 @@ from nbconvert.utils.iso639_1 import iso639_1
 
 from .templateexporter import TemplateExporter
 
+# Pinned URLs used by the built-in HTML templates. The matching SHA-256 hashes
+# were computed from the exact bytes served by cdnjs and cross-checked against
+# the sha512 values published by the cdnjs API:
+# https://api.cdnjs.com/libraries/jquery/2.0.3
+# https://api.cdnjs.com/libraries/require.js/2.1.10
+# https://api.cdnjs.com/libraries/mathjax/2.7.7
+# Re-verify these hashes whenever a pinned URL changes.
+_REQUIRE_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"
+_MATHJAX_URL = (
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"
+)
+_JQUERY_URL = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"
+_CDN_INTEGRITY = {
+    _REQUIRE_JS_URL: "sha256-tpTnwzCp6VMSdSv3Apnsnt/MQh8OASQVQmy6Bsg1N+4=",
+    _MATHJAX_URL: "sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=",
+    _JQUERY_URL: "sha256-pXtSQrmprcTB74RsNlFHuJxHK5zXcPrOMx78uWU0ayU=",
+}
+
 
 def find_lab_theme(theme_name):
     """
@@ -106,7 +124,7 @@ class HTMLExporter(TemplateExporter):
     )
 
     require_js_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js",
+        _REQUIRE_JS_URL,
         help="""
         URL to load require.js from.
 
@@ -115,7 +133,7 @@ class HTMLExporter(TemplateExporter):
     ).tag(config=True)
 
     mathjax_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe",
+        _MATHJAX_URL,
         help="""
         URL to load Mathjax from.
 
@@ -142,7 +160,7 @@ class HTMLExporter(TemplateExporter):
     )
 
     jquery_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
+        _JQUERY_URL,
         help="""
         URL to load jQuery from.
 
@@ -369,10 +387,13 @@ class HTMLExporter(TemplateExporter):
         resources["include_js"] = resources_include_js
         resources["include_url"] = resources_include_url
         resources["require_js_url"] = self.require_js_url
+        resources["require_js_integrity"] = _CDN_INTEGRITY.get(self.require_js_url, "")
         resources["mathjax_url"] = self.mathjax_url
+        resources["mathjax_integrity"] = _CDN_INTEGRITY.get(self.mathjax_url, "")
         resources["mermaid_js_url"] = self.mermaid_js_url
         resources["mermaid_layout_elk_js_url"] = self.mermaid_layout_elk_js_url
         resources["jquery_url"] = self.jquery_url
+        resources["jquery_integrity"] = _CDN_INTEGRITY.get(self.jquery_url, "")
         resources["jupyter_widgets_base_url"] = self.jupyter_widgets_base_url
         resources["widget_renderer_url"] = self.widget_renderer_url
         resources["html_manager_semver_range"] = self.html_manager_semver_range
