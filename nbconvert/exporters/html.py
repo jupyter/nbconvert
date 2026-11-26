@@ -115,6 +115,10 @@ class HTMLExporter(TemplateExporter):
 
     export_from_notebook = "HTML"
 
+    # Qt renders the exported HTML from a file:// URL, where a cross-origin
+    # request cannot load the CDN scripts. Subclasses for that case opt out.
+    _enable_cdn_integrity = True
+
     anchor_link_text = Unicode("¶", help="The text used as the text for anchor links.").tag(
         config=True
     )
@@ -387,13 +391,19 @@ class HTMLExporter(TemplateExporter):
         resources["include_js"] = resources_include_js
         resources["include_url"] = resources_include_url
         resources["require_js_url"] = self.require_js_url
-        resources["require_js_integrity"] = _CDN_INTEGRITY.get(self.require_js_url, "")
+        resources["require_js_integrity"] = (
+            _CDN_INTEGRITY.get(self.require_js_url, "") if self._enable_cdn_integrity else ""
+        )
         resources["mathjax_url"] = self.mathjax_url
-        resources["mathjax_integrity"] = _CDN_INTEGRITY.get(self.mathjax_url, "")
+        resources["mathjax_integrity"] = (
+            _CDN_INTEGRITY.get(self.mathjax_url, "") if self._enable_cdn_integrity else ""
+        )
         resources["mermaid_js_url"] = self.mermaid_js_url
         resources["mermaid_layout_elk_js_url"] = self.mermaid_layout_elk_js_url
         resources["jquery_url"] = self.jquery_url
-        resources["jquery_integrity"] = _CDN_INTEGRITY.get(self.jquery_url, "")
+        resources["jquery_integrity"] = (
+            _CDN_INTEGRITY.get(self.jquery_url, "") if self._enable_cdn_integrity else ""
+        )
         resources["jupyter_widgets_base_url"] = self.jupyter_widgets_base_url
         resources["widget_renderer_url"] = self.widget_renderer_url
         resources["html_manager_semver_range"] = self.html_manager_semver_range
