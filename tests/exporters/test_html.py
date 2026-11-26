@@ -350,8 +350,7 @@ JQUERY_CDN_SHA256 = "sha256-pXtSQrmprcTB74RsNlFHuJxHK5zXcPrOMx78uWU0ayU="
 REQUIRE_JS_CDN_URL = "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"
 REQUIRE_JS_CDN_SHA256 = "sha256-tpTnwzCp6VMSdSv3Apnsnt/MQh8OASQVQmy6Bsg1N+4="
 MATHJAX_CDN_URL = (
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js"
-    "?config=TeX-AMS_CHTML-full,Safe"
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"
 )
 MATHJAX_CDN_SHA256 = "sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw="
 
