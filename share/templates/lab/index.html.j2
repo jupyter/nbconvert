@@ -15,7 +15,7 @@
 
 {%- block html_head_js -%}
 {%- block html_head_js_requirejs -%}
-<script src="{{ resources.require_js_url }}"></script>
+<script src="{{ resources.require_js_url }}"{% if resources.require_js_integrity %} integrity="{{ resources.require_js_integrity }}" crossorigin="anonymous"{% endif %}></script>
 {%- endblock html_head_js_requirejs -%}
 {%- endblock html_head_js -%}
 
@@ -105,7 +105,7 @@ a.anchor-link {
 {% endblock notebook_css %}
 
 {%- block html_head_js_mathjax -%}
-{{ mathjax(resources.mathjax_url) }}
+{{ mathjax(resources.mathjax_url, resources.mathjax_integrity) }}
 {%- endblock html_head_js_mathjax -%}
 
 {%- block html_head_js_mermaidjs -%}

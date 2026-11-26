@@ -338,3 +338,70 @@ def test_syntax_highlight_leading_whitespace(lexer_options):
     else:
         # Check that the APL-formatted code block has the leading spaces
         assert '<span class="w">      </span>' in output
+
+
+# SHA-256 digests of the exact files served by these pinned CDN URLs, cross-checked
+# against the sha512 values published by cdnjs itself:
+# https://api.cdnjs.com/libraries/jquery/2.0.3
+# https://api.cdnjs.com/libraries/require.js/2.1.10
+# https://api.cdnjs.com/libraries/mathjax/2.7.7
+JQUERY_CDN_URL = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"
+JQUERY_CDN_SHA256 = "sha256-pXtSQrmprcTB74RsNlFHuJxHK5zXcPrOMx78uWU0ayU="
+REQUIRE_JS_CDN_URL = "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"
+REQUIRE_JS_CDN_SHA256 = "sha256-tpTnwzCp6VMSdSv3Apnsnt/MQh8OASQVQmy6Bsg1N+4="
+MATHJAX_CDN_URL = (
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"
+)
+MATHJAX_CDN_SHA256 = "sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw="
+
+
+@pytest.mark.parametrize(
+    ("template_name", "cdn_scripts"),
+    [
+        ("lab", {REQUIRE_JS_CDN_URL: REQUIRE_JS_CDN_SHA256, MATHJAX_CDN_URL: MATHJAX_CDN_SHA256}),
+        (
+            "classic",
+            {
+                JQUERY_CDN_URL: JQUERY_CDN_SHA256,
+                REQUIRE_JS_CDN_URL: REQUIRE_JS_CDN_SHA256,
+                MATHJAX_CDN_URL: MATHJAX_CDN_SHA256,
+            },
+        ),
+        (
+            "reveal",
+            {
+                JQUERY_CDN_URL: JQUERY_CDN_SHA256,
+                REQUIRE_JS_CDN_URL: REQUIRE_JS_CDN_SHA256,
+                MATHJAX_CDN_URL: MATHJAX_CDN_SHA256,
+            },
+        ),
+    ],
+)
+def test_cdn_scripts_include_subresource_integrity(template_name, cdn_scripts):
+    """Exported CDN script tags carry SRI hashes and a CORS attribute."""
+    nb = v4.new_notebook(cells=[v4.new_code_cell("1")])
+    output, _ = HTMLExporter(template_name=template_name).from_notebook_node(nb)
+    script_tags = re.findall(r"<script\b[^>]*>", output)
+
+    for url, integrity in cdn_scripts.items():
+        matching_tags = [tag for tag in script_tags if f'src="{url}"' in tag]
+        assert len(matching_tags) == 1, f"expected one script tag for {url}, got {matching_tags}"
+        assert f'integrity="{integrity}"' in matching_tags[0]
+        assert 'crossorigin="anonymous"' in matching_tags[0]
+
+
+def test_custom_cdn_url_does_not_reuse_default_integrity():
+    """Overriding a CDN URL must not leave a hash for a different resource behind."""
+    custom_url = "https://example.com/require.min.js"
+    nb = v4.new_notebook(cells=[v4.new_code_cell("1")])
+    output, _ = HTMLExporter(template_name="lab", require_js_url=custom_url).from_notebook_node(nb)
+    script_tags = re.findall(r"<script\b[^>]*>", output)
+    custom_tags = [tag for tag in script_tags if f'src="{custom_url}"' in tag]
+
+    assert len(custom_tags) == 1
+    assert "integrity=" not in custom_tags[0]
+    assert "crossorigin=" not in custom_tags[0]
+    # Other built-in CDN scripts stay protected.
+    mathjax_tags = [tag for tag in script_tags if f'src="{MATHJAX_CDN_URL}"' in tag]
+    assert len(mathjax_tags) == 1
+    assert f'integrity="{MATHJAX_CDN_SHA256}"' in mathjax_tags[0]

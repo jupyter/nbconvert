@@ -13,6 +13,15 @@ from nbconvert.exporters.qtpng import QtPNGExporter
 from .base import ExportersTestsBase
 
 
+def test_qt_exporter_skips_cdn_integrity_for_local_rendering():
+    """Qt renders from file:// URLs, so CDN scripts must stay unguarded."""
+    resources = QtPNGExporter()._init_resources({})
+
+    assert resources["require_js_integrity"] == ""
+    assert resources["mathjax_integrity"] == ""
+    assert resources["jquery_integrity"] == ""
+
+
 @pytest.mark.skipif(not QT_INSTALLED, reason="PyQtWebEngine not installed")
 class TestQtPNGExporter(ExportersTestsBase):
     """Contains test functions for qtpng.py"""

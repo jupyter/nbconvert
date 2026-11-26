@@ -1,7 +1,7 @@
 
-{%- macro mathjax(url="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe") -%}
+{%- macro mathjax(url="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe", integrity="") -%}
     <!-- Load mathjax -->
-    <script src="{{url}}"> </script>
+    <script src="{{url}}"{% if integrity %} integrity="{{ integrity }}" crossorigin="anonymous"{% endif %}> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
     init_mathjax = function() {
